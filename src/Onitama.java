@@ -4,7 +4,7 @@ import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceGraphique;
 
-public class Gaufre {
+public class Onitama {
     public static void main(String[] args) {
         Jeu j = null;
         CollecteurEvenements collecteurEvent;
@@ -14,7 +14,7 @@ public class Gaufre {
             } else if (args.length == 2) {
                 j = new Jeu(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
             } else {
-                System.err.println("Usage : java Gaufre <lignes> <colonnes>");
+                System.err.println("Usage : java Onitama <lignes> <colonnes>");
                 System.exit(1);
             }
             if (Config.graphique) {
