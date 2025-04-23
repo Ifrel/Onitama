@@ -6,7 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="PROG6-Preprojet" />
+        <module name="PROG6-PROJET-2024-25" />
       </profile>
     </annotationProcessing>
   </component>
