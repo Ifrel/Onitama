@@ -3,7 +3,7 @@ package Vue;
 import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.AdaptateurClavier;
-import Vue.VuePrincipale.VuePrincipale;
+//import Vue.VuePrincipale.VuePrincipale;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,23 +51,23 @@ public class InterfaceGraphique extends JFrame implements Runnable, InterfaceUse
         maximized = !maximized;
     }
 
-    public void setEcran(EcranSelection ecranSelection){
-        setContentPane(ecranSelection);
-        revalidate();
-        repaint();
-    }
-
-    public void setEcran(EcranDemarrage ecranDemarrage){
-        setContentPane(ecranDemarrage);
-        revalidate();
-        repaint();
-    }
-
-    public void setEcran(VuePrincipale vuePrincipale){
-        setContentPane(vuePrincipale);
-        revalidate();
-        repaint();
-    }
+//    public void setEcran(EcranSelection ecranSelection){
+//        setContentPane(ecranSelection);
+//        revalidate();
+//        repaint();
+//    }
+//
+//    public void setEcran(EcranDemarrage ecranDemarrage){
+//        setContentPane(ecranDemarrage);
+//        revalidate();
+//        repaint();
+//    }
+//
+//    public void setEcran(VuePrincipale vuePrincipale){
+//        setContentPane(vuePrincipale);
+//        revalidate();
+//        repaint();
+//    }
 
 //    public EcranSelection getEcranSelection(){
 //        return ecranSelection;

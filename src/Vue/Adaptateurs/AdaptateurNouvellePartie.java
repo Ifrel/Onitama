@@ -10,14 +10,14 @@ import java.util.jar.JarFile;
 public class AdaptateurNouvellePartie implements ActionListener {
     CollecteurEvenements collecteurEvent;
 
-    public AdaptateurNouvellePartie(CollecteurEvenements collecteurEvent, BlocMenu bm){
-        this.collecteurEvent = collecteurEvent;
-        this.bm = bm;
-    }
+    //public AdaptateurNouvellePartie(CollecteurEvenements collecteurEvent, BlocMenu bm){
+      //  this.collecteurEvent = collecteurEvent;
+        //this.bm = bm;
+    //}
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        bm.stopTimerPartieCourante();
-        collecteurEvent.clavier("NewPartie");
+//        bm.stopTimerPartieCourante();
+//        collecteurEvent.clavier("NewPartie");
     }
 }
