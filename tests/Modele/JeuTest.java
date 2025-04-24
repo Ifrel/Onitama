@@ -1,9 +1,7 @@
 package Modele;
 
-import Global.Config;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.io.File;
