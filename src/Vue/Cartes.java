@@ -1,3 +1,5 @@
 package Vue;
 
-public class Cartes {}
+public class Cartes {
+
+}

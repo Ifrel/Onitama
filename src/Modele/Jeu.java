@@ -1,11 +1,14 @@
 package Modele;
 
-import Global.Config;
+import static Global.Config.TYPECARTE.*;
+import static Global.Config.*;
 import Patterns.Observable;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -24,20 +27,29 @@ public class Jeu extends Observable {
     private int nbTotalCases; // nombres de cases constituiant la gaufre
     private IA joueurIA;
 
-    private boolean [][] jeu;
+
+    // -- GRILLE -- //
+    private Pion [][] grille;
+
+    // --- CARTES -- //
+    private List<Carte> toutesLesCartes;
 
     // ------------------------ INIT ------------------------
-    public Jeu(int l, int c) {
-        _Jeu(l, c);
-    }
 
     public Jeu() {
-        _Jeu(6, 8);
+        _Jeu(LIGNES, COLONNES);
     }
 
     /// réalise l'initialisation des champs, existe pour être appelée à plusieurs endroits, en dehors du constructeur
     private void _Jeu(int l, int c) {
+        // -- Lignes et colonnes
+        lignes = l;
+        colonnes = c;
 
+        // -- Créer notre grille de jeu
+        grille = new Pion[lignes][colonnes];
+        initGrille();
+        /*
         lignes = l;
         colonnes = c;
         joueurCourant = Config.joueurA;
@@ -55,20 +67,117 @@ public class Jeu extends Observable {
         joueurIA = new IA(this);
 
         jeu = new boolean [l][c];
-
         initGrille();
+        */
+        initCartes();
+        if (MODEDEBUG) {
+            afficherCartes();
+            afficherGrille();
+        }
     }
 
-    /// Initialise la grille, rempli les cases
-    private void initGrille() {
+    /* initGrille: Créer la grille et place les pions. */
+    private void initGrille()
+    {
+        // Mise à zéro de la grille.
         for (int i = 0; i < lignes(); i++) {
             for (int j = 0; j < colonnes(); j++) {
-                setCase(i, j, true);
+                grille[i][j] = null;
             }
         }
+        // Ajouter pion étudiant
+        ajouterPion(new ArrayList<Point>()
+        {{
+            add(new Point(0,0));
+            add(new Point(0,1));
+            add(new Point(0,3));
+            add(new Point(0,4));
+        }}, false, ROLEPION.Etudiant);
+        ajouterPion(new ArrayList<Point>()
+        {{
+            add(new Point(4,0));
+            add(new Point(4,1));
+            add(new Point(4,3));
+            add(new Point(4,4));
+        }}, true, ROLEPION.Etudiant);
 
+        // Ajouter pion maitre
+        ajouterPion(new ArrayList<Point>(){{add(new Point(0, 2));}}, false, ROLEPION.Maitre);
+        ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, true, ROLEPION.Maitre);
     }
 
+    /* initCartes: Initialize toutes les cartes disponibles dans le jeu */
+    private void initCartes()
+    {
+        toutesLesCartes = new ArrayList<>();
+        toutesLesCartes.add(new Carte(TIGRE));
+        toutesLesCartes.add(new Carte(DRAGON));
+        toutesLesCartes.add(new Carte(GRENOUILLE));
+        toutesLesCartes.add(new Carte(LAPIN));
+        toutesLesCartes.add(new Carte(CRABE));
+        toutesLesCartes.add(new Carte(ELEPHANT));
+        toutesLesCartes.add(new Carte(OIE));
+        toutesLesCartes.add(new Carte(COQ));
+        toutesLesCartes.add(new Carte(SINGE));
+        toutesLesCartes.add(new Carte(MANTE));
+        toutesLesCartes.add(new Carte(CHEVAL));
+        toutesLesCartes.add(new Carte(BOEUF));
+        toutesLesCartes.add(new Carte(GRUE));
+        toutesLesCartes.add(new Carte(SANGLIER));
+        toutesLesCartes.add(new Carte(ANGUILLE));
+        toutesLesCartes.add(new Carte(COBRA));
+    }
+
+    private void afficherCartes()
+    {
+        for (Carte c: toutesLesCartes)
+        {
+            System.err.println(c.getName());
+            c.getMoves(new Point(2, 2));
+        }
+    }
+
+    private void afficherGrille() {
+        for (int i = 0; i < lignes(); i++) {
+            for (int j = 0; j < colonnes(); j++) {
+                System.out.print(grille[i][j] + " ");
+            }
+            System.out.println(); // go to next line after each row
+        }
+    }
+
+    // -- GETTER ET SETTER
+    /// renvoie le nombre de lignes constituant la gaufre
+    public int lignes() {
+        return lignes;
+    }
+
+    /// renvoie le nombre de colonnes constituant la gaufre
+    public int colonnes() {
+        return colonnes;
+    }
+
+    // --- Cases
+    private void setCase()
+    {
+        // TODO:
+        // Verifier que la case soit bien dans les
+        // bornes disponibles et qu'elle soit vide.
+    }
+
+    // --- Pions
+    void ajouterPion(List<Point> _coordonnes, boolean _proprietaire, ROLEPION _role)
+    {
+        for (Point p: _coordonnes)
+        {
+            if (_role == ROLEPION.Etudiant){
+                grille[p.x][p.y] = new PionEtudiant(_proprietaire);
+            }else{
+                grille[p.x][p.y] = new PionMaitre(_proprietaire);
+            }
+        }
+    }
+    /*
     // ------------------------ ACTIONS  ------------------------
 
     /// jouer un coup IA
@@ -561,4 +670,5 @@ public class Jeu extends Observable {
         S.append("\n");
         return S.toString();
     }
+    */
 }
