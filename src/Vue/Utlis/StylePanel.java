@@ -1,4 +1,4 @@
-package Global;
+package Vue.Utlis;
 
 import javax.swing.*;
 import java.awt.*;
