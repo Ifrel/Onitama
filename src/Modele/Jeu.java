@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Jeu extends Observable {
-    private int lignes, colonnes;
+    private int lignes, colonnes, casesTotales;
     private static Historique<Coup> historique; // historique des coups
     private int joueurCourant;
     private int gagnant; // joueurA | joueurB | joueurIA
@@ -45,6 +45,7 @@ public class Jeu extends Observable {
         // -- Lignes et colonnes
         lignes = l;
         colonnes = c;
+        casesTotales = l*c;
 
         // -- Créer notre grille de jeu
         grille = new Pion[lignes][colonnes];
@@ -147,14 +148,19 @@ public class Jeu extends Observable {
     }
 
     // -- GETTER ET SETTER
-    /// renvoie le nombre de lignes constituant la gaufre
+    /// renvoie le nombre de lignes
     public int lignes() {
         return lignes;
     }
 
-    /// renvoie le nombre de colonnes constituant la gaufre
+    /// renvoie le nombre de colonnes
     public int colonnes() {
         return colonnes;
+    }
+
+    public int casesTotales()
+    {
+        return casesTotales;
     }
 
     // --- Cases

@@ -12,6 +12,7 @@ import java.util.List;
 public class Carte {
     private String _name;
     private TYPECARTE _type;
+    private boolean _proprietaire;
 
     public Carte(TYPECARTE type)
     {
@@ -31,4 +32,5 @@ public class Carte {
         }
         return allMoves;
     }
+    public void DefinirProprietaire(boolean proprietaire){ _proprietaire = proprietaire; }
 }
