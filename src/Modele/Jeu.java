@@ -12,9 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class Jeu extends Observable {
     private int lignes, colonnes, casesTotales;
     private static Historique<Coup> historique; // historique des coups
+
+
+    /*
     private int joueurCourant;
     private int gagnant; // joueurA | joueurB | joueurIA
     private boolean fini;
@@ -26,7 +30,22 @@ public class Jeu extends Observable {
     private int nbMangeesB; // nombre de cases mangées par le joueur B
     private int nbTotalCases; // nombres de cases constituiant la gaufre
     private IA joueurIA;
+    */
 
+    // -- Boucle de jeu -- //
+    private Pion pionSelectionne;   // Pion en cours de selection
+    private etatCoup etatCoupEnCours;       // Etat du coup en cours
+    public enum etatCoup
+    {
+        aucun,
+        selectionné,
+        joué,
+        annulé,
+        terminé
+    }
+
+    // -- JOUEURS -- //
+    private Boolean joueurCourant;
 
     // -- GRILLE -- //
     private Pion [][] grille;
@@ -46,6 +65,16 @@ public class Jeu extends Observable {
         lignes = l;
         colonnes = c;
         casesTotales = l*c;
+
+        // -- Joueurs
+        joueurCourant = false;
+        HashMap<Boolean, Joueur> JoueursEnPartie = new HashMap<Boolean, Joueur>() {{
+            put(false, new Joueur());
+            put(true, new Joueur());
+        }};
+
+        // -- Coups et actions
+        etatCoupEnCours = etatCoup.aucun;
 
         // -- Créer notre grille de jeu
         grille = new Pion[lignes][colonnes];
@@ -70,6 +99,8 @@ public class Jeu extends Observable {
         jeu = new boolean [l][c];
         initGrille();
         */
+
+        // -- Cartes
         initCartes();
         if (MODEDEBUG) {
             afficherCartes();
@@ -143,7 +174,7 @@ public class Jeu extends Observable {
             for (int j = 0; j < colonnes(); j++) {
                 System.out.print(grille[i][j] + " ");
             }
-            System.out.println(); // go to next line after each row
+            System.out.println();
         }
     }
 
@@ -183,9 +214,52 @@ public class Jeu extends Observable {
             }
         }
     }
-    /*
+
     // ------------------------ ACTIONS  ------------------------
 
+    public void jouerCoup(Point coordonnees, boolean clic)
+    {
+        // Si on fait un clic droit, on annule ce que l'on voulait faire.
+        if (clic) etatCoupEnCours = etatCoup.annulé;
+
+        switch (etatCoupEnCours)
+        {
+            case aucun:
+                // Si le pion ne nous appartient pas, on ne joue pas le coup.
+                if (!selectionnePion(coordonnees)) return;
+                etatCoupEnCours = etatCoup.selectionné;
+                metAJour();
+                break;
+            case selectionné:
+                break;
+
+            case joué:
+                break;
+            case annulé:
+                pionSelectionne = null;
+                etatCoupEnCours = etatCoup.aucun;
+                break;
+            case terminé:
+                pionSelectionne = null;
+                changerLeJoueurEnCours();
+                break;
+        }
+    }
+    private boolean selectionnePion(Point coordonnees)
+    {
+        Pion pionClique = grille[coordonnees.x][coordonnees.y];
+        if (pionClique==null) return false;
+        if (pionClique.get_proprietaire() != joueurCourant)
+            return false;
+        pionSelectionne = pionClique;
+        return true;
+    }
+
+    private void changerLeJoueurEnCours()
+    {
+
+    }
+/*
     /// jouer un coup IA
     public void jouerIA(String niveau) {
         joueurIA.jouer(niveau);

@@ -15,4 +15,8 @@ public class Pion {
     public ROLEPION get_role() {
         return _role;
     }
+    public boolean get_proprietaire()
+    {
+        return _proprietaire;
+    }
 }
