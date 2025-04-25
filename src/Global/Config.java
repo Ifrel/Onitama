@@ -8,9 +8,6 @@ import java.util.List;
 
 public class Config {
 
-    // -- PLAYER
-    public static boolean playerId;
-
     // --- DEBUG --
     public final static boolean MODEDEBUG = true;
 
@@ -19,6 +16,8 @@ public class Config {
     public final static int COLONNES = 5;
 
     // -- CARTES --
+    public final static int NOMBRES_CARTES = 16;
+    public final static int NOMBRE_CARTES_MAIN = 2;
     public enum TYPECARTE
     {
         TIGRE,

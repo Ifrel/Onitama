@@ -7,30 +7,13 @@ import Patterns.Observable;
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class Jeu extends Observable {
     private int lignes, colonnes, casesTotales;
     private static Historique<Coup> historique; // historique des coups
-
-
-    /*
-    private int joueurCourant;
-    private int gagnant; // joueurA | joueurB | joueurIA
-    private boolean fini;
-    private boolean avecIA; // Le joueur B est remplacé par une IA
-    private boolean aCommence; // Le jeu a commencé, impossible de lancer l'IA
-    private String nameA;
-    private String nameB;
-    private int nbMangeesA; // nombre de cases mangées par le joueur A
-    private int nbMangeesB; // nombre de cases mangées par le joueur B
-    private int nbTotalCases; // nombres de cases constituiant la gaufre
-    private IA joueurIA;
-    */
 
     // -- Boucle de jeu -- //
     private Pion pionSelectionne;   // Pion en cours de selection
@@ -46,12 +29,13 @@ public class Jeu extends Observable {
 
     // -- JOUEURS -- //
     private Boolean joueurCourant;
+    private HashMap<Boolean, Joueur> joueursEnPartie;
 
     // -- GRILLE -- //
     private Pion [][] grille;
 
     // --- CARTES -- //
-    private List<Carte> toutesLesCartes;
+    private ArrayList<Carte> toutesLesCartes;
 
     // ------------------------ INIT ------------------------
 
@@ -59,19 +43,15 @@ public class Jeu extends Observable {
         _Jeu(LIGNES, COLONNES);
     }
 
-    /// réalise l'initialisation des champs, existe pour être appelée à plusieurs endroits, en dehors du constructeur
+    /**
+     * Crée l'instance de jeu
+     *
+     */
     private void _Jeu(int l, int c) {
         // -- Lignes et colonnes
         lignes = l;
         colonnes = c;
         casesTotales = l*c;
-
-        // -- Joueurs
-        joueurCourant = false;
-        HashMap<Boolean, Joueur> JoueursEnPartie = new HashMap<Boolean, Joueur>() {{
-            put(false, new Joueur());
-            put(true, new Joueur());
-        }};
 
         // -- Coups et actions
         etatCoupEnCours = etatCoup.aucun;
@@ -101,14 +81,35 @@ public class Jeu extends Observable {
         */
 
         // -- Cartes
-        initCartes();
+        toutesLesCartes = new ArrayList<>();
+        toutesLesCartes = initCartes();
+
+        // -- Joueurs
+        joueurCourant = false;
+        joueursEnPartie = new HashMap<Boolean, Joueur>() {{
+            put(false, new Joueur("Joueur 1", tirerCartesAuHasard(NOMBRE_CARTES_MAIN)));
+            put(true, new Joueur("Joueur 2", tirerCartesAuHasard(NOMBRE_CARTES_MAIN)));
+        }};
+        //- Donne une référence du jeu à chaque joueur
+        joueursEnPartie.get(joueurCourant).setJeu(this);
+        joueursEnPartie.get(!joueurCourant).setJeu(this);
+
+        // -- Récupère toutes les cartes
+        toutesLesCartes = initCartes();
+
         if (MODEDEBUG) {
             afficherCartes();
             afficherGrille();
+            afficherNomJoueur(true);
+            afficherMainJoueur(joueursEnPartie.get(joueurCourant));
+            afficherMainJoueur(joueursEnPartie.get(!joueurCourant));
         }
     }
 
-    /* initGrille: Créer la grille et place les pions. */
+    /**
+     * Initialize la grille avec l'ensemble des cases vides et des pions maitres et étudiants.
+     *
+     */
     private void initGrille()
     {
         // Mise à zéro de la grille.
@@ -138,28 +139,52 @@ public class Jeu extends Observable {
         ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, true, ROLEPION.Maitre);
     }
 
-    /* initCartes: Initialize toutes les cartes disponibles dans le jeu */
-    private void initCartes()
+    /**
+     * renvoie une liste qui contient toutes les cartes du jeu
+     * @return Une ArrayList de Cartes
+     */
+    private ArrayList<Carte> initCartes()
     {
-        toutesLesCartes = new ArrayList<>();
-        toutesLesCartes.add(new Carte(TIGRE));
-        toutesLesCartes.add(new Carte(DRAGON));
-        toutesLesCartes.add(new Carte(GRENOUILLE));
-        toutesLesCartes.add(new Carte(LAPIN));
-        toutesLesCartes.add(new Carte(CRABE));
-        toutesLesCartes.add(new Carte(ELEPHANT));
-        toutesLesCartes.add(new Carte(OIE));
-        toutesLesCartes.add(new Carte(COQ));
-        toutesLesCartes.add(new Carte(SINGE));
-        toutesLesCartes.add(new Carte(MANTE));
-        toutesLesCartes.add(new Carte(CHEVAL));
-        toutesLesCartes.add(new Carte(BOEUF));
-        toutesLesCartes.add(new Carte(GRUE));
-        toutesLesCartes.add(new Carte(SANGLIER));
-        toutesLesCartes.add(new Carte(ANGUILLE));
-        toutesLesCartes.add(new Carte(COBRA));
+        ArrayList<Carte> cartes = new ArrayList<>();
+        cartes.add(new Carte(TIGRE));
+        cartes.add(new Carte(DRAGON));
+        cartes.add(new Carte(GRENOUILLE));
+        cartes.add(new Carte(LAPIN));
+        cartes.add(new Carte(CRABE));
+        cartes.add(new Carte(ELEPHANT));
+        cartes.add(new Carte(OIE));
+        cartes.add(new Carte(COQ));
+        cartes.add(new Carte(SINGE));
+        cartes.add(new Carte(MANTE));
+        cartes.add(new Carte(CHEVAL));
+        cartes.add(new Carte(BOEUF));
+        cartes.add(new Carte(GRUE));
+        cartes.add(new Carte(SANGLIER));
+        cartes.add(new Carte(ANGUILLE));
+        cartes.add(new Carte(COBRA));
+        return cartes;
     }
 
+    /**
+     * Fonction de DEBUG: Affiche le nom d'un des deux joueurs.
+     *
+     */
+    private void afficherNomJoueur(boolean afficheJoueurCourant)
+    {
+        if (afficheJoueurCourant)
+        {
+            System.err.println("Nom joueur courant: " + joueursEnPartie.get(joueurCourant).getNom());
+        }
+        else
+        {
+            for (boolean cle : joueursEnPartie.keySet()) System.err.println("Nom joueur : " + joueursEnPartie.get(cle).getNom());
+        }
+    }
+
+    /**
+     * Fonction de DEBUG: Affiche toutes les cartes disponibles
+     *
+     */
     private void afficherCartes()
     {
         for (Carte c: toutesLesCartes)
@@ -169,6 +194,21 @@ public class Jeu extends Observable {
         }
     }
 
+    /**
+     * Fonction de DEBUG: Affiche la main d'un joueur
+     *
+     */
+    private void afficherMainJoueur(Joueur joueur)
+    {
+        System.err.println("Cartes en main pour le joueur : " + joueur.getNom());
+        ArrayList<Carte> mainJoueur = joueur.getMain();
+        for (Carte c: mainJoueur) System.err.println(c.getName() + " ");
+    }
+
+    /**
+     * Fonction de DEBUG: Affiche les entités présentes sur la grille.
+     *
+     */
     private void afficherGrille() {
         for (int i = 0; i < lignes(); i++) {
             for (int j = 0; j < colonnes(); j++) {
@@ -178,23 +218,36 @@ public class Jeu extends Observable {
         }
     }
 
-    // -- GETTER ET SETTER
-    /// renvoie le nombre de lignes
+
+    /**
+     * renvoie les lignes de la grille
+     * @return Un integer
+     */
     public int lignes() {
         return lignes;
     }
 
-    /// renvoie le nombre de colonnes
+    /**
+     * renvoie les colonnes de la grille
+     * @return Un integer
+     */
     public int colonnes() {
         return colonnes;
     }
 
+    /**
+     * renvoie le nombre de cases totales
+     * @return Un integer
+     */
     public int casesTotales()
     {
         return casesTotales;
     }
 
-    // --- Cases
+    /**
+     * Pas sur de l'utilité de cette fonction
+     * // TODO
+     */
     private void setCase()
     {
         // TODO:
@@ -202,7 +255,10 @@ public class Jeu extends Observable {
         // bornes disponibles et qu'elle soit vide.
     }
 
-    // --- Pions
+    /**
+     * Ajoute un certain type de pion à une certaine position sur la grille.
+     * Assigne un propriétaire également à ce nouveau pion.
+     */
     void ajouterPion(List<Point> _coordonnes, boolean _proprietaire, ROLEPION _role)
     {
         for (Point p: _coordonnes)
@@ -217,6 +273,10 @@ public class Jeu extends Observable {
 
     // ------------------------ ACTIONS  ------------------------
 
+    /**
+     * Fonction principale pur déplacer une pièce sur la grille.
+     *
+     */
     public void jouerCoup(Point coordonnees, boolean clic)
     {
         // Si on fait un clic droit, on annule ce que l'on voulait faire.
@@ -245,6 +305,12 @@ public class Jeu extends Observable {
                 break;
         }
     }
+
+    /**
+     * renvoie si il est possible de selectionne le pion ou non.
+     * Si oui, alors le selectionne.
+     * @return Un boolean
+     */
     private boolean selectionnePion(Point coordonnees)
     {
         Pion pionClique = grille[coordonnees.x][coordonnees.y];
@@ -255,10 +321,84 @@ public class Jeu extends Observable {
         return true;
     }
 
+    /**
+     * Ensemble des opérations théoriques pour modifier le tour d'un
+     * joueur. Mdrr ça fait rien pour l'instant.
+     */
     private void changerLeJoueurEnCours()
     {
 
     }
+
+    /**
+     * Tire un certain nombre de cartes au hasard.
+     * @return Une ArrayList de Carte
+     */
+    private ArrayList<Carte> tirerCartesAuHasard(int nombre)
+    {
+        ArrayList<Carte> CartesTireesAuHasard = new ArrayList<Carte>();
+        Random r = new Random();
+        for (int i = 0; i < nombre; i++) {
+            Carte CarteTiree = toutesLesCartes.get(r.nextInt(NOMBRES_CARTES));
+            CartesTireesAuHasard.add(CarteTiree);
+            toutesLesCartes.remove(CarteTiree);
+        }
+        return CartesTireesAuHasard;
+    }
+
+    // PROTOTYPES A AJOUTER
+    /**
+     * Débute une nouvelle partie en partant de 0.
+     *
+     */
+    void nouvellePartie(){}
+
+    /**
+     * Sauvegarde dans un fichier l'état actuel de la
+     * partie en cours.
+     */
+    void sauvegarderJeu(String fichier){}
+
+    /**
+     * Rétabli l'état actuel de la partie en cours
+     * depuis un fichier de sauvegarde.
+     */
+    void chargerJeu(String fichier){}
+
+    /**
+     * Renvoie la liste des noms de tous les fichiers de sauvegarde
+     * @return Une liste de String
+     */
+    List<String> listerSauvegardes(){ return null; }
+
+    /**
+     * Joue un coup en fonction de l'état du pion et du
+     * tour du joueur/IA
+     */
+    void jouerCoup(Point p){}
+
+    /**
+     * Annule un coup générique.
+     */
+    void annulerCoup(){}
+
+    /**
+     * Rétablie un coup générique.
+     */
+    void refaireCoup(){}
+
+    /**
+     * Détermine si un coup peut être annulé.
+     * @return Un boolean
+     */
+    boolean peutAnnulerCoup(){ return false; }
+
+    /**
+     * Détermine si un coup peut être refait.
+     * @return Un boolean
+     */
+    boolean peutRefaireCoup(){ return false; }
+
 /*
     /// jouer un coup IA
     public void jouerIA(String niveau) {
