@@ -274,39 +274,6 @@ public class Jeu extends Observable {
     // ------------------------ ACTIONS  ------------------------
 
     /**
-     * Fonction principale pur déplacer une pièce sur la grille.
-     *
-     */
-    public void jouerCoup(Point coordonnees, boolean clic)
-    {
-        // Si on fait un clic droit, on annule ce que l'on voulait faire.
-        if (clic) etatCoupEnCours = etatCoup.annulé;
-
-        switch (etatCoupEnCours)
-        {
-            case aucun:
-                // Si le pion ne nous appartient pas, on ne joue pas le coup.
-                if (!selectionnePion(coordonnees)) return;
-                etatCoupEnCours = etatCoup.selectionné;
-                metAJour();
-                break;
-            case selectionné:
-                break;
-
-            case joué:
-                break;
-            case annulé:
-                pionSelectionne = null;
-                etatCoupEnCours = etatCoup.aucun;
-                break;
-            case terminé:
-                pionSelectionne = null;
-                changerLeJoueurEnCours();
-                break;
-        }
-    }
-
-    /**
      * renvoie si il est possible de selectionne le pion ou non.
      * Si oui, alors le selectionne.
      * @return Un boolean
@@ -327,7 +294,8 @@ public class Jeu extends Observable {
      */
     private void changerLeJoueurEnCours()
     {
-
+        // Changer le joueur en cours
+        // Changer les cartes.
     }
 
     /**
@@ -375,8 +343,44 @@ public class Jeu extends Observable {
      * Joue un coup en fonction de l'état du pion et du
      * tour du joueur/IA
      */
-    void jouerCoup(Point p){}
+    private void jouerCoup(Point p)
+    {
+        if (PointInvalide(p)) return;
+        switch (etatCoupEnCours)
+        {
+            case aucun:
+                // Si le pion ne nous appartient pas, on ne joue pas le coup.
+                if (!selectionnePion(p)) return;
+                etatCoupEnCours = etatCoup.selectionné;
+                metAJour();
+                break;
+            case selectionné:
 
+                break;
+
+            case joué:
+                break;
+            case annulé:
+                pionSelectionne = null;
+                etatCoupEnCours = etatCoup.aucun;
+                break;
+            case terminé:
+                pionSelectionne = null;
+                changerLeJoueurEnCours();
+                break;
+        }
+    }
+
+    /**
+     * Détermine si le point peut appartenir à
+     * @return Un boolean
+     */
+    boolean PointInvalide(Point p)
+    {
+        if (p.x > lignes || p.x < colonnes) return false;
+        if (p.y > lignes || p.y < colonnes) return false;
+        return true;
+    }
     /**
      * Annule un coup générique.
      */
