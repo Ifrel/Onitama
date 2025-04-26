@@ -1,0 +1,32 @@
+
+ (à priori)
+ 
+- PATTERNES
+ - Observateur
+- MODELE
+  - IA
+    - Niveau facile (aléatoire)
+    - Niveau intermédiaire (Coup gagnant / perdant)
+    - Niveau fort (min/max / et/ou)
+  - Sauvegarde / Chargement
+  - Nouvelle partie
+  - Annuler / Rejouer
+- VUE
+  - Collecteur Evenements
+  - Adaptateur
+   - Clavier
+   - Souris
+   - Plein Ecran
+   - Adapateurs Boutons
+    - Bouton 1
+    - Bouton 2
+    - ...
+- CONTROLEUR
+ - Médiateur
+   - Clavier
+   - Souris
+   - Plein Ecran
+   - Boutons
+    - Bouton 1
+    - Bouton 2
+    - ...

@@ -3,6 +3,7 @@
 ## JEU : Onitama
 
 Onitama est un jeu où ...
+
 ## Développement
 
 Intellij recommandé
@@ -23,12 +24,11 @@ mvn test
 
 ou clic droit sur le dossier tests > Run all tests
 
-
-## Infos groupe 
+## Infos groupe
 
 #### Groupe 1
 
-| **Membres du groupe **           |
+| **Membres du groupe**           |
 | -------------------------------- |
 | D'HERIN Arthur                   |
 | DABOUSSI Akram                   |
