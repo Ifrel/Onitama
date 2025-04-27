@@ -42,7 +42,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
     @Override
     public void miseAJour() {
-        // À compléter si besoin plus tard
+       //TODO
     }
 
 
@@ -50,7 +50,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
     /** Crée le terrain de jeu */
     private void creerTerrain() {
-        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0)); // Grille régulière avec marges 5px
+        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0)); // Grille régulière avec marges 0px
         buttonsTerrain = new JButton[LIGNES][COLONNES];
 
         // Bordure jolie avec coins arrondis
@@ -80,9 +80,9 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
     /** Crée les boutons Annuler et Refaire */
     private void creerButtonsAnnulerRefaire() {
-        annulerRefaire = creerPanel();
-        annulerRefaire.setLayout(new GridLayout(2, 1, 10, 10)); // 2 lignes, 1 colonne, 10px d'écart
-        annulerRefaire.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
+        annulerRefaire = new JPanel(new GridBagLayout());
+//        annulerRefaire.setLayout(new GridLayout(2, 1, 10, 10)); // 2 lignes, 1 colonne, 10px d'écart
+        annulerRefaire.setBorder(BorderFactory.createEmptyBorder(100, 50, 100, 25));
 
         annuler = creerBoutonAnnuler();
         refaire = creerBoutonRefaire();
@@ -95,41 +95,38 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
     /** Met ensemble les cartes, les boutons annuler/refaire et le terrain de jeu */
     private void creerPlateauCartesAnnulerRefaire() {
-        terrainCartesAnnulerRefaire = new JPanel(new GridLayout(3, 3, 0, 0));
-        //terrainCartesAnnulerRefaire.setLayout(new BorderLayout());
+        terrainCartesAnnulerRefaire = new JPanel(new BorderLayout());
 
-        // Nord : les cartes en haut
-        JPanel cartesAuNord = new JPanel(new GridLayout(1, 2, 40, 0));
-        cartesAuNord.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
+        // Nord : 2 cartes alignées au centre
+        JPanel cartesAuNord = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
         cartesAuNord.add(buttonsCartes[0]);
         cartesAuNord.add(buttonsCartes[1]);
 
-
-        // Sud : les cartes en bas
-        JPanel cartesAuSud = new JPanel(new GridLayout(1, 2, 40, 0));
-        cartesAuSud.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
+        // Sud : 2 cartes alignées au centre
+        JPanel cartesAuSud = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
         cartesAuSud.add(buttonsCartes[2]);
         cartesAuSud.add(buttonsCartes[3]);
 
-
-        // Centre gauche : une carte à gauche
-        JPanel carteGauche = new JPanel(new GridLayout(1, 1, 0, 0));
-        carteGauche.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
+        // Ouest : 1 carte centrée verticalement
+        JPanel carteGauche = new JPanel(new GridBagLayout());
+        carteGauche.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 25));
         carteGauche.add(buttonsCartes[4]);
 
+        // Est : annuler/refaire empilés verticalement
+        JPanel droite = new JPanel(new GridBagLayout());
+        droite.add(annulerRefaire);
 
-        terrainCartesAnnulerRefaire.add(new JPanel()); // Composant vide pour l'espace
-        terrainCartesAnnulerRefaire.add(cartesAuNord);
-        terrainCartesAnnulerRefaire.add(new JPanel());
+        // Centre : le terrain
+        JPanel centre = new JPanel(new BorderLayout());
+        centre.add(terrain, BorderLayout.CENTER);
 
-        terrainCartesAnnulerRefaire.add(carteGauche);
-        terrainCartesAnnulerRefaire.add(terrain);
-        terrainCartesAnnulerRefaire.add(annulerRefaire);
-
-        terrainCartesAnnulerRefaire.add(new JPanel());
-        terrainCartesAnnulerRefaire.add(cartesAuSud);
-        terrainCartesAnnulerRefaire.add(new JPanel());
-
+        // Placement général
+        terrainCartesAnnulerRefaire.add(cartesAuNord, BorderLayout.NORTH);
+        terrainCartesAnnulerRefaire.add(cartesAuSud, BorderLayout.SOUTH);
+        terrainCartesAnnulerRefaire.add(carteGauche, BorderLayout.WEST);
+        terrainCartesAnnulerRefaire.add(annulerRefaire, BorderLayout.EAST);
+        terrainCartesAnnulerRefaire.add(centre, BorderLayout.CENTER);
     }
+
 
 }

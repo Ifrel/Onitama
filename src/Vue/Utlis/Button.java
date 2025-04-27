@@ -59,6 +59,7 @@ public class Button {
         bouton.setFont(new Font("Arial", Font.PLAIN, 18));
         bouton.setFocusPainted(true);   // Effet focus visible
         bouton.setContentAreaFilled(true);
+        bouton.setPreferredSize(new Dimension(50,25));
         return bouton;
     }
 
@@ -69,6 +70,7 @@ public class Button {
         bouton.setFont(new Font("Arial", Font.PLAIN, 18));
         bouton.setFocusPainted(true);   // Effet focus visible
         bouton.setContentAreaFilled(true);
+        bouton.setPreferredSize(new Dimension(50,25));
         return bouton;
     }
 
