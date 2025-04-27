@@ -32,5 +32,8 @@ package Patterns;
  * légèrement différente. Il est réimplémenté ici à des fins pédagogiques
  */
 public interface Observateur {
+	/**
+	 * Met ajout l'observateur (boutton, ect.. ) ou ses composants (si cest un JPanel)
+	 */
 	void miseAJour();
 }

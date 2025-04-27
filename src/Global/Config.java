@@ -15,9 +15,14 @@ public class Config {
     public final static int LIGNES = 5;
     public final static int COLONNES = 5;
 
+    // -- COULEURS
+    public final static Color COULEUR_PLATEAU = new Color(105, 105, 105);
+    public final static Color COULEUR_BOUTON_PLATEAU = new Color(255, 255, 255);
+
     // -- CARTES --
     public final static int NOMBRES_CARTES = 16;
     public final static int NOMBRE_CARTES_MAIN = 2;
+    public final static int NOMBRES_CARTES_PLATEAU = 5;
     public enum TYPECARTE
     {
         TIGRE,

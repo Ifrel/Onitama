@@ -8,33 +8,52 @@ import Vue.Adaptateurs.AdaptateurClavier;
 import javax.swing.*;
 import java.awt.*;
 
-public class InterfaceGraphique extends JFrame implements Runnable, InterfaceUser, Observateur {
+public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur {
     private CollecteurEvenements collecteurEvent;
     private boolean maximized;
     private Jeu jeu;
+    JFrame frame;
 
-    public InterfaceGraphique(Jeu jeu, CollecteurEvenements controleur) {
+    public InterfaceGraphique(Jeu jeu, CollecteurEvenements collecteurEvent) {
         this.jeu = jeu;
         this.maximized =  false;
-        this.collecteurEvent = controleur;
+        this.collecteurEvent = collecteurEvent;
 
-        setTitle("Onitama");
-        setPreferredSize(new Dimension(1200, 1000));
-        setLayout(new BorderLayout());
-        addKeyListener(new AdaptateurClavier(controleur));
+        this.frame = new JFrame("Onitama");
+        frame.setLayout(new BorderLayout());
+        frame.setPreferredSize(new Dimension(1200, 1000));
+        frame.addKeyListener(new AdaptateurClavier(collecteurEvent));
 
-        jeu.ajouteObservateur(this);
+        //jeu.ajouteObservateur(this);
 
-        this.pack();
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
 
+
+    @Override
+    public void run() {
+        frame.setContentPane(new PlateauDeJeu(jeu, collecteurEvent));
+        System.err.println("Interface graphique lancée");
+
+
+        // Paramettre de la secene
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    @Override
+    public void miseAJour() {
+
+    }
+
+    public void lancer(){
+        SwingUtilities.invokeLater(new InterfaceGraphique(jeu, collecteurEvent)); // pour exécuter le run()
+    }
+
     @Override
     public void toggleIA() {
-        // Ajoute ici la logique pour activer/désactiver l'IA
     }
 
     @Override
@@ -45,53 +64,12 @@ public class InterfaceGraphique extends JFrame implements Runnable, InterfaceUse
         if (maximized) {
             device.setFullScreenWindow(null);
         } else {
-            device.setFullScreenWindow(this);
+            device.setFullScreenWindow(frame);
         }
 
         maximized = !maximized;
     }
 
-//    public void setEcran(EcranSelection ecranSelection){
-//        setContentPane(ecranSelection);
-//        revalidate();
-//        repaint();
-//    }
-//
-//    public void setEcran(EcranDemarrage ecranDemarrage){
-//        setContentPane(ecranDemarrage);
-//        revalidate();
-//        repaint();
-//    }
-//
-//    public void setEcran(VuePrincipale vuePrincipale){
-//        setContentPane(vuePrincipale);
-//        revalidate();
-//        repaint();
-//    }
-
-//    public EcranSelection getEcranSelection(){
-//        return ecranSelection;
-//    }
-
-    public CollecteurEvenements getCollecteurEvent(){
-        return collecteurEvent;
-    }
-
-    public Jeu getJeu() {
-        return jeu;
-    }
 
 
-    @Override
-    public void miseAJour() {
-//        if (vuePrincipale != null) {
-//            vuePrincipale.revalidate();
-//            vuePrincipale.repaint();
-//        }
-}
-
-    @Override
-    public void run() {
-
-    }
 }

@@ -2,16 +2,15 @@ package Vue.Adaptateurs;
 
 import Vue.CollecteurEvenements;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AdaptateurButtonGrille implements ActionListener {
+public class AdaptateurButtonPlateau implements ActionListener {
     CollecteurEvenements collecteurEvent;
     Point coordBtn;
 
-    public AdaptateurButtonGrille(CollecteurEvenements collecteurEvent, Point coordBtn){
+    public AdaptateurButtonPlateau(CollecteurEvenements collecteurEvent, Point coordBtn){
         this.collecteurEvent = collecteurEvent;
         this.coordBtn = coordBtn;
 
