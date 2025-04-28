@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 
 import static Global.Config.*;
 import static Vue.Utlis.Button.*;
@@ -253,7 +254,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
     private void jouerMusique(String chemin) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResource(chemin));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Objects.requireNonNull(getClass().getResource(chemin)));
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.loop(Clip.LOOP_CONTINUOUSLY); // Musique en boucle
