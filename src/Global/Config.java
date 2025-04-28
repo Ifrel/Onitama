@@ -16,7 +16,7 @@ public class Config {
     public final static int COLONNES = 5;
 
     // -- COULEURS
-    public final static Color COULEUR_PLATEAU = new Color(105, 105, 105);
+    public final static Color COULEUR_PLATEAU = new Color(104, 104, 104);
     public final static Color COULEUR_BOUTON_PLATEAU = new Color(255, 255, 255);
 
     // -- CARTES --

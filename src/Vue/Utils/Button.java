@@ -65,33 +65,26 @@ public class Button {
     }
 
 
-    public static JButton creerBoutonAnnuler() {
-        JButton bouton = new JButton();
-//        bouton.setBackground(new Color(175,175,175));
-        bouton.setText("Annuler");
-        bouton.setOpaque(false);// Rendre le bouton transparent
-        bouton.setContentAreaFilled(false);
-        bouton.setFocusPainted(false); // Facultatif : évite un rectangle bleu quand sélectionné
-//        bouton.setFont(new Font("Arial", Font.PLAIN, 18));
-//        bouton.setFocusPainted(true);   // Effet focus visible
-//        bouton.setContentAreaFilled(true);
-//        bouton.setPreferredSize(new Dimension(50,25));
+    public static JButton creerBoutonAction(String titre) {
+        JButton bouton = new JButton(titre);
+
+        // Couleurs
+        bouton.setBackground(new Color(140, 140, 140)); // Fond gris clair
+        bouton.setForeground(Color.WHITE);              // Texte blanc
+
+        // Apparence
+        bouton.setOpaque(true);                         // Rendre le fond visible
+        bouton.setContentAreaFilled(true);
+        bouton.setFocusPainted(false);
+//        bouton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2)); // Bordure blanche de 2px
+
+        // Optionnel : un peu plus joli
+        bouton.setFont(new Font("Arial", Font.PLAIN, 22));  // Texte un peu plus gros
+        bouton.setPreferredSize(new Dimension(150, 80));   // Taille agréable (change selon besoin)
+
         return bouton;
     }
 
-    public static JButton creerBoutonRefaire() {
-        JButton bouton = new JButton();
-//        bouton.setBackground(new Color(175,175,175));
-        bouton.setText("Refaire");
-        bouton.setOpaque(false);// Rendre le bouton transparent
-        bouton.setContentAreaFilled(false);
-        bouton.setFocusPainted(false);
-//        bouton.setFont(new Font("Arial", Font.PLAIN, 18));
-//        bouton.setFocusPainted(true);   // Effet focus visible
-//        bouton.setContentAreaFilled(true);
-//        bouton.setPreferredSize(new Dimension(50,25));
-        return bouton;
-    }
 
 
     /************************************************************************************

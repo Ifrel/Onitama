@@ -1,4 +1,3 @@
-
 package Vue;
 
 import Modele.Jeu;
@@ -16,10 +15,17 @@ import java.util.Objects;
 import static Global.Config.*;
 import static Vue.Utils.Button.*;
 
+/**
+ * Classe représentant l'interface graphique principale du plateau de jeu.
+ * Elle observe le modèle (Jeu) et met à jour l'affichage en fonction des événements.
+ */
 public class PlateauDeJeu extends JPanel implements Observateur {
+
+    // ====== Attributs principaux ======
     private final Jeu jeu;
     private final CollecteurEvenements collecteurEv;
 
+    // Composants de l'interface
     private JPanel terrain;
     private JPanel terrainCartesAnnulerRefaire;
     private JPanel annulerRefaire;
@@ -31,138 +37,58 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
     private JLabel nomJoueurCourant;
     private JLabel temps;
-
     private int numRound;
 
-    private Clip clip; // Pour gérer la musique
+    // Gestion du son
+    private Clip clip;
     private boolean musiqueActive = false; // État du son
 
 
-    //    private final ThreadLocal<JPanel> plateauEtCartes = new ThreadLocal<JPanel>();
-
-    /** Crée le plateau du de jeu  */
+    /**
+     * Constructeur principal du PlateauDeJeu
+     * @param jeu modèle de données observé
+     * @param collecteurEv gestionnaire des événements
+     */
     public PlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv) {
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
 
         System.err.println("Interface Plateau de jeu lancée");
         setLayout(new BorderLayout());
-        setBackground(COULEUR_PLATEAU); // Gris foncé
+        setBackground(COULEUR_PLATEAU);
 
+        initialiserInterface();
+    }
+
+    /** Initialise l'ensemble de l'interface utilisateur */
+    private void initialiserInterface() {
         creerTerrain();
         creerButtonsCartes();
-        creerBarreIndication();
         creerButtonsAnnulerRefaire();
         creerPlateauCartesAnnulerRefaire();
+        creerBarreIndication();
 
         add(barreIndication, BorderLayout.NORTH);
         add(terrainCartesAnnulerRefaire, BorderLayout.CENTER);
-
-
     }
+
 
     @Override
     public void miseAJour() {
-        //TODO
-    }
-
-    /**
-     * Crée la barre d'indication en haut de la fenêtre  */
-    private void creerBarreIndication() {
-        barreIndication = new JPanel(new BorderLayout());
-        barreIndication.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        barreIndication.setOpaque(false);
-
-        // Bouton Activer/Désactiver musique
-        JButton boutonSon = new JButton("son");
-        boutonSon.setForeground(Color.WHITE);
-        boutonSon.setFont(new Font("Arial", Font.PLAIN, 15));
-        boutonSon.setBackground(new Color(237, 237, 237, 16));
-        boutonSon.setContentAreaFilled(false);
-        boutonSon.setFocusPainted(false);
-        boutonSon.setPreferredSize(new Dimension(60, 40));
-        boutonSon.addActionListener(e -> toggleMusique(boutonSon));
-
-        // Partie texte
-        JLabel txt = new JLabel("C'est au tour de");
-        txt.setAlignmentX(Component.CENTER_ALIGNMENT);
-        txt.setForeground(new Color(232, 231, 231));
-
-        nomJoueurCourant = new JLabel("Kevin");
-        nomJoueurCourant.setFont(new Font("Arial", Font.BOLD, 28));
-        nomJoueurCourant.setAlignmentX(Component.CENTER_ALIGNMENT);
-        nomJoueurCourant.setForeground(new Color(218, 214, 214));
-
-        JPanel textNom = new JPanel();
-        textNom.setLayout(new BoxLayout(textNom, BoxLayout.Y_AXIS));
-        textNom.setOpaque(false);
-
-        textNom.add(txt);
-        textNom.add(Box.createRigidArea(new Dimension(0, 5)));
-        textNom.add(nomJoueurCourant);
-
-        // Partie Round et Temps
-        JPanel roundTemps = new JPanel();
-        roundTemps.setLayout(new BoxLayout(roundTemps, BoxLayout.X_AXIS));
-        roundTemps.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(206, 206, 206), 1, true),
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)
-        ));
-        roundTemps.setBackground(new Color(245, 245, 245));
-
-        numRound = 1;
-        JLabel round = new JLabel("Round: " + numRound);
-        round.setFont(new Font("Arial", Font.PLAIN, 25));
-        round.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 100));
-
-        temps = new JLabel("00:00");
-        temps.setFont(new Font("Arial", Font.BOLD, 25));
-
-        Instant debut = Instant.now();
-        Timer timer = new Timer(1000, e -> miseAjourCreerSectionTemps(debut));
-        timer.start();
-
-        roundTemps.add(round);
-        roundTemps.add(temps);
-
-        // Bouton Menu
-        JButton menu = new JButton("≡");
-        menu.setOpaque(false);
-        menu.setContentAreaFilled(false);
-        menu.setFocusPainted(false);
-        menu.setForeground(Color.WHITE);
-        menu.setFont(new Font("Arial", Font.PLAIN, 46));
-        menu.setPreferredSize(new Dimension(60, 40));
-
-        // --------- AJOUT : Wrapper avec un JPanel pour ajouter l'espacement
-        JPanel panelMenu = new JPanel(new BorderLayout());
-        panelMenu.setOpaque(false);
-        panelMenu.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0)); // 20 pixels d'espace à droite
-        panelMenu.add(menu, BorderLayout.CENTER);
-        // ---------------------------------------------------------------
-
-        // Assemblage horizontal
-        JPanel contenu = new JPanel(new BorderLayout());
-        contenu.setOpaque(false);
-
-        contenu.add(textNom, BorderLayout.CENTER);  // Texte centré
-        contenu.add(roundTemps, BorderLayout.EAST); // Round/Temps à droite
-
-        // Placement dans la barreIndication
-        barreIndication.add(boutonSon, BorderLayout.WEST);  // Bouton son à gauche
-        barreIndication.add(contenu, BorderLayout.CENTER);  // Texte au centre
-        barreIndication.add(panelMenu, BorderLayout.EAST);  // Menu à droite avec espace
+        // TODO : mettre à jour l'affichage selon les changements du modèle (jeu)
     }
 
 
 
-    /**
-     *  Crée le terrain de jeu */
+    // =========================================
+    // ============ Création UI ================
+    // =========================================
+
+    /** Crée la grille du terrain de jeu */
     private void creerTerrain() {
-        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0)); // Grille régulière avec marges 0px
+        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
         buttonsTerrain = new JButton[LIGNES][COLONNES];
 
-        // Bordure jolie avec coins arrondis
         terrain.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(206, 206, 206), 5, true),
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
@@ -178,102 +104,213 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         }
     }
 
-    /**
-     * Initialise les buttons avec les images des cartes tirées par le jeu  */
-    private void creerButtonsCartes(){
-        buttonsCartes =  new JButton[NOMBRES_CARTES_PLATEAU];
-        for (int row = 0; row < LIGNES; row++) {
-            JButton bouton = new JButton("Clique-moi");
+    /** Crée les boutons représentant les cartes */
+    private void creerButtonsCartes() {
+        buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU];
+        for (int i = 0; i < buttonsCartes.length; i++) {
+            JButton bouton = creerBoutonCarte("res/vue/images/cartes/TIGRE.png");
             bouton.setPreferredSize(new Dimension(200, 100));
-
-            buttonsCartes[row] = bouton;
+            buttonsCartes[i] = bouton;
         }
     }
 
-    /**
-     * Crée les boutons Annuler et Refaire */
+    /** Crée les boutons "Annuler" et "Refaire" */
     private void creerButtonsAnnulerRefaire() {
-        annulerRefaire = new JPanel(new BorderLayout());
-        annulerRefaire.setLayout(new GridLayout(2, 1, 10, 10)); // 2 lignes, 1 colonne, 10px d'écart
-        annulerRefaire.setPreferredSize(new Dimension(200, 50));
+        annulerRefaire = new JPanel(new GridLayout(2, 1, 10, 10));
+        annulerRefaire.setOpaque(false);
 
-        annuler = creerBoutonAnnuler();
-        refaire = creerBoutonRefaire();
+        annuler = creerBoutonAction("Annuler");
+        refaire = creerBoutonAction("Refaire");
 
         annulerRefaire.add(annuler);
         annulerRefaire.add(refaire);
     }
 
-
-    /**
-     * Met ensemble les cartes, les boutons annuler/refaire et le terrain de jeu */
+    /** Assemble le terrain, les cartes, et les boutons Annuler/Refaire */
     private void creerPlateauCartesAnnulerRefaire() {
         terrainCartesAnnulerRefaire = new JPanel(new BorderLayout(80, 40));
         terrainCartesAnnulerRefaire.setOpaque(false);
 
-        // Nord : 2 cartes alignées au centre
-        JPanel cartesAuNord = new JPanel(new GridLayout(1, 2, 40, 0));
-        cartesAuNord.setBorder(BorderFactory.createEmptyBorder(50, 400, 0, 400));
-        cartesAuNord.add(buttonsCartes[0]);
-        cartesAuNord.add(buttonsCartes[1]);
-
-
-        // Sud : 2 cartes alignées au centre
-        JPanel cartesAuSud = new JPanel(new GridLayout(1, 2, 40, 0));
-        cartesAuSud.setBorder(BorderFactory.createEmptyBorder(0, 400, 50, 400));
-        cartesAuSud.add(buttonsCartes[2]);
-        cartesAuSud.add(buttonsCartes[3]);
-
-        // Ouest : 1 carte centrée verticalement
-        JPanel carteGauche = new JPanel(new GridLayout(3, 1, 40, 40));
-        carteGauche.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
-        carteGauche.add(Box.createHorizontalGlue());
-        carteGauche.add(buttonsCartes[4]);
-        carteGauche.add(Box.createHorizontalGlue());
-
-        // Est : annuler/refaire empilés verticalement
-        JPanel droite = new JPanel(new GridLayout(3, 1, 40, 40));
-        droite.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50));
-        droite.add(Box.createHorizontalGlue());
-        droite.add(annulerRefaire);
-        droite.add(Box.createHorizontalGlue());
-
-        // Centre : le terrain
-        JPanel centre = new JPanel(new BorderLayout());
-        centre.add(terrain, BorderLayout.CENTER);
-
-        // Placement général
-        terrainCartesAnnulerRefaire.add(cartesAuNord, BorderLayout.NORTH);
-        terrainCartesAnnulerRefaire.add(cartesAuSud, BorderLayout.SOUTH);
-        terrainCartesAnnulerRefaire.add(carteGauche, BorderLayout.WEST);
-        terrainCartesAnnulerRefaire.add(droite, BorderLayout.EAST);
-        terrainCartesAnnulerRefaire.add(centre, BorderLayout.CENTER);
+        terrainCartesAnnulerRefaire.add(creerCartesNord(), BorderLayout.NORTH);
+        terrainCartesAnnulerRefaire.add(creerCartesSud(), BorderLayout.SOUTH);
+        terrainCartesAnnulerRefaire.add(creerCarteGauche(), BorderLayout.WEST);
+        terrainCartesAnnulerRefaire.add(creerBoutonsDroite(), BorderLayout.EAST);
+        terrainCartesAnnulerRefaire.add(creerCentreTerrain(), BorderLayout.CENTER);
     }
 
+
+
+    /** Crée la barre supérieure d'indications */
+    private void creerBarreIndication() {
+        barreIndication = new JPanel(new BorderLayout());
+        barreIndication.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        barreIndication.setOpaque(false);
+
+        JButton boutonSon = creerBoutonSon();
+        JPanel contenuCentre = creerContenuCentre();
+        JPanel panelMenu = creerBoutonMenu();
+
+        barreIndication.add(boutonSon, BorderLayout.WEST);
+        barreIndication.add(contenuCentre, BorderLayout.CENTER);
+        barreIndication.add(panelMenu, BorderLayout.EAST);
+    }
+
+    // === Sous-méthodes de création d'éléments ===
+
+    private JPanel creerCartesNord() {
+        JPanel cartes = new JPanel(new GridLayout(1, 2, 40, 0));
+        cartes.setBorder(BorderFactory.createEmptyBorder(50, 400, 0, 400));
+        cartes.add(buttonsCartes[0]);
+        cartes.add(buttonsCartes[1]);
+        cartes.setOpaque(false);
+        return cartes;
+    }
+
+    private JPanel creerCartesSud() {
+        JPanel cartes = new JPanel(new GridLayout(1, 2, 40, 0));
+        cartes.setBorder(BorderFactory.createEmptyBorder(0, 400, 50, 400));
+        cartes.add(buttonsCartes[2]);
+        cartes.add(buttonsCartes[3]);
+        cartes.setOpaque(false);
+        return cartes;
+    }
+
+    private JPanel creerCarteGauche() {
+        JPanel carte = new JPanel(new GridLayout(3, 1, 40, 40));
+        carte.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
+        carte.add(Box.createVerticalGlue());
+        carte.add(buttonsCartes[4]);
+        carte.add(Box.createVerticalGlue());
+        carte.setOpaque(false);
+        return carte;
+    }
+
+    private JPanel creerBoutonsDroite() {
+        JPanel droite = new JPanel(new GridLayout(3, 1, 40, 40));
+        droite.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50));
+        droite.add(Box.createVerticalGlue());
+        droite.add(annulerRefaire);
+        droite.add(Box.createVerticalGlue());
+        droite.setOpaque(false);
+        return droite;
+    }
+
+    private JPanel creerCentreTerrain() {
+        JPanel centre = new JPanel(new BorderLayout());
+        centre.add(terrain, BorderLayout.CENTER);
+        return centre;
+    }
+
+    private JButton creerBoutonSon() {
+        JButton boutonSon = new JButton("son");
+        boutonSon.setForeground(Color.WHITE);
+        boutonSon.setFont(new Font("Arial", Font.PLAIN, 15));
+        boutonSon.setBackground(new Color(237, 237, 237, 16));
+        boutonSon.setContentAreaFilled(false);
+        boutonSon.setFocusPainted(false);
+        boutonSon.setPreferredSize(new Dimension(60, 40));
+        boutonSon.addActionListener(e -> toggleMusique(boutonSon));
+        return boutonSon;
+    }
+
+    private JPanel creerContenuCentre() {
+        JPanel textNom = new JPanel();
+        textNom.setLayout(new BoxLayout(textNom, BoxLayout.Y_AXIS));
+        textNom.setOpaque(false);
+
+        JLabel txt = new JLabel("C'est au tour de");
+        txt.setAlignmentX(Component.CENTER_ALIGNMENT);
+        txt.setForeground(new Color(232, 231, 231));
+
+        nomJoueurCourant = new JLabel("Kevin");
+        nomJoueurCourant.setFont(new Font("Arial", Font.BOLD, 28));
+        nomJoueurCourant.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nomJoueurCourant.setForeground(new Color(218, 214, 214));
+
+        textNom.add(txt);
+        textNom.add(Box.createRigidArea(new Dimension(0, 5)));
+        textNom.add(nomJoueurCourant);
+
+        JPanel roundTemps = creerPanelRoundTemps();
+
+        JPanel contenu = new JPanel(new BorderLayout());
+        contenu.setOpaque(false);
+        contenu.add(textNom, BorderLayout.CENTER);
+        contenu.add(roundTemps, BorderLayout.EAST);
+
+        return contenu;
+    }
+
+    private JPanel creerPanelRoundTemps() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(206, 206, 206), 1, true),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        panel.setBackground(new Color(245, 245, 245));
+
+        numRound = 1;
+        JLabel round = new JLabel("Round: " + numRound);
+        round.setFont(new Font("Arial", Font.PLAIN, 25));
+        round.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 100));
+
+        temps = new JLabel("00:00");
+        temps.setFont(new Font("Arial", Font.BOLD, 25));
+
+        Instant debut = Instant.now();
+        Timer timer = new Timer(1000, e -> miseAjourTemps(debut));
+        timer.start();
+
+        panel.add(round);
+        panel.add(temps);
+        return panel;
+    }
+
+    private JPanel creerBoutonMenu() {
+        JButton menu = new JButton("≡");
+        menu.setOpaque(false);
+        menu.setContentAreaFilled(false);
+        menu.setFocusPainted(false);
+        menu.setForeground(Color.WHITE);
+        menu.setFont(new Font("Arial", Font.PLAIN, 46));
+        menu.setPreferredSize(new Dimension(60, 40));
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
+        panel.add(menu, BorderLayout.CENTER);
+        return panel;
+    }
+
+
+
+
+    // =========================================
+    // ========= Gestion Son & Musique =========
+    // =========================================
 
     private void toggleMusique(JButton boutonSon) {
         if (musiqueActive) {
-            // Stop musique
             if (clip != null && clip.isRunning()) {
                 clip.stop();
             }
-            boutonSon.setText("off"); // Icône Muet
-            musiqueActive = false;
+            boutonSon.setText("off");
         } else {
-            // Lance musique
-            jouerMusique("/vue/musique/son_1.wav"); //fichier dans le dossier ressource
-            boutonSon.setText("on"); // Icône Son
-            musiqueActive = true;
+            jouerMusique("/vue/musique/son_1.wav");
+            boutonSon.setText("on");
         }
+        musiqueActive = !musiqueActive;
     }
-
 
     private void jouerMusique(String chemin) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Objects.requireNonNull(getClass().getResource(chemin)));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                    Objects.requireNonNull(getClass().getResource(chemin))
+            );
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-            clip.loop(Clip.LOOP_CONTINUOUSLY); // Musique en boucle
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();
         } catch (Exception e) {
             e.printStackTrace();
@@ -282,12 +319,15 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
 
 
-    ///  === Fonctions de mise à jour ===
-    private void miseAjourCreerSectionTemps(Instant debut) {
+
+    // =========================================
+    // ============== Mise à jour ==============
+    // =========================================
+
+    private void miseAjourTemps(Instant debut) {
         Duration duration = Duration.between(debut, Instant.now());
         long minutes = duration.toMinutes();
         long secondes = duration.getSeconds() % 60;
         temps.setText(String.format("%02d:%02d", minutes, secondes));
     }
-
 }
