@@ -225,14 +225,18 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         cartesAuSud.add(buttonsCartes[3]);
 
         // Ouest : 1 carte centrée verticalement
-        JPanel carteGauche = new JPanel(new GridLayout(1, 1, 40, 40));
+        JPanel carteGauche = new JPanel(new GridLayout(3, 1, 40, 40));
         carteGauche.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
+        carteGauche.add(Box.createHorizontalGlue());
         carteGauche.add(buttonsCartes[4]);
+        carteGauche.add(Box.createHorizontalGlue());
 
         // Est : annuler/refaire empilés verticalement
-        JPanel droite = new JPanel(new GridLayout(1, 1, 40, 40));
+        JPanel droite = new JPanel(new GridLayout(3, 1, 40, 40));
         droite.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50));
+        droite.add(Box.createHorizontalGlue());
         droite.add(annulerRefaire);
+        droite.add(Box.createHorizontalGlue());
 
         // Centre : le terrain
         JPanel centre = new JPanel(new BorderLayout());
