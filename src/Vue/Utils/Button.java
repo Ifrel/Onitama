@@ -1,4 +1,4 @@
-package Vue.Utlis;
+package Vue.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +19,7 @@ public class Button {
         return bouton;
     }
 
-    public static JButton creerBoutonPlateau(){
+    public static JButton creerBoutonPlateau() {
         JButton bouton = new JButton();
         bouton.setBackground(COULEUR_BOUTON_PLATEAU);
         bouton.setFocusPainted(true);   // Effet focus visible
@@ -30,10 +30,11 @@ public class Button {
 
     /**
      * Crée un bouton avec l'image d'une carte qui redimensionne l'image automatiquement avec la taille du bouton
+     *
      * @param cheminImageCarte Chemin de l'image de la carte
      * @return JButton
      */
-    public static JButton creerBoutonCarte(String cheminImageCarte){
+    public static JButton creerBoutonCarte(String cheminImageCarte) {
         ImageIcon icon = new ImageIcon(cheminImageCarte);
         JButton bouton = new JButton(icon);
 
@@ -64,11 +65,13 @@ public class Button {
     }
 
 
-    public static JButton creerBoutonAnnuler(){
+    public static JButton creerBoutonAnnuler() {
         JButton bouton = new JButton();
 //        bouton.setBackground(new Color(175,175,175));
         bouton.setText("Annuler");
-        bouton.setOpaque(false);
+        bouton.setOpaque(false);// Rendre le bouton transparent
+        bouton.setContentAreaFilled(false);
+        bouton.setFocusPainted(false); // Facultatif : évite un rectangle bleu quand sélectionné
 //        bouton.setFont(new Font("Arial", Font.PLAIN, 18));
 //        bouton.setFocusPainted(true);   // Effet focus visible
 //        bouton.setContentAreaFilled(true);
@@ -76,23 +79,19 @@ public class Button {
         return bouton;
     }
 
-    public static JButton creerBoutonRefaire(){
+    public static JButton creerBoutonRefaire() {
         JButton bouton = new JButton();
 //        bouton.setBackground(new Color(175,175,175));
         bouton.setText("Refaire");
-        bouton.setOpaque(false);
+        bouton.setOpaque(false);// Rendre le bouton transparent
+        bouton.setContentAreaFilled(false);
+        bouton.setFocusPainted(false);
 //        bouton.setFont(new Font("Arial", Font.PLAIN, 18));
 //        bouton.setFocusPainted(true);   // Effet focus visible
 //        bouton.setContentAreaFilled(true);
 //        bouton.setPreferredSize(new Dimension(50,25));
         return bouton;
     }
-
-
-
-
-
-
 
 
     /************************************************************************************

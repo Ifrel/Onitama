@@ -1,4 +1,4 @@
-package Vue.Utlis;
+package Vue.Utils;
 
 import javax.swing.*;
 import java.awt.*;

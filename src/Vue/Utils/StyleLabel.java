@@ -1,8 +1,9 @@
-package Vue.Utlis;
+package Vue.Utils;
+
 import javax.swing.*;
 import java.awt.*;
 
-public  class StyleLabel{
+public class StyleLabel {
     public static void labelTitreBleu(JLabel l) {
         l.setForeground(new Color(0, 102, 204));
         l.setFont(new Font("Arial", Font.BOLD, 20));
@@ -107,5 +108,5 @@ public  class StyleLabel{
     public static void labelChampagne(JLabel l) {
         l.setForeground(new Color(250, 214, 165));
         l.setFont(new Font("Arial", Font.BOLD, 15));
-        }
+    }
 }
