@@ -68,6 +68,7 @@ public class Button {
         JButton bouton = new JButton();
 //        bouton.setBackground(new Color(175,175,175));
         bouton.setText("Annuler");
+        bouton.setOpaque(false);
 //        bouton.setFont(new Font("Arial", Font.PLAIN, 18));
 //        bouton.setFocusPainted(true);   // Effet focus visible
 //        bouton.setContentAreaFilled(true);
@@ -79,6 +80,7 @@ public class Button {
         JButton bouton = new JButton();
 //        bouton.setBackground(new Color(175,175,175));
         bouton.setText("Refaire");
+        bouton.setOpaque(false);
 //        bouton.setFont(new Font("Arial", Font.PLAIN, 18));
 //        bouton.setFocusPainted(true);   // Effet focus visible
 //        bouton.setContentAreaFilled(true);
