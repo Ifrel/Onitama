@@ -52,7 +52,7 @@ public class Menu extends JPanel implements Observateur {
         Font font = new Font("SansSerif", Font.BOLD, 18);
 
         // --- Ligne 1 : Round ---
-        JPanel ligneRound = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel ligneRound = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ligneRound.setOpaque(false);
         JLabel lblRound = new JLabel("Round :");
         lblRound.setFont(font);
