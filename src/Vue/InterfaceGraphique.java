@@ -7,6 +7,8 @@ import Vue.Adaptateurs.AdaptateurClavier;
 import javax.swing.*;
 import java.awt.*;
 
+import static Global.Config.WIDTH_MENU;
+
 /**
  * Classe principale pour l'affichage graphique du jeu Onitama.
  * Gère la fenêtre, le plateau, les couches superposées, et les interactions comme le menu latéral.*/
@@ -16,11 +18,11 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     private boolean maximized;
     private Jeu jeu;
 
-    // --- Composants Swing ---
+    // --- Utils Swing ---
     private JFrame frame;
     private JLayeredPane layeredPane;
     private JPanel backgroundBlur;
-    private JPanel menuPanel;
+    private Menu menuPanel;
     private PlateauDeJeu plateau;
 
     /**
@@ -90,9 +92,10 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
      * Crée un panneau gris semi-transparent pour le flou de fond*/
     private void initialiserBackgroundBlur() {
         backgroundBlur = new JPanel();
+        backgroundBlur.setToolTipText("JEU EN PAUSE");
         backgroundBlur.setBackground(new Color(161, 160, 160, 50)); // Gris transparent
         backgroundBlur.setBounds(0, 0, frame.getWidth(), frame.getHeight());
-        backgroundBlur.setOpaque(true);
+        backgroundBlur.setOpaque(false);
         backgroundBlur.setVisible(false);
 
         backgroundBlur.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -107,16 +110,9 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     /**
      * Initialise le menu latéral (caché par défaut)*/
     private void initialiserMenuPanel() {
-        menuPanel = new JPanel();
-        menuPanel.setBackground(new Color(228, 169, 108)); // Couleur du menu
-        menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
-        menuPanel.setBounds(frame.getWidth(), 0, 200, frame.getHeight());
+        menuPanel = new Menu(jeu, collecteurEvent, this);
+        menuPanel.setBounds(frame.getWidth(), 0, WIDTH_MENU, frame.getHeight());
         menuPanel.setVisible(false);
-
-        // Ajouter quelques options au menu
-        menuPanel.add(new JLabel("Option 1"));
-        menuPanel.add(new JLabel("Option 2"));
-        menuPanel.add(new JLabel("Option 3"));
 
         layeredPane.add(menuPanel, JLayeredPane.MODAL_LAYER);
     }
@@ -130,9 +126,9 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
                 backgroundBlur.setBounds(0, 0, frame.getWidth(), frame.getHeight());
 
                 if (menuPanel.isVisible()) {
-                    menuPanel.setBounds(frame.getWidth() - 200, 0, 200, frame.getHeight());
+                    menuPanel.setBounds(frame.getWidth() - WIDTH_MENU, 0, WIDTH_MENU, frame.getHeight());
                 } else {
-                    menuPanel.setBounds(frame.getWidth(), 0, 200, frame.getHeight());
+                    menuPanel.setBounds(frame.getWidth(), 0, WIDTH_MENU, frame.getHeight());
                 }
             }
         });
@@ -149,12 +145,12 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
 
             new Thread(() -> {
                 int x = frame.getWidth();
-                while (x > frame.getWidth() - 200) {
+                while (x > frame.getWidth() - WIDTH_MENU) {
                     x -= 10;
-                    menuPanel.setBounds(x, 0, 200, frame.getHeight());
+                    menuPanel.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
                     try { Thread.sleep(5); } catch (InterruptedException ignored) {}
                 }
-                menuPanel.setBounds(frame.getWidth() - 200, 0, 200, frame.getHeight());
+                menuPanel.setBounds(frame.getWidth() - WIDTH_MENU, 0, WIDTH_MENU, frame.getHeight());
             }).start();
         }
     }
@@ -166,7 +162,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
             int x = menuPanel.getX();
             while (x < frame.getWidth()) {
                 x += 10;
-                menuPanel.setBounds(x, 0, 200, frame.getHeight());
+                menuPanel.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
                 try { Thread.sleep(5); } catch (InterruptedException ignored) {}
             }
             menuPanel.setVisible(false);

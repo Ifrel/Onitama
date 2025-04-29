@@ -19,6 +19,12 @@ public class Config {
     public final static Color COULEUR_PLATEAU = new Color(104, 104, 104);
     public final static Color COULEUR_BOUTON_PLATEAU = new Color(255, 255, 255);
 
+    // --- INTERFACES
+    public final static int WIDTH_MENU = 500;
+
+    // --- PATHS
+    public final static String PATH_IMAGE_ARRIERE_PLAN_MENU = "res/vue/images/arrierePlans/menu.png";
+
     // -- CARTES --
     public final static int NOMBRES_CARTES = 16;
     public final static int NOMBRE_CARTES_MAIN = 2;
