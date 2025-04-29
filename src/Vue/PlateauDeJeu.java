@@ -53,6 +53,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
      * Constructeur principal du PlateauDeJeu
      * @param jeu modèle de données observé
      * @param collecteurEv gestionnaire des événements
+     * @param interfaceGraphique Scène principale
      */
     public PlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
         this.jeu = jeu;
@@ -147,7 +148,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         terrainCartesAnnulerRefaire.add(creerCartesSud(), BorderLayout.SOUTH);
         terrainCartesAnnulerRefaire.add(creerCarteGauche(), BorderLayout.WEST);
         terrainCartesAnnulerRefaire.add(creerBoutonsDroite(), BorderLayout.EAST);
-        terrainCartesAnnulerRefaire.add(creerCentreTerrain(), BorderLayout.CENTER);
+        terrainCartesAnnulerRefaire.add(terrain, BorderLayout.CENTER);
     }
 
     /** Crée la barre supérieure d'indications */
@@ -156,13 +157,9 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         barreIndication.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         barreIndication.setOpaque(false);
 
-        JButton boutonSon = creerBoutonSon();
-        JPanel contenuCentre = creerContenuCentre();
-        JPanel panelMenu = creerBoutonMenu(this);
-
-        barreIndication.add(boutonSon, BorderLayout.WEST);
-        barreIndication.add(contenuCentre, BorderLayout.CENTER);
-        barreIndication.add(panelMenu, BorderLayout.EAST);
+        barreIndication.add(creerBoutonSon(), BorderLayout.WEST);
+        barreIndication.add(creerContenuCentre(), BorderLayout.CENTER);
+        barreIndication.add(creerBoutonMenu(this), BorderLayout.EAST);
     }
 
     // === Sous-méthodes de création d'éléments ===
@@ -203,12 +200,6 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         droite.add(Box.createVerticalGlue());
         droite.setOpaque(false);
         return droite;
-    }
-
-    private JPanel creerCentreTerrain() {
-        JPanel centre = new JPanel(new BorderLayout());
-        centre.add(terrain, BorderLayout.CENTER);
-        return centre;
     }
 
     private JButton creerBoutonSon() {
@@ -297,9 +288,6 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
 
 
-
-
-
     // =========================================
     // ========= Gestion Son & Musique =========
     // =========================================
@@ -330,8 +318,6 @@ public class PlateauDeJeu extends JPanel implements Observateur {
             e.printStackTrace();
         }
     }
-
-
 
 
     // =========================================
