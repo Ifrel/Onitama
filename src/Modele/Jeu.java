@@ -306,8 +306,8 @@ public class Jeu extends Observable {
     {
         ArrayList<Carte> CartesTireesAuHasard = new ArrayList<Carte>();
         Random r = new Random();
-        for (int i = 0; i < nombre-1; i++) {
-            Carte CarteTiree = toutesLesCartes.get(r.nextInt(NOMBRES_CARTES));
+        for (int i = 0; i < nombre; i++) {
+            Carte CarteTiree = toutesLesCartes.get(r.nextInt(toutesLesCartes.size()));
             CartesTireesAuHasard.add(CarteTiree);
             toutesLesCartes.remove(CarteTiree);
         }
