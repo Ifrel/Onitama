@@ -4,7 +4,7 @@ import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.AdaptateurAnnuler;
 import Vue.Adaptateurs.AdaptateurBoutonTerrain;
-import Vue.Adaptateurs.AdaptateurCarte;
+import Vue.Adaptateurs.AdaptateurCarteUI;
 import Vue.Adaptateurs.AdaptateurRefaire;
 
 import javax.sound.sampled.AudioInputStream;
@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 import static Global.Config.*;
-import static Vue.Utils.Button.*;
+import static Vue.Utils.*;
 
 /**
  * Classe représentant l'interface graphique principale du plateau de jeu.
@@ -30,7 +30,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
     private InterfaceGraphique interfaceGraphique;
     private final CollecteurEvenements collecteurEv;
 
-    // Composants de l'interface
+    // Utils de l'interface
     private JPanel terrain;
     private JPanel terrainCartesAnnulerRefaire;
     private JPanel annulerRefaire;
@@ -105,7 +105,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
         for (int row = 0; row < LIGNES; row++) {
             for (int col = 0; col < COLONNES; col++) {
-                JButton bouton = creerBoutonPlateau();
+                JButton bouton = creerBoutonTerrain();
                 bouton.addActionListener(new AdaptateurBoutonTerrain(bouton, new Point(row, col), collecteurEv));
                 buttonsTerrain[row][col] = bouton;
                 terrain.add(bouton);
@@ -118,7 +118,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU];
         for (int i = 0; i < buttonsCartes.length; i++) {
             JButton bouton = creerBoutonCarte("res/vue/images/cartes/TIGRE.png");
-            bouton.addActionListener(new AdaptateurCarte(new CarteUI(bouton, i), collecteurEv));
+            bouton.addActionListener(new AdaptateurCarteUI(new CarteUI(bouton, i), collecteurEv));
             bouton.setPreferredSize(new Dimension(200, 100));
             buttonsCartes[i] = bouton;
         }
