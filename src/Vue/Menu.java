@@ -4,6 +4,7 @@ import Modele.Jeu;
 import Patterns.Observateur;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.Duration;
 
@@ -17,31 +18,30 @@ import static Vue.Utils.mettreImageEnFond;
  */
 public class Menu extends JPanel implements Observateur {
 
-    // Références au modèle et à la vue
+    // Références au modèle, au gestionnaire d'événements et à l'interface graphique principale
     private final Jeu jeu;
     private final CollecteurEvenements collecteurEv;
     private final InterfaceGraphique interfaceGraphique;
 
-    // Données simulées (exemple) pour affichage
-    private int round;
-    private Duration duree;
-    private String joueurA, joueurB;
-    private int scoreJoueurA, scoreJoueurB;
-
+    // Données pour l'affichage des statistiques du jeu
+    private int round; // Le numéro du round actuel
+    private Duration duree; // La durée totale de la session de jeu
+    private String joueurA, joueurB; // Les noms des joueurs
+    private int scoreJoueurA, scoreJoueurB; // Les scores des joueurs
 
     /**
-     * Constructeur du menu principal.
+     * Constructeur du menu principal. Initialise les composants et les données affichées.
      *
-     * @param jeu le modèle du jeu
-     * @param collecteurEv le gestionnaire d'événements
-     * @param interfaceGraphique l'interface principale
+     * @param jeu               Le modèle du jeu.
+     * @param collecteurEv      Le gestionnaire d'événements pour interagir avec l'utilisateur.
+     * @param interfaceGraphique L'interface graphique principale contenant ce menu.
      */
-    public Menu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique){
+    public Menu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
 
-        // --- Données factices à afficher ---
+        // Initialisation des données de statistiques (données factices pour l'exemple)
         round = 7;
         duree = Duration.ofMinutes(24);
         joueurA = "Kevin";
@@ -49,199 +49,208 @@ public class Menu extends JPanel implements Observateur {
         scoreJoueurA = 4;
         scoreJoueurB = 3;
 
-        setLayout(new GridLayout(5, 1, 40, 40));
+        // Configuration du layout manager pour organiser les composants
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 20, 10, 20); // Marges autour des composants
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Étirement horizontal des composants
+        gbc.weightx = 1.0; // Distribution de l'espace horizontal supplémentaire
+        gbc.gridx = 0; // Tous les composants sont dans la même colonne
 
-        add(creerBoutonRetour());
-        add(creerTableauDeStatistiques());
-        add(creerBoutonSauvegarde());
-        add(creerBoutonsActions());
-        add(creerBoutonExit());
+        // Ajout du bouton Retour en haut à droite
+        JPanel panelRetour = creerPanelRetour();
+        gbc.gridy = 0; // Première ligne
+        gbc.anchor = GridBagConstraints.NORTHEAST; // Alignement en haut à droite
+        add(panelRetour, gbc);
+
+        // Ajout du tableau de statistiques au centre
+        JPanel panelStats = creerTableauDeStatistiques();
+        gbc.gridy = 1; // Deuxième ligne
+        gbc.weighty = 0.5; // Prend la moitié de l'espace vertical disponible
+        gbc.fill = GridBagConstraints.BOTH; // Étirement horizontal et vertical
+        gbc.anchor = GridBagConstraints.CENTER; // Alignement au centre
+        add(panelStats, gbc);
+
+        // Ajout des boutons d'action au centre
+        JPanel panelActions = creerBoutonsActions();
+        gbc.gridy = 2; // Troisième ligne
+        gbc.weighty = 0.5; // Prend l'autre moitié de l'espace vertical disponible
+        gbc.fill = GridBagConstraints.BOTH; // Étirement horizontal et vertical
+        gbc.anchor = GridBagConstraints.CENTER; // Alignement au centre
+        add(panelActions, gbc);
+
+        // Ajout du bouton Sauvegarder en bas à gauche
+        JPanel panelSauvegarde = creerBoutonSauvegarde();
+        gbc.gridy = 3; // Quatrième ligne
+        gbc.weighty = 0.1; // Prend un peu d'espace vertical
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Étirement horizontal
+        gbc.anchor = GridBagConstraints.SOUTHWEST; // Alignement en bas à gauche
+        add(panelSauvegarde, gbc);
+
+        // Ajout du bouton Exit en bas à droite
+        JPanel panelExit = creerBoutonExit();
+        gbc.gridy = 3; // Quatrième ligne
+        gbc.anchor = GridBagConstraints.SOUTHEAST; // Alignement en bas à droite
+        add(panelExit, gbc);
+
+        // Configuration de l'image de fond du menu
+//        mettreImageEnFond(this, PATH_IMAGE_ARRIERE_PLAN_MENU, 0);
     }
 
+    /**
+     * Méthode appelée lorsque l'objet observé (le modèle Jeu) notifie un changement.
+     * Dans ce cas, elle pourrait être utilisée pour mettre à jour les statistiques affichées.
+     */
     @Override
     public void miseAJour() {
-        // À compléter si on veut rafraîchir les stats dynamiquement
+        // À compléter si on veut rafraîchir les stats dynamiquement en fonction des changements du modèle
     }
 
+    /**
+     * Crée le panneau contenant le bouton "Retour" aligné à droite en haut.
+     *
+     * @return Le JPanel contenant le bouton "Retour".
+     */
+    private JPanel creerPanelRetour() {
+        JButton btnRetour = creerBoutonActionMenu("Retour");
+        btnRetour.setPreferredSize(new Dimension(120, 30)); // Taille préférée du bouton
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Layout pour aligner à droite
+        panel.setOpaque(false); // Rend le fond du panneau transparent
+        panel.add(btnRetour);
+        panel.setBorder(new EmptyBorder(20, 0, 0, 50)); // Marge haute et droite
+        return panel;
+    }
 
     /**
-     * Crée le Bouton "Sauvegarde"
-     * @return JPanel   */
+     * Crée le panneau contenant le bouton "Sauvegarder" aligné à gauche en bas.
+     *
+     * @return Le JPanel contenant le bouton "Sauvegarder".
+     */
     private JPanel creerBoutonSauvegarde() {
-        JButton btnSauvegarder = new JButton("Sauvegarder");
-        JPanel panelSauvegarder = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-//        panelSauvegarder.setOpaque(false);
-        panelSauvegarder.setBackground(new Color(85, 165, 83));
-        panelSauvegarder.add(btnSauvegarder);
-        return panelSauvegarder;
+        JButton btnSauvegarder = creerBoutonActionMenu("Sauvegarder");
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Layout pour aligner à gauche
+        panel.setOpaque(false); // Rend le fond du panneau transparent
+        panel.add(btnSauvegarder);
+        panel.setBorder(new EmptyBorder(0, 50, 20, 0)); // Marge gauche et basse
+        return panel;
     }
 
     /**
-     * Crée un Bouton "Retour" en haut à droite sur {@code this}    */
-    private JPanel creerBoutonRetour(){
-        JButton btnRetour = new JButton("Retour");
-        JPanel topPanel = new JPanel(new BorderLayout());
-//        topPanel.setOpaque(false);
-        topPanel.setBackground(new Color(78, 115, 207));
-        topPanel.add(btnRetour, BorderLayout.EAST);
-        return topPanel;
-    }
-
-
-
-    /**
-     * Crée des boutons d'action (Mes parties, Nouvelle partie, Didacticiel, Règles),
-     * tous de même taille, alignés à gauche, redimensionnables avec la fenêtre.
-     * @return JPanel contenant les boutons.
+     * Crée le panneau contenant les boutons d'action principaux (Mes parties, Nouvelle partie, Didacticiel, Règles)
+     * disposés verticalement au centre.
+     *
+     * @return Le JPanel contenant les boutons d'action.
      */
     private JPanel creerBoutonsActions() {
-        // Panel principal avec BoxLayout pour centrage horizontal possible
-        JPanel container = new JPanel();
-        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
-//        container.setOpaque(false);
-        container.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0)); // Décalage à gauche
+        JPanel container = new JPanel(new GridBagLayout()); // Utilisation de GridBagLayout pour centrer les boutons
+        container.setOpaque(false); // Rend le fond du panneau transparent
+        GridBagConstraints gbcBouton = new GridBagConstraints();
+        gbcBouton.fill = GridBagConstraints.HORIZONTAL; // Étirement horizontal des boutons
+        gbcBouton.insets = new Insets(10, 0, 10, 0); // Marges autour des boutons
+        gbcBouton.weightx = 1.0; // Distribution de l'espace horizontal supplémentaire
 
-        // Sous-panel avec GridLayout pour garantir même taille
-        JPanel menuBoutons = new JPanel(new GridLayout(4, 1, 0, 10)); // 4 lignes, 1 colonne, 10px de marge verticale
-//        menuBoutons.setOpaque(false);
-        menuBoutons.setPreferredSize(new Dimension(0, 300));
-        menuBoutons.setBackground(new Color(218, 88, 189));
-
-        // Boutons + Ajout dans le panneau grid
-        menuBoutons.add(creerBoutonActionMenu("Mes parties"));
-        menuBoutons.add(creerBoutonActionMenu("Nouvelle partie"));
-        menuBoutons.add(creerBoutonActionMenu("Didacticiel"));
-        menuBoutons.add(creerBoutonActionMenu("Règles"));
-
-        container.add(menuBoutons);
-        container.add(Box.createHorizontalGlue());
-        container.add(Box.createHorizontalGlue());
-        container.setBackground(new Color(168, 129, 164));
-
+        String[] labels = {"Mes parties", "Nouvelle partie", "Didacticiel", "Règles"};
+        for (int i = 0; i < labels.length; i++) {
+            JButton bouton = creerBoutonActionMenu(labels[i]);
+            gbcBouton.gridy = i; // Chaque bouton sur une nouvelle ligne
+            container.add(bouton, gbcBouton);
+        }
+        container.setBorder(new EmptyBorder(50, 50, 50, 50)); // Marges autour du conteneur de boutons
         return container;
     }
 
-
-
-
     /**
-     * Crée le Bouton "Exit" en bas à droite
-     * @return JPanel     */
+     * Crée le panneau contenant le bouton "Exit" aligné à droite en bas.
+     *
+     * @return Le JPanel contenant le bouton "Exit".
+     */
     private JPanel creerBoutonExit() {
         JButton btnExit = new JButton("Exit");
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-//        bottomPanel.setOpaque(false);
-        bottomPanel.add(btnExit, BorderLayout.EAST);
-        bottomPanel.setBackground(new Color(221, 156, 116));
-        return bottomPanel;
+        btnExit.setPreferredSize(new Dimension(100, 30)); // Taille préférée du bouton
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Layout pour aligner à droite
+        panel.setOpaque(false); // Rend le fond du panneau transparent
+        panel.add(btnExit);
+        panel.setBorder(new EmptyBorder(0, 0, 20, 50)); // Marge basse et droite
+        return panel;
     }
 
-
     /**
-     * Crée un panneau contenant les statistiques du jeu (round, score, durée).
+     * Crée le panneau affichant les statistiques du jeu (round, victoires, durée totale).
      *
-     * @return le panneau de statistiques     */
+     * @return Le JPanel contenant le tableau de statistiques.
+     */
     private JPanel creerTableauDeStatistiques() {
-        JPanel tableau = new JPanel();
-        tableau.setLayout(new BoxLayout(tableau, BoxLayout.X_AXIS));
-//        tableau.setOpaque(false); // Fond transparent
-        tableau.setBackground(new Color(74, 172, 153));
+        JPanel tableau = new JPanel(new GridBagLayout()); // Utilisation de GridBagLayout pour organiser les labels et les valeurs
+        tableau.setOpaque(false); // Rend le fond du panneau transparent
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10); // Marges autour des labels et valeurs
+        gbc.anchor = GridBagConstraints.WEST; // Alignement à gauche par défaut
 
-        Font font = new Font("SansSerif", Font.BOLD, 18);
+        Font font = new Font("SansSerif", Font.BOLD, 18); // Police pour les statistiques
+        Color textColor = Color.BLACK; // Couleur du texte
 
-        // --- Partie gauche : libellés alignés à droite ---
-        JPanel gauche = new JPanel();
-        gauche.setLayout(new BoxLayout(gauche, BoxLayout.Y_AXIS));
-        gauche.setOpaque(false);
-        gauche.add(creerLigneDroite("Round :", font));
-        gauche.add(creerLigneDroite("Victoires :", font));
-        gauche.add(creerLigneDroite("Durée totale :", font));
+        // Ligne 1 : Affichage du round actuel
+        gbc.gridx = 0; // Première colonne
+        gbc.gridy = 0; // Première ligne
+        tableau.add(creerLabelStat("Round :", font, textColor, GridBagConstraints.EAST), gbc); // Label "Round :" aligné à droite
+        gbc.gridx = 1; // Deuxième colonne
+        gbc.weightx = 1.0; // La valeur prend l'espace horizontal disponible
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Étirement horizontal de la valeur
+        tableau.add(creerLabelStat(String.valueOf(round), font, textColor, GridBagConstraints.WEST), gbc); // Valeur du round alignée à gauche
+        gbc.weightx = 0.0; // Réinitialisation du poids
+        gbc.fill = GridBagConstraints.NONE; // Réinitialisation du fill
 
-        // --- Partie droite : valeurs dynamiques alignées à gauche ---
-        JPanel droite = new JPanel();
-        droite.setLayout(new BoxLayout(droite, BoxLayout.Y_AXIS));
-        droite.setOpaque(false);
-
-        // Round actuel
-        droite.add(creerLigneGauche(String.valueOf(round), font));
-
-        // Score des joueurs avec couleur dynamique selon le gagnant
+        // Ligne 2 : Affichage du score des joueurs
+        gbc.gridx = 0; // Première colonne
+        gbc.gridy = 1; // Deuxième ligne
+        tableau.add(creerLabelStat("Victoires :", font, textColor, GridBagConstraints.EAST), gbc); // Label "Victoires :" aligné à droite
+        gbc.gridx = 1; // Deuxième colonne
         JLabel lblScore = new JLabel();
         lblScore.setFont(font);
+        // Affichage du score avec une couleur différente pour le joueur ayant le score le plus élevé
         if (scoreJoueurA > scoreJoueurB) {
-            lblScore.setText("<html><font color='green'>" + joueurA + "</font>: " + scoreJoueurA +
-                    ", <font color='red'>" + joueurB + "</font>: " + scoreJoueurB + "</html>");
+            lblScore.setText(String.format("<html><font color='green'>%s</font>: %d, <font color='red'>%s</font>: %d</html>", joueurA, scoreJoueurA, joueurB, scoreJoueurB));
         } else if (scoreJoueurA < scoreJoueurB) {
-            lblScore.setText("<html><font color='red'>" + joueurA + "</font>: " + scoreJoueurA +
-                    ", <font color='green'>" + joueurB + "</font>: " + scoreJoueurB + "</html>");
+            lblScore.setText(String.format("<html><font color='red'>%s</font>: %d, <font color='green'>%s</font>: %d</html>", joueurA, scoreJoueurA, joueurB, scoreJoueurB));
         } else {
             lblScore.setText(joueurA + ": " + scoreJoueurA + ", " + joueurB + ": " + scoreJoueurB);
         }
-        droite.add(creerLigneGauche(lblScore, font));
+        tableau.add(lblScore, gbc);
 
-        // Formatage de la durée en hh:mm:ss
+        // Ligne 3 : Affichage de la durée totale de la session
+        gbc.gridx = 0; // Première colonne
+        gbc.gridy = 2; // Troisième ligne
+        tableau.add(creerLabelStat("Durée totale :", font, textColor, GridBagConstraints.EAST), gbc); // Label "Durée totale :" aligné à droite
+        gbc.gridx = 1; // Deuxième colonne
         long totalSeconds = duree.getSeconds();
         long heures = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;
         long secondes = totalSeconds % 60;
-        String temps = String.format("%02d:%02d:%02d", heures, minutes, secondes);
-        droite.add(creerLigneGauche(temps, font));
+        String temps = String.format("%02d:%02d:%02d", heures, minutes, secondes); // Formatage de la durée en HH:MM:SS
+        tableau.add(creerLabelStat(temps, font, textColor, GridBagConstraints.WEST), gbc); // Valeur de la durée alignée à gauche
 
-        // --- Composition finale ---
-        tableau.add(Box.createHorizontalGlue());
-        tableau.add(gauche);
-        tableau.add(Box.createHorizontalStrut(20)); // Espace entre gauche et droite
-        tableau.add(droite);
-        tableau.add(Box.createHorizontalGlue());
-
+        // Ajout d'une bordure esthétique autour du tableau de statistiques
+        tableau.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(150, 150, 150), 2), // Bordure extérieure grise
+                new EmptyBorder(20, 20, 20, 20) // Marge intérieure
+        ));
         return tableau;
     }
 
-
     /**
-     * Crée une ligne contenant un libellé aligné à droite.
+     * Crée un JLabel avec la police, la couleur et l'alignement spécifiés.
      *
-     * @param texte le texte du libellé
-     * @param font la police à utiliser
-     * @return le panneau contenant le libellé    */
-    private JPanel creerLigneDroite(String texte, Font font) {
-        JPanel ligne = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        ligne.setOpaque(false);
+     * @param texte     Le texte du label.
+     * @param font      La police à utiliser.
+     * @param couleur   La couleur du texte.
+     * @param alignement L'alignement du texte (SwingConstants.LEFT ou SwingConstants.RIGHT).
+     * @return Le JLabel créé.
+     */
+    private JLabel creerLabelStat(String texte, Font font, Color couleur, int alignement) {
         JLabel label = new JLabel(texte);
         label.setFont(font);
-        ligne.add(label);
-        return ligne;
-    }
-
-
-
-    /**
-     * Crée une ligne contenant une valeur textuelle alignée à gauche.
-     *
-     * @param texte la valeur à afficher
-     * @param font la police à utiliser
-     * @return le panneau contenant la valeur     */
-    private JPanel creerLigneGauche(String texte, Font font) {
-        JPanel ligne = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ligne.setOpaque(false);
-        JLabel label = new JLabel(texte);
-        label.setFont(font);
-        ligne.add(label);
-        return ligne;
-    }
-
-
-    /**
-     * Crée une ligne contenant un JLabel personnalisé aligné à gauche.
-     *
-     * @param label le JLabel déjà configuré
-     * @param font la police à appliquer
-     * @return le panneau contenant le JLabel     */
-    private JPanel creerLigneGauche(JLabel label, Font font) {
-        JPanel ligne = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ligne.setOpaque(false);
-        label.setFont(font);
-        ligne.add(label);
-        return ligne;
+        label.setForeground(couleur);
+//        label.setHorizontalAlignment(alignement);
+        return label;
     }
 }
