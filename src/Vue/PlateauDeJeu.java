@@ -2,6 +2,10 @@ package Vue;
 
 import Modele.Jeu;
 import Patterns.Observateur;
+import Vue.Adaptateurs.AdaptateurAnnuler;
+import Vue.Adaptateurs.AdaptateurBoutonTerrain;
+import Vue.Adaptateurs.AdaptateurCarte;
+import Vue.Adaptateurs.AdaptateurRefaire;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -23,6 +27,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
     // ====== Attributs principaux ======
     private final Jeu jeu;
+    private InterfaceGraphique interfaceGraphique;
     private final CollecteurEvenements collecteurEv;
 
     // Composants de l'interface
@@ -49,14 +54,16 @@ public class PlateauDeJeu extends JPanel implements Observateur {
      * @param jeu modèle de données observé
      * @param collecteurEv gestionnaire des événements
      */
-    public PlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv) {
+    public PlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
+        this.interfaceGraphique = interfaceGraphique;
 
         System.err.println("Interface Plateau de jeu lancée");
         setLayout(new BorderLayout());
         setBackground(COULEUR_PLATEAU);
 
+        jeu.ajouteObservateur(this);
         initialiserInterface();
     }
 
@@ -98,6 +105,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         for (int row = 0; row < LIGNES; row++) {
             for (int col = 0; col < COLONNES; col++) {
                 JButton bouton = creerBoutonPlateau();
+                bouton.addActionListener(new AdaptateurBoutonTerrain(bouton, new Point(row, col), collecteurEv));
                 buttonsTerrain[row][col] = bouton;
                 terrain.add(bouton);
             }
@@ -109,6 +117,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU];
         for (int i = 0; i < buttonsCartes.length; i++) {
             JButton bouton = creerBoutonCarte("res/vue/images/cartes/TIGRE.png");
+            bouton.addActionListener(new AdaptateurCarte(new CarteUI(bouton, i), collecteurEv));
             bouton.setPreferredSize(new Dimension(200, 100));
             buttonsCartes[i] = bouton;
         }
@@ -121,6 +130,9 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
         annuler = creerBoutonAction("Annuler");
         refaire = creerBoutonAction("Refaire");
+
+        annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
+        refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
 
         annulerRefaire.add(annuler);
         annulerRefaire.add(refaire);
@@ -138,8 +150,6 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         terrainCartesAnnulerRefaire.add(creerCentreTerrain(), BorderLayout.CENTER);
     }
 
-
-
     /** Crée la barre supérieure d'indications */
     private void creerBarreIndication() {
         barreIndication = new JPanel(new BorderLayout());
@@ -148,7 +158,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
         JButton boutonSon = creerBoutonSon();
         JPanel contenuCentre = creerContenuCentre();
-        JPanel panelMenu = creerBoutonMenu();
+        JPanel panelMenu = creerBoutonMenu(this);
 
         barreIndication.add(boutonSon, BorderLayout.WEST);
         barreIndication.add(contenuCentre, BorderLayout.CENTER);
@@ -267,7 +277,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         return panel;
     }
 
-    private JPanel creerBoutonMenu() {
+    private JPanel creerBoutonMenu(JPanel contentPane) {
         JButton menu = new JButton("≡");
         menu.setOpaque(false);
         menu.setContentAreaFilled(false);
@@ -276,12 +286,16 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         menu.setFont(new Font("Arial", Font.PLAIN, 46));
         menu.setPreferredSize(new Dimension(60, 40));
 
+        menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
         panel.add(menu, BorderLayout.CENTER);
         return panel;
     }
+
+
 
 
 

@@ -35,33 +35,32 @@ public class Button {
      * @return JButton
      */
     public static JButton creerBoutonCarte(String cheminImageCarte) {
-        ImageIcon icon = new ImageIcon(cheminImageCarte);
-        JButton bouton = new JButton(icon);
-
-        bouton.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                int width = bouton.getWidth();
-                int height = bouton.getHeight();
-
-                // Redimensionne l'image à la nouvelle taille du bouton
-                Image imageRedimensionnee = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                bouton.setIcon(new ImageIcon(imageRedimensionnee));
-
-            }
-        });
-
-//        // Centre bien l'image
+//        ImageIcon iconOriginal = new ImageIcon(cheminImageCarte);
+//        JButton bouton = new JButton(new ImageIcon(iconOriginal.getImage())); // Utiliser une copie initiale
+//
 //        bouton.setHorizontalAlignment(SwingConstants.CENTER);
 //        bouton.setVerticalAlignment(SwingConstants.CENTER);
-//
-//        // Supprime les bordures moches si besoin
-//        bouton.setBorderPainted(true);
+//        bouton.setBorderPainted(true);  // Optionnel pour rendre plus joli
 //        bouton.setFocusPainted(true);
-//        bouton.setContentAreaFilled(false);
-
-
-        return bouton;
+//        bouton.setContentAreaFilled(true);
+//        bouton.setMinimumSize(new Dimension(100, 150));  // largeur: 100, hauteur: 150
+//
+//
+//        bouton.addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                int width = bouton.getWidth();
+//                int height = bouton.getHeight();
+//                if (width > 0 && height > 0) {
+//                    // Redimensionner proprement à partir de l'image d'origine
+//                    Image imageRedimensionnee = iconOriginal.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+//                    bouton.setIcon(new ImageIcon(imageRedimensionnee));
+//                }
+//            }
+//        });
+//
+//        return bouton;
+        return  new JButton();
     }
 
 

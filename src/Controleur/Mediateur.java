@@ -20,18 +20,20 @@ public class Mediateur implements CollecteurEvenements {
     public void clavier(String touche) {
     }
 
-
     @Override
-    public void buttonGrille(Point btnCoords) {
-        return;
+    public void boutonTerrainJeu(Point btnCoords) {
+
     }
-
-
 
         // répercuter sur la vue ??????
 
     @Override
     public void tictac() {
+
+    }
+
+    @Override
+    public void carteSelectionne(int numCarte) {
 
     }
 }

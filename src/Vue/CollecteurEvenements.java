@@ -7,8 +7,10 @@ public interface CollecteurEvenements {
     void clavier(String t);
 
     /// gère les boutons
-    void buttonGrille(Point btnCoords);
+    void boutonTerrainJeu(Point btnCoords);
 
     void tictac();
+
+    void carteSelectionne(int numCarte);
 }
 

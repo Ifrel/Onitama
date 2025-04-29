@@ -300,13 +300,13 @@ public class Jeu extends Observable {
 
     /**
      * Tire un certain nombre de cartes au hasard.
-     * @return Une ArrayList de Carte
+     * @return Une ArrayList de CarteUI
      */
     private ArrayList<Carte> tirerCartesAuHasard(int nombre)
     {
         ArrayList<Carte> CartesTireesAuHasard = new ArrayList<Carte>();
         Random r = new Random();
-        for (int i = 0; i < nombre; i++) {
+        for (int i = 0; i < nombre-1; i++) {
             Carte CarteTiree = toutesLesCartes.get(r.nextInt(NOMBRES_CARTES));
             CartesTireesAuHasard.add(CarteTiree);
             toutesLesCartes.remove(CarteTiree);

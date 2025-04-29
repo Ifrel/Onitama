@@ -5,8 +5,8 @@ import Vue.InterfaceGraphique;
 
 public class Onitama {
     public static void main(String[] args) {
-        //Jeu jeu = new Jeu();
-        Jeu jeu = null;
+        Jeu jeu = new Jeu();
+//        Jeu jeu = null;
         CollecteurEvenements collecteurEvenements =  new Mediateur(jeu);
         new InterfaceGraphique(jeu, collecteurEvenements).lancer();
 
