@@ -1,9 +1,9 @@
 
  (à priori)
  
-- PATTERNES
- - Observateur
-- MODELE
+- # PATTERNES
+ - ~~Observateur~~
+- # MODELE
   - IA
     - Niveau facile (aléatoire)
     - Niveau intermédiaire (Coup gagnant / perdant)
@@ -11,17 +11,31 @@
   - Sauvegarde / Chargement
   - Nouvelle partie
   - Annuler / Rejouer
-- VUE
-  - Collecteur Evenements
-  - Adaptateur
-   - Clavier
-   - Souris
-   - Plein Ecran
-   - Adapateurs Boutons
-    - Bouton 1
-    - Bouton 2
-    - ...
-- CONTROLEUR
+- # VUE
+  - <span style="color:orange">Ecran de jeu</span> (en cours)
+    - <span style="color:green">~~barre d'indication~~ </span>
+    - <span style="color:green">~~boutton menu~~ </span>
+    - <span style="color:green">~~terrain~~ </span>
+    - <span style="color:green">~~ajout adaptateurs~~ </span>
+    - <span style="color:green">~~button son(facultatif)~~ </span>
+    - <span style="color:green">~~annuler/refaire~~ </span>
+    - <span style="color:orange"> cartes  </span> (presque terminée)
+  - <span style="color:orange"> Ecran Menu </span> (en cours)
+  - <span style="color:red"> Ecran Confifigurations </span>
+  - <span style="color:red"> Ecran Save </span>
+  - <span style="color:red"> Ecrans Victoirs + Défaites </span>
+  - <span style="color:red"> Collecteur Evenements </span>
+  - ## Adaptateurs
+     - <span style="color:red"> Clavier </span>
+     - <span style="color:red"> Souris </span>
+     - <span style="color:red"> Plein Ecran </span>
+     - <span style="color:red"> "+" pour ceux des écrans pas encore faits </span>
+  - ## Annimations
+    - <span style="color:red"> Cible </span>
+    - <span style="color:red"> Deplacement carte </span>
+    - <span style="color:red"> Lumiere entourantla carte sélectionée </span>
+    - <span style="color:red"> etc.. </span>
+- # CONTROLEUR
  - Médiateur
    - Clavier
    - Souris
