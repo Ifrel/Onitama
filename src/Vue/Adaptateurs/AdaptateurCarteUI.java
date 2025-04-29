@@ -6,11 +6,11 @@ import Vue.CollecteurEvenements;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AdaptateurCarte implements ActionListener {
+public class AdaptateurCarteUI implements ActionListener {
     private CollecteurEvenements collecteurEvent;
     private CarteUI carteUI;
 
-    public AdaptateurCarte(CarteUI carteUI, CollecteurEvenements collecteurEvent){
+    public AdaptateurCarteUI(CarteUI carteUI, CollecteurEvenements collecteurEvent){
         this.collecteurEvent = collecteurEvent;
         this.carteUI = carteUI;
     }
