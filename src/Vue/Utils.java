@@ -24,8 +24,7 @@ public class Utils {
      * Crée un bouton avec l'image d'une carte qui redimensionne l'image automatiquement avec la taille du bouton
      *
      * @param cheminImageCarte Chemin de l'image de la carte
-     * @return JButton
-     */
+     * @return JButton     */
     public static JButton creerBoutonCarte(String cheminImageCarte) {
         return new JButton();
     }
@@ -133,6 +132,12 @@ public class Utils {
         return bouton;
     }
 */
+
+    public static JButton creerBoutonActionMenu(String titre){
+        JButton bouton = new JButton(titre);
+        return bouton;
+    }
+
 
 }
 
