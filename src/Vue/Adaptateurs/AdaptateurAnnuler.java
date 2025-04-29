@@ -9,11 +9,13 @@ public class AdaptateurAnnuler implements ActionListener {
     CollecteurEvenements collecteurEvent;
 
     public AdaptateurAnnuler(CollecteurEvenements collecteurEvent){
+
         this.collecteurEvent = collecteurEvent;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.err.println("bouton: annuler préssé");
         collecteurEvent.clavier("Annuler");
     }
 }
