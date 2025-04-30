@@ -23,7 +23,7 @@ import static Vue.Utils.*;
  * Classe représentant l'interface graphique principale du plateau de jeu.
  * Elle observe le modèle (Jeu) et met à jour l'affichage en fonction des événements.
  */
-public class PlateauDeJeu extends JPanel implements Observateur {
+public class EcranPlateauDeJeu extends JPanel implements Observateur {
 
     // ====== Attributs principaux ======
     private final Jeu jeu;
@@ -50,12 +50,12 @@ public class PlateauDeJeu extends JPanel implements Observateur {
 
 
     /**
-     * Constructeur principal du PlateauDeJeu
+     * Constructeur principal du EcranPlateauDeJeu
      * @param jeu modèle de données observé
      * @param collecteurEv gestionnaire des événements
      * @param interfaceGraphique Scène principale
      */
-    public PlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
+    public EcranPlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
@@ -64,7 +64,7 @@ public class PlateauDeJeu extends JPanel implements Observateur {
         setLayout(new BorderLayout());
         setBackground(COULEUR_PLATEAU);
 
-        jeu.ajouteObservateur(this);
+//        jeu.ajouteObservateur(this);
         initialiserInterface();
     }
 
