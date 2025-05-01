@@ -12,5 +12,34 @@ public interface CollecteurEvenements {
     void tictac();
 
     void carteSelectionne(int numCarte);
+
+    // --- Configuration général (Ecran De démarrage)
+    void configChargerPartie(String partieSelectionee);
+    void configNiveauIA(String niveauIA);
+    void configNomJoueur(int num, String nom);
+
+    // --- IA ---
+    void configModeAuto(boolean nouvelEtat);
+    void configIAReflexion(int tempsMs);
+    void configIAHeuristique(boolean active);
+    void configIAAlgorithme(String nomAlgorithme);
+
+    // --- Couleur ---
+    // Utiliser l'enum CouleurCible défini dans EcranDeDemarrage
+//    void configCouleur(EcranDeDemarrage.CouleurCible cible, Color couleur);
+
+    // --- Animation ---
+    void configAnimationVitesse(int vitesse); // Ou float, selon l'échelle
+    void configAnimationPieces(boolean active);
+    void configAnimationSurbrillance(boolean active);
+
+    // --- Son ---
+    void configSonVolumeGeneral(int volume);
+    void configSonVolumeEffets(int volume);
+    void configSonVolumeMusique(int volume);
+    void configSonMuet(boolean muet);
+
+    // ... autres méthodes (lancerPartie, quitter, etc.)
+
 }
 
