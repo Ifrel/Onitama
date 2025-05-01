@@ -44,3 +44,7 @@
     - Bouton 1
     - Bouton 2
     - ...
+ 
+- # Besoin de la vue:(à barer SVP si ajouter)
+  - Au niveu du MODELE:
+    - 
