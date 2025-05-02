@@ -8,15 +8,13 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.Duration;
 
-import static Global.Config.PATH_IMAGE_ARRIERE_PLAN_MENU;
-import static Vue.Utils.creerBoutonActionMenu;
-import static Vue.Utils.mettreImageEnFond;
+import static Vue.Utils.MethodsStaticsUtils.creerBoutonActionMenu;
 
 /**
- * La classe Menu représente l'écran de menu principal avec les statistiques du jeu.
+ * La classe EcranMenu représente l'écran de menu principal avec les statistiques du jeu.
  * Elle est liée au modèle (Jeu) et agit en tant qu'observateur pour réagir aux mises à jour.
  */
-public class Menu extends JPanel implements Observateur {
+public class EcranMenu extends JPanel implements Observateur {
 
     // Références au modèle, au gestionnaire d'événements et à l'interface graphique principale
     private final Jeu jeu;
@@ -36,7 +34,7 @@ public class Menu extends JPanel implements Observateur {
      * @param collecteurEv      Le gestionnaire d'événements pour interagir avec l'utilisateur.
      * @param interfaceGraphique L'interface graphique principale contenant ce menu.
      */
-    public Menu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
+    public EcranMenu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
