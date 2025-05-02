@@ -1,5 +1,6 @@
 package Controleur;
 
+import Global.Config;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceGraphique;
@@ -69,6 +70,11 @@ public class Mediateur implements CollecteurEvenements {
 
     @Override
     public void configIAAlgorithme(String nomAlgorithme) {
+
+    }
+
+    @Override
+    public void configCouleur(Config.CiblesDesCouleurs cible, Color couleur) {
 
     }
 
