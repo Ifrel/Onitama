@@ -21,16 +21,16 @@
     - <span style="color:green">~~annuler/refaire~~ </span>
     - <span style="color:orange"> cartes  </span> (presque terminée)
   - <span style="color:orange"> Ecran Menu </span> (en cours)
-  - <span style="color:red"> Ecran Confifigurations </span>
+  - <span style="color:green"> Ecran Démarrage </span> (Quelques détails restant) 
   - <span style="color:red"> Ecran Save </span>
   - <span style="color:red"> Ecrans Victoirs + Défaites </span>
-  - <span style="color:red"> Collecteur Evenements </span>
-  - ## Adaptateurs
+  - <span style="color:green"> Collecteur Evenements </span>
+  - ## Adaptateurs (en cours)
      - <span style="color:red"> Clavier </span>
      - <span style="color:red"> Souris </span>
      - <span style="color:red"> Plein Ecran </span>
      - <span style="color:red"> "+" pour ceux des écrans pas encore faits </span>
-  - ## Annimations
+  - ## Annimations (commencer)
     - <span style="color:red"> Cible </span>
     - <span style="color:red"> Deplacement carte </span>
     - <span style="color:red"> Lumiere entourantla carte sélectionée </span>
@@ -47,4 +47,9 @@
  
 - # Besoin de la vue:(à barer SVP si ajouter)
   - Au niveu du MODELE:
-    - 
+    - getConfigCouleur(String cle), 
+    - setConfigCouleur(String cle, Color couleur), 
+    - getConfigIAReflexion(), 
+    - setConfigIAReflexion(int temps), 
+    - getNomJoueur(1)
+    - getListeSauvegardes()
