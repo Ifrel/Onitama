@@ -48,6 +48,10 @@ public class ConfigUI {
 
     public static final String INDICATION_SELECTION = "Sélectionner ici...";
     public static final String OPTION_IA_NON = "Non";
+    // exemples
+    public static final String[] OPTIONS_REPRENDRE = new String[]{INDICATION_SELECTION, "Partie 1", "Partie 2", "Partie 3"}; // <-- SUPPRIMER
+    public static final String[] OPTIONS_IA = new String[]{OPTION_IA_NON, "Facile", "Intermédiaire", "Difficile"}; // <-- SUPPRIMER
+
 
     // Polices (Fonts)
     public static final Font FONT_TITRE = new Font(POLICE_1, Font.BOLD, 40); // Taille ajustée

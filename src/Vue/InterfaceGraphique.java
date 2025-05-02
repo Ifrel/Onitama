@@ -7,7 +7,8 @@ import Vue.Adaptateurs.AdaptateurClavier;
 import javax.swing.*;
 import java.awt.*;
 
-import static Global.Config.WIDTH_MENU;
+import static Vue.ConfigUI.WIDTH_MENU;
+
 
 /**
  * Classe principale pour l'affichage graphique du jeu Onitama.
@@ -18,12 +19,15 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     private boolean maximized;
     private Jeu jeu;
 
-    // --- Utils Swing ---
+    // --- MethodsStaticsUtils Swing ---
     private JFrame frame;
     private JLayeredPane layeredPane;
     private JPanel backgroundBlur;
-    private Menu menuPanel;
-    private PlateauDeJeu plateau;
+
+    private EcranMenu ecranMenu;
+    private EcranPlateauDeJeu ecranPlateauDeJeu;
+    private EcranDeDemarrage ecranDeDemarrage;
+
 
     /**
      * Gestionaire de toutes les interfaces graphiques
@@ -34,16 +38,20 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         this.collecteurEvent = collecteurEvent;
         this.maximized = false;
 
-        initialiserFenetrePrincipale();
+        InitiliserLaScene();
         initialiserLayeredPane();
 
         // Observer pour mettre à jour l'affichage si nécessaire
-        jeu.ajouteObservateur(this);
+//        jeu.ajouteObservateur(this);
     }
+
+
+
+
 
     /**
      * Initialise la fenêtre principale (JFrame)*/
-    private void initialiserFenetrePrincipale() {
+    private void InitiliserLaScene() {
         frame = new JFrame("Onitama");
         frame.setLayout(new BorderLayout());
         frame.setPreferredSize(new Dimension(1200, 1000));
@@ -61,12 +69,13 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     // --- Lancement graphique ---
     @Override
     public void run() {
+        initialiserEcranDeDemarage();
         initialiserPlateau();
         initialiserBackgroundBlur();
-        initialiserMenuPanel();
+        initialiserMenu();
         ajouterComportementRedimensionnement();
 
-        frame.setContentPane(layeredPane);
+        frame.setContentPane(ecranDeDemarrage);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -80,12 +89,17 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     }
 
 
+    private void initialiserEcranDeDemarage(){
+        ecranDeDemarrage = new EcranDeDemarrage(jeu, collecteurEvent, this);
+        ecranDeDemarrage.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+    }
+
     /**
      * Initialise le plateau de jeu */
     private void initialiserPlateau() {
-        plateau = new PlateauDeJeu(jeu, collecteurEvent, this);
-        plateau.setBounds(0, 0, frame.getWidth(), frame.getHeight());
-        layeredPane.add(plateau, JLayeredPane.DEFAULT_LAYER);
+        ecranPlateauDeJeu = new EcranPlateauDeJeu(jeu, collecteurEvent, this);
+        ecranPlateauDeJeu.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+        layeredPane.add(ecranPlateauDeJeu, JLayeredPane.DEFAULT_LAYER);
     }
 
     /**
@@ -109,12 +123,12 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
 
     /**
      * Initialise le menu latéral (caché par défaut)*/
-    private void initialiserMenuPanel() {
-        menuPanel = new Menu(jeu, collecteurEvent, this);
-        menuPanel.setBounds(frame.getWidth(), 0, WIDTH_MENU, frame.getHeight());
-        menuPanel.setVisible(false);
+    private void initialiserMenu() {
+        ecranMenu = new EcranMenu(jeu, collecteurEvent, this);
+        ecranMenu.setBounds(frame.getWidth(), 0, WIDTH_MENU, frame.getHeight());
+        ecranMenu.setVisible(false);
 
-        layeredPane.add(menuPanel, JLayeredPane.MODAL_LAYER);
+        layeredPane.add(ecranMenu, JLayeredPane.MODAL_LAYER);
     }
 
     /**
@@ -122,13 +136,13 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     private void ajouterComportementRedimensionnement() {
         frame.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
-                plateau.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+                ecranPlateauDeJeu.setBounds(0, 0, frame.getWidth(), frame.getHeight());
                 backgroundBlur.setBounds(0, 0, frame.getWidth(), frame.getHeight());
 
-                if (menuPanel.isVisible()) {
-                    menuPanel.setBounds(frame.getWidth() - WIDTH_MENU, 0, WIDTH_MENU, frame.getHeight());
+                if (ecranMenu.isVisible()) {
+                    ecranMenu.setBounds(frame.getWidth() - WIDTH_MENU, 0, WIDTH_MENU, frame.getHeight());
                 } else {
-                    menuPanel.setBounds(frame.getWidth(), 0, WIDTH_MENU, frame.getHeight());
+                    ecranMenu.setBounds(frame.getWidth(), 0, WIDTH_MENU, frame.getHeight());
                 }
             }
         });
@@ -139,18 +153,18 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     /**
      * Ouvre le menu latéral avec animation*/
     public void ouvrirMenu() {
-        if (!menuPanel.isVisible()) {
+        if (!ecranMenu.isVisible()) {
             backgroundBlur.setVisible(true);
-            menuPanel.setVisible(true);
+            ecranMenu.setVisible(true);
 
             new Thread(() -> {
                 int x = frame.getWidth();
                 while (x > frame.getWidth() - WIDTH_MENU) {
                     x -= 10;
-                    menuPanel.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
-                    try { Thread.sleep(5); } catch (InterruptedException ignored) {}
+                    ecranMenu.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
+                    try { Thread.sleep(2); } catch (InterruptedException ignored) {}
                 }
-                menuPanel.setBounds(frame.getWidth() - WIDTH_MENU, 0, WIDTH_MENU, frame.getHeight());
+                ecranMenu.setBounds(frame.getWidth() - WIDTH_MENU, 0, WIDTH_MENU, frame.getHeight());
             }).start();
         }
     }
@@ -159,13 +173,13 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
      * Ferme le menu latéral avec animation*/
     public void fermerMenu() {
         new Thread(() -> {
-            int x = menuPanel.getX();
+            int x = ecranMenu.getX();
             while (x < frame.getWidth()) {
                 x += 10;
-                menuPanel.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
-                try { Thread.sleep(5); } catch (InterruptedException ignored) {}
+                ecranMenu.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
+                try { Thread.sleep(2); } catch (InterruptedException ignored) {}
             }
-            menuPanel.setVisible(false);
+            ecranMenu.setVisible(false);
             backgroundBlur.setVisible(false);
         }).start();
     }
@@ -196,4 +210,5 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     public void lancer() {
         SwingUtilities.invokeLater(new InterfaceGraphique(jeu, collecteurEvent));
     }
+    public void lancerPlatauDeJeu(){frame.setContentPane(layeredPane);}
 }

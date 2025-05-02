@@ -6,6 +6,7 @@ import Vue.Adaptateurs.AdaptateurAnnuler;
 import Vue.Adaptateurs.AdaptateurBoutonTerrain;
 import Vue.Adaptateurs.AdaptateurCarteUI;
 import Vue.Adaptateurs.AdaptateurRefaire;
+import Vue.Annimations.BruitGrisAvecPointsPanel;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -17,20 +18,20 @@ import java.time.Instant;
 import java.util.Objects;
 
 import static Global.Config.*;
-import static Vue.Utils.*;
+import static Vue.Utils.MethodsStaticsUtils.*;
 
 /**
  * Classe représentant l'interface graphique principale du plateau de jeu.
  * Elle observe le modèle (Jeu) et met à jour l'affichage en fonction des événements.
  */
-public class EcranPlateauDeJeu extends JPanel implements Observateur {
+public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Observateur {
 
     // ====== Attributs principaux ======
     private final Jeu jeu;
     private InterfaceGraphique interfaceGraphique;
     private final CollecteurEvenements collecteurEv;
 
-    // Utils de l'interface
+    // MethodsStaticsUtils de l'interface
     private JPanel terrain;
     private JPanel terrainCartesAnnulerRefaire;
     private JPanel annulerRefaire;
@@ -62,7 +63,7 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
 
         System.err.println("Interface Plateau de jeu lancée");
         setLayout(new BorderLayout());
-        setBackground(COULEUR_PLATEAU);
+        setBackground(COULEUR_PLATEAU_DE_JEU);
 
 //        jeu.ajouteObservateur(this);
         initialiserInterface();
@@ -113,6 +114,8 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         }
     }
 
+
+
     /** Crée les boutons représentant les cartes */
     private void creerButtonsCartes() {
         buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU];
@@ -123,6 +126,8 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
             buttonsCartes[i] = bouton;
         }
     }
+
+
 
     /** Crée les boutons "Annuler" et "Refaire" */
     private void creerButtonsAnnulerRefaire() {
@@ -139,6 +144,9 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         annulerRefaire.add(refaire);
     }
 
+
+
+
     /** Assemble le terrain, les cartes, et les boutons Annuler/Refaire */
     private void creerPlateauCartesAnnulerRefaire() {
         terrainCartesAnnulerRefaire = new JPanel(new BorderLayout(80, 40));
@@ -151,6 +159,9 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         terrainCartesAnnulerRefaire.add(terrain, BorderLayout.CENTER);
     }
 
+
+
+
     /** Crée la barre supérieure d'indications */
     private void creerBarreIndication() {
         barreIndication = new JPanel(new BorderLayout());
@@ -162,8 +173,9 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         barreIndication.add(creerBoutonMenu(this), BorderLayout.EAST);
     }
 
-    // === Sous-méthodes de création d'éléments ===
 
+
+    /** Sous-méthodes de création d'éléments */
     private JPanel creerCartesNord() {
         JPanel cartes = new JPanel(new GridLayout(1, 2, 40, 0));
         cartes.setBorder(BorderFactory.createEmptyBorder(50, 400, 0, 400));
@@ -173,6 +185,8 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         return cartes;
     }
 
+
+    /** Sous-méthodes de création d'éléments */
     private JPanel creerCartesSud() {
         JPanel cartes = new JPanel(new GridLayout(1, 2, 40, 0));
         cartes.setBorder(BorderFactory.createEmptyBorder(0, 400, 50, 400));
@@ -182,6 +196,8 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         return cartes;
     }
 
+
+    /** Sous-méthodes de création d'éléments */
     private JPanel creerCarteGauche() {
         JPanel carte = new JPanel(new GridLayout(3, 1, 40, 40));
         carte.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
@@ -192,6 +208,9 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         return carte;
     }
 
+
+
+    /** Sous-méthodes de création d'éléments */
     private JPanel creerBoutonsDroite() {
         JPanel droite = new JPanel(new GridLayout(3, 1, 40, 40));
         droite.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50));
@@ -202,6 +221,8 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         return droite;
     }
 
+
+    /** Sous-méthodes de création d'éléments */
     private JButton creerBoutonSon() {
         JButton boutonSon = new JButton("son");
         boutonSon.setForeground(Color.WHITE);
@@ -214,6 +235,9 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         return boutonSon;
     }
 
+
+
+    /** Sous-méthodes de création d'éléments */
     private JPanel creerContenuCentre() {
         JPanel textNom = new JPanel();
         textNom.setLayout(new BoxLayout(textNom, BoxLayout.Y_AXIS));
@@ -242,6 +266,8 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         return contenu;
     }
 
+
+    /** Sous-méthodes de création d'éléments */
     private JPanel creerPanelRoundTemps() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -267,6 +293,8 @@ public class EcranPlateauDeJeu extends JPanel implements Observateur {
         panel.add(temps);
         return panel;
     }
+
+
 
     private JPanel creerBoutonMenu(JPanel contentPane) {
         JButton menu = new JButton("≡");
