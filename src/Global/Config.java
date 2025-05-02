@@ -1,7 +1,6 @@
 package Global;
 
 import java.awt.*;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,15 +14,25 @@ public class Config {
     public final static int LIGNES = 5;
     public final static int COLONNES = 5;
 
-    // -- COULEURS
-    public final static Color COULEUR_PLATEAU = new Color(104, 104, 104);
-    public final static Color COULEUR_BOUTON_PLATEAU = new Color(255, 255, 255);
+    // -- COULEURS DE BASE
+    public static final Color COULEUR_PLATEAU_DE_JEU        = new Color(104, 104, 104);
+    public static final Color COULEUR_CASE_TERRAIN          = new Color(255, 255, 255);
+    public static final Color COULEUR_CASE_MAITRE_JOUEUR_1  = new Color(255, 255, 255);
+    public static final Color COULEUR_CASE_MAITRE_JOUEUR_2  = new Color(255, 255, 255);
+    public static final Color COULEUR_CASE_ELEVE_JOUEUR_1   = new Color(255, 255, 255);
+    public static final Color COULEUR_CASE_ELEVE_JOUEUR_2   = new Color(255, 255, 255);
+    public static final Color COULEUR_BLOC_MENU             = new Color(211, 142, 44);
+    // Enum pour identifier la cible de la couleur (simplifie le listener)
+    public enum CiblesDesCouleurs {
+        PLATEAU_DE_JEU,
+        CASE_TERRAIN,
+        CASE_MAITRE_JOUEUR_1,
+        CASE_MAITRE_JOUEUR_2,
+        CASE_ELEVE_JOUEUR_1,
+        CASE_ELEVE_JOUEUR_2,
+        BLOC_MENU
+    }
 
-    // --- INTERFACES
-    public final static int WIDTH_MENU = 500;
-
-    // --- PATHS
-    public final static String PATH_IMAGE_ARRIERE_PLAN_MENU = "res/vue/images/arrierePlans/menu.png";
 
     // -- CARTES --
     public final static int NOMBRES_CARTES = 16;
