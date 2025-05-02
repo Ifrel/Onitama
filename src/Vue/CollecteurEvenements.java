@@ -1,5 +1,7 @@
 package Vue;
 
+import Global.Config;
+
 import java.awt.*;
 
 public interface CollecteurEvenements {
@@ -25,8 +27,8 @@ public interface CollecteurEvenements {
     void configIAAlgorithme(String nomAlgorithme);
 
     // --- Couleur ---
-    // Utiliser l'enum CouleurCible défini dans EcranDeDemarrage
-//    void configCouleur(EcranDeDemarrage.CouleurCible cible, Color couleur);
+    // Utiliser l'enum CilblesDesCouleurs défini dans EcranDeDemarrage
+    void configCouleur(Config.CiblesDesCouleurs cible, Color couleur);
 
     // --- Animation ---
     void configAnimationVitesse(int vitesse); // Ou float, selon l'échelle
