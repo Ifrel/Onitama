@@ -43,7 +43,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private JButton[] buttonsCartes;
     private JButton annuler, refaire;
     private JButton boutonSon; // Ajouté pour pouvoir modifier son texte
-    private JButton boutonMenu; // Ajouté pour pouvoir y accéder si besoin
+    private JPanel boutonMenu; // Ajouté pour pouvoir y accéder si besoin
 
     private JLabel nomJoueurCourantLabel; // Renommé pour clarté
     private JLabel tempsLabel; // Renommé pour clarté
@@ -327,7 +327,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         // Utilisation de Box.createVerticalGlue() si le GridLayout se comporte comme attendu,
         // sinon un BoxLayout pourrait être plus approprié pour le Glue.
         carte.add(Box.createVerticalGlue());
-        cartes.add(buttonsCartes[4]); // Assurez-vous que l'index correspond à la carte correcte
+        carte.add(buttonsCartes[4]); // Assurez-vous que l'index correspond à la carte correcte
         carte.add(Box.createVerticalGlue());
         carte.setOpaque(false);
         return carte;
@@ -415,7 +415,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
 
-    private JButton creerBoutonMenu() {
+    private JPanel creerBoutonMenu() {
         JButton menu = new JButton("≡");
         menu.setOpaque(false);
         menu.setContentAreaFilled(false);
@@ -512,7 +512,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
                         // Afficher le pion sur le bouton. Ex: changer l'icône ou le texte.
                         // Cela dépend de la manière dont vous représentez les pions.
                         // Exemple simple avec texte :
-                        bouton.setText(pion.getType().charAt(0) + ""); // Afficher l'initiale du type de pion
+                        bouton.setText(pion.getType() + ""); // Afficher l'initiale du type de pion
                         bouton.setForeground(pion.getCouleur()); // Changer la couleur du texte selon le joueur
 
                         // Exemple avec icône (nécessite une méthode pour obtenir l'icône du pion)
@@ -566,8 +566,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     // Méthode utilitaire pour obtenir l'icône d'une carte (à implémenter)
     private ImageIcon getIconForCarte(Carte carte) {
         // Exemple : Charger une image basée sur le type ou le nom de la carte
-//        String cheminImage = "res/vue/images/cartes/" + carte.getNom() + ".png"; // Supposons que Carte a un getNom()
-         String cheminImage = "res/vue/images/cartes/COBRA.png"; // Supposons que Carte a un getNom()
+        String cheminImage = "res/vue/images/cartes/" + carte.getNom() + ".png"; // Supposons que Carte a un getNom()
         java.net.URL imgURL = getClass().getResource(cheminImage);
         if (imgURL != null) {
             return new ImageIcon(imgURL);
@@ -581,14 +580,13 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     // Met à jour l'affichage du joueur courant et du numéro de round
     private void updatePlayerAndRoundInfo() {
         if (jeu != null && nomJoueurCourantLabel != null && roundLabel != null) {
-            //TODO  Suppose que jeu.getJoueurCourant() retourne l'objet Joueur courant
+            // Suppose que jeu.getJoueurCourant() retourne l'objet Joueur courant
             // et que Joueur a une méthode getName()
-//            String nomJoueur = jeu.getJoueurCourant().getName(); // Méthodes à implémenter
-            String nomJoueur = "Kevin";
+            String nomJoueur = jeu.getJoueurCourant().getNom(); // Méthodes à implémenter
             nomJoueurCourantLabel.setText(nomJoueur);
 
-            // TODO Suppose que jeu.getRoundNumber() retourne le numéro du round
-//            numRound = jeu.getRoundNumber(); // Méthode à implémenter
+            // Suppose que jeu.getRoundNumber() retourne le numéro du round
+            numRound = jeu.getNumeroRound(); // Méthode à implémenter
             roundLabel.setText("Round: " + numRound);
 
             // Optionnel : Changer la couleur du texte du joueur courant pour qu'elle corresponde à sa couleur de pion
@@ -599,9 +597,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     // Met à jour l'état des boutons Annuler/Refaire
     private void updateUndoRedoButtons() {
         if (jeu != null && annuler != null && refaire != null) {
-            // TODO Suppose que jeu.peutAnnuler() et jeu.peutRfaire() existent et retournent boolean
-//            annuler.setEnabled(jeu.peutAnnuler()); // Méthode à implémenter
-//            refaire.setEnabled(jeu.peutRefaire()); // Méthode à implémenter
+            // Suppose que jeu.peutAnnuler() et jeu.peutRefaire() existent et retournent boolean
+            annuler.setEnabled(jeu.peutAnnuler()); // Méthode à implémenter
+            refaire.setEnabled(jeu.peutRefaire()); // Méthode à implémenter
         }
     }
 

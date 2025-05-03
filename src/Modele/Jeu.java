@@ -5,8 +5,6 @@ import static Global.Config.*;
 import Patterns.Observable;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.*;
 import java.util.List;
 
@@ -28,8 +26,8 @@ public class Jeu extends Observable {
     }
 
     // -- JOUEURS -- //
-    private Boolean joueurCourant;
-    private HashMap<Boolean, Joueur> joueursEnPartie;
+    private int joueurCourant;
+    private HashMap<Integer, Joueur> joueursEnPartie;
 
     // -- GRILLE -- //
     private Pion [][] grille;
@@ -43,6 +41,11 @@ public class Jeu extends Observable {
         _Jeu(LIGNES, COLONNES);
     }
 
+    int round;
+    boolean peutRefaire, peutAnnuler;
+
+
+
     /**
      * Crée l'instance de jeu
      *
@@ -52,6 +55,8 @@ public class Jeu extends Observable {
         lignes = l;
         colonnes = c;
         casesTotales = l*c;
+        round = 1;
+        peutRefaire = peutAnnuler = false;
 
         // -- Coups et actions
         etatCoupEnCours = etatCoup.aucun;
@@ -85,14 +90,18 @@ public class Jeu extends Observable {
         toutesLesCartes = initCartes();
 
         // -- Joueurs
-        joueurCourant = false;
-        joueursEnPartie = new HashMap<Boolean, Joueur>() {{
-            put(false, new Joueur("Joueur 1", tirerCartesAuHasard(NOMBRE_CARTES_MAIN)));
-            put(true, new Joueur("Joueur 2", tirerCartesAuHasard(NOMBRE_CARTES_MAIN)));
+        joueurCourant = 2;
+        Joueur joueur1 = new Joueur(1,"Joueur 1");
+        Joueur joueur2 = new Joueur(2,"Joueur 2");
+        joueur1.addCard(tirerCartesAuHasard(NOMBRE_CARTES_MAIN));
+        joueur2.addCard(tirerCartesAuHasard(NOMBRE_CARTES_MAIN));
+        joueursEnPartie = new HashMap<Integer, Joueur>() {{
+            put(0, joueur1);
+            put(2, joueur2);
         }};
         //- Donne une référence du jeu à chaque joueur
-        joueursEnPartie.get(joueurCourant).setJeu(this);
-        joueursEnPartie.get(!joueurCourant).setJeu(this);
+        //joueursEnPartie.get(joueurCourant).setJeu(this);
+        //joueursEnPartie.get(!joueurCourant).setJeu(this);
 
         // -- Récupère toutes les cartes
         toutesLesCartes = initCartes();
@@ -102,7 +111,7 @@ public class Jeu extends Observable {
             afficherGrille();
             afficherNomJoueur(true);
             afficherMainJoueur(joueursEnPartie.get(joueurCourant));
-            afficherMainJoueur(joueursEnPartie.get(!joueurCourant));
+            afficherMainJoueur(joueursEnPartie.get(joueurCourant));
         }
     }
 
@@ -177,7 +186,7 @@ public class Jeu extends Observable {
         }
         else
         {
-            for (boolean cle : joueursEnPartie.keySet()) System.err.println("Nom joueur : " + joueursEnPartie.get(cle).getNom());
+            for (int cle : joueursEnPartie.keySet()) System.err.println("Nom joueur : " + joueursEnPartie.get(cle).getNom());
         }
     }
 
@@ -189,7 +198,7 @@ public class Jeu extends Observable {
     {
         for (Carte c: toutesLesCartes)
         {
-            System.err.println(c.getName());
+            System.err.println(c.getNom());
             c.getMoves(new Point(2, 2));
         }
     }
@@ -201,8 +210,8 @@ public class Jeu extends Observable {
     private void afficherMainJoueur(Joueur joueur)
     {
         System.err.println("Cartes en main pour le joueur : " + joueur.getNom());
-        ArrayList<Carte> mainJoueur = joueur.getMain();
-        for (Carte c: mainJoueur) System.err.println(c.getName() + " ");
+        List<Carte> mainJoueur = joueur.getCartesEnMain();
+        for (Carte c: mainJoueur) System.err.println(c.getNom() + " ");
     }
 
     /**
@@ -217,6 +226,35 @@ public class Jeu extends Observable {
             System.out.println();
         }
     }
+
+
+
+    public Pion getPionAt(int row, int col){
+        return grille[row][col];
+    }
+
+
+    public  Joueur getJoueurCourant(){
+        return joueursEnPartie.get(joueurCourant);
+    }
+
+
+    public int getNumeroRound(){
+        return round;
+    }
+
+    public void setNumeroRound(int round){
+        this.round = round;
+    }
+
+    public boolean peutAnnuler(){
+        return peutAnnuler;
+    }
+
+    public boolean peutRefaire(){
+        return peutRefaire;
+    }
+
 
 
     /**
@@ -282,7 +320,7 @@ public class Jeu extends Observable {
     {
         Pion pionClique = grille[coordonnees.x][coordonnees.y];
         if (pionClique==null) return false;
-        if (pionClique.get_proprietaire() != joueurCourant)
+        if (pionClique.getProprietaire() != joueurCourant)
             return false;
         pionSelectionne = pionClique;
         return true;

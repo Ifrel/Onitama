@@ -1,36 +1,144 @@
 package Modele;
 
-import Global.Config;
 import Global.Config.TYPECARTE;
 import static Global.Config.MOUVEMENTCARTE;
-import javax.swing.event.CaretEvent;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
+/**
+ * Représente une carte dans le jeu.
+ * Une carte possède un nom, un type, une description de son effet, et potentiellement un chemin vers son image.
+ * Cette classe est axée sur les propriétés de la carte; la logique d'application de l'effet
+ * sera généralement gérée ailleurs (par exemple, dans la classe Jeu ou un gestionnaire d'effets).
+ */
 public class Carte {
-    private String _name;
-    private TYPECARTE _type;
-    private boolean _proprietaire;
+    private String nom;                 // Nom unique ou identifiant de la carte
+    private TYPECARTE type;             // Type de la carte
+    private String description;         // Description textuelle de l'effet de la carte
+    private String cheminImage;         // Chemin relatif ou nom de fichier de l'image de la carte
+    // Ajout d'autres attributs si nécessaire (par ex. force, coût, etc.)
 
-    public Carte(TYPECARTE type)
-    {
-        _type = type;
-        _name = type.name();
+    public Carte(TYPECARTE type){
+        this.type = type;
+        nom = type.name();
+        description = "";
+        cheminImage = "";
     }
 
-    public String getName() { return _name; }
-    public TYPECARTE getType() { return _type; }
+    /**
+     * Retourne le nom de la carte.
+     * @return Le nom de la carte.
+     */
+    public String getNom() { return nom; }
+
+
+    /**
+     * Retourne le type de la carte.
+     * @return Le type de la carte.
+     */
+    public TYPECARTE getType() { return type; }
+
+
+    /**
+     * Retourne la description de l'effet de la carte.
+     * @return La description de l'effet.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+
+    /**
+     * Retourne le chemin de l'image de la carte.
+     * Peut être null si la carte n'a pas d'image associée.
+     * @return Le chemin de l'image, ou null.
+     */
+    public String getCheminImage() {
+        return cheminImage;
+    }
+
+
+    /**
+     * Assigne la description de l'effet de la carte.
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    /**
+     * Assigne le chemin de l'image de la carte.
+     * Peut être null si la carte n'a pas d'image associée.
+     */
+    public void setCheminImage(String cheminImage) {
+        this.cheminImage = cheminImage;
+    }
+
+
     public List<Coup> getMoves(Point origin)
     {
         List<Coup> allMoves = new ArrayList<Coup>();
-        for (Point p : MOUVEMENTCARTE.get(_type)) {
+        for (Point p : MOUVEMENTCARTE.get(type)) {
             Point nouveauPoint = new Point(origin.x + p.x, origin.y + p.y);
             Coup nouveauCoup = new Coup(origin, nouveauPoint);
             allMoves.add(nouveauCoup);
         }
         return allMoves;
     }
-    public void DefinirProprietaire(boolean proprietaire){ _proprietaire = proprietaire; }
+
+
+
+    // =========================================
+    // ===== Méthodes Utilitaires Standard =====
+    // =========================================
+
+    /**
+     * Compare cette carte à un autre objet pour vérifier l'égalité.
+     * Deux cartes sont considérées égales si elles ont le même nom et le même type.
+     *
+     * @param o L'objet à comparer.
+     * @return true si les objets sont égaux, false sinon.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Carte carte = (Carte) o;
+        // Comparer les attributs qui définissent l'identité unique d'une carte.
+        // Ici, on utilise le nom et le type comme identifiants.
+        return Objects.equals(nom, carte.nom) && type == carte.type;
+    }
+
+
+    /**
+     * Retourne le code de hachage pour cette carte.
+     * Compatible avec la méthode equals().
+     *
+     * @return Le code de hachage.
+     */
+    @Override
+    public int hashCode() {
+        // Utiliser les mêmes attributs que dans equals() pour calculer le hashCode
+        return Objects.hash(nom, type);
+    }
+
+
+
+    /**
+     * Retourne une représentation textuelle de la carte.
+     * Utile pour le débogage.
+     *
+     * @return Une chaîne de caractères représentant la carte.
+     */
+    @Override
+    public String toString() {
+        return "Carte{" +
+                "nom='" + nom + '\'' +
+                ", type=" + type +
+                '}'; // Omet la description et l'image pour une chaîne courte
+    }
 }

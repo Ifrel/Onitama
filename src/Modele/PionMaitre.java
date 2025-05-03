@@ -5,12 +5,12 @@ import Global.Config.ROLEPION;
 
 
 public class PionMaitre extends Pion {
+    boolean proprietaire;
 
     public PionMaitre(boolean proprietaire) {
-        super(proprietaire);
+        this.proprietaire = proprietaire;
     }
 
-    @Override
     public Config.ROLEPION get_role() {
         return Config.ROLEPION.Maitre; // or some custom logic
     }
