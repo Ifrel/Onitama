@@ -598,8 +598,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private void updateUndoRedoButtons() {
         if (jeu != null && annuler != null && refaire != null) {
             // Suppose que jeu.peutAnnuler() et jeu.peutRefaire() existent et retournent boolean
-            annuler.setEnabled(jeu.peutAnnuler()); // Méthode à implémenter
-            refaire.setEnabled(jeu.peutRefaire()); // Méthode à implémenter
+            annuler.setEnabled(jeu.peutAnnulerCoup());
+            refaire.setEnabled(jeu.peutRefaireCoup());
         }
     }
 

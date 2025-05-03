@@ -42,7 +42,6 @@ public class Jeu extends Observable {
     }
 
     int round;
-    boolean peutRefaire, peutAnnuler;
 
 
 
@@ -56,7 +55,6 @@ public class Jeu extends Observable {
         colonnes = c;
         casesTotales = l*c;
         round = 1;
-        peutRefaire = peutAnnuler = false;
 
         // -- Coups et actions
         etatCoupEnCours = etatCoup.aucun;
@@ -64,6 +62,9 @@ public class Jeu extends Observable {
         // -- Créer notre grille de jeu
         grille = new Pion[lignes][colonnes];
         initGrille();
+
+
+        historique = new Historique<>();
         /*
         lignes = l;
         colonnes = c;
@@ -247,12 +248,20 @@ public class Jeu extends Observable {
         this.round = round;
     }
 
-    public boolean peutAnnuler(){
-        return peutAnnuler;
+    /**
+     *
+     * @return vrai si on peut annuler un coup, faux sinon
+     */
+    public boolean peutAnnulerCoup(){
+        return historique.peutAnnuler();
     }
 
-    public boolean peutRefaire(){
-        return peutRefaire;
+    /**
+     *
+     * @return vrai si on peut refaire un coup, faux sinon
+     */
+    public boolean peutRefaireCoup(){
+        return historique.peutRefaire();
     }
 
 
@@ -429,17 +438,6 @@ public class Jeu extends Observable {
      */
     void refaireCoup(){}
 
-    /**
-     * Détermine si un coup peut être annulé.
-     * @return Un boolean
-     */
-    boolean peutAnnulerCoup(){ return false; }
-
-    /**
-     * Détermine si un coup peut être refait.
-     * @return Un boolean
-     */
-    boolean peutRefaireCoup(){ return false; }
 
 /*
     /// jouer un coup IA
