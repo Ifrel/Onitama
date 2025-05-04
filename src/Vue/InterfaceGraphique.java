@@ -42,7 +42,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         initialiserLayeredPane();
 
         // Observer pour mettre à jour l'affichage si nécessaire
-//        jeu.ajouteObservateur(this);
+        jeu.ajouteObservateur(this);
     }
 
 
@@ -86,6 +86,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     @Override
     public void miseAJour() {
         // (Réagir aux changements du modèle ici si nécessaire)
+        System.err.println("Mise à jour \"InterfaceGraphique\"");
     }
 
 

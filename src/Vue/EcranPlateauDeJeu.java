@@ -7,8 +7,8 @@ import Vue.Adaptateurs.AdaptateurBoutonTerrain;
 import Vue.Adaptateurs.AdaptateurCarteUI;
 import Vue.Adaptateurs.AdaptateurRefaire;
 import Vue.Annimations.BruitGrisAvecPointsPanel;
-import Modele.Carte; // Assurez-vous d'importer votre classe Carte si elle existe
-import Modele.Pion; // Assurez-vous d'importer votre classe Pion si elle existe
+import Modele.Carte;
+import Modele.Pion;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -17,11 +17,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List; // Pour les listes de cartes/pions
+import java.util.List;
 import java.util.Objects;
 
 import static Global.Config.*;
-import static Vue.Utils.MethodsStaticsUtils.*; // Assurez-vous que ces méthodes existent et sont accessibles
+import static Global.Paths.PATH_SON_1;
+import static Vue.Utils.MethodsStaticsUtils.*;
+
 
 /**
  * Classe représentant l'interface graphique principale du plateau de jeu.
@@ -53,12 +55,13 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     // Gestion du son
     private Clip clip;
     private boolean musiqueActive = false; // État du son
-    private final String cheminMusique = "/vue/musique/son_1.wav"; // Chemin de la musique
+    private final String cheminMusique = PATH_SON_1.toString(); // Chemin de la musique
 
 
     // Gestion du temps
     private Instant debutTempsPartie;
     private Timer timerPartie; // Référence au timer
+
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -71,7 +74,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
 
-        // === CORRECTION CRITIQUE 1 : Enregistrer l'observateur ===
         jeu.ajouteObservateur(this);
 
         // Pour le debug, utiliser un logger si possible, sinon commenter pour la production
