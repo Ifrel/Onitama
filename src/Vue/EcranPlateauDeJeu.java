@@ -6,10 +6,9 @@ import Vue.Adaptateurs.AdaptateurAnnuler;
 import Vue.Adaptateurs.AdaptateurBoutonTerrain;
 import Vue.Adaptateurs.AdaptateurCarteUI;
 import Vue.Adaptateurs.AdaptateurRefaire;
-import Vue.Annimations.BruitGrisAvecPointsPanel;
+import Vue.Animations.BruitGrisAvecPointsPanel;
 import Modele.Carte;
 import Modele.Pion;
-import Vue.Utils.PanelAvecImage;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;

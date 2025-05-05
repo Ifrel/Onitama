@@ -3,7 +3,7 @@ package Vue;
 import Global.Config;
 import Modele.Jeu;
 import Vue.Adaptateurs.AdaptateurBoutonEntrer;
-import Vue.Annimations.BruitGrisAvecPointsPanel;
+import Vue.Animations.BruitGrisAvecPointsPanel;
 import Vue.Utils.JPanelAvecCouleurDebraille;
 import Vue.Utils.PanelAvecImage;
 

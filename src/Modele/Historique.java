@@ -4,96 +4,144 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Gère la possibilité d'annuler et de refaire une série d'actions
+ * @param <T> Action à stocker dans l'historique
+ */
 public class Historique<T> {
 
     private Stack<T> passe;
     private Stack<T> futur;
 
+    /**
+     * Initialise un historique vide
+     */
     public Historique() {
         passe = new Stack<T>();
         futur = new Stack<T>();
     }
 
-    ///  vide l'historique
+    /**
+     * Vide l'historique (le remet à zéro)
+     */
     public void reset() {
         passe = new Stack<T>();
         futur = new Stack<T>();
     }
 
-    ///  vérifie si on peut annuler la dernière action
+    /**
+     * Indique si on peut annuler la dernière action effectuée
+     * @return vrai si on peut annuler la dernière action, faux sinon
+     */
     public boolean peutAnnuler() {
         return ! passe.isEmpty();
     }
 
-    ///  vérifie si on peut refaire la dernière action après l'avoir annulée
+    /**
+     * Indique si on peut refaire la dernière action annulée
+     * @return vrai si on peut refaire la dernière action après l'avoir annulée, faux sinon
+     */
     public boolean peutRefaire() {
         return ! futur.isEmpty();
     }
 
-    ///  annule la dernière action
+    /**
+     * Annule la dernière action effectuée et la renvoie
+     * @return la dernière action effectuée, considérée comme annulée
+     */
     public T annuler() {
         if (! peutAnnuler()) {
             return null;
         }
-        T e = passe.pop();
-        futur.push(e);
-        return e;
+        T action = passe.pop();
+        futur.push(action);
+        return action;
 
     }
 
-    /// refais la dernière action annulée
+    /**
+     * Refait la dernière action et la renvoie
+     * @return la dernière action annulée, considérée comme refaite
+     */
     public T refaire() {
         if (! peutRefaire()) {
             return null;
         }
-        T e = futur.pop();
-        passe.push(e);
-        return e;
+        T action = futur.pop();
+        passe.push(action);
+        return action;
     }
 
-    ///  ajoute à l'historique l'élément 'e'
-    public void add(T e) {
-        passe.push(e);
+    /**
+     * Déroulement normal d'une suite d'action, ajoute une action sans annuler ni refaire
+     * @param action l'action à ajouter à l'historique
+     */
+    public void add(T action) {
+        passe.push(action);
         futur.clear();
     }
 
-    ///  fixe valeur de l'historique
-    public void setHistorique(Stack<T> passe, Stack <T> futur) {
-        this.passe = passe;
-        this.futur = futur;
+    /**
+     * Fixe la valeur de l'historique
+     * @param passe Référence vers une liste contenant une liste d'actions passées
+     * @param futur Référence vers une liste contenant une liste d'actions annulées pretes à etre refaites
+     */
+    public void setHistorique(List<T> passe, List <T> futur) {
+        reset();
+        for (T action : passe) {
+            this.passe.push(action);
+        }
+        for (T action : futur) {
+            this.futur.push(action);
+        }
     }
 
-    /// renvoie la taille de la partie "passé" de l'historique
+    /**
+     * Renvoie la taille de la partie "passé" de l'historique
+     * @return la taille de la partie "passé" de l'historique
+     */
     public int passeSize() {
         return passe.size();
     }
 
-    /// renvoie la taille de la partie "passé" de l'historique
+    /**
+     * Renvoie la taille de la partie "futur" de l'historique
+     * @return la taille de la partie "futur" de l'historique
+     */
     public int futurSize() {
         return futur.size();
     }
 
-    /// renvoie le contenu du "passé"
+    /**
+     * Fourni une liste des actions effectuées
+     * @return le contenu du "passé"
+     */
     public List<T> dumpPasse() {
         ArrayList<T> liste = new ArrayList<>();
-        for (int i =0; i < passeSize(); i++) {
+        for (int i = 0; i < passeSize(); i++) {
             liste.add(passe.get(i));
         }
         return liste;
     }
 
-    /// renvoie le contenu du "passé"
+    /**
+     * Fourni une liste des actions annulées pretes à etre refaites
+     * @return le contenu du "futur"
+     */
     public List<T> dumpFutur() {
         ArrayList<T> liste = new ArrayList<>();
-        for (int i =0; i < futurSize(); i++) {
+        for (int i = 0; i < futurSize(); i++) {
             liste.add(futur.get(i));
         }
         return liste;
     }
 
 
+    /**
+     * Génère et renvoie une chaine de caractère qui représente l'état de l'historique
+     * @return la réprésentation textuelle de l'historique
+     */
     @Override
-    ///  renvoie la représentation textuelle de l'historique
     public String toString() {
         StringBuilder S = new StringBuilder();
         S.append("Passe:{");
