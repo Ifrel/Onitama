@@ -6,6 +6,7 @@ import Vue.Adaptateurs.AdaptateurClavier;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.logging.Logger;
 
 import static Global.Config.DIM_SCENE;
 import static Vue.ConfigUI.WIDTH_MENU;
@@ -28,6 +29,8 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     private EcranMenu ecranMenu;
     private EcranPlateauDeJeu ecranPlateauDeJeu;
     private EcranDeDemarrage ecranDeDemarrage;
+
+    private static final Logger logger = Logger.getLogger(InterfaceGraphique.class.getName());
 
 
     /**
@@ -87,7 +90,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     @Override
     public void miseAJour() {
         // (Réagir aux changements du modèle ici si nécessaire)
-        System.err.println("Mise à jour \"InterfaceGraphique\"");
+        logger.info("Mise à jour \"InterfaceGraphique\"");
     }
 
 
@@ -155,6 +158,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     /**
      * Ouvre le menu latéral avec animation*/
     public void ouvrirMenu() {
+        logger.info("Ouverture menu");
         if (!ecranMenu.isVisible()) {
             backgroundBlur.setVisible(true);
             ecranMenu.setVisible(true);
@@ -174,6 +178,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     /**
      * Ferme le menu latéral avec animation*/
     public void fermerMenu() {
+        logger.info("Fermeture menu");
         new Thread(() -> {
             int x = ecranMenu.getX();
             while (x < frame.getWidth()) {
@@ -200,8 +205,10 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
 
         if (maximized) {
             device.setFullScreenWindow(null);
+            logger.info("Mode plein écran désactivé");
         } else {
             device.setFullScreenWindow(frame);
+            logger.info("Mode plein écran désactivé");
         }
         maximized = !maximized;
     }
@@ -210,7 +217,15 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     /**
      * Lance l'interface graphique (à utiliser depuis le collecteur)     */
     public static  void lancerInterfaceGraphique(Jeu jeu, CollecteurEvenements collecteurEvenements) {
-        SwingUtilities.invokeLater(new InterfaceGraphique(jeu, collecteurEvenements));
+        try {
+            logger.info("Lancement interface graphique");
+            SwingUtilities.invokeLater(new InterfaceGraphique(jeu, collecteurEvenements));
+            logger.info("Interface graphique lancée");
+        } catch (Exception e) {
+            logger.severe(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+
     }
 
 
