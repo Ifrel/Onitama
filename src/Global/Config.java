@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Config {
+    // -- DIMENSION
+    public static Dimension DIM_SCENE = new Dimension(900, 700);
 
     // --- DEBUG --
     public final static boolean MODEDEBUG = true;

@@ -7,11 +7,12 @@ import Vue.Adaptateurs.AdaptateurClavier;
 import javax.swing.*;
 import java.awt.*;
 
+import static Global.Config.DIM_SCENE;
 import static Vue.ConfigUI.WIDTH_MENU;
 
 
 /**
- * Classe principale pour l'affichage graphique du jeu Onitama.
+ * Classe principale pour l'affichage graphique du jeu Onitama......
  * Gère la fenêtre, le plateau, les couches superposées, et les interactions comme le menu latéral.*/
 public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur {
     // --- Attributs principaux ---
@@ -54,7 +55,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     private void InitiliserLaScene() {
         frame = new JFrame("Onitama");
         frame.setLayout(new BorderLayout());
-        frame.setPreferredSize(new Dimension(1200, 1000));
+        frame.setPreferredSize(DIM_SCENE);
         frame.setMinimumSize(new Dimension(900, 700));
         frame.addKeyListener(new AdaptateurClavier(collecteurEvent));
     }
@@ -75,7 +76,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         initialiserMenu();
         ajouterComportementRedimensionnement();
 
-        frame.setContentPane(layeredPane);
+        frame.setContentPane(ecranDeDemarrage);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
