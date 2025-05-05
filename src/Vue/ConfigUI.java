@@ -3,6 +3,7 @@ package Vue;
 import Modele.Jeu;
 
 import java.awt.*;
+import java.nio.file.Path;
 
 
 public class ConfigUI {
@@ -16,7 +17,7 @@ public class ConfigUI {
     public static final String PATH_BTN_MODE_AUTO_ON        = "res/vue/images/buttons/button_on.png";
     public static final String PATH_BTN_ENTRER              = "res/vue/images/buttons/button_entrer.png";
     public static final String PATH_ARRIERE_PLAN_ED_O1      = "res/vue/images/arrierePlans/ecran_de_demarrage.png";
-    public static final String PATH_ARRIERE_PLAN_ED_O2      = "res/vue/images/arrierePlans/ecran_de_demarrage2.png";
+    public static final Path PATH_ARRIERE_PLAN_ED_O2        = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage2.png");
 
 
     // --- POLICES

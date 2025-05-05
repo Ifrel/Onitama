@@ -75,7 +75,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         initialiserMenu();
         ajouterComportementRedimensionnement();
 
-        frame.setContentPane(ecranDeDemarrage);
+        frame.setContentPane(layeredPane);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -212,4 +212,20 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         SwingUtilities.invokeLater(new InterfaceGraphique(jeu, collecteurEvent));
     }
     public void lancerPlatauDeJeu(){frame.setContentPane(layeredPane);}
+
+    /*
+         frame.addWindowListener(new java.awt.event.WindowAdapter() {
+             @Override
+             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                 if (ecranPlateauDeJeu.timerPartie != null && ecranPlateauDeJeu.timerPartie.isRunning()) {
+                     ecranPlateauDeJeu.timerPartie.stop();
+                 }
+                 if (ecranPlateauDeJeu.clip != null && ecranPlateauDeJeu.clip.isRunning()) {
+                     ecranPlateauDeJeu.clip.stop();
+                 }
+                 // Autres nettoyages...
+                 System.exit(0); // ou dispose();
+             }
+         });
+         */
 }

@@ -9,6 +9,7 @@ import Vue.Adaptateurs.AdaptateurRefaire;
 import Vue.Annimations.BruitGrisAvecPointsPanel;
 import Modele.Carte;
 import Modele.Pion;
+import Vue.Utils.PanelAvecImage;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -22,6 +23,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
+import static Global.Paths.PATH_CARTE_DRAGON;
 import static Global.Paths.PATH_SON_1;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
@@ -48,7 +50,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private JButton[] buttonsCartes;
     private JButton annuler, refaire;
     private JButton boutonSon; // Ajouté pour pouvoir modifier son texte
-    private JPanel boutonMenu; // Ajouté pour pouvoir y accéder si besoin
+    private JButton boutonMenu; // Ajouté pour pouvoir y accéder si besoin
 
     private JLabel nomJoueurCourantLabel; // Renommé pour clarté
     private JLabel tempsLabel; // Renommé pour clarté
@@ -94,6 +96,123 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         miseAJour(); // Appeler miseAJour() après l'initialisation pour afficher l'état initial
     }
 
+    
+/*
+    private void initialiserInterface() {
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(50, 50, 50, 50);
+
+        // 1. Création des composants
+        creerTerrain();
+        creerButtonsCartes();
+        creerButtonsAnnulerRefaire();
+        boutonSon = creerBoutonSon();
+        boutonMenu = creerBoutonMenu();
+        JPanel roundTempsPanel = creerPanelRoundTemps();
+        JPanel contenuCentrePanel = creerContenuCentre();
+        JPanel cartesNordPanel = creerCartesNord();
+        JPanel carteGauchePanel = creerCarteGauche();
+        JPanel cartesSudPanel = creerCartesSud();
+
+
+        // 2. Placement des composants via GridBagLayout
+
+//        // Bouton Son
+//        gbc.gridx = 0;
+//        gbc.gridy = 0;
+//        gbc.gridwidth = 2;
+//        gbc.gridheight = 2;
+////        gbc.anchor = GridBagConstraints.NORTHWEST;
+//        gbc.fill = GridBagConstraints.NONE;
+//        add(boutonSon, gbc);
+//
+//        // Contenu centre
+//        gbc.gridx = 2;
+//        gbc.gridwidth = 2;
+//        gbc.gridheight = 1;
+//        gbc.weightx = 0;
+////        gbc.anchor = GridBagConstraints.NORTH;
+//        gbc.fill = GridBagConstraints.NONE;
+//        add(contenuCentrePanel, gbc);
+//
+//        // Panel Round/Temps
+//        gbc.gridx = 6;
+//        gbc.gridwidth = 2;
+////        gbc.anchor = GridBagConstraints.NORTHEAST;
+//        gbc.fill = GridBagConstraints.NONE;
+//        gbc.weightx = 0;
+//        add(roundTempsPanel, gbc);
+//
+//        // Bouton Menu
+//        gbc.gridx = 8;
+//        gbc.gridwidth = 2;
+//        add(boutonMenu, gbc);
+
+        // Cartes Nord
+        gbc.gridx = 2;
+        gbc.gridy = 4;
+        gbc.gridwidth = 6;
+        gbc.gridheight = 2;
+        gbc.weightx = 0.2;
+        gbc.weighty = 0.2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.BOTH;
+        add(cartesNordPanel, gbc);
+
+        // Carte Gauche
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 6;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0.2;
+        gbc.anchor = GridBagConstraints.EAST;
+//        gbc.fill = GridBagConstraints.NONE;
+        add(carteGauchePanel, gbc);
+
+        // Terrain
+        gbc.gridx = 2;
+        gbc.gridy = 8;
+        gbc.gridwidth = 6;
+        gbc.gridheight = 6;
+        gbc.weightx = 0.2;
+        gbc.weighty = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+//        gbc.fill = GridBagConstraints.NONE;
+        add(terrain, gbc);
+
+        // Panel Annuler/Refaire
+        gbc.gridx = 8;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 6;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0.2;
+        gbc.anchor = GridBagConstraints.WEST;
+//        gbc.fill = GridBagConstraints.NONE;
+        add(annulerRefairePanel, gbc);
+
+        // Cartes Sud
+        gbc.gridx = 2;
+        gbc.gridy = 15;
+        gbc.gridwidth = 6;
+        gbc.gridheight = 5;
+        gbc.weightx = 0.2;
+        gbc.weighty = 0.2;
+        gbc.anchor = GridBagConstraints.NORTH;
+//        gbc.fill = GridBagConstraints.NONE;
+        add(cartesSudPanel, gbc);
+
+        // 3. Démarrage du timer
+        debutTempsPartie = Instant.now();
+        timerPartie = new Timer(1000, e -> miseAjourTemps());
+        timerPartie.start();
+    }
+*/
+
+
+
     /**
      * Initialise l'ensemble de l'interface utilisateur avec GridBagLayout.
      */
@@ -102,113 +221,131 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Configuration des contraintes par défaut pour tous les composants
-        gbc.fill = GridBagConstraints.NONE; // Les composants ne s'étirent pas par défaut
-        gbc.insets = new Insets(10, 10, 10, 10); // Marge entre les composants
 
         // 1. Création des composants
         creerTerrain();
         creerButtonsCartes();
         creerButtonsAnnulerRefaire();
-        boutonSon = creerBoutonSon(); // Stocke la référence du bouton son
-        boutonMenu = creerBoutonMenu(); // Stocke la référence du bouton menu
-        JPanel roundTempsPanel = creerPanelRoundTemps(); // Crée le panel round/temps
-        JPanel contenuCentrePanel = creerContenuCentre(); // Crée le contenu central
-        JPanel cartesNordPanel = creerCartesNord(); // Crée le panel des cartes Nord
-        JPanel carteGauchePanel = creerCarteGauche(); // Crée le panel de la carte Gauche
-        JPanel cartesSudPanel = creerCartesSud(); // Crée le panel des cartes Sud
+        boutonSon = creerBoutonSon();                       // Stocke la référence du bouton son
+        boutonMenu = creerBoutonMenu();                     // Stocke la référence du bouton menu
+        JPanel roundTempsPanel = creerPanelRoundTemps();    // Crée le panel round/temps
+        JPanel contenuCentrePanel = creerContenuCentre();   // Crée le contenu central
+        JPanel cartesNordPanel = creerCartesNord();         // Crée le panel des cartes Nord
+        JPanel carteGauchePanel = creerCarteGauche();       // Crée le panel de la carte Gauche
+        JPanel cartesSudPanel = creerCartesSud();           // Crée le panel des cartes Sud
+
 
         // 2. Placement des composants via GridBagLayout
+        // --- Ligne du haut (Son, Infos Centre, Round/Temps, Menu) - Sans espace vide ---
+        // Configuration des contraintes par défaut pour tous les composants
+        gbc.insets = new Insets(50, 50, 50, 50); // Marge entre les composant
+        gbc.gridy = 0; // Positionnement sur la première ligne (index 0)
+        gbc.fill = GridBagConstraints.VERTICAL; // Les composants ne s'étirent pas par défaut
 
-        // --- Ligne du haut (Son, Infos Centre, Round/Temps, Menu) ---
-        gbc.gridy = 0; // Première ligne
 
-        // Bouton Son (occupe 2 colonnes et 2 lignes pour une taille potentielle)
-        gbc.gridx = 0; // Colonne 0
-        gbc.gridwidth = 2;
-        gbc.gridheight = 2;
-         gbc.fill = GridBagConstraints.BOTH; // Potentiellement pour un bouton plus grand? Ajuster au besoin.
+        // Bouton Son : Ancré à gauche
+        gbc.gridx = 0;      // Commence à la colonne 0
+        gbc.gridwidth = 2;  // Occupe 2 colonnes
+        gbc.gridheight = 2; // Peut occuper 2 lignes (si le bouton est plus grand)
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         add(boutonSon, gbc);
-
-        // Rétablir les valeurs par défaut pour les prochains composants
+        // réinitialisation
         gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.NONE; // Rétablir le fill si modifié
+//        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
 
-        // Contenu Centre (Infos)
-        gbc.gridx = 2; // Colonne 2
-        gbc.gridwidth = 4; // Peut occuper plus de place
+
+        // Contenu Centre (Infos) : Positionné dans l'espace restant, prend l'espace principal, décalé par son point de départ.
+        gbc.gridx = 2;
+        gbc.gridwidth = 4;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.NORTH;
         add(contenuCentrePanel, gbc);
+        // réinitialisation
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+//        gbc.fill = GridBagConstraints.NONE;
 
-        // Panel Round/Temps
-        gbc.gridx = 6; // Colonne 6
-        gbc.gridwidth = 2;
+
+        // Panel Round/Temps : Ancré à droite, partie gauche du groupe de droite.
+        gbc.gridx = 6; // Commence à la colonne 6. Ajustez ce nombre si nécessaire pour positionner le groupe de droite.
+        gbc.gridwidth = 2; // Occupe 2 colonnes
+        gbc.weightx = 0; // **Ce composant ne prend pas d'espace supplémentaire**
+        gbc.anchor = GridBagConstraints.NORTHEAST;
         add(roundTempsPanel, gbc);
 
-        // Bouton Menu
-        gbc.gridx = 8; // Colonne 8
-        gbc.gridwidth = 2;
-        add(boutonMenu, gbc);
 
+
+
+        // Bouton Menu : Ancré à droite, partie droite du groupe de droite.
+        gbc.gridx = 8; // Commence juste après le panel Round/Temps (colonne 8)
+        gbc.gridwidth = 2; // Occupe 2 colonnes
+        gbc.weightx = 0; // **Ce composant ne prend pas d'espace supplémentaire**
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        add(boutonMenu, gbc);
+        // réinitialisation
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+
+
+
+
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(50, 50, 50, 50); // Marge entre les composant
+
+        //  (Cartes Nord, Terrain, etc.)
         // --- Ligne suivante (Cartes Nord) ---
-        gbc.gridy = 2; // Deuxième ligne (après le bouton Son et la première ligne)
+        gbc.gridy = 4; // Deuxième ligne (après le bouton Son et la première ligne)
         gbc.gridx = 2; // Centré approximativement sous les infos/round/temps
         gbc.gridwidth = 6; // Occupe une largeur significative
         gbc.gridheight = 2; // Occupe 2 lignes
-        // gbc.fill = GridBagConstraints.HORIZONTAL; // Pour que les cartes s'étirent horizontalement
         add(cartesNordPanel, gbc);
 
         // Rétablir la hauteur par défaut
         gbc.gridheight = 1;
-        // gbc.fill = GridBagConstraints.NONE; // Rétablir le fill si modifié
 
         // --- Ligne du milieu (Carte Gauche, Terrain, Annuler/Refaire Droite) ---
-        gbc.gridy = 4; // Ligne du milieu
+        gbc.gridy = 8; // Ligne du milieu
 
         // Carte Gauche
         gbc.gridx = 0; // Colonne 0
         gbc.gridwidth = 2;
         gbc.gridheight = 4; // Occupe plus de hauteur
-        // gbc.fill = GridBagConstraints.VERTICAL; // Pour que la carte s'étire verticalement
         add(carteGauchePanel, gbc);
 
         // Rétablir la hauteur et largeur par défaut
         gbc.gridheight = 1;
         gbc.gridwidth = 1;
-        // gbc.fill = GridBagConstraints.NONE; // Rétablir le fill si modifié
 
 
         // Terrain de jeu (élément central et principal)
         gbc.gridx = 2; // Colonne 2
         gbc.gridwidth = 6; // Grande largeur
-        gbc.gridheight = 4; // Grande hauteur
-        gbc.fill = GridBagConstraints.BOTH; // Le terrain s'étire dans les deux directions
+        gbc.gridheight = 6; // Grande hauteur
         add(terrain, gbc); // Assurez-vous que 'terrain' est bien le JPanel
 
         // Rétablir les valeurs par défaut pour les prochains composants
         gbc.gridheight = 1;
         gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE; // Rétablir le fill
 
 
         // Panel Annuler/Refaire
         gbc.gridx = 8; // Colonne 8 (à droite du terrain)
         gbc.gridwidth = 2;
         gbc.gridheight = 4; // Occupe la même hauteur que le terrain
-        // gbc.fill = GridBagConstraints.VERTICAL; // Pour que le panel s'étire verticalement
         add(annulerRefairePanel, gbc); // Assurez-vous que 'annulerRefairePanel' est bien le JPanel
 
         // Rétablir la hauteur et largeur par défaut
         gbc.gridheight = 1;
         gbc.gridwidth = 1;
-        // gbc.fill = GridBagConstraints.NONE; // Rétablir le fill si modifié
 
 
         // --- Ligne du bas (Cartes Sud) ---
-        gbc.gridy = 8; // Ligne après le terrain, carte gauche et annuler/refaire
+        gbc.gridy = 15; // Ligne après le terrain, carte gauche et annuler/refaire
         gbc.gridx = 2; // Centré sous le terrain
         gbc.gridwidth = 6; // Occupe une largeur significative
         gbc.gridheight = 2; // Occupe 2 lignes
-        // gbc.fill = GridBagConstraints.HORIZONTAL; // Pour que les cartes s'étirent horizontalement
         add(cartesSudPanel, gbc);
 
         // 3. Démarrage du timer
@@ -220,7 +357,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
 
-    // === CORRECTION CRITIQUE 2 & 3 : Implémentation de miseAJour() ===
+
     @Override
     public void miseAJour() {
         // Cette méthode est appelée chaque fois que le modèle 'jeu' notifie ses observateurs.
@@ -278,9 +415,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU]; // Supposons que NOMBRES_CARTES_PLATEAU = 5
         for (int i = 0; i < buttonsCartes.length; i++) {
             // On crée juste le bouton, l'image correcte sera mise dans updateCartes()
-            JButton bouton = creerBoutonCarte(null); // Utilisez null ou une image par défaut/vide
+            JButton bouton = creerBoutonCarte(PATH_CARTE_DRAGON); // Utilisez null ou une image par défaut/vide
             bouton.addActionListener(new AdaptateurCarteUI(new CarteUI(bouton, i), collecteurEv));
-            bouton.setPreferredSize(new Dimension(200, 100)); // Ajustez la taille si besoin
             buttonsCartes[i] = bouton;
         }
     }
@@ -351,7 +487,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private JButton creerBoutonSon() {
         JButton bouton = new JButton("son");
         bouton.setForeground(Color.WHITE);
-        bouton.setFont(new Font("Arial", Font.PLAIN, 15));
+        bouton.setFont(new Font("Arial", Font.PLAIN, 20));
         bouton.setBackground(new Color(237, 237, 237, 16));
         bouton.setContentAreaFilled(false);
         bouton.setFocusPainted(false);
@@ -359,6 +495,11 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         // Texte initial "son" ou "off" si musique désactivée par défaut
         bouton.setText(musiqueActive ? "on" : "off");
         bouton.addActionListener(e -> toggleMusique(bouton));
+
+//        JPanel panel = new JPanel(new BorderLayout());
+//        panel.setOpaque(false);
+////        panel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0)); // Marge à droite
+//        panel.add(bouton, BorderLayout.CENTER);
         return bouton;
     }
 
@@ -408,7 +549,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         return panel;
     }
 
-    private JPanel creerBoutonMenu() {
+    private JButton creerBoutonMenu() {
         JButton menu = new JButton("≡");
         menu.setOpaque(false);
         menu.setContentAreaFilled(false);
@@ -419,11 +560,11 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0)); // Marge à droite
-        panel.add(menu, BorderLayout.CENTER);
-        return panel;
+//        JPanel panel = new JPanel(new BorderLayout());
+//        panel.setOpaque(false);
+//        panel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0)); // Marge à droite
+//        panel.add(menu, BorderLayout.CENTER);
+        return menu;
     }
 
 
@@ -611,7 +752,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         System.out.println("Nettoyage de EcranPlateauDeJeu effectué.");
     }
 
-    // Le reste du code (main) peut rester tel quel pour un exemple conceptuel.
 }
 
 

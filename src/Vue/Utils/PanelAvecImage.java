@@ -3,6 +3,7 @@ package Vue.Utils;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Un panneau (JPanel) personnalisé qui affiche une image d'arrière-plan
@@ -21,8 +22,8 @@ public class PanelAvecImage extends JPanel {
      *
      * @param cheminImage Le chemin d'accès au fichier image à utiliser (.jpg, .png, etc.).
      */
-    public PanelAvecImage(String cheminImage) {
-        this.image = new ImageIcon(cheminImage).getImage();
+    public PanelAvecImage(Path cheminImage) {
+        this.image = new ImageIcon(cheminImage.toString()).getImage();
         setOpaque(false);
     }
 

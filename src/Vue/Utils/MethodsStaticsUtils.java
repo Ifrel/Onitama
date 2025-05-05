@@ -2,6 +2,7 @@ package Vue.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.file.Path;
 
 import static Global.Config.COULEUR_CASE_TERRAIN;
 import static Vue.ConfigUI.FONT_LABEL;
@@ -24,8 +25,18 @@ public class MethodsStaticsUtils {
      *
      * @param cheminImageCarte Chemin de l'image de la carte
      * @return JButton     */
-    public static JButton creerBoutonCarte(String cheminImageCarte) {
-        return new JButton();
+    public static JButton creerBoutonCarte(Path cheminImageCarte) {
+        JButton bouton = new JButton();
+        bouton.setPreferredSize(new Dimension(200, 100));
+        bouton.setBorderPainted(true);
+        bouton.setFocusPainted(false);
+        bouton.setContentAreaFilled(false);
+        bouton.setOpaque(false);
+
+        JPanel panel = new PanelAvecImage(cheminImageCarte);
+
+        bouton.add(panel);
+        return bouton;
     }
 
 
