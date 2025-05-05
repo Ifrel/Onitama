@@ -6,17 +6,24 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Config {
-    // -- DIMENSION
-    public static Dimension DIM_SCENE = new Dimension(900, 700);
+    // -- IA --
+    public static enum DIFFICULTE_IA {
+        FACILE,
+        MOYEN,
+        DIFFICILE
+    }
+
+    // -- DIMENSION --
+    public static final Dimension DIM_SCENE = new Dimension(900, 700);
 
     // --- DEBUG --
-    public final static boolean MODEDEBUG = true;
+    public static final boolean MODEDEBUG = true;
 
     // -- GRILLE --
     public final static int LIGNES = 5;
     public final static int COLONNES = 5;
 
-    // -- COULEURS DE BASE
+    // -- COULEURS DE BASE --
     public static final Color COULEUR_PLATEAU_DE_JEU        = new Color(104, 104, 104);
     public static final Color COULEUR_CASE_TERRAIN          = new Color(255, 255, 255);
     public static final Color COULEUR_CASE_MAITRE_JOUEUR_1  = new Color(255, 255, 255);
