@@ -15,7 +15,7 @@ public class Onitama {
             // Choisir les niveaux :
             // → Console : INFO et plus grave
             // → Fichier : tout (ALL)
-            LogManagerSetup.setupLogger(Level.INFO, Level.INFO);
+            LogManagerSetup.setupLogger(Level.INFO, Level.FINEST);
 
             logger.info("Lancement du modèle du jeu");
             Jeu jeu = new Jeu();
@@ -24,7 +24,7 @@ public class Onitama {
             CollecteurEvenements collecteurEvenements = new Mediateur(jeu);
 
             logger.info("Lancement de l'interface graphique du jeu");
-            new InterfaceGraphique(jeu, collecteurEvenements).lancer();
+            InterfaceGraphique.lancerInterfaceGraphique(jeu, collecteurEvenements);
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur au démarrage de l'application : " + e.getMessage(), e);

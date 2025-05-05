@@ -27,6 +27,7 @@ public class AdaptateurBoutonEntrer implements ActionListener {
     private final CollecteurEvenements collecteurEvent; // Interface pour notifier les événements au contrôleur.
     InterfaceGraphique interfaceGraphique;
 
+
     /**
      * Constructeur de l'AdaptateurBoutonEntrer.
      *
@@ -64,6 +65,7 @@ public class AdaptateurBoutonEntrer implements ActionListener {
                 if (Objects.equals(champJoueur1.getText(), "")) {
                     champJoueur1.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Définit une bordure rouge pour indiquer une erreur de saisie.
                     System.err.println("Erreur saisie nom 1");
+                    return;
                 } else {
                     collecteurEvent.configNiveauIA(niveauIAselectione); // Notifie le collecteur du niveau de l'IA.
                     collecteurEvent.configNomJoueur(1, champJoueur1.getText()); // Notifie le collecteur du nom du joueur 1.
@@ -83,11 +85,13 @@ public class AdaptateurBoutonEntrer implements ActionListener {
                     if (Objects.equals(champJoueur1.getText(), "")) {
                         champJoueur1.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Indique une erreur de saisie pour le joueur 1.
                         System.err.println("Erreur saisie nom 1");
+                        return;
                     }
                     // Vérifie si le nom du joueur 2 a été saisi
                     else if (Objects.equals(champJoueur2.getText(), "")) {
                         champJoueur2.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Indique une erreur de saisie pour le joueur 2.
                         System.err.println("Erreur saisie nom 2");
+                        return;
                     }
                     // Si les noms des deux joueurs ont été saisis
                     else {

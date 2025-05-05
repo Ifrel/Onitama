@@ -209,9 +209,11 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
 
     /**
      * Lance l'interface graphique (à utiliser depuis le collecteur)     */
-    public void lancer() {
-        SwingUtilities.invokeLater(new InterfaceGraphique(jeu, collecteurEvent));
+    public static  void lancerInterfaceGraphique(Jeu jeu, CollecteurEvenements collecteurEvenements) {
+        SwingUtilities.invokeLater(new InterfaceGraphique(jeu, collecteurEvenements));
     }
+
+
     public void lancerPlatauDeJeu(){frame.setContentPane(layeredPane);}
 
     /*
