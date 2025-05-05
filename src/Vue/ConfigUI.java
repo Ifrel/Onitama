@@ -11,22 +11,11 @@ public class ConfigUI {
      // --- INTERFACES
     public final static int WIDTH_MENU = 500;
 
-    // --- PATHS
-    public final static String PATH_IMAGE_ARRIERE_PLAN_MENU = "res/vue/images/arrierePlans/menu.png";
-    public static final String PATH_BTN_MODE_AUTO_OFF       = "res/vue/images/buttons/button_off.png";
-    public static final String PATH_BTN_MODE_AUTO_ON        = "res/vue/images/buttons/button_on.png";
-    public static final String PATH_BTN_ENTRER              = "res/vue/images/buttons/button_entrer.png";
-    public static final String PATH_ARRIERE_PLAN_ED_O1      = "res/vue/images/arrierePlans/ecran_de_demarrage.png";
-    public static final Path PATH_ARRIERE_PLAN_ED_O2        = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage2.png");
-
 
     // --- POLICES
     public  final static String POLICE_1 = "Arial";
     public  final static String POLICE_2 = "Times New Roman";
     public  final static String POLICE_3 = "Georgia";
-
-
-
 
 
     /******************************************

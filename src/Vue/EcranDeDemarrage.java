@@ -14,6 +14,7 @@ import java.awt.*;
 
 
 import static Global.Config.*;
+import static Global.Paths.*;
 import static Vue.ConfigUI.*;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
@@ -106,8 +107,8 @@ public class EcranDeDemarrage extends JTabbedPane {
         boutonModeAuto.setFont(FONT_COMPOSANT);
         boutonModeAuto.addActionListener(e -> {
             modeAutoIA = ! modeAutoIA;
-            ImageIcon iconOFF = new ImageIcon(PATH_BTN_MODE_AUTO_OFF);
-            ImageIcon iconON = new ImageIcon(PATH_BTN_MODE_AUTO_ON);
+            ImageIcon iconOFF = new ImageIcon(PATH_BTN_MODE_AUTO_OFF.toString());
+            ImageIcon iconON = new ImageIcon(PATH_BTN_MODE_AUTO_ON.toString());
             if (modeAutoIA) boutonModeAuto.setIcon(iconON);
             else  boutonModeAuto.setIcon(iconOFF);
             adaptateurBoutonEntrer.setModeAutoIA(modeAutoIA);

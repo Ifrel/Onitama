@@ -1,5 +1,7 @@
 package Vue.Utils;
 
+import Global.Paths;
+
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
@@ -63,8 +65,8 @@ public class MethodsStaticsUtils {
 
 
 
-    public static JButton creerBoutonAvecImage(String cheminImage) {
-        ImageIcon icon = new ImageIcon(cheminImage);
+    public static JButton creerBoutonAvecImage(Path cheminImage) {
+        ImageIcon icon = new ImageIcon(cheminImage.toString());
         JButton bouton = new JButton(icon);
 
         bouton.setBorderPainted(true);

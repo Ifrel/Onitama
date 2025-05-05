@@ -23,6 +23,17 @@ public class Paths {
     public static Path PATH_CARTE_COQ         = Path.of("res/vue/images/cartes/COQ.png");
     public static Path PATH_CARTE_OIE         = Path.of("res/vue/images/cartes/OIE.png");
 
+
+    /********************************************
+     *              IMAGES                      *
+     *******************************************/
+    public final static Path PATH_IMAGE_ARRIERE_PLAN_MENU = Path.of("res/vue/images/arrierePlans/menu.png");
+    public static final Path PATH_BTN_MODE_AUTO_OFF       = Path.of("res/vue/images/buttons/button_off.png");
+    public static final Path PATH_BTN_MODE_AUTO_ON        = Path.of("res/vue/images/buttons/button_on.png");
+    public static final Path PATH_BTN_ENTRER              = Path.of("res/vue/images/buttons/button_entrer.png");
+    public static final Path PATH_ARRIERE_PLAN_ED_O1      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage.png");
+    public static final Path PATH_ARRIERE_PLAN_ED_O2      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage2.png");
+
     /********************************************
      *              MUSIQUES                      *
      *******************************************/
