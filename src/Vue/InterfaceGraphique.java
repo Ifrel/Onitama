@@ -79,7 +79,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         initialiserMenu();
         ajouterComportementRedimensionnement();
 
-        frame.setContentPane(ecranDeDemarrage);
+        frame.setContentPane(ecranPlateauDeJeu);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

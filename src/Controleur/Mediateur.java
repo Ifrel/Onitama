@@ -26,7 +26,6 @@ public class Mediateur implements CollecteurEvenements {
 
     }
 
-        // répercuter sur la vue ??????
 
     @Override
     public void tictac() {

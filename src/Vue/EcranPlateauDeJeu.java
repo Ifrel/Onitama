@@ -90,13 +90,12 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
         // Démarrer la musique au début si souhaité
         // toggleMusique(this.boutonSon); // Peut-être démarrer par défaut ou attendre action utilisateur
-
         // === Initialiser l'affichage une première fois ===
         miseAJour(); // Appeler miseAJour() après l'initialisation pour afficher l'état initial
     }
 
     
-/*
+
     private void initialiserInterface() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -156,8 +155,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gbc.weightx = 0.2;
         gbc.weighty = 0.2;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.BOTH;
-        add(cartesNordPanel, gbc);
+//        gbc.fill = GridBagConstraints.BOTH;
+//        add(cartesNordPanel, gbc);
 
         // Carte Gauche
         gbc.gridx = 0;
@@ -168,17 +167,19 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gbc.weighty = 0.2;
         gbc.anchor = GridBagConstraints.EAST;
 //        gbc.fill = GridBagConstraints.NONE;
-        add(carteGauchePanel, gbc);
+//        add(carteGauchePanel, gbc);
 
         // Terrain
-        gbc.gridx = 2;
-        gbc.gridy = 8;
-        gbc.gridwidth = 6;
-        gbc.gridheight = 6;
-        gbc.weightx = 0.2;
-        gbc.weighty = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 0;
+        gbc.gridheight = 0;
+//        gbc.weightx = 0.2;
+//        gbc.weighty = 1;
+        gbc.ipadx = 0;
+        gbc.ipady = 0;
         gbc.anchor = GridBagConstraints.CENTER;
-//        gbc.fill = GridBagConstraints.NONE;
+        gbc.fill = GridBagConstraints.NONE;
         add(terrain, gbc);
 
         // Panel Annuler/Refaire
@@ -190,7 +191,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gbc.weighty = 0.2;
         gbc.anchor = GridBagConstraints.WEST;
 //        gbc.fill = GridBagConstraints.NONE;
-        add(annulerRefairePanel, gbc);
+//        add(annulerRefairePanel, gbc);
 
         // Cartes Sud
         gbc.gridx = 2;
@@ -201,20 +202,21 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gbc.weighty = 0.2;
         gbc.anchor = GridBagConstraints.NORTH;
 //        gbc.fill = GridBagConstraints.NONE;
-        add(cartesSudPanel, gbc);
+//        add(cartesSudPanel, gbc);
 
         // 3. Démarrage du timer
         debutTempsPartie = Instant.now();
         timerPartie = new Timer(1000, e -> miseAjourTemps());
         timerPartie.start();
     }
-*/
+
 
 
 
     /**
      * Initialise l'ensemble de l'interface utilisateur avec GridBagLayout.
      */
+    /*
     private void initialiserInterface() {
         // Utilisation de GridBagLayout
         setLayout(new GridBagLayout());
@@ -354,8 +356,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         timerPartie = new Timer(1000, e -> miseAjourTemps()); // Utilise la nouvelle méthode sans paramètre
         timerPartie.start();
     }
-
-
+*/
 
     @Override
     public void miseAJour() {
