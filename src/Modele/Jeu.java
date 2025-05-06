@@ -390,7 +390,7 @@ public class Jeu extends Observable {
      * Joue un coup en fonction de l'état du pion et du
      * tour du joueur/IA
      */
-    private void jouerCoup(Point p)
+    public void jouerCoup(Point p)
     {
         if (PointInvalide(p)) return;
         switch (etatCoupEnCours)
