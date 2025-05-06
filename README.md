@@ -18,22 +18,18 @@ mvn install
 
 puis
 
-```sh
-mvn test
-```
-
-ou clic droit sur le dossier tests > Run all tests
+clic droit sur le dossier tests > Run all tests
 
 ## Infos groupe
 
 #### Groupe 1
 
-| **Membres du groupe**           |
-| -------------------------------- |
-| D'HERIN Arthur                   |
-| DABOUSSI Akram                   |
-| KUTLU Akin                       |
-| LAUSSAC Guillaume                |
-| MAKOUNDIKA KIDZOUNOU Ifrel Rinel |
-| NTYAM Kevin                      |
-| ROQUE Santiago                   |
+| **Membres du groupe**             |
+|-----------------------------------|
+| D'HERIN Arthur                    |
+| DABOUSSI Akram                    |
+| KUTLU Akin                        |
+| LAUSSAC Guillaume                 |
+| MAKOUNDIKA KIDZOUNOU Ifrel Rinel  |
+| NTYAM Kevin                       |
+| ROQUE Santiago                    |
