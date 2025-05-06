@@ -18,8 +18,8 @@ public class ConfigurationPlateau {
 
     ConfigurationPlateau(int joueurCourantID, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2, Carte carteEnPlus, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
         this.joueurCourantID = joueurID2Octet(joueurCourantID);
-        this.cartesJ1 = cartes2ListeOctets(cartesJoueur1);
-        this.cartesJ2 = cartes2ListeOctets(cartesJoueur2);
+        this.cartesJ1 = listeCartes2ListeOctets(cartesJoueur1);
+        this.cartesJ2 = listeCartes2ListeOctets(cartesJoueur2);
         this.carteRetrait = carte2Octet(carteEnPlus);
 
     }
@@ -50,7 +50,7 @@ public class ConfigurationPlateau {
      * @param listeCartes liste de cartes à convertir
      * @return liste d'octets représentant les cartes
      */
-    public byte[] cartes2ListeOctets (List<Carte> listeCartes) {
+    public byte[] listeCartes2ListeOctets (List<Carte> listeCartes) {
         byte[] listeOctets = new byte[listeCartes.size()];
         for (int i = 0; i < listeCartes.size(); i++) {
             listeOctets[i] = carte2Octet(listeCartes.get(i));
@@ -63,7 +63,7 @@ public class ConfigurationPlateau {
      * @param listeOctets liste de cartes en octets à convertir
      * @return liste d'octets représentant les cartes
      */
-    public List<Carte> cartes2ListeOctets (byte[] listeOctets) {
+    public List<Carte> listeOctets2ListeCartes (byte[] listeOctets) {
         List<Carte> listeCartes = new ArrayList<>();
         for (byte octet : listeOctets) {
             listeCartes.add(octet2Carte(octet));
