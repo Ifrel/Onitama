@@ -7,10 +7,10 @@ import java.util.List;
 
 public class Config {
     // -- IA --
-    public static enum DIFFICULTE_IA {
-        FACILE,
+    public static enum NIVEAU_IA {
+        FAIBLE,
         MOYEN,
-        DIFFICILE
+        FORT
     }
 
     // -- DIMENSION --
