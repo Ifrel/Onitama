@@ -5,6 +5,9 @@
  - ~~Observateur~~
 - # MODELE
   - IA
+    - Classe configuration (état du plateau)
+      - Compresser un peu plus les données
+      - La rendre hashable (int hashCode()) 
     - Niveau facile (aléatoire)
     - Niveau intermédiaire (Coup gagnant / perdant)
     - Niveau fort (min/max / et/ou)
@@ -30,7 +33,7 @@
      - <span style="color:red"> Souris </span>
      - <span style="color:red"> Plein Ecran </span>
      - <span style="color:red"> "+" pour ceux des écrans pas encore faits </span>
-  - ## Annimations (commencer)
+  - ## Animations (commencé)
     - <span style="color:red"> Cible </span>
     - <span style="color:red"> Deplacement carte </span>
     - <span style="color:red"> Lumiere entourantla carte sélectionée </span>
