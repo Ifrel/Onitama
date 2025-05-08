@@ -83,7 +83,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         // Pour le debug, utiliser un logger si possible, sinon commenter pour la production
          logger.info("Interface Plateau de jeu lancée");
 
-        setLayout(new GridBagLayout()); // Garde votre layout actuel
+        setLayout(new BorderLayout());
         setBackground(COULEUR_PLATEAU_DE_JEU);
 
         initialiserInterface();
@@ -97,10 +97,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     
 
     private void initialiserInterface() {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(50, 50, 50, 50);
-
         // 1. Création des composants
         creerTerrain();
         creerButtonsCartes();
@@ -112,97 +108,62 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         JPanel cartesNordPanel = creerCartesNord();
         JPanel carteGauchePanel = creerCarteGauche();
         JPanel cartesSudPanel = creerCartesSud();
+        JPanel annulerRefaire = creerBoutonsDroite();
 
 
-        // 2. Placement des composants via GridBagLayout
 
-//        // Bouton Son
-//        gbc.gridx = 0;
-//        gbc.gridy = 0;
-//        gbc.gridwidth = 2;
-//        gbc.gridheight = 2;
-////        gbc.anchor = GridBagConstraints.NORTHWEST;
-//        gbc.fill = GridBagConstraints.NONE;
-//        add(boutonSon, gbc);
-//
-//        // Contenu centre
-//        gbc.gridx = 2;
-//        gbc.gridwidth = 2;
-//        gbc.gridheight = 1;
-//        gbc.weightx = 0;
-////        gbc.anchor = GridBagConstraints.NORTH;
-//        gbc.fill = GridBagConstraints.NONE;
-//        add(contenuCentrePanel, gbc);
-//
-//        // Panel Round/Temps
-//        gbc.gridx = 6;
-//        gbc.gridwidth = 2;
-////        gbc.anchor = GridBagConstraints.NORTHEAST;
-//        gbc.fill = GridBagConstraints.NONE;
-//        gbc.weightx = 0;
-//        add(roundTempsPanel, gbc);
-//
-//        // Bouton Menu
-//        gbc.gridx = 8;
-//        gbc.gridwidth = 2;
-//        add(boutonMenu, gbc);
 
-        // Cartes Nord
-        gbc.gridx = 2;
-        gbc.gridy = 4;
-        gbc.gridwidth = 6;
-        gbc.gridheight = 2;
-        gbc.weightx = 0.2;
-        gbc.weighty = 0.2;
-        gbc.anchor = GridBagConstraints.CENTER;
-//        gbc.fill = GridBagConstraints.BOTH;
-//        add(cartesNordPanel, gbc);
 
-        // Carte Gauche
-        gbc.gridx = 0;
-        gbc.gridy = 8;
-        gbc.gridwidth = 2;
-        gbc.gridheight = 6;
-        gbc.weightx = 0.5;
-        gbc.weighty = 0.2;
-        gbc.anchor = GridBagConstraints.EAST;
-//        gbc.fill = GridBagConstraints.NONE;
-//        add(carteGauchePanel, gbc);
+        // Ligne 1 : boutonSon | espace | round+timer | espace fixe | boutonMenu
+        JPanel ligne1 = new JPanel();
+        ligne1.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20)); // top, left, bottom, right
+        ligne1.setLayout(new BoxLayout(ligne1, BoxLayout.X_AXIS));
+        ligne1.setOpaque(false);
+        ligne1.add(boutonSon);
+        ligne1.add(Box.createHorizontalGlue());
+        ligne1.add(roundTempsPanel);
+        ligne1.add(Box.createHorizontalStrut(20));
+        ligne1.add(boutonMenu);
 
-        // Terrain
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 0;
-        gbc.gridheight = 0;
-//        gbc.weightx = 0.2;
-//        gbc.weighty = 1;
-        gbc.ipadx = 0;
-        gbc.ipady = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.NONE;
-        add(terrain, gbc);
+        // panel ligne2: "c'est au tour de nomDuJoueur"
+        JPanel ligne2 = new JPanel();
+        ligne2.setLayout(new BoxLayout(ligne2, BoxLayout.X_AXIS));
+        ligne2.setOpaque(false);
+        ligne2.add(Box.createHorizontalGlue());
+        ligne2.add(contenuCentrePanel);
+        ligne2.add(Box.createHorizontalGlue());
 
-        // Panel Annuler/Refaire
-        gbc.gridx = 8;
-        gbc.gridy = 8;
-        gbc.gridwidth = 2;
-        gbc.gridheight = 6;
-        gbc.weightx = 0.5;
-        gbc.weighty = 0.2;
-        gbc.anchor = GridBagConstraints.WEST;
-//        gbc.fill = GridBagConstraints.NONE;
-//        add(annulerRefairePanel, gbc);
+        // Panel global contenant ligne1 et ligne2 verticalement
+        JPanel ligne1_2 = new JPanel();
+        ligne1_2.setOpaque(false);
+        ligne1_2.setLayout(new BoxLayout(ligne1_2, BoxLayout.Y_AXIS));
+        ligne1_2.add(ligne1);
+        ligne1_2.add(Box.createVerticalStrut(50));
+        ligne1_2.add(ligne2);
+        add(ligne1_2, BorderLayout.NORTH);
 
-        // Cartes Sud
-        gbc.gridx = 2;
-        gbc.gridy = 15;
-        gbc.gridwidth = 6;
-        gbc.gridheight = 5;
-        gbc.weightx = 0.2;
-        gbc.weighty = 0.2;
-        gbc.anchor = GridBagConstraints.NORTH;
-//        gbc.fill = GridBagConstraints.NONE;
-//        add(cartesSudPanel, gbc);
+
+        JPanel plateau = new JPanel(new BorderLayout(25,25)); // marge entre les zones
+        plateau.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
+        // Cartes au nord
+        plateau.add(cartesNordPanel, BorderLayout.NORTH);
+
+        // Cartes au sud
+        plateau.add(cartesSudPanel, BorderLayout.SOUTH);
+
+        // Carte à gauche
+        plateau.add(carteGauchePanel, BorderLayout.WEST);
+
+        // Annuler/Refaire à droite
+        plateau.add(annulerRefaire, BorderLayout.EAST);
+
+        // Terrain au centre
+        plateau.add(terrain, BorderLayout.CENTER);
+
+
+        add(plateau, BorderLayout.CENTER);
+
+
 
         // 3. Démarrage du timer
         debutTempsPartie = Instant.now();
@@ -212,151 +173,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
 
 
-
-    /**
-     * Initialise l'ensemble de l'interface utilisateur avec GridBagLayout.
-     */
-    /*
-    private void initialiserInterface() {
-        // Utilisation de GridBagLayout
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
-
-        // 1. Création des composants
-        creerTerrain();
-        creerButtonsCartes();
-        creerButtonsAnnulerRefaire();
-        boutonSon = creerBoutonSon();                       // Stocke la référence du bouton son
-        boutonMenu = creerBoutonMenu();                     // Stocke la référence du bouton menu
-        JPanel roundTempsPanel = creerPanelRoundTemps();    // Crée le panel round/temps
-        JPanel contenuCentrePanel = creerContenuCentre();   // Crée le contenu central
-        JPanel cartesNordPanel = creerCartesNord();         // Crée le panel des cartes Nord
-        JPanel carteGauchePanel = creerCarteGauche();       // Crée le panel de la carte Gauche
-        JPanel cartesSudPanel = creerCartesSud();           // Crée le panel des cartes Sud
-
-
-        // 2. Placement des composants via GridBagLayout
-        // --- Ligne du haut (Son, Infos Centre, Round/Temps, Menu) - Sans espace vide ---
-        // Configuration des contraintes par défaut pour tous les composants
-        gbc.insets = new Insets(50, 50, 50, 50); // Marge entre les composant
-        gbc.gridy = 0; // Positionnement sur la première ligne (index 0)
-        gbc.fill = GridBagConstraints.VERTICAL; // Les composants ne s'étirent pas par défaut
-
-
-        // Bouton Son : Ancré à gauche
-        gbc.gridx = 0;      // Commence à la colonne 0
-        gbc.gridwidth = 2;  // Occupe 2 colonnes
-        gbc.gridheight = 2; // Peut occuper 2 lignes (si le bouton est plus grand)
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        add(boutonSon, gbc);
-        // réinitialisation
-        gbc.gridheight = 1;
-//        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-
-
-        // Contenu Centre (Infos) : Positionné dans l'espace restant, prend l'espace principal, décalé par son point de départ.
-        gbc.gridx = 2;
-        gbc.gridwidth = 4;
-        gbc.weightx = 1.0;
-        gbc.anchor = GridBagConstraints.NORTH;
-        add(contenuCentrePanel, gbc);
-        // réinitialisation
-        gbc.weightx = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-//        gbc.fill = GridBagConstraints.NONE;
-
-
-        // Panel Round/Temps : Ancré à droite, partie gauche du groupe de droite.
-        gbc.gridx = 6; // Commence à la colonne 6. Ajustez ce nombre si nécessaire pour positionner le groupe de droite.
-        gbc.gridwidth = 2; // Occupe 2 colonnes
-        gbc.weightx = 0; // **Ce composant ne prend pas d'espace supplémentaire**
-        gbc.anchor = GridBagConstraints.NORTHEAST;
-        add(roundTempsPanel, gbc);
-
-
-
-
-        // Bouton Menu : Ancré à droite, partie droite du groupe de droite.
-        gbc.gridx = 8; // Commence juste après le panel Round/Temps (colonne 8)
-        gbc.gridwidth = 2; // Occupe 2 colonnes
-        gbc.weightx = 0; // **Ce composant ne prend pas d'espace supplémentaire**
-        gbc.anchor = GridBagConstraints.NORTHEAST;
-        add(boutonMenu, gbc);
-        // réinitialisation
-        gbc.weightx = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.NONE;
-
-
-
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(50, 50, 50, 50); // Marge entre les composant
-
-        //  (Cartes Nord, Terrain, etc.)
-        // --- Ligne suivante (Cartes Nord) ---
-        gbc.gridy = 4; // Deuxième ligne (après le bouton Son et la première ligne)
-        gbc.gridx = 2; // Centré approximativement sous les infos/round/temps
-        gbc.gridwidth = 6; // Occupe une largeur significative
-        gbc.gridheight = 2; // Occupe 2 lignes
-        add(cartesNordPanel, gbc);
-
-        // Rétablir la hauteur par défaut
-        gbc.gridheight = 1;
-
-        // --- Ligne du milieu (Carte Gauche, Terrain, Annuler/Refaire Droite) ---
-        gbc.gridy = 8; // Ligne du milieu
-
-        // Carte Gauche
-        gbc.gridx = 0; // Colonne 0
-        gbc.gridwidth = 2;
-        gbc.gridheight = 4; // Occupe plus de hauteur
-        add(carteGauchePanel, gbc);
-
-        // Rétablir la hauteur et largeur par défaut
-        gbc.gridheight = 1;
-        gbc.gridwidth = 1;
-
-
-        // Terrain de jeu (élément central et principal)
-        gbc.gridx = 2; // Colonne 2
-        gbc.gridwidth = 6; // Grande largeur
-        gbc.gridheight = 6; // Grande hauteur
-        add(terrain, gbc); // Assurez-vous que 'terrain' est bien le JPanel
-
-        // Rétablir les valeurs par défaut pour les prochains composants
-        gbc.gridheight = 1;
-        gbc.gridwidth = 1;
-
-
-        // Panel Annuler/Refaire
-        gbc.gridx = 8; // Colonne 8 (à droite du terrain)
-        gbc.gridwidth = 2;
-        gbc.gridheight = 4; // Occupe la même hauteur que le terrain
-        add(annulerRefairePanel, gbc); // Assurez-vous que 'annulerRefairePanel' est bien le JPanel
-
-        // Rétablir la hauteur et largeur par défaut
-        gbc.gridheight = 1;
-        gbc.gridwidth = 1;
-
-
-        // --- Ligne du bas (Cartes Sud) ---
-        gbc.gridy = 15; // Ligne après le terrain, carte gauche et annuler/refaire
-        gbc.gridx = 2; // Centré sous le terrain
-        gbc.gridwidth = 6; // Occupe une largeur significative
-        gbc.gridheight = 2; // Occupe 2 lignes
-        add(cartesSudPanel, gbc);
-
-        // 3. Démarrage du timer
-        // Démarrer le timer après que les labels tempsLabel et roundLabel (supposés être dans roundTempsPanel) soient créés
-        // === Gestion du Timer : Démarrage ===
-        debutTempsPartie = Instant.now(); // Assurez-vous que debutTempsPartie est une variable d'instance Instant
-        timerPartie = new Timer(1000, e -> miseAjourTemps()); // Utilise la nouvelle méthode sans paramètre
-        timerPartie.start();
-    }
-*/
 
     @Override
     public void miseAJour() {
@@ -381,6 +197,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
         // Note : Le timer est géré séparément par son propre TimerTask.
     }
+
+
 
     // =========================================
     // ============ Création UI ================
@@ -424,62 +242,83 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
     /** Crée les boutons "Annuler" et "Refaire" */
     private void creerButtonsAnnulerRefaire() {
-        annulerRefairePanel = new JPanel(new GridLayout(2, 1, 10, 10)); // Renommé
+        annulerRefairePanel = new JPanel(new GridLayout(4, 1, 10, 10)); // Renommé
         annulerRefairePanel.setOpaque(false);
 
-        annuler = creerBoutonAction("Annuler"); // Méthode statique
-        refaire = creerBoutonAction("Refaire"); // Méthode statique
+        annuler = creerBoutonAction("Annuler");
+        refaire = creerBoutonAction("Refaire");
 
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
 
+        annulerRefairePanel.add(Box.createVerticalGlue());
         annulerRefairePanel.add(annuler);
         annulerRefairePanel.add(refaire);
-
-        // L'état activé/désactivé sera géré dans updateUndoRedoButtons()
+        annulerRefairePanel.add(Box.createVerticalGlue());
     }
 
 
     // --- Méthodes de création des conteneurs de layout spécifiques ---
-    // Ces méthodes créent des JPanel pour regrouper d'autres composants,
-    // à placer ensuite dans le GridBagLayout principal.
 
     private JPanel creerCartesNord() {
-        JPanel cartes = new JPanel(new GridLayout(1, 2, 40, 0));
-        cartes.setBorder(BorderFactory.createEmptyBorder(50, 400, 0, 400)); // Marge autour du groupe de cartes
-        cartes.add(buttonsCartes[0]); // Assurez-vous que l'index correspond à la carte correcte
-        cartes.add(buttonsCartes[1]); // Assurez-vous que l'index correspond à la carte correcte
+        JPanel cartes = new JPanel();
+        cartes.setLayout(new BoxLayout(cartes, BoxLayout.X_AXIS));
+        cartes.setPreferredSize(new Dimension(100, 50));
         cartes.setOpaque(false);
+
+        cartes.add(Box.createHorizontalGlue());
+        cartes.add(Box.createHorizontalGlue());
+        cartes.add(buttonsCartes[0]);
+        cartes.add(Box.createHorizontalStrut(25));
+        cartes.add(buttonsCartes[1]);
+        cartes.add(Box.createHorizontalGlue());
+        cartes.add(Box.createHorizontalGlue());
+
         return cartes;
     }
 
+
     private JPanel creerCartesSud() {
-        JPanel cartes = new JPanel(new GridLayout(1, 2, 40, 0));
-        cartes.setBorder(BorderFactory.createEmptyBorder(0, 400, 50, 400)); // Marge autour du groupe de cartes
-        cartes.add(buttonsCartes[2]); // Assurez-vous que l'index correspond à la carte correcte
-        cartes.add(buttonsCartes[3]); // Assurez-vous que l'index correspond à la carte correcte
+        JPanel cartes = new JPanel();
+        cartes.setLayout(new BoxLayout(cartes, BoxLayout.X_AXIS));
+        cartes.setPreferredSize(new Dimension(100, 50));
         cartes.setOpaque(false);
+
+        cartes.add(Box.createHorizontalGlue());
+        cartes.add(Box.createHorizontalGlue());
+        cartes.add(buttonsCartes[2]);
+        cartes.add(Box.createHorizontalStrut(25));
+        cartes.add(buttonsCartes[3]);
+        cartes.add(Box.createHorizontalGlue());
+        cartes.add(Box.createHorizontalGlue());
         return cartes;
     }
 
     private JPanel creerCarteGauche() {
-        JPanel carte = new JPanel(new GridLayout(3, 1, 40, 40)); // 3 lignes, 1 colonne
-        carte.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0)); // Marge à gauche
-        // Utilisation de Box.createVerticalGlue() si le GridLayout se comporte comme attendu,
-        // sinon un BoxLayout pourrait être plus approprié pour le Glue.
-        carte.add(Box.createVerticalGlue());
-        carte.add(buttonsCartes[4]); // Assurez-vous que l'index correspond à la carte correcte
-        carte.add(Box.createVerticalGlue());
+        JPanel carte = new JPanel();
+        carte.setLayout(new BoxLayout(carte, BoxLayout.Y_AXIS));
+        carte.setPreferredSize(new Dimension(100, 50));
         carte.setOpaque(false);
+
+        JPanel carte2 = new JPanel();
+        carte2.setLayout(new BoxLayout(carte2, BoxLayout.X_AXIS));
+        carte2.setPreferredSize(new Dimension(100, 50));
+        carte2.setOpaque(false);
+        carte2.add(Box.createHorizontalGlue());
+        carte2.add(buttonsCartes[4]);
+
+        carte.add(Box.createVerticalGlue());
+        carte.add(carte2);
+        carte.add(Box.createVerticalGlue());
         return carte;
     }
 
     private JPanel creerBoutonsDroite() {
-        JPanel droite = new JPanel(new GridLayout(3, 1, 40, 40)); // 3 lignes, 1 colonne
-        droite.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50)); // Marge à droite
-        droite.add(Box.createVerticalGlue());
-        droite.add(annulerRefairePanel); // Ajoute le panneau annuler/refaire
-        droite.add(Box.createVerticalGlue());
+        JPanel droite = new JPanel();
+        droite.setLayout(new BoxLayout(droite, BoxLayout.X_AXIS));
+        droite.setPreferredSize(new Dimension(100, 50));
+        droite.add(annulerRefairePanel);
+        droite.add(Box.createHorizontalGlue());
         droite.setOpaque(false);
         return droite;
     }
@@ -509,11 +348,12 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         textNomPanel.setOpaque(false);
 
         JLabel txt = new JLabel("C'est au tour de");
+        txt.setFont(new Font("Arial", Font.PLAIN, 20));
         txt.setAlignmentX(Component.CENTER_ALIGNMENT);
         txt.setForeground(new Color(232, 231, 231));
 
         nomJoueurCourantLabel = new JLabel("Nom Joueur"); // Initialisé ici, mis à jour dans miseAJour()
-        nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 28));
+        nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 38));
         nomJoueurCourantLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         nomJoueurCourantLabel.setForeground(new Color(218, 214, 214));
 
@@ -532,7 +372,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
                 BorderFactory.createLineBorder(new Color(206, 206, 206), 1, true),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
-        panel.setBackground(new Color(245, 245, 245));
+        panel.setBackground(new Color(245, 245, 245, 23));
 
         // numRound est géré dans miseAJour(), ici on initialise le label
         roundLabel = new JLabel("Round: ?"); // Initialisé ici
