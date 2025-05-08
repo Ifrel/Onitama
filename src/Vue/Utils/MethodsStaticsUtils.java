@@ -14,6 +14,7 @@ public class MethodsStaticsUtils {
 
     public static JButton creerBoutonTerrain() {
         JButton bouton = new JButton();
+        bouton.setPreferredSize(new Dimension(60,60));
         bouton.setBackground(COULEUR_CASE_TERRAIN);
         bouton.setFocusPainted(true);   // Effet focus visible
         bouton.setContentAreaFilled(true);
@@ -29,7 +30,6 @@ public class MethodsStaticsUtils {
      * @return JButton     */
     public static JButton creerBoutonCarte(Path cheminImageCarte) {
         JButton bouton = new JButton();
-        bouton.setPreferredSize(new Dimension(200, 100));
         bouton.setBorderPainted(true);
         bouton.setFocusPainted(false);
         bouton.setContentAreaFilled(false);
@@ -57,9 +57,7 @@ public class MethodsStaticsUtils {
 //        bouton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2)); // Bordure blanche de 2px
 
         // Optionnel : un peu plus joli
-        bouton.setFont(new Font("Arial", Font.PLAIN, 22));  // Texte un peu plus gros
-        bouton.setPreferredSize(new Dimension(150, 80));   // Taille agréable (change selon besoin)
-
+        bouton.setFont(new Font("Arial", Font.PLAIN, 22));
         return bouton;
     }
 
