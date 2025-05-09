@@ -22,8 +22,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
-import static Global.Paths.PATH_CARTE_DRAGON;
-import static Global.Paths.PATH_SON_1;
+import static Global.Paths.*;
 import static Vue.ConfigUI.DIM_CARTES;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
@@ -178,7 +177,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         // Cartes nord
         centreGbc.gridx = 1;
         centreGbc.gridy = 0;
-        centreGbc.weightx = 0;
+        centreGbc.weightx = 2.5;
         centreGbc.weighty = 0.5;
         panelCentreEmpile.add(cartesNordPanel, centreGbc);
 
@@ -210,7 +209,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         // Cartes sud
         centreGbc.gridx = 1;
         centreGbc.gridy = 2;
-        centreGbc.weightx = 0.8;
+        centreGbc.weightx = 2.5;
         centreGbc.weighty = 0.5;
         panelCentreEmpile.add(cartesSudPanel, centreGbc);
 
@@ -239,7 +238,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         updateTerrain();
 
         // 2. Mettre à jour l'affichage des cartes du joueur courant
-        updateCartes();
+//        updateCartes();
 
         // 3. Mettre à jour les informations du joueur courant et du round
         updatePlayerAndRoundInfo();
@@ -286,7 +285,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private void creerButtonsCartes() {
         buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU];
         for (int i = 0; i < buttonsCartes.length; i++) {
-            JButton bouton = creerBoutonCarte(PATH_CARTE_DRAGON);
+            JButton bouton = creerBoutonAvecImage(PATH_CARTE_CRABE);
             bouton.addActionListener(new AdaptateurCarteUI(new CarteUI(bouton, i), collecteurEv));
             buttonsCartes[i] = bouton;
         }
@@ -296,10 +295,16 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     /** Crée les boutons "Annuler" et "Refaire" */
     private void creerButtonsAnnulerRefaire() {
         annulerRefairePanel = new JPanel(new GridLayout(6, 1, 0, 10));
-//        annulerRefairePanel.setOpaque(false);
+        annulerRefairePanel.setOpaque(false);
 
-        annuler = creerBoutonAction("A");
-        refaire = creerBoutonAction("R");
+        annuler = creerBoutonAvecImage(PATH_BTN_ANNULER);
+        refaire = creerBoutonAvecImage(PATH_BTN_REFAIRE);
+
+        annuler.setBackground(new Color(207, 207, 207, 44));
+        refaire.setBackground(new Color(207, 207, 207, 44));
+
+        annuler.setOpaque(true);
+        refaire.setOpaque(true);
 
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
@@ -321,14 +326,15 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         cartes.setOpaque(false);
 
         cartes.add(Box.createGlue());
+        cartes.add(Box.createGlue());
         cartes.add(buttonsCartes[0]);
         cartes.add(Box.createHorizontalStrut(25));
         cartes.add(buttonsCartes[1]);
         cartes.add(Box.createGlue());
+        cartes.add(Box.createGlue());
 
         return cartes;
     }
-
 
     private JPanel creerCartesSud() {
         JPanel cartes = new JPanel();
@@ -336,9 +342,11 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         cartes.setOpaque(false);
 
         cartes.add(Box.createGlue());
+        cartes.add(Box.createGlue());
         cartes.add(buttonsCartes[2]);
         cartes.add(Box.createHorizontalStrut(25));
         cartes.add(buttonsCartes[3]);
+        cartes.add(Box.createGlue());
         cartes.add(Box.createGlue());
 
         return cartes;
@@ -362,7 +370,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gauche.add(Box.createGlue());
         gauche.add(carte);
         gauche.add(Box.createGlue());
-        //gauche.setOpaque(false);
+        gauche.setOpaque(false);
 
         return gauche;
     }
@@ -373,7 +381,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         droite.add(Box.createGlue());
         droite.add(annulerRefairePanel);
         droite.add(Box.createGlue());
-//        droite.setOpaque(false);
+        droite.setOpaque(false);
+
         return droite;
     }
 
@@ -562,34 +571,34 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     // Met à jour l'affichage des cartes du joueur courant
-    private void updateCartes() {
-        // Exemple conceptuel : suppose que jeu.getJoueurCourant() et joueur.getCartesEnMain() existent
-        if (jeu != null && buttonsCartes != null) {
-            List<Carte> cartesEnMain = jeu.getJoueurCourant().getCartesEnMain(); // Méthodes à implémenter
-
-            // Assurez-vous que le nombre de cartes en main correspond au nombre de boutons de cartes
-            // ou gérez les index en conséquence.
-            for (int i = 0; i < buttonsCartes.length; i++) {
-                JButton bouton = buttonsCartes[i];
-
-                if (i < cartesEnMain.size()) {
-                    Carte carte = cartesEnMain.get(i);
-                    // Afficher l'image de la carte sur le bouton
-                    ImageIcon icon = getIconForCarte(carte); // Méthode utilitaire à créer
-                    bouton.setIcon(icon);
-                    bouton.setEnabled(true); // La carte est en main, donc potentiellement utilisable
-                    // Peut-être désactiver si le coup n'est pas valide pour la carte dans l'état actuel
-                    // boolean isCardPlayable = jeu.isCarteJouable(carte); // Méthode à implémenter
-                    // bouton.setEnabled(isCardPlayable);
-                } else {
-                    // Pas de carte à cet index pour le joueur courant (main plus petite que NOMBRES_CARTES_PLATEAU)
-                    bouton.setIcon(null); // Ou une icône vide
-                    bouton.setText(""); // Assurez-vous que le texte est vide
-                    bouton.setEnabled(false); // Pas de carte, bouton désactivé
-                }
-            }
-        }
-    }
+//    private void updateCartes() {
+//        // Exemple conceptuel : suppose que jeu.getJoueurCourant() et joueur.getCartesEnMain() existent
+//        if (jeu != null && buttonsCartes != null) {
+//            List<Carte> cartesEnMain = jeu.getJoueurCourant().getCartesEnMain(); // Méthodes à implémenter
+//
+//            // Assurez-vous que le nombre de cartes en main correspond au nombre de boutons de cartes
+//            // ou gérez les index en conséquence.
+//            for (int i = 0; i < buttonsCartes.length; i++) {
+//                JButton bouton = buttonsCartes[i];
+//
+//                if (i < cartesEnMain.size()) {
+//                    Carte carte = cartesEnMain.get(i);
+//                    // Afficher l'image de la carte sur le bouton
+//                    ImageIcon icon = getIconForCarte(carte); // Méthode utilitaire à créer
+//                    bouton.setIcon(icon);
+//                    bouton.setEnabled(true); // La carte est en main, donc potentiellement utilisable
+//                    // Peut-être désactiver si le coup n'est pas valide pour la carte dans l'état actuel
+//                    // boolean isCardPlayable = jeu.isCarteJouable(carte); // Méthode à implémenter
+//                    // bouton.setEnabled(isCardPlayable);
+//                } else {
+//                    // Pas de carte à cet index pour le joueur courant (main plus petite que NOMBRES_CARTES_PLATEAU)
+//                    bouton.setIcon(null); // Ou une icône vide
+//                    bouton.setText(""); // Assurez-vous que le texte est vide
+//                    bouton.setEnabled(false); // Pas de carte, bouton désactivé
+//                }
+//            }
+//        }
+//    }
 
     // Méthode utilitaire pour obtenir l'icône d'une carte (à implémenter)
     private ImageIcon getIconForCarte(Carte carte) {
