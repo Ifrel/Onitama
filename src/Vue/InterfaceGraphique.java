@@ -6,6 +6,8 @@ import Vue.Adaptateurs.AdaptateurClavier;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.logging.Logger;
 
 import static Global.Config.DIM_SCENE;
@@ -59,7 +61,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         frame = new JFrame("Onitama");
         frame.setLayout(new BorderLayout());
         frame.setPreferredSize(DIM_SCENE);
-        frame.setMinimumSize(new Dimension(900, 700));
+        frame.setMinimumSize(DIM_SCENE);
         frame.addKeyListener(new AdaptateurClavier(collecteurEvent));
     }
 

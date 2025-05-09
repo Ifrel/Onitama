@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import static Global.Config.*;
 import static Global.Paths.PATH_CARTE_DRAGON;
 import static Global.Paths.PATH_SON_1;
+import static Vue.ConfigUI.DIM_CARTES;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
 
@@ -94,10 +95,20 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         miseAJour(); // Appeler miseAJour() après l'initialisation pour afficher l'état initial
     }
 
-    
 
+
+    // Constantes pour les espacements
+    private static final int MAIN_INSET = 20;
+    private static final int VERTICAL_GAP_ROW0_ROW1 = 20;
+    private static final int VERTICAL_GAP_ROW1_ROW2 = 30;
+    private static final int HORIZONTAL_STRUT_SIZE = 20;
+
+
+    /**
+     * Initialise l'interface utilisateur avec GridBagLayout.
+     */
     private void initialiserInterface() {
-        // 1. Création des composants
+        // === 1. Création des composants ===
         creerTerrain();
         creerButtonsCartes();
         creerButtonsAnnulerRefaire();
@@ -110,62 +121,103 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         JPanel cartesSudPanel = creerCartesSud();
         JPanel annulerRefaire = creerBoutonsDroite();
 
+        // === 2. Conteneur principal avec GridBagLayout ===
+        JPanel contenu = new JPanel(new GridBagLayout());
+        contenu.setBorder(BorderFactory.createEmptyBorder(MAIN_INSET, MAIN_INSET, MAIN_INSET, MAIN_INSET));
+        contenu.setOpaque(false);
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
 
+        // === Ligne 0 : Haut (son | timer | menu) ===
+        JPanel ligne0 = new JPanel();
+        ligne0.setLayout(new BoxLayout(ligne0, BoxLayout.X_AXIS));
+        ligne0.setOpaque(false);
+        ligne0.add(boutonSon);
+        ligne0.add(Box.createHorizontalGlue());
+        ligne0.add(roundTempsPanel);
+        ligne0.add(Box.createHorizontalStrut(HORIZONTAL_STRUT_SIZE));
+        ligne0.add(boutonMenu);
 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.insets = new Insets(0, 0, VERTICAL_GAP_ROW0_ROW1, 0);
+        contenu.add(ligne0, gbc);
 
-        // Ligne 1 : boutonSon | espace | round+timer | espace fixe | boutonMenu
-        JPanel ligne1 = new JPanel();
-        ligne1.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20)); // top, left, bottom, right
-        ligne1.setLayout(new BoxLayout(ligne1, BoxLayout.X_AXIS));
-        ligne1.setOpaque(false);
-        ligne1.add(boutonSon);
-        ligne1.add(Box.createHorizontalGlue());
-        ligne1.add(roundTempsPanel);
-        ligne1.add(Box.createHorizontalStrut(20));
-        ligne1.add(boutonMenu);
+        // === Ligne 1 : Texte du tour ===
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(15, 0, VERTICAL_GAP_ROW1_ROW2 + 15, 0);
+        contenu.add(contenuCentrePanel, gbc);
 
-        // panel ligne2: "c'est au tour de nomDuJoueur"
-        JPanel ligne2 = new JPanel();
-        ligne2.setLayout(new BoxLayout(ligne2, BoxLayout.X_AXIS));
-        ligne2.setOpaque(false);
-        ligne2.add(Box.createHorizontalGlue());
-        ligne2.add(contenuCentrePanel);
-        ligne2.add(Box.createHorizontalGlue());
+        // === Ligne 2 : Plateau de jeu centré ===
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 0);
 
-        // Panel global contenant ligne1 et ligne2 verticalement
-        JPanel ligne1_2 = new JPanel();
-        ligne1_2.setOpaque(false);
-        ligne1_2.setLayout(new BoxLayout(ligne1_2, BoxLayout.Y_AXIS));
-        ligne1_2.add(ligne1);
-        ligne1_2.add(Box.createVerticalStrut(50));
-        ligne1_2.add(ligne2);
-        add(ligne1_2, BorderLayout.NORTH);
+        // === Centre empilé : cartes nord, terrain, cartes sud ===
+        JPanel panelCentreEmpile = new JPanel(new GridBagLayout());
+        panelCentreEmpile.setOpaque(false);
 
+        GridBagConstraints centreGbc = new GridBagConstraints();
+        centreGbc.insets = new Insets(0, 0, 0, 0);
+        centreGbc.fill = GridBagConstraints.BOTH;
+        centreGbc.weighty = 1.0;
 
-        JPanel plateau = new JPanel(new BorderLayout(25,25)); // marge entre les zones
-        plateau.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
-        // Cartes au nord
-        plateau.add(cartesNordPanel, BorderLayout.NORTH);
-
-        // Cartes au sud
-        plateau.add(cartesSudPanel, BorderLayout.SOUTH);
+        // Cartes nord
+        centreGbc.gridx = 1;
+        centreGbc.gridy = 0;
+        centreGbc.weightx = 0.8;
+        panelCentreEmpile.add(cartesNordPanel, centreGbc);
 
         // Carte à gauche
-        plateau.add(carteGauchePanel, BorderLayout.WEST);
+        centreGbc.gridx = 0;
+        centreGbc.gridy = 1;
+        centreGbc.weightx = 0.1;
+        centreGbc.insets = new Insets(20, 20, 20, 20);
+        panelCentreEmpile.add(carteGauchePanel, centreGbc);
 
-        // Annuler/Refaire à droite
-        plateau.add(annulerRefaire, BorderLayout.EAST);
+        // Terrain
+        centreGbc.gridx = 1;
+        centreGbc.gridy = 1;
+        centreGbc.weightx = 0.8;
+        centreGbc.insets = new Insets(40, 20, 40, 20);
+        panelCentreEmpile.add(terrain, centreGbc);
+        centreGbc.insets = new Insets(20, 20, 20, 20);
 
-        // Terrain au centre
-        plateau.add(terrain, BorderLayout.CENTER);
+        // Boutons annuler/refaire
+        centreGbc.gridx = 2;
+        centreGbc.gridy = 1;
+        centreGbc.weightx = 0.1;
+        panelCentreEmpile.add(annulerRefaire, centreGbc);
+        centreGbc.insets = new Insets(0, 0, 0, 0); // reset
 
+        // Cartes sud
+        centreGbc.gridx = 1;
+        centreGbc.gridy = 2;
+        centreGbc.weightx = 0.8;
+        panelCentreEmpile.add(cartesSudPanel, centreGbc);
 
-        add(plateau, BorderLayout.CENTER);
+        contenu.add(panelCentreEmpile, gbc);
 
+        // === 3. Ajout du conteneur principal au panneau ===
+        setLayout(new BorderLayout());
+        add(contenu, BorderLayout.CENTER);
 
-
-        // 3. Démarrage du timer
+        // === 4. Démarrage du timer ===
         debutTempsPartie = Instant.now();
         timerPartie = new Timer(1000, e -> miseAjourTemps());
         timerPartie.start();
@@ -230,10 +282,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
     /** Crée les boutons représentant les cartes (structure vide, l'affichage sera fait dans updateCartes)*/
     private void creerButtonsCartes() {
-        buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU]; // Supposons que NOMBRES_CARTES_PLATEAU = 5
+        buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU];
         for (int i = 0; i < buttonsCartes.length; i++) {
-            // On crée juste le bouton, l'image correcte sera mise dans updateCartes()
-            JButton bouton = creerBoutonCarte(PATH_CARTE_DRAGON); // Utilisez null ou une image par défaut/vide
+            JButton bouton = creerBoutonCarte(PATH_CARTE_DRAGON);
             bouton.addActionListener(new AdaptateurCarteUI(new CarteUI(bouton, i), collecteurEv));
             buttonsCartes[i] = bouton;
         }
@@ -242,8 +293,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
     /** Crée les boutons "Annuler" et "Refaire" */
     private void creerButtonsAnnulerRefaire() {
-        annulerRefairePanel = new JPanel(new GridLayout(4, 1, 10, 10)); // Renommé
-        annulerRefairePanel.setOpaque(false);
+        annulerRefairePanel = new JPanel(new GridLayout(4, 1, 20, 10));
+//        annulerRefairePanel.setOpaque(false);
 
         annuler = creerBoutonAction("Annuler");
         refaire = creerBoutonAction("Refaire");
@@ -263,7 +314,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private JPanel creerCartesNord() {
         JPanel cartes = new JPanel();
         cartes.setLayout(new BoxLayout(cartes, BoxLayout.X_AXIS));
-        cartes.setPreferredSize(new Dimension(100, 50));
+        cartes.setPreferredSize(DIM_CARTES);
         cartes.setOpaque(false);
 
         cartes.add(Box.createHorizontalGlue());
@@ -281,7 +332,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private JPanel creerCartesSud() {
         JPanel cartes = new JPanel();
         cartes.setLayout(new BoxLayout(cartes, BoxLayout.X_AXIS));
-        cartes.setPreferredSize(new Dimension(100, 50));
+        cartes.setPreferredSize(DIM_CARTES);
         cartes.setOpaque(false);
 
         cartes.add(Box.createHorizontalGlue());
@@ -295,31 +346,30 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     private JPanel creerCarteGauche() {
-        JPanel carte = new JPanel();
-        carte.setLayout(new BoxLayout(carte, BoxLayout.Y_AXIS));
-        carte.setPreferredSize(new Dimension(100, 50));
+        JPanel carte = new JPanel(new GridLayout(4, 1, 20, 10));
         carte.setOpaque(false);
-
-        JPanel carte2 = new JPanel();
-        carte2.setLayout(new BoxLayout(carte2, BoxLayout.X_AXIS));
-        carte2.setPreferredSize(new Dimension(100, 50));
-        carte2.setOpaque(false);
-        carte2.add(Box.createHorizontalGlue());
-        carte2.add(buttonsCartes[4]);
-
         carte.add(Box.createVerticalGlue());
-        carte.add(carte2);
+        carte.add(new JButton("buttonsCartes[4]"));
+        carte.add(buttonsCartes[4]);
         carte.add(Box.createVerticalGlue());
-        return carte;
+
+        JPanel gauche = new JPanel();
+        gauche.setLayout(new BoxLayout(gauche, BoxLayout.X_AXIS));
+        gauche.add(Box.createHorizontalGlue());
+        gauche.setPreferredSize(DIM_CARTES);
+        gauche.add(carte);
+//        gauche.setOpaque(false);
+
+        return gauche;
     }
 
     private JPanel creerBoutonsDroite() {
         JPanel droite = new JPanel();
         droite.setLayout(new BoxLayout(droite, BoxLayout.X_AXIS));
-        droite.setPreferredSize(new Dimension(100, 50));
+        droite.setPreferredSize(DIM_CARTES);
         droite.add(annulerRefairePanel);
         droite.add(Box.createHorizontalGlue());
-        droite.setOpaque(false);
+//        droite.setOpaque(false);
         return droite;
     }
 
@@ -593,379 +643,3 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//package Vue;
-//
-//import Modele.Jeu;
-//import Patterns.Observateur;
-//import Vue.Adaptateurs.AdaptateurAnnuler;
-//import Vue.Adaptateurs.AdaptateurBoutonTerrain;
-//import Vue.Adaptateurs.AdaptateurCarteUI;
-//import Vue.Adaptateurs.AdaptateurRefaire;
-//import Vue.Annimations.BruitGrisAvecPointsPanel;
-//
-//import javax.sound.sampled.AudioInputStream;
-//import javax.sound.sampled.AudioSystem;
-//import javax.sound.sampled.Clip;
-//import javax.swing.*;
-//import java.awt.*;
-//import java.time.Duration;
-//import java.time.Instant;
-//import java.util.Objects;
-//
-//import static Global.Config.*;
-//import static Vue.Utils.MethodsStaticsUtils.*;
-//
-///**
-// * Classe représentant l'interface graphique principale du plateau de jeu.
-// * Elle observe le modèle (Jeu) et met à jour l'affichage en fonction des événements.
-// */
-//public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Observateur {
-//
-//    // ====== Attributs principaux ======
-//    private final Jeu jeu;
-//    private InterfaceGraphique interfaceGraphique;
-//    private final CollecteurEvenements collecteurEv;
-//
-//    // MethodsStaticsUtils de l'interface
-//    private JPanel terrain;
-//    private JPanel terrainCartesAnnulerRefaire;
-//    private JPanel annulerRefaire;
-//    private JPanel barreIndication;
-//
-//    private JButton[][] buttonsTerrain;
-//    private JButton[] buttonsCartes;
-//    private JButton annuler, refaire;
-//
-//    private JLabel nomJoueurCourant;
-//    private JLabel temps;
-//    private int numRound;
-//
-//    // Gestion du son
-//    private Clip clip;
-//    private boolean musiqueActive = false; // État du son
-//
-//
-//    /**
-//     * Constructeur principal du EcranPlateauDeJeu
-//     * @param jeu modèle de données observé
-//     * @param collecteurEv gestionnaire des événements
-//     * @param interfaceGraphique Scène principale
-//     */
-//    public EcranPlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
-//        this.jeu = jeu;
-//        this.collecteurEv = collecteurEv;
-//        this.interfaceGraphique = interfaceGraphique;
-//
-//        System.err.println("Interface Plateau de jeu lancée");
-//        setLayout(new BorderLayout());
-//        setBackground(COULEUR_PLATEAU_DE_JEU);
-//
-////        jeu.ajouteObservateur(this);
-//        initialiserInterface();
-//    }
-//
-//    /** Initialise l'ensemble de l'interface utilisateur */
-//    private void initialiserInterface() {
-//        creerTerrain();
-//        creerButtonsCartes();
-//        creerButtonsAnnulerRefaire();
-//        creerPlateauCartesAnnulerRefaire();
-//        creerBarreIndication();
-//
-//        add(barreIndication, BorderLayout.NORTH);
-//        add(terrainCartesAnnulerRefaire, BorderLayout.CENTER);
-//    }
-//
-//
-//    @Override
-//    public void miseAJour() {
-//        // TODO : mettre à jour l'affichage selon les changements du modèle (jeu)
-//    }
-//
-//
-//
-//    // =========================================
-//    // ============ Création UI ================
-//    // =========================================
-//
-//    /** Crée la grille du terrain de jeu */
-//    private void creerTerrain() {
-//        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
-//        buttonsTerrain = new JButton[LIGNES][COLONNES];
-//
-//        terrain.setBorder(BorderFactory.createCompoundBorder(
-//                BorderFactory.createLineBorder(new Color(206, 206, 206), 5, true),
-//                BorderFactory.createEmptyBorder(15, 15, 15, 15)
-//        ));
-//        terrain.setBackground(new Color(226, 226, 226));
-//
-//        for (int row = 0; row < LIGNES; row++) {
-//            for (int col = 0; col < COLONNES; col++) {
-//                JButton bouton = creerBoutonTerrain();
-//                bouton.addActionListener(new AdaptateurBoutonTerrain(bouton, new Point(row, col), collecteurEv));
-//                buttonsTerrain[row][col] = bouton;
-//                terrain.add(bouton);
-//            }
-//        }
-//    }
-//
-//
-//
-//    /** Crée les boutons représentant les cartes */
-//    private void creerButtonsCartes() {
-//        buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU];
-//        for (int i = 0; i < buttonsCartes.length; i++) {
-//            JButton bouton = creerBoutonCarte("res/vue/images/cartes/TIGRE.png");
-//            bouton.addActionListener(new AdaptateurCarteUI(new CarteUI(bouton, i), collecteurEv));
-//            bouton.setPreferredSize(new Dimension(200, 100));
-//            buttonsCartes[i] = bouton;
-//        }
-//    }
-//
-//
-//
-//    /** Crée les boutons "Annuler" et "Refaire" */
-//    private void creerButtonsAnnulerRefaire() {
-//        annulerRefaire = new JPanel(new GridLayout(2, 1, 10, 10));
-//        annulerRefaire.setOpaque(false);
-//
-//        annuler = creerBoutonAction("Annuler");
-//        refaire = creerBoutonAction("Refaire");
-//
-//        annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
-//        refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
-//
-//        annulerRefaire.add(annuler);
-//        annulerRefaire.add(refaire);
-//    }
-//
-//
-//
-//
-//    /** Assemble le terrain, les cartes, et les boutons Annuler/Refaire */
-//    private void creerPlateauCartesAnnulerRefaire() {
-//        terrainCartesAnnulerRefaire = new JPanel(new BorderLayout(80, 40));
-//        terrainCartesAnnulerRefaire.setOpaque(false);
-//
-//        terrainCartesAnnulerRefaire.add(creerCartesNord(), BorderLayout.NORTH);
-//        terrainCartesAnnulerRefaire.add(creerCartesSud(), BorderLayout.SOUTH);
-//        terrainCartesAnnulerRefaire.add(creerCarteGauche(), BorderLayout.WEST);
-//        terrainCartesAnnulerRefaire.add(creerBoutonsDroite(), BorderLayout.EAST);
-//        terrainCartesAnnulerRefaire.add(terrain, BorderLayout.CENTER);
-//    }
-//
-//
-//
-//
-//    /** Crée la barre supérieure d'indications */
-//    private void creerBarreIndication() {
-//        barreIndication = new JPanel(new BorderLayout());
-//        barreIndication.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-//        barreIndication.setOpaque(false);
-//
-//        barreIndication.add(creerBoutonSon(), BorderLayout.WEST);
-//        barreIndication.add(creerContenuCentre(), BorderLayout.CENTER);
-//        barreIndication.add(creerBoutonMenu(this), BorderLayout.EAST);
-//    }
-//
-//
-//
-//    /** Sous-méthodes de création d'éléments */
-//    private JPanel creerCartesNord() {
-//        JPanel cartes = new JPanel(new GridLayout(1, 2, 40, 0));
-//        cartes.setBorder(BorderFactory.createEmptyBorder(50, 400, 0, 400));
-//        cartes.add(buttonsCartes[0]);
-//        cartes.add(buttonsCartes[1]);
-//        cartes.setOpaque(false);
-//        return cartes;
-//    }
-//
-//
-//    /** Sous-méthodes de création d'éléments */
-//    private JPanel creerCartesSud() {
-//        JPanel cartes = new JPanel(new GridLayout(1, 2, 40, 0));
-//        cartes.setBorder(BorderFactory.createEmptyBorder(0, 400, 50, 400));
-//        cartes.add(buttonsCartes[2]);
-//        cartes.add(buttonsCartes[3]);
-//        cartes.setOpaque(false);
-//        return cartes;
-//    }
-//
-//
-//    /** Sous-méthodes de création d'éléments */
-//    private JPanel creerCarteGauche() {
-//        JPanel carte = new JPanel(new GridLayout(3, 1, 40, 40));
-//        carte.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
-//        carte.add(Box.createVerticalGlue());
-//        carte.add(buttonsCartes[4]);
-//        carte.add(Box.createVerticalGlue());
-//        carte.setOpaque(false);
-//        return carte;
-//    }
-//
-//
-//
-//    /** Sous-méthodes de création d'éléments */
-//    private JPanel creerBoutonsDroite() {
-//        JPanel droite = new JPanel(new GridLayout(3, 1, 40, 40));
-//        droite.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50));
-//        droite.add(Box.createVerticalGlue());
-//        droite.add(annulerRefaire);
-//        droite.add(Box.createVerticalGlue());
-//        droite.setOpaque(false);
-//        return droite;
-//    }
-//
-//
-//    /** Sous-méthodes de création d'éléments */
-//    private JButton creerBoutonSon() {
-//        JButton boutonSon = new JButton("son");
-//        boutonSon.setForeground(Color.WHITE);
-//        boutonSon.setFont(new Font("Arial", Font.PLAIN, 15));
-//        boutonSon.setBackground(new Color(237, 237, 237, 16));
-//        boutonSon.setContentAreaFilled(false);
-//        boutonSon.setFocusPainted(false);
-//        boutonSon.setPreferredSize(new Dimension(60, 40));
-//        boutonSon.addActionListener(e -> toggleMusique(boutonSon));
-//        return boutonSon;
-//    }
-//
-//
-//
-//    /** Sous-méthodes de création d'éléments */
-//    private JPanel creerContenuCentre() {
-//        JPanel textNom = new JPanel();
-//        textNom.setLayout(new BoxLayout(textNom, BoxLayout.Y_AXIS));
-//        textNom.setOpaque(false);
-//
-//        JLabel txt = new JLabel("C'est au tour de");
-//        txt.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        txt.setForeground(new Color(232, 231, 231));
-//
-//        nomJoueurCourant = new JLabel("Kevin");
-//        nomJoueurCourant.setFont(new Font("Arial", Font.BOLD, 28));
-//        nomJoueurCourant.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        nomJoueurCourant.setForeground(new Color(218, 214, 214));
-//
-//        textNom.add(txt);
-//        textNom.add(Box.createRigidArea(new Dimension(0, 5)));
-//        textNom.add(nomJoueurCourant);
-//
-//        JPanel roundTemps = creerPanelRoundTemps();
-//
-//        JPanel contenu = new JPanel(new BorderLayout());
-//        contenu.setOpaque(false);
-//        contenu.add(textNom, BorderLayout.CENTER);
-//        contenu.add(roundTemps, BorderLayout.EAST);
-//
-//        return contenu;
-//    }
-//
-//
-//    /** Sous-méthodes de création d'éléments */
-//    private JPanel creerPanelRoundTemps() {
-//        JPanel panel = new JPanel();
-//        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-//        panel.setBorder(BorderFactory.createCompoundBorder(
-//                BorderFactory.createLineBorder(new Color(206, 206, 206), 1, true),
-//                BorderFactory.createEmptyBorder(10, 20, 10, 20)
-//        ));
-//        panel.setBackground(new Color(245, 245, 245));
-//
-//        numRound = 1;
-//        JLabel round = new JLabel("Round: " + numRound);
-//        round.setFont(new Font("Arial", Font.PLAIN, 25));
-//        round.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 100));
-//
-//        temps = new JLabel("00:00");
-//        temps.setFont(new Font("Arial", Font.BOLD, 25));
-//
-//        Instant debut = Instant.now();
-//        Timer timer = new Timer(1000, e -> miseAjourTemps(debut));
-//        timer.start();
-//
-//        panel.add(round);
-//        panel.add(temps);
-//        return panel;
-//    }
-//
-//
-//
-//    private JPanel creerBoutonMenu(JPanel contentPane) {
-//        JButton menu = new JButton("≡");
-//        menu.setOpaque(false);
-//        menu.setContentAreaFilled(false);
-//        menu.setFocusPainted(false);
-//        menu.setForeground(Color.WHITE);
-//        menu.setFont(new Font("Arial", Font.PLAIN, 46));
-//        menu.setPreferredSize(new Dimension(60, 40));
-//
-//        menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
-//
-//        JPanel panel = new JPanel(new BorderLayout());
-//        panel.setOpaque(false);
-//        panel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
-//        panel.add(menu, BorderLayout.CENTER);
-//        return panel;
-//    }
-//
-//
-//
-//    // =========================================
-//    // ========= Gestion Son & Musique =========
-//    // =========================================
-//
-//    private void toggleMusique(JButton boutonSon) {
-//        if (musiqueActive) {
-//            if (clip != null && clip.isRunning()) {
-//                clip.stop();
-//            }
-//            boutonSon.setText("off");
-//        } else {
-//            jouerMusique("/vue/musique/son_1.wav");
-//            boutonSon.setText("on");
-//        }
-//        musiqueActive = !musiqueActive;
-//    }
-//
-//    private void jouerMusique(String chemin) {
-//        try {
-//            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
-//                    Objects.requireNonNull(getClass().getResource(chemin))
-//            );
-//            clip = AudioSystem.getClip();
-//            clip.open(audioInputStream);
-//            clip.loop(Clip.LOOP_CONTINUOUSLY);
-//            clip.start();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//
-//    // =========================================
-//    // ============== Mise à jour ==============
-//    // =========================================
-//
-//    private void miseAjourTemps(Instant debut) {
-//        Duration duration = Duration.between(debut, Instant.now());
-//        long minutes = duration.toMinutes();
-//        long secondes = duration.getSeconds() % 60;
-//        temps.setText(String.format("%02d:%02d", minutes, secondes));
-//    }
-//}

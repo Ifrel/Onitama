@@ -47,11 +47,10 @@ public class MethodsStaticsUtils {
         JButton bouton = new JButton(titre);
 
         // Couleurs
-        bouton.setBackground(new Color(140, 140, 140)); // Fond gris clair
-        bouton.setForeground(Color.WHITE);              // Texte blanc
-
+        bouton.setBackground(new Color(140, 140, 140));
+        bouton.setForeground(Color.WHITE);
         // Apparence
-        bouton.setOpaque(true);                         // Rendre le fond visible
+        bouton.setOpaque(true);
         bouton.setContentAreaFilled(true);
         bouton.setFocusPainted(false);
 //        bouton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2)); // Bordure blanche de 2px

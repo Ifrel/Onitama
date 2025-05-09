@@ -98,7 +98,10 @@ public class ConfigUI {
 
 
 
-
+    /******************************************
+     *         ECRAN PLATEAU DE JEU             *
+     ******************************************/
+    public static final Dimension DIM_CARTES  = new Dimension(200, 100);
 
 
 
