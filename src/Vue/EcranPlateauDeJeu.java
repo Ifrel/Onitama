@@ -159,8 +159,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
         // === Saut de ligne entre ligne 1 et 2 ===
         gbc.gridy = 2;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+        gbc.weightx = 0.25;
+        gbc.weighty = 0.25;
         contenu.add(Box.createGlue(), gbc);
 
         // === Ligne 3 : Plateau avec layout empilé ===
