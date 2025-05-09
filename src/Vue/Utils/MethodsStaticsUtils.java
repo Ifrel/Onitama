@@ -29,7 +29,7 @@ public class MethodsStaticsUtils {
      * @param cheminImageCarte Chemin de l'image de la carte
      * @return JButton     */
     public static JButton creerBoutonCarte(Path cheminImageCarte) {
-        JButton bouton = new JButton();
+        JButton bouton = new JButton("   carte    ");
         bouton.setBorderPainted(true);
         bouton.setFocusPainted(false);
         bouton.setContentAreaFilled(false);

@@ -107,6 +107,128 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     /**
      * Initialise l'interface utilisateur avec GridBagLayout.
      */
+
+    private void initialiserInterface() {
+        // === 1. Création des composants ===
+        creerTerrain();
+        creerButtonsCartes();
+        creerButtonsAnnulerRefaire();
+        boutonSon = creerBoutonSon();
+        boutonMenu = creerBoutonMenu();
+        JPanel roundTempsPanel = creerPanelRoundTemps();
+        JPanel contenuCentrePanel = creerContenuCentre();
+        JPanel cartesNordPanel = creerCartesNord();
+        JPanel carteGauchePanel = creerCarteGauche();
+        JPanel cartesSudPanel = creerCartesSud();
+        JPanel annulerRefaire = creerBoutonsDroite();
+
+        // === 2. Conteneur principal avec GridBagLayout ===
+        JPanel contenu = new JPanel(new GridBagLayout());
+        contenu.setBorder(BorderFactory.createEmptyBorder(MAIN_INSET, MAIN_INSET, MAIN_INSET, MAIN_INSET));
+        contenu.setOpaque(false);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        // === Ligne 0 : Haut (son | timer | menu) ===
+        JPanel ligne0 = new JPanel();
+        ligne0.setLayout(new BoxLayout(ligne0, BoxLayout.X_AXIS));
+        ligne0.setOpaque(false);
+        ligne0.add(boutonSon);
+        ligne0.add(Box.createHorizontalGlue());
+        ligne0.add(roundTempsPanel);
+        ligne0.add(Box.createHorizontalStrut(HORIZONTAL_STRUT_SIZE));
+        ligne0.add(boutonMenu);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(0, 0, VERTICAL_GAP_ROW0_ROW1, 0);
+        contenu.add(ligne0, gbc);
+
+        // === Ligne 1 : Texte du tour ===
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(15, 0, 0, 0);
+        contenu.add(contenuCentrePanel, gbc);
+
+        // === Saut de ligne entre ligne 1 et 2 ===
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        contenu.add(Box.createGlue(), gbc);
+
+        // === Ligne 3 : Plateau avec layout empilé ===
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+
+        JPanel panelCentreEmpile = new JPanel(new GridBagLayout());
+        panelCentreEmpile.setOpaque(false);
+        GridBagConstraints centreGbc = new GridBagConstraints();
+        centreGbc.fill = GridBagConstraints.BOTH;
+
+        // Cartes nord
+        centreGbc.gridx = 1;
+        centreGbc.gridy = 0;
+        centreGbc.weightx = 1.0;
+        centreGbc.weighty = 1.0;
+        centreGbc.insets = new Insets(20, 20, 20, 20);
+        panelCentreEmpile.add(cartesNordPanel, centreGbc);
+
+        // Espace gauche
+        centreGbc.gridx = 0;
+        centreGbc.gridy = 1;
+        centreGbc.weightx = 1.0;
+        centreGbc.weighty = 1.0;
+        centreGbc.insets = new Insets(20, 20, 20, 20);
+        panelCentreEmpile.add(creerCarteGauche(), centreGbc);
+
+        // terrain
+        centreGbc.gridx = 1;
+        centreGbc.gridy = 1;
+        centreGbc.weightx = 0.5;
+        centreGbc.weighty = 0.5;
+        centreGbc.insets = new Insets(20, 20, 20, 20);
+        panelCentreEmpile.add(terrain, centreGbc);
+
+        // Espace droite
+        centreGbc.gridx = 2;
+        centreGbc.gridy = 1;
+        centreGbc.weightx = 1.0;
+        centreGbc.weighty = 1.0;
+        centreGbc.insets = new Insets(20, 20, 20, 20);
+        panelCentreEmpile.add(annulerRefaire, centreGbc);
+
+        // Cartes sud
+        centreGbc.gridx = 1;
+        centreGbc.gridy = 2;
+        centreGbc.weightx = 1.0;
+        centreGbc.weighty = 1.0;
+        centreGbc.insets = new Insets(20, 20, 20, 20);
+        panelCentreEmpile.add(cartesSudPanel, centreGbc);
+
+        contenu.add(panelCentreEmpile, gbc);
+
+        // === 3. Ajout du conteneur principal au panneau ===
+        setLayout(new BorderLayout());
+        add(contenu, BorderLayout.CENTER);
+
+        // === 4. Démarrage du timer ===
+        debutTempsPartie = Instant.now();
+        timerPartie = new Timer(1000, e -> miseAjourTemps());
+        timerPartie.start();
+    }
+
+
+    /*
     private void initialiserInterface() {
         // === 1. Création des composants ===
         creerTerrain();
@@ -175,25 +297,27 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         GridBagConstraints centreGbc = new GridBagConstraints();
         centreGbc.insets = new Insets(0, 0, 0, 0);
         centreGbc.fill = GridBagConstraints.BOTH;
-        centreGbc.weighty = 1.0;
 
         // Cartes nord
         centreGbc.gridx = 1;
         centreGbc.gridy = 0;
         centreGbc.weightx = 0.8;
+        centreGbc.weighty = 1.0;
         panelCentreEmpile.add(cartesNordPanel, centreGbc);
 
         // Carte à gauche
         centreGbc.gridx = 0;
         centreGbc.gridy = 1;
         centreGbc.weightx = 0.1;
+        centreGbc.weighty = 1.0;
         centreGbc.insets = new Insets(20, 20, 20, 20);
         panelCentreEmpile.add(carteGauchePanel, centreGbc);
 
         // Terrain
         centreGbc.gridx = 1;
         centreGbc.gridy = 1;
-        centreGbc.weightx = 0.8;
+        centreGbc.weightx = 0;
+        centreGbc.weighty = 0;
         centreGbc.insets = new Insets(40, 20, 40, 20);
         panelCentreEmpile.add(terrain, centreGbc);
         centreGbc.insets = new Insets(20, 20, 20, 20);
@@ -202,6 +326,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         centreGbc.gridx = 2;
         centreGbc.gridy = 1;
         centreGbc.weightx = 0.1;
+        centreGbc.weighty = 1.0;
         panelCentreEmpile.add(annulerRefaire, centreGbc);
         centreGbc.insets = new Insets(0, 0, 0, 0); // reset
 
@@ -209,7 +334,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         centreGbc.gridx = 1;
         centreGbc.gridy = 2;
         centreGbc.weightx = 0.8;
+        centreGbc.weighty = 1.0;
         panelCentreEmpile.add(cartesSudPanel, centreGbc);
+
 
         contenu.add(panelCentreEmpile, gbc);
 
@@ -222,7 +349,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         timerPartie = new Timer(1000, e -> miseAjourTemps());
         timerPartie.start();
     }
-
+*/
 
 
 
@@ -346,10 +473,10 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     private JPanel creerCarteGauche() {
-        JPanel carte = new JPanel(new GridLayout(4, 1, 20, 10));
+        JPanel carte = new JPanel();
+        carte.setLayout(new BoxLayout(carte, BoxLayout.Y_AXIS));
         carte.setOpaque(false);
         carte.add(Box.createVerticalGlue());
-        carte.add(new JButton("buttonsCartes[4]"));
         carte.add(buttonsCartes[4]);
         carte.add(Box.createVerticalGlue());
 
