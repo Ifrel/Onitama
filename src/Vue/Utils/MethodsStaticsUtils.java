@@ -1,6 +1,7 @@
 package Vue.Utils;
 
 import Global.Paths;
+import Vue.Animations.Animations;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +30,7 @@ public class MethodsStaticsUtils {
      * @param cheminImageCarte Chemin de l'image de la carte
      * @return JButton     */
     public static JButton creerBoutonCarte(Path cheminImageCarte) {
-        JButton bouton = new JButton("   carte    ");
+        JButton bouton = new JButton();
         bouton.setBorderPainted(true);
         bouton.setFocusPainted(false);
         bouton.setContentAreaFilled(false);
@@ -62,16 +63,18 @@ public class MethodsStaticsUtils {
 
 
 
-    public static JButton creerBoutonAvecImage(Path cheminImage) {
-        ImageIcon icon = new ImageIcon(cheminImage.toString());
-        JButton bouton = new JButton(icon);
+    public static BoutonAvecImage creerBoutonAvecImage(Path cheminImage) {
+        JButton bouton = new JButton();
 
         bouton.setBorderPainted(true);
         bouton.setFocusPainted(false);
         bouton.setContentAreaFilled(false);
         bouton.setOpaque(false);
 
-        return bouton;
+        PanelAvecImage panel = new PanelAvecImage(cheminImage);
+        bouton.add(panel);
+
+        return new BoutonAvecImage(bouton, panel);
     }
 
 
@@ -113,6 +116,21 @@ public class MethodsStaticsUtils {
         panneau.add(textePlaceholder, contraintes);
 
         return panneau;
+    }
+
+    public static class BoutonAvecImage {
+        public JButton bouton;
+        public PanelAvecImage panel;
+        public Animations animation;
+
+        public BoutonAvecImage(JButton bouton, PanelAvecImage panel) {
+            this.bouton = bouton;
+            this.panel = panel;
+        }
+
+        public void setAnimation(Animations animation) {
+            this.animation = animation;
+        }
     }
 
 }
