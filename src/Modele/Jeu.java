@@ -142,18 +142,18 @@ public class Jeu extends Observable {
             add(new Point(0,1));
             add(new Point(0,3));
             add(new Point(0,4));
-        }}, false, ROLEPION.Etudiant);
+        }}, 1, ROLEPION.Etudiant);
         ajouterPion(new ArrayList<Point>()
         {{
             add(new Point(4,0));
             add(new Point(4,1));
             add(new Point(4,3));
             add(new Point(4,4));
-        }}, true, ROLEPION.Etudiant);
+        }}, 2, ROLEPION.Etudiant);
 
         // Ajouter pion maitre
-        ajouterPion(new ArrayList<Point>(){{add(new Point(0, 2));}}, false, ROLEPION.Maitre);
-        ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, true, ROLEPION.Maitre);
+        ajouterPion(new ArrayList<Point>(){{add(new Point(0, 2));}}, 1, ROLEPION.Maitre);
+        ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, 2, ROLEPION.Maitre);
     }
 
     /**
@@ -261,7 +261,7 @@ public class Jeu extends Observable {
 
     public CasePlateau getCasePlateau(int row, int col) {
         //TODO
-        return new CasePlateau();
+        return new CasePlateau(new Point(row,col));
     }
 
     /**
@@ -324,14 +324,14 @@ public class Jeu extends Observable {
      * Ajoute un certain type de pion à une certaine position sur la grille.
      * Assigne un propriétaire également à ce nouveau pion.
      */
-    void ajouterPion(List<Point> _coordonnes, boolean _proprietaire, ROLEPION _role)
+    void ajouterPion(List<Point> _coordonnes, int _proprietaire, ROLEPION _role)
     {
         for (Point p: _coordonnes)
         {
             if (_role == ROLEPION.Etudiant){
-                grille[p.x][p.y] = new PionEtudiant(_proprietaire);
+                grille[p.x][p.y] = new PionEtudiant(_proprietaire, p);
             }else{
-                grille[p.x][p.y] = new PionMaitre(_proprietaire);
+                grille[p.x][p.y] = new PionMaitre(_proprietaire, p);
             }
         }
     }
