@@ -1,5 +1,6 @@
 package Modele;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -39,6 +40,10 @@ public class Pion {
 
     public void setProrietaire(int prorietaire) {
         this.prorietaire = prorietaire;
+    }
+
+    public ImageIcon getIcon() {
+        return null;
     }
 
 // Ajoutez d'autres getters/setters si nécessaire
