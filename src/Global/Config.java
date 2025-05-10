@@ -227,7 +227,7 @@ public class Config {
                 put(TYPECARTE.MANTE, new ArrayList<Point>()
                 {{
                     add(new Point(-1,-1));
-                    add(new Point(0,1));
+                    add(new Point(1,0));
                     add(new Point(-1,1));
                 }});
                 /* CHEVAL
