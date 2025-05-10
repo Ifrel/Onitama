@@ -1,71 +1,58 @@
 package Vue.Utils;
 
-import Global.Paths;
 import Vue.Animations.Animations;
 
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
 
-import static Global.Config.COULEUR_CASE_TERRAIN;
 import static Vue.ConfigUI.FONT_LABEL;
 
+/**
+ * Classe utilitaire regroupant des méthodes statiques pour la création
+ * d'éléments d'interface utilisateur personnalisés. */
 public class MethodsStaticsUtils {
 
 
-    public static JButton creerBoutonTerrain() {
-        JButton bouton = new JButton();
-        bouton.setPreferredSize(new Dimension(60,60));
-        bouton.setBackground(COULEUR_CASE_TERRAIN);
-        bouton.setFocusPainted(true);   // Effet focus visible
-        bouton.setContentAreaFilled(true);
-        bouton.setOpaque(true);         // Important pour respecter le look L&F
+    /**
+     * Crée un bouton standard avec un texte donné.
+     *
+     * @param titre le texte à afficher sur le bouton
+     * @return un JButton configuré     */
+    public static JButton creerBouton(String titre) {
+        JButton bouton = new JButton(titre);
         return bouton;
     }
+
+
+
 
 
     /**
-     * Crée un bouton avec l'image d'une carte qui redimensionne l'image automatiquement avec la taille du bouton
+     * Crée un JLabel stylisé pouvant être utilisé comme un onglet ou une étiquette.
      *
-     * @param cheminImageCarte Chemin de l'image de la carte
-     * @return JButton     */
-    public static JButton creerBoutonCarte(Path cheminImageCarte) {
-        JButton bouton = new JButton();
-        bouton.setBorderPainted(true);
-        bouton.setFocusPainted(false);
-        bouton.setContentAreaFilled(false);
-        bouton.setOpaque(false);
-
-        JPanel panel = new PanelAvecImage(cheminImageCarte);
-
-        bouton.add(panel);
-        return bouton;
+     * @param text le texte à afficher
+     * @return un JLabel avec police et taille prédéfinies     */
+    public static JLabel creerJPanel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Arial", Font.PLAIN, 25)); // Police personnalisée
+        label.setPreferredSize(new Dimension(160, 40));  // Taille fixe de l’onglet
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        return label;
     }
 
 
 
-    public static JButton creerBoutonAction(String titre) {
-        JButton bouton = new JButton(titre);
-
-        // Couleurs
-        bouton.setBackground(new Color(140, 140, 140));
-        bouton.setForeground(Color.WHITE);
-        // Apparence
-        bouton.setOpaque(true);
-        bouton.setContentAreaFilled(true);
-        bouton.setFocusPainted(false);
-//        bouton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2)); // Bordure blanche de 2px
-
-        // Optionnel : un peu plus joli
-        bouton.setFont(new Font("Arial", Font.PLAIN, 22));
-        return bouton;
-    }
 
 
-
+    /**
+     * Crée un bouton transparent avec une image d’arrière-plan personnalisée,
+     * encapsulé dans un objet contenant également son panneau image.
+     *
+     * @param cheminImage le chemin vers l’image à utiliser en arrière-plan
+     * @return un objet BoutonAvecImage contenant le JButton et le PanelAvecImage     */
     public static BoutonAvecImage creerBoutonAvecImage(Path cheminImage) {
         JButton bouton = new JButton();
-
         bouton.setBorderPainted(true);
         bouton.setFocusPainted(false);
         bouton.setContentAreaFilled(false);
@@ -79,62 +66,35 @@ public class MethodsStaticsUtils {
 
 
 
-    public static JButton creerBoutonActionMenu(String titre){
-        JButton bouton = new JButton(titre);
-        return bouton;
-    }
-
-
-
-    public static JLabel creerTitreOnglets(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.PLAIN, 25)); // Police personnalisée
-        label.setPreferredSize(new Dimension(160, 40));  // Taille fixe de l’onglet
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        return label;
-    }
-
-
-
     /**
-     * Crée un JPanel simple avec une étiquette temporaire pour les onglets non implémentés.
-     * @param titreOnglet Le titre de l'onglet.
-     * @return Un JPanel avec un message temporaire.
-     */
-    private JPanel creerOngletTemporaire(String titreOnglet) {
-        JPanel panneau = new JPanel(new GridBagLayout()); // Utiliser GridBagLayout pour centrer facilement
-        JLabel textePlaceholder = new JLabel("Paramètres pour '" + titreOnglet + "' à venir.");
-        textePlaceholder.setFont(FONT_LABEL);
-        textePlaceholder.setForeground(Color.GRAY);
-
-        GridBagConstraints contraintes = new GridBagConstraints();
-        contraintes.gridx = 0;
-        contraintes.gridy = 0;
-        contraintes.weightx = 1.0;
-        contraintes.weighty = 1.0;
-        contraintes.anchor = GridBagConstraints.CENTER;
-        panneau.add(textePlaceholder, contraintes);
-
-        return panneau;
-    }
-
+     * Classe utilitaire pour encapsuler un bouton avec son panneau image
+     * et une animation associée.     */
     public static class BoutonAvecImage {
+        /** Le bouton Swing principal */
         public JButton bouton;
+
+        /** Le panneau affichant l’image d’arrière-plan */
         public PanelAvecImage panel;
+
+        /** Animation associée au bouton (peut être null) */
         public Animations animation;
 
+
+        /**
+         * Constructeur du bouton avec panneau image.
+         * @param bouton le bouton à associer
+         * @param panel  le panneau image utilisé en arrière-plan         */
         public BoutonAvecImage(JButton bouton, PanelAvecImage panel) {
             this.bouton = bouton;
             this.panel = panel;
+            this.animation = null;
         }
 
+        /**
+         * Associe une animation au bouton.
+         * @param animation l’objet animation à lier         */
         public void setAnimation(Animations animation) {
             this.animation = animation;
         }
     }
-
 }
-
-
-
-
