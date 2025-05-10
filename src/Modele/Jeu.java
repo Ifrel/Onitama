@@ -16,6 +16,8 @@ public class Jeu extends Observable {
     // -- Boucle de jeu -- //
     private Pion pionSelectionne;   // Pion en cours de selection
     private etatCoup etatCoupEnCours;       // Etat du coup en cours
+
+
     public enum etatCoup
     {
         aucun,
@@ -34,6 +36,7 @@ public class Jeu extends Observable {
 
     // --- CARTES -- //
     private ArrayList<Carte> toutesLesCartes;
+    private ArrayList<Carte> CartesSurLeTerrain;
 
     // ------------------------ INIT ------------------------
 
@@ -89,11 +92,12 @@ public class Jeu extends Observable {
         // -- Cartes
         toutesLesCartes = new ArrayList<>();
         toutesLesCartes = initCartes();
+        CartesSurLeTerrain = new ArrayList<>();
 
         // -- Joueurs
         joueurCourant = 2;
-        Joueur joueur1 = new Joueur(1,"Joueur 1");
-        Joueur joueur2 = new Joueur(2,"Joueur 2");
+        Joueur joueur1 = new Joueur(1,"nom Joueur 1");
+        Joueur joueur2 = new Joueur(2,"nom Joueur 2");
         joueur1.addCard(tirerCartesAuHasard(NOMBRE_CARTES_MAIN));
         joueur2.addCard(tirerCartesAuHasard(NOMBRE_CARTES_MAIN));
         joueursEnPartie = new HashMap<Integer, Joueur>() {{
@@ -106,6 +110,9 @@ public class Jeu extends Observable {
 
         // -- Récupère toutes les cartes
         toutesLesCartes = initCartes();
+        CartesSurLeTerrain.addAll(joueur1.getCartesEnMain());
+        CartesSurLeTerrain.addAll(joueur2.getCartesEnMain());
+        CartesSurLeTerrain.addAll(tirerCartesAuHasard(1));
 
         if (MODEDEBUG) {
             afficherCartes();
@@ -248,12 +255,22 @@ public class Jeu extends Observable {
         this.round = round;
     }
 
+    public Carte getCartesSurLeTerrain(int i) {
+        return CartesSurLeTerrain.get(i);
+    }
+
+    public CasePlateau getCasePlateau(int row, int col) {
+        //TODO
+        return new CasePlateau();
+    }
+
     /**
      *
      * @return vrai si on peut annuler un coup, faux sinon
      */
     public boolean peutAnnulerCoup(){
-        return historique.peutAnnuler();
+        return  true;
+        //TODO return historique.peutAnnuler();
     }
 
     /**
@@ -261,7 +278,8 @@ public class Jeu extends Observable {
      * @return vrai si on peut refaire un coup, faux sinon
      */
     public boolean peutRefaireCoup(){
-        return historique.peutRefaire();
+        return true;
+        // TODO return historique.peutRefaire();
     }
 
 

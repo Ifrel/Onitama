@@ -11,20 +11,17 @@ import static Global.Config.COULEUR_CASE_MAITRE_JOUEUR_2;
 /**
  * Représente un joueur participant à la partie.
  * Un joueur possède un nom, une couleur, un identifiant, un score,
- * une main de cartes et potentiellement des pions sur le plateau.
- */
+ * une main de cartes et potentiellement des pions sur le plateau. */
 public class Joueur {
 
     // Attributs représentant les propriétés du joueur
     private final String nom;           // Nom du joueur (ne doit pas être null ou vide)
-    private Color couleur;        // Couleur associée au joueur (pour l'affichage, par ex.)
+    private Color couleur;              // Couleur associée au joueur (pour l'affichage, par ex.)
     private final int id;               // Identifiant unique du joueur (par ex. 1, 2, etc.)
 
     private int score;                  // Score actuel du joueur
     private List<Carte> mainCartes;     // Liste des cartes que le joueur a en main
     private List<Pion> pions;           // Liste des pions appartenant à ce joueur
-    // Ajoutez d'autres attributs si nécessaire (par ex. ressources, état, etc.)
-
 
 
     /**
@@ -34,8 +31,7 @@ public class Joueur {
      * @param id L'identifiant unique du joueur (par ex. 1 pour Joueur 1).
      * @param nom Le nom du joueur (ne doit pas être null ou vide).
      * @throws NullPointerException si nom ou couleur est null.
-     * @throws IllegalArgumentException si nom est vide ou id est invalide (par ex. < 1).
-     */
+     * @throws IllegalArgumentException si nom est vide ou id est invalide (par ex. < 1).*/
     public Joueur(int id, String nom) {
         // Validation des paramètres d'entrée
         if (id < 1)  throw new IllegalArgumentException("L'identifiant du joueur doit être supérieur ou égal à 1.");
@@ -71,7 +67,7 @@ public class Joueur {
      * Retourne le nom du joueur.
      * @return Le nom du joueur.
      */
-public String getNom() {
+    public String getNom() {
         return nom;
     }
 
@@ -91,6 +87,11 @@ public String getNom() {
      */
     public int getScore() {
         return score;
+    }
+
+
+    public Color getCouleurPion() {
+        return couleur;
     }
 
 
@@ -139,7 +140,7 @@ public String getNom() {
         this.couleur = couleur;
     }
 
-    // Ajoutez des setters pour d'autres attributs si nécessaire (s'ils ne sont pas final)
+
 
     // =========================================
     // ========= Gestion des Cartes ==========
@@ -281,6 +282,7 @@ public String getNom() {
                 ", cartesEnMain=" + mainCartes.size() + // Afficher juste le nombre de cartes
                 '}';
     }
+
 
 
 }
