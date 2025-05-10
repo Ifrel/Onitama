@@ -1,50 +1,70 @@
 package Modele;
 
-import javax.swing.*;
+import Global.Config.ROLEPION;
+import Global.Config.TYPE_ELEMENT_TERRAIN;
+
 import java.awt.*;
+import java.nio.file.Path;
 
 /**
- * Placeholder pour la classe Pion.
- * Vous devez implémenter votre propre classe Pion avec les attributs
- * et méthodes pertinents pour votre jeu (par ex. position, type, couleur, etc.).
- * Cette classe est ici uniquement pour permettre la compilation de Joueur.
- */
-public class Pion {
-     // Exemple d'attributs nécessaires basés sur l'utilisation dans EcranPlateauDeJeu
-     private Color couleur;     // La couleur du pion, souvent liée à la couleur du joueur propriétaire
-     private String type;       // Le type du pion (ex: "TIGRE", "ELEPHANT")
-     private int prorietaire;
-     // Ajoutez position, etc.
+ * Représente un pion dans le modèle du jeu.
+ * Un pion a une position, une couleur, un propriétaire, une image et un type spécifique. */
+public interface Pion {
 
-     public Pion(Color couleur, String type) {
-          this.couleur = couleur;
-          this.type = type;
-          this.prorietaire = 0;
-     }
+    /**
+     * Retourne la couleur actuelle du pion.
+     * @return la couleur du pion   */
+    Color getCouleur();
 
-    public Pion() {
-        // je ne sais pas pourquoi pas ultil pour la class pionEtudiant/pionMaitre (à rechercher pourquoi)
-    }
 
-    public Color getCouleur() {
-          return couleur;
-     }
+    /**
+     * Retourne l'identifiant du joueur propriétaire de ce pion.
+     * @return l'ID du propriétaire (habituellement un entier associé à un joueur)     */
+     int getProprietaire();
 
-     public String getType() {
-          return type;
-     }
 
-     public int getProprietaire(){
-         return prorietaire;
-     }
 
-    public void setProrietaire(int prorietaire) {
-        this.prorietaire = prorietaire;
-    }
+    /**
+     * Retourne le chemin vers l'image associée à ce pion.
+     * @return le chemin de l'image du pion    */
+     Path getChemainImage();
 
-    public ImageIcon getIcon() {
-        return null;
-    }
 
-// Ajoutez d'autres getters/setters si nécessaire
+
+    /**
+     * Retourne le type d'élément du terrain que représente ce pion.
+     * @return le type d'élément terrain (e.g., PION_ETUDIANT ou PION_MAITRE.)     */
+     TYPE_ELEMENT_TERRAIN getType();
+
+
+    /**
+     * Retourne la position actuelle du pion sur la grille.
+     * @return la position du pion sous forme de Point (x, y)   */
+     Point getPosition();
+
+
+    /**
+     * revoie le statut di pion : Maitre ou Eleve
+     * @return un type ROLEPION     */
+    public ROLEPION getStatut();
+
+
+
+    /**
+     * Définit une nouvelle position pour le pion.
+     * @param position la nouvelle position à attribuer     */
+    void setNewPosition(Point position);
+
+
+    /**
+     * Modifie la couleur du pion.
+     * @param couleur la nouvelle couleur   */
+    void setCouleur(Color couleur);
+
+
+
+    /**
+     * Modifie le chemin de l'image représentant ce pion.
+     * @param chemainImage le nouveau chemin de l'image     */
+    void setChemainImage(Path chemainImage);
 }
