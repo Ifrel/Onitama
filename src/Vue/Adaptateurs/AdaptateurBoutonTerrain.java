@@ -1,5 +1,6 @@
 package Vue.Adaptateurs;
 
+import Modele.CasePlateau;
 import Vue.CollecteurEvenements;
 
 import javax.swing.*;
@@ -8,19 +9,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AdaptateurBoutonTerrain implements ActionListener {
-    private CollecteurEvenements collecteurEvent;
-    private Point bntCoord;
-    private JButton bouton;
+    private final CollecteurEvenements collecteurEvent;
+    private CasePlateau casePlateau;
 
-    public AdaptateurBoutonTerrain(JButton bouton, Point bntCoord, CollecteurEvenements collecteurEvent){
+    public AdaptateurBoutonTerrain(CasePlateau casePlateau, CollecteurEvenements collecteurEvent){
         this.collecteurEvent = collecteurEvent;
-        this.bntCoord = bntCoord;
-        this.bouton = bouton;
+        this.casePlateau = casePlateau;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.err.println("bouton: ("+bntCoord.x+", "+bntCoord.y+") préssé");
-        collecteurEvent.boutonTerrainJeu(bntCoord);
+        System.err.println("bouton: case préssé");
+//        collecteurEvent.boutonTerrainJeu(casePlateau);
     }
 }
