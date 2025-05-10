@@ -13,8 +13,15 @@ public class Config {
         FORT
     }
 
+    // -- TYPE ELEMENT SUR LE TERRAIN DE JEU --
+    public static enum TYPE_ELEMENT_TERRAIN {
+        VIDE,
+        PION_ETUDIANT,
+        PION_MAITRE
+    }
+
     // -- DIMENSION --
-    public static final Dimension DIM_SCENE = new Dimension(900, 700);
+    public static final Dimension DIM_SCENE = new Dimension(1000, 900);
 
     // --- DEBUG --
     public static final boolean MODEDEBUG = true;
