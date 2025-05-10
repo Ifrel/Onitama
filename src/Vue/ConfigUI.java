@@ -74,7 +74,7 @@ public class ConfigUI {
     public static final String LBL_PLATEAU_DE_JEU        = "Plateau de Jeu";
     public static final String LBL_CASE_TERRAIN          = "Case Terain";
     public static final String LBL_CASE_MAITRE_JOUEUR_1  = "Case Maitre Joueur 1";
-    public static final String LBL_CASE_MAITRE_JOUEUR_2  =  "Case Maitre Joueur 2";
+    public static final String LBL_CASE_MAITRE_JOUEUR_2  = "Case Maitre Joueur 2";
     public static final String LBL_CASE_ELEVE_JOUEUR_1   = "Case Elève Joueur 1";
     public static final String LBL_CASE_ELEVE_JOUEUR_2   = "Case Elève Joueur 2";
     public static final String LBL_BLOC_MENU             = "Bloc menu";
@@ -94,18 +94,6 @@ public class ConfigUI {
     public static final String LBL_VOLUME_EFFETS    = "Volume Effets Sonores";
     public static final String LBL_VOLUME_MUSIQUE   = "Volume Musique";
     public static final String LBL_SON_MUET         = "Muet (couper tout son)";
-
-
-
-
-    /******************************************
-     *         ECRAN PLATEAU DE JEU             *
-     ******************************************/
-    public static final Dimension DIM_CARTES  = new Dimension(200, 100);
-
-
-
-
 
 
 
