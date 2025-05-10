@@ -76,105 +76,249 @@ public class Config {
 
     public static HashMap<TYPECARTE, List<Point>> MOUVEMENTCARTE =
             new HashMap<TYPECARTE, List<Point>>() {{
+                /* TIGRE
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   | o |   |   |
+                 *   |   |   |   |   |   |
+                 *   |   |   | X |   |   |
+                 *   |   |   | o |   |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.TIGRE, new ArrayList<Point>()
                 {{
-                    add(new Point(0,2));
-                    add(new Point(0,-1));
+                    add(new Point(-2,0));
+                    add(new Point(1,0));
                 }});
+                /* DRAGON
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   | o |   |   |   | o |
+                 *   |   |   | X |   |   |
+                 *   |   | o |   | o |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.DRAGON, new ArrayList<Point>()
                 {{
-                    add(new Point(-2,1));
-                    add(new Point(-1,-1));
+                    add(new Point(-1, -2));
                     add(new Point(1,-1));
-                    add(new Point(2,1));
+                    add(new Point(-1,2));
+                    add(new Point(1,1));
                 }});
+                /* GRENOUILLE
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   | o |   |   |   |
+                 *   | o |   | X |   |   |
+                 *   |   |   |   | o |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.GRENOUILLE, new ArrayList<Point>()
                 {{
-                    add(new Point(-2,0));
-                    add(new Point(-1,1));
-                    add(new Point(1,-1));
+                    add(new Point(0,-2));
+                    add(new Point(-1,-1));
+                    add(new Point(1,1));
                 }});
+                /* LAPIN
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   |   |   | o |   |
+                 *   |   |   | X |   | o |
+                 *   |   | o |   |   |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.LAPIN, new ArrayList<Point>()
                 {{
-                    add(new Point(-1,-1));
-                    add(new Point(1,1));
-                    add(new Point(2,0));
+                    add(new Point(1,-1));
+                    add(new Point(-1,1));
+                    add(new Point(0,2));
                 }});
+                /* CRABE
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   |   | o |   |   |
+                 *   | o |   | X |   | o |
+                 *   |   |   |   |   |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.CRABE, new ArrayList<Point>()
                 {{
-                    add(new Point(-2,0));
-                    add(new Point(0,1));
-                    add(new Point(2,0));
+                    add(new Point(0,-2));
+                    add(new Point(-1,0));
+                    add(new Point(0,2));
                 }});
+                /* ELEPHANT
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   | o |   | o |   |
+                 *   |   | o | X | o |   |
+                 *   |   |   |   |   |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.ELEPHANT, new ArrayList<Point>()
                 {{
-                    add(new Point(-1,0));
+                    add(new Point(0,-1));
+                    add(new Point(-1,-1));
                     add(new Point(-1,1));
-                    add(new Point(1,0));
-                    add(new Point(1,1));
+                    add(new Point(0,1));
                 }});
+                /* OIE
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   | o |   |   |   |
+                 *   |   | o | X | o |   |
+                 *   |   |   |   | o |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.OIE, new ArrayList<Point>()
                 {{
-                    add(new Point(-1,0));
-                    add(new Point(-1,1));
-                    add(new Point(1,0));
-                    add(new Point(1,-1));
+                    add(new Point(0,-1));
+                    add(new Point(-1,-1));
+                    add(new Point(0,1));
+                    add(new Point(1,1));
                 }});
+                /* COQ
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   |   |   | o |   |
+                 *   |   | o | X | o |   |
+                 *   |   | o |   |   |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.COQ, new ArrayList<Point>()
                 {{
-                    add(new Point(-1,0));
-                    add(new Point(-1,-1));
-                    add(new Point(1,0));
-                    add(new Point(1,1));
+                    add(new Point(1,-1));
+                    add(new Point(0,-1));
+                    add(new Point(0,1));
+                    add(new Point(-1,1));
                 }});
+                /* SINGE
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   | o |   | o |   |
+                 *   |   |   | X |   |   |
+                 *   |   | o |   | o |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.SINGE, new ArrayList<Point>()
                 {{
-                    add(new Point(-1,1));
                     add(new Point(-1,-1));
-                    add(new Point(1,1));
                     add(new Point(1,-1));
+                    add(new Point(-1,1));
+                    add(new Point(1,1));
                 }});
+                /* MANTE
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   | o |   | o |   |
+                 *   |   |   | X |   |   |
+                 *   |   |   | o |   |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.MANTE, new ArrayList<Point>()
                 {{
+                    add(new Point(-1,-1));
+                    add(new Point(0,1));
                     add(new Point(-1,1));
-                    add(new Point(0,-1));
-                    add(new Point(1,1));
                 }});
+                /* CHEVAL
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   |   | o |   |   |
+                 *   |   | o | X |   |   |
+                 *   |   |   | o |   |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.CHEVAL, new ArrayList<Point>()
                 {{
-                    add(new Point(-1,0));
-                    add(new Point(0,1));
                     add(new Point(0,-1));
+                    add(new Point(-1,0));
+                    add(new Point(1,0));
                 }});
+                /* BOEUF
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   |   | o |   |   |
+                 *   |   |   | X | o |   |
+                 *   |   |   | o |   |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.BOEUF, new ArrayList<Point>()
                 {{
+                    add(new Point(-1,0));
                     add(new Point(1,0));
                     add(new Point(0,1));
-                    add(new Point(0,-1));
                 }});
+                /* GRUE
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   |   | o |   |   |
+                 *   |   |   | X |   |   |
+                 *   |   | o |   | o |   |
+                 *   |   |   |   |   |   |
+                 */
                 put(TYPECARTE.GRUE, new ArrayList<Point>()
                 {{
-                    add(new Point(0,1));
-                    add(new Point(-1,-1));
                     add(new Point(1,-1));
-                }});
-                put(TYPECARTE.SANGLIER, new ArrayList<Point>()
-                {{
-                    add(new Point(0,1));
-                    add(new Point(-1,0));
-                    add(new Point(1,0));
-                }});
-                put(TYPECARTE.ANGUILLE, new ArrayList<Point>()
-                {{
-                    add(new Point(-1,1));
-                    add(new Point(-1,-1));
-                    add(new Point(1,0));
-                }});
-                put(TYPECARTE.COBRA, new ArrayList<Point>()
-                {{
                     add(new Point(-1,0));
                     add(new Point(1,1));
+                }});
+                /* SANGLIER
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   |   | o |   |   |
+                 *   |   | o | X | o |   |
+                 *   |   |   |   |   |   |
+                 *   |   |   |   |   |   |
+                 */
+                put(TYPECARTE.SANGLIER, new ArrayList<Point>()
+                {{
+                    add(new Point(0,-1));
+                    add(new Point(-1,0));
+                    add(new Point(0,1));
+                }});
+                /* ANGUILLE
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   | o |   |   |   |
+                 *   |   |   | X | o |   |
+                 *   |   | o |   |   |   |
+                 *   |   |   |   |   |   |
+                 */
+                put(TYPECARTE.ANGUILLE, new ArrayList<Point>()
+                {{
+                    add(new Point(-1,-1));
                     add(new Point(1,-1));
+                    add(new Point(0,1));
+                }});
+                /* COBRA
+                 * Origine : X ; Déplacement : o
+                 * (0,0)
+                 *   |   |   |   |   |   |
+                 *   |   |   |   | o |   |
+                 *   |   | o | X |   |   |
+                 *   |   |   |   | o |   |
+                 *   |   |   |   |   |   |
+                 */
+                put(TYPECARTE.COBRA, new ArrayList<Point>()
+                {{
+                    add(new Point(0,-1));
+                    add(new Point(-1,1));
+                    add(new Point(1,1));
                 }});
     }};
 
