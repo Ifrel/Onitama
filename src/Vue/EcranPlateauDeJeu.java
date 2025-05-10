@@ -1,10 +1,11 @@
 package Vue;
 
+import Modele.CasePlateau;
 import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.AdaptateurAnnuler;
 import Vue.Adaptateurs.AdaptateurBoutonTerrain;
-import Vue.Adaptateurs.AdaptateurCarteUI;
+import Vue.Adaptateurs.AdaptateurCarte;
 import Vue.Adaptateurs.AdaptateurRefaire;
 import Vue.Animations.BruitGrisAvecPointsPanel;
 import Modele.Carte;
@@ -15,15 +16,15 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
 import static Global.Paths.*;
-import static Vue.ConfigUI.DIM_CARTES;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
 
@@ -32,39 +33,31 @@ import static Vue.Utils.MethodsStaticsUtils.*;
  * Elle observe le modèle (Jeu) et met à jour l'affichage en fonction des événements.
  */
 public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Observateur {
-    // ===== logger =======
     private static final Logger logger = Logger.getLogger(EcranPlateauDeJeu.class.getName());
 
-    // ====== Attributs principaux ======
     private final Jeu jeu;
     private final InterfaceGraphique interfaceGraphique;
     private final CollecteurEvenements collecteurEv;
 
-    // Éléments de l'interface
-    private JPanel terrain;
-    private JPanel annulerRefairePanel; // Renommé pour éviter confusion
-    private JPanel barreIndication; // Utilisé si vous le décommentez
+    private BoutonAvecImage[][] buttonsTerrain;
+    private BoutonAvecImage[] buttonsCartes;
+    private JButton boutonSon, annuler, refaire;
 
-    private JButton[][] buttonsTerrain;
-    private JButton[] buttonsCartes;
-    private JButton annuler, refaire;
-    private JButton boutonSon; // Ajouté pour pouvoir modifier son texte
-    private JButton boutonMenu; // Ajouté pour pouvoir y accéder si besoin
-
-    private JLabel nomJoueurCourantLabel; // Renommé pour clarté
-    private JLabel tempsLabel; // Renommé pour clarté
-    private JLabel roundLabel; // Ajouté pour afficher le round
-    private int numRound; // Géré par le modèle si possible
+    private JLabel nomJoueurCourantLabel;
+    private JLabel tempsLabel;
+    private JLabel roundLabel;
+    private int numRound;
 
     // Gestion du son
     private Clip clip;
-    private boolean musiqueActive = false; // État du son
-    private final String cheminMusique = PATH_SON_1.toString(); // Chemin de la musique
-
+    private boolean musiqueActive = false;
 
     // Gestion du temps
     private Instant debutTempsPartie;
-    private Timer timerPartie; // Référence au timer
+    private Timer timerPartie;
+
+    // Constantes
+    private static final int ESPACE = 20;
 
 
     /**
@@ -79,73 +72,56 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         this.interfaceGraphique = interfaceGraphique;
 
         jeu.ajouteObservateur(this);
-
-        // Pour le debug, utiliser un logger si possible, sinon commenter pour la production
-         logger.info("Interface Plateau de jeu lancée");
+        logger.info("Interface Plateau de jeu lancée");
 
         setLayout(new BorderLayout());
         setBackground(COULEUR_PLATEAU_DE_JEU);
 
+        creerButtonsCartes();
         initialiserInterface();
-
-        // Démarrer la musique au début si souhaité
-        // toggleMusique(this.boutonSon); // Peut-être démarrer par défaut ou attendre action utilisateur
-        // === Initialiser l'affichage une première fois ===
-        miseAJour(); // Appeler miseAJour() après l'initialisation pour afficher l'état initial
     }
 
 
 
-    // Constantes pour les espacements
-    private static final int MAIN_INSET = 20;
-    private static final int VERTICAL_GAP_ROW0_ROW1 = 20;
-    private static final int VERTICAL_GAP_ROW1_ROW2 = 30;
-    private static final int HORIZONTAL_STRUT_SIZE = 20;
+    @Override
+    public void miseAJour() {
+        logger.info("Mise à jour de l'interface...");
+        updateTerrain();
+        updateCartes();
+        updatePlayerAndRoundInfo();
+        updateUndoRedoButtons();
+        logger.info("Mise à jour de l'interface terminée.");
+    }
 
 
     /**
-     * Initialise l'interface utilisateur avec GridBagLayout.
-     */
-
+     * Initialise l'interface utilisateur avec GridBagLayout. */
     private void initialiserInterface() {
-        // === 1. Création des composants ===
-        creerTerrain();
-        creerButtonsCartes();
-        creerButtonsAnnulerRefaire();
-        boutonSon = creerBoutonSon();
-        boutonMenu = creerBoutonMenu();
-        JPanel roundTempsPanel = creerPanelRoundTemps();
-        JPanel contenuCentrePanel = creerContenuCentre();
-        JPanel cartesNordPanel = creerCartesNord();
-        JPanel carteGauchePanel = creerCarteGauche();
-        JPanel cartesSudPanel = creerCartesSud();
-        JPanel annulerRefaire = creerBoutonsDroite();
-
-        // === 2. Conteneur principal avec GridBagLayout ===
+        //  Conteneur principal avec GridBagLayout
         JPanel contenu = new JPanel(new GridBagLayout());
-        contenu.setBorder(BorderFactory.createEmptyBorder(MAIN_INSET, MAIN_INSET, MAIN_INSET, MAIN_INSET));
+        contenu.setBorder(BorderFactory.createEmptyBorder(ESPACE, ESPACE, ESPACE, ESPACE));
         contenu.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
 
-        // === Ligne 0 : Haut (son | timer | menu) ===
+        // Ligne 0 : Haut (son | timer | menu)
         JPanel ligne0 = new JPanel();
         ligne0.setLayout(new BoxLayout(ligne0, BoxLayout.X_AXIS));
         ligne0.setOpaque(false);
-        ligne0.add(boutonSon);
-        ligne0.add(Box.createHorizontalGlue());
-        ligne0.add(roundTempsPanel);
-        ligne0.add(Box.createHorizontalStrut(HORIZONTAL_STRUT_SIZE));
-        ligne0.add(boutonMenu);
+        ligne0.add( creerBoutonSon());
+        ligne0.add(Box.createGlue());
+        ligne0.add(creerPanelRoundTemps());
+        ligne0.add(Box.createHorizontalStrut(ESPACE));
+        ligne0.add(creerBoutonMenu());
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.insets = new Insets(0, 0, VERTICAL_GAP_ROW0_ROW1, 0);
+        gbc.insets = new Insets(0, 0, ESPACE, 0);
         contenu.add(ligne0, gbc);
 
         // === Ligne 1 : Texte du tour ===
@@ -154,7 +130,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gbc.weightx = 0;
         gbc.weighty = 0;
         gbc.insets = new Insets(15, 0, 0, 0);
-        contenu.add(contenuCentrePanel, gbc);
+        contenu.add(creerContenuCentre(), gbc);
 
         // === Saut de ligne entre ligne 1 et 2 ===
         gbc.gridy = 2;
@@ -178,8 +154,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         centreGbc.gridx = 1;
         centreGbc.gridy = 0;
         centreGbc.weightx = 2.5;
-        centreGbc.weighty = 0.5;
-        panelCentreEmpile.add(cartesNordPanel, centreGbc);
+        centreGbc.weighty = 0.37;
+        panelCentreEmpile.add(creerCartesNord(), centreGbc);
 
         // Carte gauche
         centreGbc.gridx = 0;
@@ -188,15 +164,13 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         centreGbc.weighty = 1.0;
         panelCentreEmpile.add(creerCarteGauche(), centreGbc);
 
-
-
         // terrain
         centreGbc.gridx = 1;
         centreGbc.gridy = 1;
         centreGbc.weightx = 2;
         centreGbc.weighty = 1.7;
         centreGbc.insets = new Insets(20, 20, 20, 20);
-        panelCentreEmpile.add(terrain, centreGbc);
+        panelCentreEmpile.add(creerTerrain(), centreGbc);
         centreGbc.insets = new Insets(0, 0, 0, 0);
 
         // Carte droite
@@ -204,52 +178,27 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         centreGbc.gridy = 1;
         centreGbc.weightx = 1.0;
         centreGbc.weighty = 1.0;
-        panelCentreEmpile.add(annulerRefaire, centreGbc);
+        panelCentreEmpile.add(creerBoutonsDroite(), centreGbc);
 
         // Cartes sud
         centreGbc.gridx = 1;
         centreGbc.gridy = 2;
         centreGbc.weightx = 2.5;
-        centreGbc.weighty = 0.5;
-        panelCentreEmpile.add(cartesSudPanel, centreGbc);
+        centreGbc.weighty = 0.37;
+        panelCentreEmpile.add(creerCartesSud(), centreGbc);
 
         contenu.add(panelCentreEmpile, gbc);
 
-        // === 3. Ajout du conteneur principal au panneau ===
+        // Ajout du conteneur principal au panneau
         setLayout(new BorderLayout());
         add(contenu, BorderLayout.CENTER);
 
-        // === 4. Démarrage du timer ===
+        // Démarrage du timer
         debutTempsPartie = Instant.now();
         timerPartie = new Timer(1000, e -> miseAjourTemps());
         timerPartie.start();
     }
 
-
-
-    @Override
-    public void miseAJour() {
-        // Cette méthode est appelée chaque fois que le modèle 'jeu' notifie ses observateurs.
-        // Elle doit lire l'état actuel du jeu et mettre à jour l'interface graphique.
-
-        System.out.println("Mise à jour de l'interface..."); // Pour vérifier si elle est appelée
-
-        // 1. Mettre à jour le plateau de jeu (les boutons du terrain)
-        updateTerrain();
-
-        // 2. Mettre à jour l'affichage des cartes du joueur courant
-//        updateCartes();
-
-        // 3. Mettre à jour les informations du joueur courant et du round
-        updatePlayerAndRoundInfo();
-
-        // 4. Mettre à jour l'état (activé/désactivé) des boutons Annuler/Refaire
-        updateUndoRedoButtons();
-
-        // Si d'autres éléments dépendent de l'état du jeu, ajoutez leurs mises à jour ici.
-
-        // Note : Le timer est géré séparément par son propre TimerTask.
-    }
 
 
 
@@ -258,9 +207,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     // =========================================
 
     /** Crée la grille du terrain de jeu */
-    private void creerTerrain() {
-        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
-        buttonsTerrain = new JButton[LIGNES][COLONNES];
+    private JPanel  creerTerrain() {
+        JPanel terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
+        buttonsTerrain = new BoutonAvecImage[LIGNES][COLONNES];
 
         terrain.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(206, 206, 206), 5, true),
@@ -270,35 +219,37 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
         for (int row = 0; row < LIGNES; row++) {
             for (int col = 0; col < COLONNES; col++) {
-                JButton bouton = creerBoutonTerrain(); // Méthode statique de MethodsStaticsUtils
-                // L'action listener dépend de la position et du collecteur d'événements
-                bouton.addActionListener(new AdaptateurBoutonTerrain(bouton, new Point(row, col), collecteurEv));
-                buttonsTerrain[row][col] = bouton;
-                terrain.add(bouton);
+                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
+                BoutonAvecImage boutonCase = configurerCaseTerrain(casePlateau);
+                boutonCase.bouton.addActionListener(new AdaptateurBoutonTerrain(casePlateau, collecteurEv));
+                buttonsTerrain[row][col] = boutonCase;
+                terrain.add(boutonCase.bouton);
             }
         }
-        // L'affichage initial du contenu des cases (pions) se fait dans updateTerrain()
+
+        return  terrain;
     }
 
 
-    /** Crée les boutons représentant les cartes (structure vide, l'affichage sera fait dans updateCartes)*/
+    /** Crée les boutons représentant les cartes */
     private void creerButtonsCartes() {
-        buttonsCartes = new JButton[NOMBRES_CARTES_PLATEAU];
+        buttonsCartes = new BoutonAvecImage[NOMBRES_CARTES_PLATEAU];
         for (int i = 0; i < buttonsCartes.length; i++) {
-            JButton bouton = creerBoutonAvecImage(PATH_CARTE_CRABE);
-            bouton.addActionListener(new AdaptateurCarteUI(new CarteUI(bouton, i), collecteurEv));
-            buttonsCartes[i] = bouton;
+            Carte carte = jeu.getCartesSurLeTerrain(i);
+            BoutonAvecImage boutonCarte = creerBoutonAvecImage(carte.getCheminImage());
+            configurerBoutonCarte(boutonCarte, carte );
+            boutonCarte.bouton.addActionListener(new AdaptateurCarte(carte, i, collecteurEv));
+            buttonsCartes[i] = boutonCarte;
         }
     }
 
-
     /** Crée les boutons "Annuler" et "Refaire" */
-    private void creerButtonsAnnulerRefaire() {
-        annulerRefairePanel = new JPanel(new GridLayout(6, 1, 0, 10));
-        annulerRefairePanel.setOpaque(false);
+    private JPanel creerButtonsAnnulerRefaire() {
+        JPanel boutonsAnnuleRefaire = new JPanel(new GridLayout(6, 1, 0, 10));
+        boutonsAnnuleRefaire.setOpaque(false);
 
-        annuler = creerBoutonAvecImage(PATH_BTN_ANNULER);
-        refaire = creerBoutonAvecImage(PATH_BTN_REFAIRE);
+        annuler = creerBoutonAvecImage(PATH_BTN_ANNULER).bouton;
+        refaire = creerBoutonAvecImage(PATH_BTN_REFAIRE).bouton;
 
         annuler.setBackground(new Color(207, 207, 207, 44));
         refaire.setBackground(new Color(207, 207, 207, 44));
@@ -309,16 +260,15 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
 
-        annulerRefairePanel.add(Box.createGlue());
-        annulerRefairePanel.add(Box.createGlue());
-        annulerRefairePanel.add(annuler);
-        annulerRefairePanel.add(refaire);
-        annulerRefairePanel.add(Box.createGlue());
-        annulerRefairePanel.add(Box.createGlue());
+        boutonsAnnuleRefaire.add(Box.createGlue());
+        boutonsAnnuleRefaire.add(Box.createGlue());
+        boutonsAnnuleRefaire.add(annuler);
+        boutonsAnnuleRefaire.add(refaire);
+        boutonsAnnuleRefaire.add(Box.createGlue());
+        boutonsAnnuleRefaire.add(Box.createGlue());
+
+        return  boutonsAnnuleRefaire;
     }
-
-
-    // --- Méthodes de création des conteneurs de layout spécifiques ---
 
     private JPanel creerCartesNord() {
         JPanel cartes = new JPanel();
@@ -327,9 +277,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
         cartes.add(Box.createGlue());
         cartes.add(Box.createGlue());
-        cartes.add(buttonsCartes[0]);
+        cartes.add(buttonsCartes[0].bouton);
         cartes.add(Box.createHorizontalStrut(25));
-        cartes.add(buttonsCartes[1]);
+        cartes.add(buttonsCartes[1].bouton);
         cartes.add(Box.createGlue());
         cartes.add(Box.createGlue());
 
@@ -343,9 +293,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
         cartes.add(Box.createGlue());
         cartes.add(Box.createGlue());
-        cartes.add(buttonsCartes[2]);
+        cartes.add(buttonsCartes[2].bouton);
         cartes.add(Box.createHorizontalStrut(25));
-        cartes.add(buttonsCartes[3]);
+        cartes.add(buttonsCartes[3].bouton);
         cartes.add(Box.createGlue());
         cartes.add(Box.createGlue());
 
@@ -359,7 +309,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         carte.add(Box.createVerticalStrut(50));
         carte.add(Box.createGlue());
         carte.add(Box.createGlue());
-        carte.add(buttonsCartes[4]);
+        carte.add(buttonsCartes[4].bouton);
         carte.add(Box.createGlue());
         carte.add(Box.createGlue());
         carte.add(Box.createVerticalStrut(50));
@@ -379,7 +329,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         JPanel droite = new JPanel();
         droite.setLayout(new BoxLayout(droite, BoxLayout.X_AXIS));
         droite.add(Box.createGlue());
-        droite.add(annulerRefairePanel);
+        droite.add(creerButtonsAnnulerRefaire());
         droite.add(Box.createGlue());
         droite.setOpaque(false);
 
@@ -387,43 +337,37 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     private JButton creerBoutonSon() {
-        JButton bouton = new JButton("son");
-        bouton.setForeground(Color.WHITE);
-        bouton.setFont(new Font("Arial", Font.PLAIN, 20));
-        bouton.setBackground(new Color(237, 237, 237, 16));
-        bouton.setContentAreaFilled(false);
-        bouton.setFocusPainted(false);
-        bouton.setPreferredSize(new Dimension(60, 40));
-        // Texte initial "son" ou "off" si musique désactivée par défaut
-        bouton.setText(musiqueActive ? "on" : "off");
-        bouton.addActionListener(e -> toggleMusique(bouton));
+        boutonSon = new JButton("son");
+        boutonSon.setForeground(Color.WHITE);
+        boutonSon.setFont(new Font("Arial", Font.PLAIN, 33));
+        boutonSon.setBackground(new Color(237, 237, 237, 16));
+        boutonSon.setContentAreaFilled(false);
+        boutonSon.setFocusPainted(false);
+        boutonSon.setText(musiqueActive ? "on" : "off");
+        boutonSon.addActionListener(e -> toggleMusique(boutonSon));
 
-//        JPanel panel = new JPanel(new BorderLayout());
-//        panel.setOpaque(false);
-////        panel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0)); // Marge à droite
-//        panel.add(bouton, BorderLayout.CENTER);
-        return bouton;
+        return boutonSon;
     }
 
-    private JPanel creerContenuCentre() {
+    private JPanel creerContenuCentre()  {
         JPanel textNomPanel = new JPanel(); // Renommé
         textNomPanel.setLayout(new BoxLayout(textNomPanel, BoxLayout.Y_AXIS));
         textNomPanel.setOpaque(false);
 
         JLabel txt = new JLabel("C'est au tour de");
-        txt.setFont(new Font("Arial", Font.PLAIN, 15));
+        txt.setFont(new Font("Arial", Font.PLAIN, 20));
         txt.setAlignmentX(Component.CENTER_ALIGNMENT);
         txt.setForeground(new Color(232, 231, 231));
 
-        nomJoueurCourantLabel = new JLabel("Nom Joueur"); // Initialisé ici, mis à jour dans miseAJour()
+        nomJoueurCourantLabel = new JLabel(jeu.getJoueurCourant().getNom());
         nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 30));
         nomJoueurCourantLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        nomJoueurCourantLabel.setForeground(new Color(218, 214, 214));
+        // Changer la couleur du texte du joueur courant pour qu'elle corresponde à sa couleur de pion
+        nomJoueurCourantLabel.setForeground(jeu.getJoueurCourant().getCouleurPion());
 
         textNomPanel.add(txt);
-        textNomPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        textNomPanel.add(Box.createRigidArea(new Dimension(0, 2)));
         textNomPanel.add(nomJoueurCourantLabel);
-
 
         return textNomPanel;
     }
@@ -437,18 +381,18 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         ));
         panel.setBackground(new Color(245, 245, 245, 23));
 
-        // numRound est géré dans miseAJour(), ici on initialise le label
-        roundLabel = new JLabel("Round: ?"); // Initialisé ici
+        numRound = jeu.getNumeroRound();
+        roundLabel = new JLabel("Round: "+numRound);
         roundLabel.setFont(new Font("Arial", Font.PLAIN, 25));
         roundLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 100));
 
-        tempsLabel = new JLabel("00:00"); // Initialisé ici
+        tempsLabel = new JLabel("00:00");
+        tempsLabel.setOpaque(false);
         tempsLabel.setFont(new Font("Arial", Font.BOLD, 25));
 
         panel.add(roundLabel);
         panel.add(tempsLabel);
 
-        // Le timer sera démarré après que tous les composants soient créés dans initialiserInterface()
         return panel;
     }
 
@@ -458,24 +402,42 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         menu.setContentAreaFilled(false);
         menu.setFocusPainted(false);
         menu.setForeground(Color.WHITE);
-        menu.setFont(new Font("Arial", Font.PLAIN, 46)); // Grande taille pour le symbole
-        menu.setPreferredSize(new Dimension(60, 40)); // Ajuster la taille si besoin
-
+        menu.setFont(new Font("Arial", Font.PLAIN, 40));
+        menu.setPreferredSize(new Dimension(60, 40));
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
 
-//        JPanel panel = new JPanel(new BorderLayout());
-//        panel.setOpaque(false);
-//        panel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0)); // Marge à droite
-//        panel.add(menu, BorderLayout.CENTER);
         return menu;
     }
+
+    private void configurerBoutonCarte(BoutonAvecImage bouton, Carte carteSurLeTerrain) {
+        bouton.panel.setImage(carteSurLeTerrain.getCheminImage());
+    }
+
+    private BoutonAvecImage configurerCaseTerrain(CasePlateau casePlateau) {
+        BoutonAvecImage boutonAvecImage = creerBoutonAvecImage(casePlateau.getCheminImage());
+            switch (casePlateau.getTypeElement()){
+                case VIDE: // case vide
+                        boutonAvecImage.setAnimation(null);
+                    break;
+                case PION_ETUDIANT:
+                        boutonAvecImage.setAnimation(null);
+                    break;
+                case PION_MAITRE:
+                        boutonAvecImage.setAnimation(null);
+                    break;
+                default:
+                    logger.logp(Level.SEVERE, EcranPlateauDeJeu.class.getName(),"configurerCaseTerrain","Erreur, type INCONNU: "+casePlateau.getTypeElement().name());
+                    break;
+            }
+
+        return boutonAvecImage;
+    }
+
 
 
     // =========================================
     // ========= Gestion Son & Musique =========
     // =========================================
-    // Ces méthodes semblent correctes pour une gestion simple du son.
-    // Pensez à gérer la fermeture du clip à la fin de l'application (voir note dans initialiserInterface)
 
     private void toggleMusique(JButton bouton) {
         if (musiqueActive) {
@@ -486,7 +448,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         } else {
             // Jouer la musique si elle n'est pas déjà en cours
             if (clip == null || !clip.isRunning()) {
-                jouerMusique(cheminMusique); // Utilise l'attribut cheminMusique
+                jouerMusique(PATH_SON_1.toString());
             }
             bouton.setText("on");
         }
@@ -507,8 +469,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();
         } catch (Exception e) {
-            System.err.println("Erreur lors de la lecture audio: " + e.getMessage()); // Utiliser System.err pour les erreurs ou un logger
-            // e.printStackTrace(); // Ne pas imprimer la stack trace complète en production
+            logger.severe("Erreur lors de la lecture audio: " + e.getMessage()); // Utiliser System.err pour les erreurs ou un logger
             // Optionnel : désactiver le bouton son si une erreur se produit
             if (boutonSon != null) {
                 boutonSon.setEnabled(false);
@@ -522,10 +483,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     // =========================================
     // ============== Mise à jour ==============
     // =========================================
-    // Ces méthodes sont appelées par miseAJour() pour actualiser l'UI
 
     // Mise à jour du temps (appelée par le Timer)
-    private void miseAjourTemps() { // Supprimé le paramètre Instant debut
+    private void miseAjourTemps() {
         if (debutTempsPartie != null && tempsLabel != null) { // Vérifier si les attributs sont initialisés
             Duration duration = Duration.between(debutTempsPartie, Instant.now());
             long minutes = duration.toMinutes();
@@ -535,81 +495,24 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
 
-    // Met à jour l'affichage du terrain en fonction de l'état du jeu
+    // Met à jour l'affichage du terrain en fonction de l'État du jeu
     private void updateTerrain() {
-        // Exemple conceptuel : suppose que jeu.getPlateau() retourne un tableau 2D ou similaire
-        // et que jeu.getPionAt(ligne, colonne) retourne le pion (ou null) à cette position.
         if (jeu != null && buttonsTerrain != null) {
             for (int row = 0; row < LIGNES; row++) {
                 for (int col = 0; col < COLONNES; col++) {
-                    Pion pion = jeu.getPionAt(row, col); // Méthode à implémenter dans votre classe Jeu
-                    JButton bouton = buttonsTerrain[row][col];
-
-                    if (pion != null) {
-                        // Afficher le pion sur le bouton. Ex: changer l'icône ou le texte.
-                        // Cela dépend de la manière dont vous représentez les pions.
-                        // Exemple simple avec texte :
-                        bouton.setText(pion.getType() + ""); // Afficher l'initiale du type de pion
-                        bouton.setForeground(pion.getCouleur()); // Changer la couleur du texte selon le joueur
-
-                        // Exemple avec icône (nécessite une méthode pour obtenir l'icône du pion)
-                        // ImageIcon icon = getIconForPion(pion); // Méthode utilitaire à créer
-                        // bouton.setIcon(icon);
-                        // bouton.setText(""); // Enlever le texte si icône
-                    } else {
-                        // Case vide
-                        bouton.setText("");
-                        // bouton.setIcon(null);
-                    }
-
-                    // Optionnel : Activer/désactiver le bouton si la case est jouable dans l'état actuel
-                    // boolean isPlayable = jeu.isCasePlayable(row, col); // Méthode à implémenter dans Jeu
-                    // bouton.setEnabled(isPlayable);
+                   buttonsTerrain[row][col] = configurerCaseTerrain(jeu.getCasePlateau(row, col));
                 }
             }
         }
     }
 
     // Met à jour l'affichage des cartes du joueur courant
-//    private void updateCartes() {
-//        // Exemple conceptuel : suppose que jeu.getJoueurCourant() et joueur.getCartesEnMain() existent
-//        if (jeu != null && buttonsCartes != null) {
-//            List<Carte> cartesEnMain = jeu.getJoueurCourant().getCartesEnMain(); // Méthodes à implémenter
-//
-//            // Assurez-vous que le nombre de cartes en main correspond au nombre de boutons de cartes
-//            // ou gérez les index en conséquence.
-//            for (int i = 0; i < buttonsCartes.length; i++) {
-//                JButton bouton = buttonsCartes[i];
-//
-//                if (i < cartesEnMain.size()) {
-//                    Carte carte = cartesEnMain.get(i);
-//                    // Afficher l'image de la carte sur le bouton
-//                    ImageIcon icon = getIconForCarte(carte); // Méthode utilitaire à créer
-//                    bouton.setIcon(icon);
-//                    bouton.setEnabled(true); // La carte est en main, donc potentiellement utilisable
-//                    // Peut-être désactiver si le coup n'est pas valide pour la carte dans l'état actuel
-//                    // boolean isCardPlayable = jeu.isCarteJouable(carte); // Méthode à implémenter
-//                    // bouton.setEnabled(isCardPlayable);
-//                } else {
-//                    // Pas de carte à cet index pour le joueur courant (main plus petite que NOMBRES_CARTES_PLATEAU)
-//                    bouton.setIcon(null); // Ou une icône vide
-//                    bouton.setText(""); // Assurez-vous que le texte est vide
-//                    bouton.setEnabled(false); // Pas de carte, bouton désactivé
-//                }
-//            }
-//        }
-//    }
-
-    // Méthode utilitaire pour obtenir l'icône d'une carte (à implémenter)
-    private ImageIcon getIconForCarte(Carte carte) {
-        // Exemple : Charger une image basée sur le type ou le nom de la carte
-        String cheminImage = "res/vue/images/cartes/" + carte.getNom() + ".png"; // Supposons que Carte a un getNom()
-        java.net.URL imgURL = getClass().getResource(cheminImage);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            System.err.println("Ressource d'image de carte introuvable : " + cheminImage);
-            return null; // Ou retourner une icône par défaut/vide
+    private void updateCartes() {
+        if (jeu != null && buttonsCartes != null) {
+            for (int i = 0; i < buttonsCartes.length; i++) {
+                BoutonAvecImage bouton = buttonsCartes[i];
+                configurerBoutonCarte(bouton, jeu.getCartesSurLeTerrain(i));
+            }
         }
     }
 
@@ -617,17 +520,14 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     // Met à jour l'affichage du joueur courant et du numéro de round
     private void updatePlayerAndRoundInfo() {
         if (jeu != null && nomJoueurCourantLabel != null && roundLabel != null) {
-            // Suppose que jeu.getJoueurCourant() retourne l'objet Joueur courant
-            // et que Joueur a une méthode getName()
-            String nomJoueur = jeu.getJoueurCourant().getNom(); // Méthodes à implémenter
+            String nomJoueur = jeu.getJoueurCourant().getNom();
             nomJoueurCourantLabel.setText(nomJoueur);
 
-            // Suppose que jeu.getRoundNumber() retourne le numéro du round
-            numRound = jeu.getNumeroRound(); // Méthode à implémenter
+            numRound = jeu.getNumeroRound();
             roundLabel.setText("Round: " + numRound);
 
-            // Optionnel : Changer la couleur du texte du joueur courant pour qu'elle corresponde à sa couleur de pion
-            // nomJoueurCourantLabel.setForeground(jeu.getJoueurCourant().getCouleurPion()); // Méthode à implémenter
+            // Changer la couleur du texte du joueur courant pour qu'elle corresponde à sa couleur de pion
+             nomJoueurCourantLabel.setForeground(jeu.getJoueurCourant().getCouleurPion());
         }
     }
 
@@ -640,8 +540,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         }
     }
 
+
     // =========================================
-    // ============== Méthodes Utiles ==============
+    // ============== Méthodes Utiles ==========
     // =========================================
 
     // Méthode pour arrêter le timer et le son (à appeler lors de la fermeture de la fenêtre)
@@ -652,7 +553,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         if (clip != null) {
             clip.close();
         }
-        System.out.println("Nettoyage de EcranPlateauDeJeu effectué.");
+        logger.info("Nettoyage de EcranPlateauDeJeu effectué.");
     }
 
 }
