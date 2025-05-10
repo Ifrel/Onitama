@@ -1,6 +1,7 @@
 package Controleur;
 
 import Global.Config;
+import Modele.CasePlateau;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceGraphique;
@@ -22,7 +23,7 @@ public class Mediateur implements CollecteurEvenements {
     }
 
     @Override
-    public void boutonTerrainJeu(Point btnCoords) {
+    public void boutonTerrainJeu(CasePlateau casePlateau) {
 
     }
 
