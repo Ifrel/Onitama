@@ -20,6 +20,6 @@ public class AdaptateurBoutonTerrain implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         System.err.println("bouton: case préssé");
-//        collecteurEvent.boutonTerrainJeu(casePlateau);
+        collecteurEvent.boutonTerrainJeu(casePlateau);
     }
 }
