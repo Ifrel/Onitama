@@ -2,8 +2,10 @@ package Modele;
 
 import Global.Config.TYPECARTE;
 import static Global.Config.MOUVEMENTCARTE;
+import static Global.Paths.PATH_CARTE_TIGRE;
 
 import java.awt.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,14 +21,14 @@ public class Carte {
     private String nom;                 // Nom unique ou identifiant de la carte
     private TYPECARTE type;             // Type de la carte
     private String description;         // Description textuelle de l'effet de la carte
-    private String cheminImage;         // Chemin relatif ou nom de fichier de l'image de la carte
+    private Path cheminImage;         // Chemin relatif ou nom de fichier de l'image de la carte
     // Ajout d'autres attributs si nécessaire (par ex. force, coût, etc.)
 
     public Carte(TYPECARTE type){
         this.type = type;
         nom = type.name();
         description = "";
-        cheminImage = "";
+        cheminImage = PATH_CARTE_TIGRE;
     }
 
     /**
@@ -57,7 +59,7 @@ public class Carte {
      * Peut être null si la carte n'a pas d'image associée.
      * @return Le chemin de l'image, ou null.
      */
-    public String getCheminImage() {
+    public Path getCheminImage() {
         return cheminImage;
     }
 
@@ -72,9 +74,8 @@ public class Carte {
 
     /**
      * Assigne le chemin de l'image de la carte.
-     * Peut être null si la carte n'a pas d'image associée.
-     */
-    public void setCheminImage(String cheminImage) {
+     * Peut être null si la carte n'a pas d'image associée.*/
+    public void setCheminImage(Path cheminImage) {
         this.cheminImage = cheminImage;
     }
 
