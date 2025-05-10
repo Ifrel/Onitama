@@ -102,7 +102,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
 
         // --- Ligne 1 : Mode Auto ---
-        boutonModeAuto = creerBoutonAvecImage(PATH_BTN_MODE_AUTO_OFF); // État par défaut
+        boutonModeAuto = creerBoutonAvecImage(PATH_BTN_MODE_AUTO_OFF).bouton; // État par défaut
         boutonModeAuto.setPreferredSize(new Dimension(62,35));
         boutonModeAuto.setFont(FONT_COMPOSANT);
         boutonModeAuto.addActionListener(e -> {
@@ -188,7 +188,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         ajouterLigne(ongletGeneral, LBL_JOUEUR_2, champJoueur2, ligneCourante++, FONT_LABEL);
 
         // -- bouton enter
-        JButton entrer = creerBoutonAvecImage(PATH_BTN_ENTRER);
+        JButton entrer = creerBoutonAvecImage(PATH_BTN_ENTRER).bouton;
         entrer.setPreferredSize(new Dimension(98, 98));
         contraintes = new GridBagConstraints();
         contraintes.gridx = 6;
