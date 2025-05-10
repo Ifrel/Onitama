@@ -59,19 +59,19 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // Créer et ajouter les onglets
         addTab(null, creerOngletGeneral());
-        setTabComponentAt(0, creerTitreOnglets(TITRE_ONGLET_GENERAL)); // Supposons que creerTitreOnglets fonctionne
+        setTabComponentAt(0, creerJPanel(TITRE_ONGLET_GENERAL)); // Supposons que creerTitreOnglets fonctionne
 
         addTab(null, creerOngletIA());
-        setTabComponentAt(1, creerTitreOnglets(TITRE_ONGLET_IA));
+        setTabComponentAt(1, creerJPanel(TITRE_ONGLET_IA));
 
         addTab(null, creerOngletCouleur());
-        setTabComponentAt(2, creerTitreOnglets(TITRE_ONGLET_COULEUR));
+        setTabComponentAt(2, creerJPanel(TITRE_ONGLET_COULEUR));
 
         addTab(null, creerOngletAnimation());
-        setTabComponentAt(3, creerTitreOnglets(TITRE_ONGLET_ANIMATION));
+        setTabComponentAt(3, creerJPanel(TITRE_ONGLET_ANIMATION));
 
         addTab(null, creerOngletSon());
-        setTabComponentAt(4, creerTitreOnglets(TITRE_ONGLET_SON));
+        setTabComponentAt(4, creerJPanel(TITRE_ONGLET_SON));
     }
 
 

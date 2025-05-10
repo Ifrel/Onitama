@@ -8,7 +8,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.Duration;
 
-import static Vue.Utils.MethodsStaticsUtils.creerBoutonActionMenu;
+import static Vue.Utils.MethodsStaticsUtils.creerBouton;
 
 /**
  * La classe EcranMenu représente l'écran de menu principal avec les statistiques du jeu.
@@ -110,7 +110,7 @@ public class EcranMenu extends JPanel implements Observateur {
      * @return Le JPanel contenant le bouton "Retour".
      */
     private JPanel creerPanelRetour() {
-        JButton btnRetour = creerBoutonActionMenu("Retour");
+        JButton btnRetour = creerBouton("Retour");
         btnRetour.setPreferredSize(new Dimension(120, 30)); // Taille préférée du bouton
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Layout pour aligner à droite
         panel.setOpaque(false); // Rend le fond du panneau transparent
@@ -125,7 +125,7 @@ public class EcranMenu extends JPanel implements Observateur {
      * @return Le JPanel contenant le bouton "Sauvegarder".
      */
     private JPanel creerBoutonSauvegarde() {
-        JButton btnSauvegarder = creerBoutonActionMenu("Sauvegarder");
+        JButton btnSauvegarder = creerBouton("Sauvegarder");
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Layout pour aligner à gauche
         panel.setOpaque(false); // Rend le fond du panneau transparent
         panel.add(btnSauvegarder);
@@ -149,7 +149,7 @@ public class EcranMenu extends JPanel implements Observateur {
 
         String[] labels = {"Mes parties", "Nouvelle partie", "Didacticiel", "Règles"};
         for (int i = 0; i < labels.length; i++) {
-            JButton bouton = creerBoutonActionMenu(labels[i]);
+            JButton bouton = creerBouton(labels[i]);
             gbcBouton.gridy = i; // Chaque bouton sur une nouvelle ligne
             container.add(bouton, gbcBouton);
         }
