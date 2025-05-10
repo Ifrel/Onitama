@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 public class Paths {
     /********************************************
-     *              CARTES                      *
+     *              IMAGES CARTES                      *
      *******************************************/
     public static Path PATH_CARTE_GRENOUILLE  = Path.of("res/vue/images/cartes/GRENOUILLE.png");
     public static Path PATH_CARTE_ELEPHANT    = Path.of("res/vue/images/cartes/ELEPHANT.png");
@@ -25,19 +25,33 @@ public class Paths {
 
 
     /********************************************
-     *              IMAGES                      *
+     *              IMAGES BOUTONS              *
      *******************************************/
     public final static Path PATH_IMAGE_ARRIERE_PLAN_MENU = Path.of("res/vue/images/arrierePlans/menu.png");
     public static final Path PATH_BTN_MODE_AUTO_OFF       = Path.of("res/vue/images/buttons/button_off.png");
     public static final Path PATH_BTN_MODE_AUTO_ON        = Path.of("res/vue/images/buttons/button_on.png");
     public static final Path PATH_BTN_ENTRER              = Path.of("res/vue/images/buttons/button_entrer.png");
     public static final Path PATH_BTN_ANNULER             = Path.of("res/vue/images/buttons/button_annuler.png");
-    public static final Path PATH_BTN_REFAIRE              = Path.of("res/vue/images/buttons/button_refaire.png");
+    public static final Path PATH_BTN_REFAIRE             = Path.of("res/vue/images/buttons/button_refaire.png");
     public static final Path PATH_ARRIERE_PLAN_ED_O1      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage.png");
     public static final Path PATH_ARRIERE_PLAN_ED_O2      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage2.png");
+
+
+    /********************************************
+     *              IMAGES PIONS              *
+     *******************************************/
+    public final static Path PATH_PION_BLEU_ETUDIANT_CLIQUE     = Path.of("res/vue/images/pions/pion_bleu_etudiant_cliquer.png");
+    public final static Path PATH_PION_ROUGE_ETUDIANT           = Path.of("res/vue/images/pions/pion_rouge_etudiant.png");
+    public final static Path PATH_PION_BLEU_ETUDIANT            = Path.of("res/vue/images/pions/pion_bleu_etudiant.png");
+    public final static Path PATH_PION_NOIR_ETUDIANT            = Path.of("res/vue/images/pions/pion_noir_etudiant.png");
+    public final static Path PATH_PION_ROUGE_MAITRE             = Path.of("res/vue/images/pions/pion_rouge_maitre.png");
+    public final static Path PATH_PION_NOIR_MAITRE              = Path.of("res/vue/images/pions/pion_noir_maitre.png");
+    public final static Path PATH_PION_BLEU_MAITRE              = Path.of("res/vue/images/pions/pion_bleu_maitre.png");
+
 
     /********************************************
      *              MUSIQUES                      *
      *******************************************/
     public static Path PATH_SON_1             = Path.of("/vue/musique/son_1.wav");
+
 }
