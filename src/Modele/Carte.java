@@ -91,6 +91,10 @@ public class Carte {
         return allMoves;
     }
 
+    public List<Point> getMoves() {
+        return MOUVEMENTCARTE.get(type);
+    }
+
 
 
     // =========================================

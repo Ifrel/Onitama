@@ -21,14 +21,15 @@ public class Jeu extends Observable {
     public enum etatCoup
     {
         aucun,
-        selectionné,
-        joué,
-        annulé,
-        terminé
+        selectionne,
+        joue,
+        annule,
+        termine
     }
 
     // -- JOUEURS -- //
     private int joueurCourant;
+    private Joueur joueur1, joueur2;
     private HashMap<Integer, Joueur> joueursEnPartie;
 
     // -- GRILLE -- //
@@ -96,8 +97,8 @@ public class Jeu extends Observable {
 
         // -- Joueurs
         joueurCourant = 2;
-        Joueur joueur1 = new Joueur(1,"nom Joueur 1");
-        Joueur joueur2 = new Joueur(2,"nom Joueur 2");
+        joueur1 = new Joueur(1,"nom Joueur 1");
+        joueur2 = new Joueur(2,"nom Joueur 2");
         joueur1.addCard(tirerCartesAuHasard(NOMBRE_CARTES_MAIN));
         joueur2.addCard(tirerCartesAuHasard(NOMBRE_CARTES_MAIN));
         joueursEnPartie = new HashMap<Integer, Joueur>() {{
@@ -283,6 +284,20 @@ public class Jeu extends Observable {
     }
 
 
+    public long getTempsJeuSecondes() {
+        return  4500;
+    }
+
+    public boolean estTermine() {
+        return false;
+    }
+
+    public Joueur getJoueur(int idJoueur) {
+        if (idJoueur == 1) return joueur1;
+        else if (idJoueur == 2) return joueur2;
+        else return null;
+    }
+
 
     /**
      * renvoie les lignes de la grille
@@ -416,20 +431,20 @@ public class Jeu extends Observable {
             case aucun:
                 // Si le pion ne nous appartient pas, on ne joue pas le coup.
                 if (!selectionnePion(p)) return;
-                etatCoupEnCours = etatCoup.selectionné;
+                etatCoupEnCours = etatCoup.selectionne;
                 metAJour();
                 break;
-            case selectionné:
+            case selectionne:
 
                 break;
 
-            case joué:
+            case joue:
                 break;
-            case annulé:
+            case annule:
                 pionSelectionne = null;
                 etatCoupEnCours = etatCoup.aucun;
                 break;
-            case terminé:
+            case termine:
                 pionSelectionne = null;
                 changerLeJoueurEnCours();
                 break;

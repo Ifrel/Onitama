@@ -3,6 +3,7 @@ import Global.LogManagerSetup;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceGraphique;
+import Vue.InterfaceTextuelle;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,8 +24,11 @@ public class Onitama {
             logger.info("Initialisation du collecteur d'évènements");
             CollecteurEvenements collecteurEvenements = new Mediateur(jeu);
 
-            logger.info("Lancement de l'interface graphique du jeu");
-            InterfaceGraphique.lancerInterfaceGraphique(jeu, collecteurEvenements);
+//            logger.info("Lancement de l'interface graphique du jeu");
+//            InterfaceGraphique.lancerInterfaceGraphique(jeu, collecteurEvenements);
+
+            logger.info("Lancement de l'interface Textuelle du jeu");
+            InterfaceTextuelle.lancerInterfaceTextuelle(jeu, collecteurEvenements);
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur au démarrage de l'application : " + e.getMessage(), e);
