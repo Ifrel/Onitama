@@ -14,7 +14,7 @@ import static Global.Config.ROLEPION;
 public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
     private byte [] config; // 12 octets = 96 bits; BIG ENDIAN
     //  4    4     4    4     4           25 (5 x 5)                 25 (5 x 5)            5     5      5     5      6
-    // 1111 1111  1111 1111  1111  1 111 11 11 1111 1111 1111 1111 1  1111111111111111111111111  11111 11111  11111 11111  XXXXXX
+    // 1111 1111  1111 1111  1111  1111111111111111111111111  1111111111111111111111111  11111 11111  11111 11111  XXXXXX
     // ^^^^ ^^^^  ^^^^ ^^^^  ^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^ ^^^^^  ^^^^^ ^^^^^  ^^^^^^
     //  |    |     |    |     |               |                          |                |     |      |     |       |
     //  |    |     |    |     |               |                          |                |     |      |     |      6 bits inutilisés
@@ -168,6 +168,12 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
         return res;
     }
 
+    /**
+     * Renvoie un vecteur de booléens qui indique la valeur d'une séquence de bits (relatif à un point de départ)
+     * Seulement pour les pions étudiants
+     * @param lp Liste de pions
+     * @return Un vecteur de booléen indiquant des valeurs de bit
+     */
     private boolean [] pionsEtudiantsToBits(List<Pion> lp) {
         boolean [] res = new boolean[25];
         for (Pion p: lp) {
@@ -183,6 +189,12 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
         return res;
     }
 
+    /**
+     * Renvoie un vecteur de booléens qui indique la valeur d'une séquence de bits (relatif à un point de départ)
+     * Seulement pour les pions maîtres
+     * @param lp Liste de pions
+     * @return Un vecteur de booléen indiquant des valeurs de bit
+     */
     private boolean [] pionMaitreToBits(List<Pion> lp) {
         boolean [] res = new boolean[10];
         for (Pion p: lp) {
@@ -199,6 +211,12 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
         return res;
     }
 
+    /**
+     * Défini les valeurs des bits dans 'bs' conformément à 'pos', en partant de 'début', jusqu'à atteindre la taille de 'pos'
+     * @param debut Point de départ dans le vecteur de bits
+     * @param pos Vecteur de booléen de taille variable indiquant les valeurs des bits (relatif à 'debut')
+     * @param bs Bitset (séquence de bits) où on écrit
+     */
     private void ecrireVecteur(int debut, boolean [] pos, BitSet bs) {
         int pl = pos.length;
         for (int i = 0; i < pl; i++) {
@@ -210,6 +228,11 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
         }
     }
 
+    /**
+     * Convertit un Bitset (séquence de bits) en un vecteur de bits plus compact
+     * @param bs Bitset à convertir
+     * @return Vecteur de bits compact
+     */
     private byte [] bitsetToCompactByteArray(BitSet bs) {
         // int bl = bs.size();
         int bl = TAILLE_VECTEUR_BITS;
