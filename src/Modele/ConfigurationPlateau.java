@@ -22,8 +22,8 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
     //  |    |     |    |     |               |                          |                |     |     Position Ligne Maitre Joueur 2
     //  |    |     |    |     |               |                          |                |    Position Colonne Maitre Joueur 1
     //  |    |     |    |     |               |                          |               Position Ligne Maitre Joueur 1
-    //  |    |     |    |     |               |                         Positions Pions Joueur 2
-    //  |    |     |    |     |              Positions Pions Eleves Joueur 1
+    //  |    |     |    |     |               |                         Positions Pions Etudiants Joueur 2
+    //  |    |     |    |     |              Positions Pions Etudiants Joueur 1
     //  |    |     |    |    Carte Supplémentaire
     //  |    |     |   Carte de la Main 2 du Joueur 2
     //  |    |    Carte de la Main 1 du Joueur 2
