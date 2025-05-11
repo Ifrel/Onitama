@@ -13,6 +13,8 @@ public class Config {
         FORT
     }
 
+    public static final int TAILLE_VECTEUR_BITS = 96;
+
     // -- TYPE ELEMENT SUR LE TERRAIN DE JEU --
     public static enum TYPE_ELEMENT_TERRAIN {
         VIDE,
