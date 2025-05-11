@@ -1,6 +1,7 @@
 package Modele;
 
-import java.util.ArrayList;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
 
 import static Global.Config.TYPECARTE.*;
@@ -8,67 +9,83 @@ import static Global.Config.TYPECARTE.*;
 /**
  * Représentation compacte de l'état du plateau de jeu à un moment donné de la partie
  */
-public class ConfigurationPlateau {
-    private byte joueurCourantID;
-    private byte[] cartesJ1;
-    private byte[] cartesJ2; // utile ???
-    private byte carteRetrait;
-    private byte[] pionsJ1;
-    private byte[] pionsJ2;
+public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
+    private  byte[] config; // 12 octets = 96 bits
+    // 1111 1111  1111 1111  1111  11111 11111 11111 11111  11111  11111 1111 11111 11111 11111 11111 11111 11111 1111 w1 1  XX XXXX
+    // ^^^^ ^^^^  ^^^^ ^^^^  ^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^ ^^^^^  ^^^^^ ^^^^^  ^^^^^^
+    //  |    |     |    |     |               |                          |                |     |      |     |       |
+    //  |    |     |    |     |               |                          |                |     |      |     |      6 bits inutilisés
+    //  |    |     |    |     |               |                          |                |     |      |    Position Colonne Maitre Joueur 2
+    //  |    |     |    |     |               |                          |                |     |     Position Ligne Maitre Joueur 2
+    //  |    |     |    |     |               |                          |                |    Position Colonne Maitre Joueur 1
+    //  |    |     |    |     |               |                          |               Position Ligne Maitre Joueur 1
+    //  |    |     |    |     |               |                         Positions Pions Joueur 2
+    //  |    |     |    |     |              Positions Pions Eleves Joueur 1
+    //  |    |     |    |    Carte Supplémentaire
+    //  |    |     |   Carte de la Main 2 du Joueur 2
+    //  |    |    Carte de la Main 1 du Joueur 2
+    //  |   Carte de la Main 2 du Joueur 1
+    // Carte de la Main 1 du Joueur 1
+    // ---------------------------------
+    // -> Cartes sur 4 bits car 16 valeurs possibles ( Math.ceiling(log2(16)) )
+    // -> Positions pions, impossible d'utilise 2 vecteurs de 5 bits, on obtiendrait des intersections en trop,
+    // donc plus de pions que prévu, donc 25 bits pour toutes les positions possibles, 1 si pion à cette position, 0 sinon
+    // -> Position Maitres : possible d'utiliser 2 vecteurs de 5 bits car 1 seul maitre par joueur donc aucune ambiguité
 
-    ConfigurationPlateau(int joueurCourantID, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2, Carte carteEnPlus, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
-        this.joueurCourantID = joueurID2Octet(joueurCourantID);
-        this.cartesJ1 = listeCartes2ListeOctets(cartesJoueur1);
-        this.cartesJ2 = listeCartes2ListeOctets(cartesJoueur2);
-        this.carteRetrait = carte2Octet(carteEnPlus);
 
-    }
+    public ConfigurationPlateau(int joueurCourantID, Carte carteEnPlus, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2,  List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
+        Objects.requireNonNull(carteEnPlus, "La Carte Supplémentaire ne peut pas valoir null");
+        Objects.requireNonNull(cartesJoueur1, "La liste des cartes du joueur 1 ne peut pas valoir null");
+        Objects.requireNonNull(cartesJoueur2, "La liste des cartes du joueur 2 ne peut pas valoir null");
+        Objects.requireNonNull(pionsJoueur1, "La liste des pions du joueur 1 ne peut pas valoir null");
+        Objects.requireNonNull(pionsJoueur2, "La liste des pions du joueur 2 ne peut pas valoir null");
 
-    /**
-     * Convertit l'identifiant du joueur fourni en octet et le renvoie
-     * @param id identifiant du joueur dont on veut récupérer l'identifiant sour forme d'octet
-     * @return l'octet représentant l'identifiant du joueur
-     */
-    public byte joueurID2Octet(int id) {
-        if (id < 0 || id > 255) {
-            throw new RuntimeException("LA classe " + ConfigurationPlateau.class.getName() + " ne traite que des octets positifs (donc valeur entre 0 et 255");
+        if (cartesJoueur1.size() != 2) {
+            throw new RuntimeException("Le Joueur 1 devrait avoir 2 cartes mais en a " + cartesJoueur1.size());
         }
-        return (byte) id;
-    }
-
-    /**
-     * Convertit l'octet représentant l'identifiant du jouer courant en un entier
-     * @param b l'octet représentant l'identifiant du joueur
-     * @return identifiant du joueur courant sous forme d'entier
-     */
-    public int octet2JoueurID(byte b) {
-        return (int) b;
-    }
-
-    /**
-     * Convertit une liste de carte en une liste d'octets
-     * @param listeCartes liste de cartes à convertir
-     * @return liste d'octets représentant les cartes
-     */
-    public byte[] listeCartes2ListeOctets (List<Carte> listeCartes) {
-        byte[] listeOctets = new byte[listeCartes.size()];
-        for (int i = 0; i < listeCartes.size(); i++) {
-            listeOctets[i] = carte2Octet(listeCartes.get(i));
+        if (cartesJoueur2.size() != 2) {
+            throw new RuntimeException("Le Joueur 2 devrait avoir 2 cartes mais en a " + cartesJoueur2.size());
         }
-        return listeOctets;
+
+        if (pionsJoueur1.size() > 5) {
+            throw new RuntimeException("Le Joueur 1 devrait avoir au maximum 5 pions mais en a " + pionsJoueur1.size());
+        }
+
+        if (pionsJoueur2.size() > 5) {
+            throw new RuntimeException("Le Joueur 2 devrait avoir au maximum 5 pions mais en a " + pionsJoueur2.size());
+        }
+
+        config = new byte[12]; // 96 bits, 90 utilisés
+
+        byte b, b1, b2;
+
+        b1 = carte2Octet(cartesJoueur1.get(0));
+        b2 = carte2Octet(cartesJoueur1.get(1));
+        b = (byte) (b1 << 4 | b2);
+        config[0] = b;
+
+        b1 = carte2Octet(cartesJoueur2.get(0));
+        b2 = carte2Octet(cartesJoueur2.get(1));
+        b = (byte) (b1 << 4 | b2);
+        config[1] = b;
+
+        b1 = carte2Octet(carteEnPlus);
+        List<Point> lp1 = new ArrayList<>();
+        
+        //b2 =
+    }
+
+    public ConfigurationPlateau(byte [] etatJeu) {
+        Objects.requireNonNull(etatJeu, "L'état du jeu ne peut pas valoir null");
+        this.config = etatJeu.clone();
     }
 
     /**
-     * Convertit une liste d'octets représentant des cartes en une liste de cartes
-     * @param listeOctets liste de cartes en octets à convertir
-     * @return liste d'octets représentant les cartes
+     * Renvoie la représentation compacte du plateau de jeu
+     * @return un vecteur de 96 bits représentant l'état du jeu
      */
-    public List<Carte> listeOctets2ListeCartes (byte[] listeOctets) {
-        List<Carte> listeCartes = new ArrayList<>();
-        for (byte octet : listeOctets) {
-            listeCartes.add(octet2Carte(octet));
-        }
-        return listeCartes;
+    public byte[] getEtat() {
+        return this.config.clone();
     }
 
     /**
@@ -189,5 +206,15 @@ public class ConfigurationPlateau {
                 break;
         }
         return c;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(config);
+    }
+
+    @Override
+    public int compareTo(ConfigurationPlateau cp) {
+        return hashCode() - cp.hashCode();
     }
 }
