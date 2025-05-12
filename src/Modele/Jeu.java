@@ -1,25 +1,30 @@
 package Modele;
 
-import static Global.Config.TYPECARTE.*;
-import static Global.Config.*;
-import static Global.Config.ROLEPION.*;
-
 import Modele.IA.IA;
 import Patterns.Observable;
 
 import java.awt.*;
-import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import static Global.Config.*;
+import static Global.Config.ROLEPION.PION_ETUDIANT;
+import static Global.Config.ROLEPION.PION_MAITRE;
+import static Global.Config.TYPECARTE.*;
 
 
 public class Jeu extends Observable {
-    private Pion [][] grille;
+    private Pion [][] grille; // grille de pions
     private Historique<Coup> historique;
     private Joueur joueur1, joueur2;
     private IA IA_1, IA_2;
     private int lignes, colonnes;
-    private int idJoueurCourant;
+    private int idJoueurCourant; // identifiant du joueur courant
+    private Carte carteSelectionee;
+    private long tempsJeu; // temps écoulé depuis le début de la partie
+    private int numRound; // à quel round on en est
+    private boolean partieFinie;
 
     // --- CARTES -- //
     private List<Carte> toutesLesCartes; //Toutes les cartes confondues
@@ -29,14 +34,17 @@ public class Jeu extends Observable {
     private Carte carteEchange; //La carte qui sera en échange
 
     // -- GRILLE -- //
-    private ArrayList<Pion> pionJoueurUn = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
-    private ArrayList<Pion> pionJoueurDeux = new ArrayList<>(); //idem pour le deuxième joueur
+    private final List<Pion> pionsJoueurUn = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
+    private final List<Pion> pionsJoueurDeux = new ArrayList<>(); //idem pour le deuxième joueur
 
 
 
 
     public Jeu() {
         lignes = colonnes = 5;
+
+        grille = new Pion[LIGNES][COLONNES];
+
         historique = new Historique<>();
 
         toutesLesCartes = initCartes();
@@ -44,6 +52,7 @@ public class Jeu extends Observable {
 
         initGrille();
 
+        initJoueurs();
         idJoueurCourant = 1;
 
     }
@@ -101,51 +110,18 @@ public class Jeu extends Observable {
         return cartesTirees;
     }
 
-    /**
-     * Ajoute un certain type de pion à une certaine position sur la grille.
-     * Assigne un propriétaire également à ce nouveau pion.
-     */
-    void ajouterPion(List<Point> _coordonnes, int _proprietaire, ROLEPION _role)
-    {
-        //Si on est le joueur 1
-        if(_proprietaire == 1)
-        {
-            //Si il s'agit d'un pion étudiant
-            if(_role == PION_ETUDIANT)
-            {
-                //Alors pour chaque point initiale:
-                for (Point p: _coordonnes)
-                {
-                    //On associe le propriétaire et la position a un pion étudiant
-                    Pion pionEtudiant1 = new Pion(_proprietaire,p, PION_ETUDIANT);
-                    //On mémorise ce pion dans la liste des pions du premier joueur
-                    pionJoueurUn.add(pionEtudiant1);
-                }
-            }
-            else{
-                //Idem, mais pour un pion maitre (on passe une seule coordonée lorsqu'il s'agit d'un pion maitre)
-                Pion pionMaitre1 = new Pion(_proprietaire,  _coordonnes.get(0), PION_MAITRE);
-                pionJoueurUn.add(pionMaitre1);
-            }
-        }
-        //Sinon si on est le deuxième joueur
-        else{
-            //Meme principe, sauf que on stocke les pions dans la liste du second joueur
-            if(_role == PION_ETUDIANT)
-            {
-                for (Point p: _coordonnes)
-                {
-                    Pion pionEtudiant2 = new Pion(_proprietaire, p, PION_ETUDIANT);
-                    pionJoueurDeux.add(pionEtudiant2);
-                }
-            }
-            else{
-                Pion pionMaitre2 = new Pion(_proprietaire,_coordonnes.get(0), PION_MAITRE);
-                pionJoueurDeux.add(pionMaitre2);
+    private void ajouterPion(List<Point> coordonnees, int proprietaire, ROLEPION role) {
+        for (int i = 0; i < coordonnees.size(); i++) {
+            Point p = coordonnees.get(i);
+            Pion pion = new Pion(proprietaire, p, role);
+            grille[p.x][p.y] = pion; // ajout grille jeu
+            if (proprietaire == 1) { // ajout dans liste joueur
+                pionsJoueurUn.add(pion);
+            } else {
+                pionsJoueurDeux.add(pion);
             }
 
         }
-
     }
 
 
@@ -158,7 +134,7 @@ public class Jeu extends Observable {
 
 
         // Ajouter pion étudiant
-        //Pour le joueur 1 et 2, on ajoute les positions initiales des pions étudiants et maitres, selon le joueur bien sur
+        // Pour le joueur 1 et 2, on ajoute les positions initiales des pions étudiants et maitres, selon le joueur bien sur
         ajouterPion(new ArrayList<Point>()
         {{
             add(new Point(0,0));
@@ -179,7 +155,7 @@ public class Jeu extends Observable {
         ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, 2, PION_MAITRE);
     }
 
-    private void initialiserJoueurs() {
+    private void initJoueurs() {
         //Initialisation des joueurs de la partie
         //Pour chaque joueur, on accorde deux cartes des 5 cartes de la partie:
         Carte carte1Joueur1 = cartesDuJeu.get(0);
@@ -202,199 +178,268 @@ public class Jeu extends Observable {
 
 // ######## ANNULER / REFAIRE ########
 
-public boolean peutAnnulerCoup() {
-    return historique.peutAnnuler();
-}
+    public boolean peutAnnulerCoup() {
+        return historique.peutAnnuler();
+    }
 
-public boolean peutRefaireCoup() {
-    return historique.peutRefaire();
-}
+    public boolean peutRefaireCoup() {
+        return historique.peutRefaire();
+    }
 
-public void annulerCoup() {
-    if (! peutAnnulerCoup()) {
-        System.err.println("Impossible d'annuler un Coup");
+    public void annulerCoup() {
+        if (! peutAnnulerCoup()) {
+            System.err.println("Impossible d'annuler un Coup");
+            return;
+        }
+
+        if (estPartieFinie()) {
+            System.err.println("Impossible d'annuler un Coup\nLA PARTIE EST TERMINEE :)");
+            return;
+
+        }
+        Coup c = historique.annuler();
+
+        // faire des choses avec le coup
         return;
     }
 
-    if (estPartieFinie()) {
-        System.err.println("Impossible d'annuler un Coup\nLA PARTIE EST TERMINEE :)");
-        return;
+    public void refaireCoup() {
+        if (! peutRefaireCoup()) {
+            System.err.println("Impossible de refaire un Coup");
+            return;
+        }
 
-    }
-    Coup c = historique.annuler();
+        Coup c = historique.refaire();
 
-    // faire des choses avec le coup
-    return;
-}
-
-public void refaireCoup() {
-    if (! peutRefaireCoup()) {
-        System.err.println("Impossible de refaire un Coup");
+        // faire des choses avec le coup
         return;
     }
 
-    Coup c = historique.refaire();
+    // ######### CHARGER / SAUVEGARDER ########
 
-    // faire des choses avec le coup
-    return;
-}
+    public void sauvegarderJeu(String fichier) {
+        return;
+    }
 
-// ######### CHARGER / SAUVEGARDER ########
+    public void chargerJeu(String fichier) {
+        return;
+    }
 
-public void sauvegarderJeu(String fichier) {
-    return;
-}
-
-public void chargerJeu(String fichier) {
-    return;
-}
-
-public List<String> listerSauvegardes() {
-    return null;
-}
+    public List<String> listerSauvegardes() {
+        return null;
+    }
 
 // ######## STATUT / DONNEES ########
 
-public int lignes() {
-    return 5;
-}
+    public int lignes() {
+        return 5;
+    }
 
-public int colonnes() {
-    return 5;
-}
+    public int colonnes() {
+        return 5;
+    }
 
-public int casesTotales() {
-    return lignes() * colonnes();
-}
+    public int casesTotales() {
+        return lignes() * colonnes();
+    }
 
-public boolean estCaseVide(int i, int j) {
-    return true;
-}
+    private void verifieSiDansGrille(int i, int j) {
+        if (i < 0 || i > lignes() || j < 0 || j > colonnes()) {
+            throw new RuntimeException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + lignes() + "x" + colonnes());
+        }
+    }
 
-public boolean estPionEtudiantJoueur1(int i, int j) {
-    return false;
-}
+    private Pion getCase(int i, int j) {
+        try {
+            verifieSiDansGrille(i, j);
+            return grille[i][j];
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-public boolean estPionEtudiantJoueur2(int i, int j) {
-    return true;
-}
+    private void setCase(int i, int j, Pion p) {
+        try {
+            verifieSiDansGrille(i, j);
+            grille[i][j] = p;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-public boolean estPionMaitreJoueur1(int i, int j) {
-    return false;
-}
+    public boolean estCaseVide(int i, int j) {
+        try {
+            return getCase(i, j) == null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-public boolean estPionMaitreJoueur2(int i, int j) {
-    return false;
-}
+    public boolean estPionEtudiantJoueur1(int i, int j) {
+        try {
+            Pion p = getCase(i, j);
+            return p.getProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_ETUDIANT;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-public List<Pion> getPionsJoueur1() {
-    return null;
-}
+    public boolean estPionEtudiantJoueur2(int i, int j) {
+        try {
+            Pion p = getCase(i, j);
+            return p.getProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_ETUDIANT;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-public List<Pion> getPionsJoueur2() {
-    return null;
-}
+    public boolean estPionMaitreJoueur1(int i, int j) {
+        try {
+            Pion p = getCase(i, j);
+            return p.getProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_MAITRE;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-public List<Carte> getCartesJoueur1() {
-    return null;
-}
+    public boolean estPionMaitreJoueur2(int i, int j) {
+        try {
+            Pion p = getCase(i, j);
+            return p.getProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_MAITRE;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-public List<Carte> getCartesJoueur2() {
-    return null;
-}
+    public List<Pion> getPionsJoueur1() {
+        return pionsJoueurUn;
+    }
 
-public Carte getCarteSupplementaire() {
-    return null;
-}
+    public List<Pion> getPionsJoueur2() {
+        return pionsJoueurDeux;
+    }
 
-public Carte getCarteJouee() {
-    return null;
-}
+    public List<Carte> getCartesJoueur1() {
+        return joueur1.getCartesEnMain();
+    }
 
-public boolean estPionDuJoueurCourant(int i, int j) {
-    return false;
-}
+    public List<Carte> getCartesJoueur2() {
+        return joueur2.getCartesEnMain();
+    }
 
-public boolean estCoupConforme(int i, int j) {
-    return false;
-}
+    public Carte getCarteSupplementaire() {
+        return carteEchange;
+    }
 
-public int getProprietairePionAt(int i, int j) {
-    return 1;
-}
+    public Carte getCarteJouee() {
+        return carteSelectionee;
+    }
 
-public ROLEPION getRolePionAt(int i, int j) {
-    return PION_ETUDIANT;
-}
+    public boolean estPionDuJoueurCourant(int i, int j) {
+        try {
+            Pion p = getCase(i, j);
+            return p.getProprietaire() == idJoueurCourant ;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean estCoupConforme(int i, int j) {
+        return false;
+    }
+
+    public int getProprietairePionAt(int i, int j) {
+        try {
+            Pion p = getCase(i, j);
+            return p.getProprietaire();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ROLEPION getRolePionAt(int i, int j) {
+        try {
+            Pion p = getCase(i, j);
+            return p.getRole();
+        } catch (NullPointerException e) {
+            throw new NullPointerException();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 // ######## PARTIE ########
 
-public void nouvellePartie() {
-    return;
-}
-
-public long getTempsDeJeu() {
-    return 1234;
-}
-
-public void setTempsDeJeu(long temp) {
+    public void nouvellePartie() {
         return;
-}
+    }
 
-public void setNomJoueur1() {
-    return;
-}
+    public long getTempsDeJeu() {
+        return tempsJeu;
+    }
 
-public void setNomJoueur2() {
-    return;
-}
+    public void setTempsDeJeu(long temp) {
+        tempsJeu = temp;
+    }
 
-public String getNomJoueur1() {
-    return "Abcd";
-}
+    public void setNomJoueur1(String nom) {
+        joueur1.setNom(nom);
+    }
 
-public String getNomJoueur2() {
-    return "bonjour";
-}
+    public void setNomJoueur2(String nom) {
+        joueur2.setNom(nom);
+    }
 
-public String getNomJoueurCourant() {
-    return "bonjour";
-}
+    public String getNomJoueur1() {
+        return joueur1.getNom();
+    }
 
-public Joueur getJoueurCourant() {
-    return new Joueur(1, "nom Joueur 1");
-}
+    public String getNomJoueur2() {
+        return joueur2.getNom();
+    }
 
-public int getNumeroRound() {
-    return 1;
-}
+    public String getNomJoueurCourant() {
+        return getJoueurCourant().getNom();
+    }
 
-public CasePlateau getCasePlateau(int row, int col) {
-    //TODO
-    return new CasePlateau(this, new Point(row, col));
-}
+    public Joueur getJoueurCourant() {
+        return (idJoueurCourant == ID_JOUEUR_1) ? joueur1 : joueur2;
+    }
 
-public Carte getCartesSurLeTerrain(int i) {
-    return null;
-}
+    public int getNumeroRound() {
+        return numRound;
+    }
 
-public Joueur getJoueur(int id) {
-    return null;
-}
+    public CasePlateau getCasePlateau(int row, int col) {
+        //TODO
+        return new CasePlateau(this, new Point(row, col));
+    }
 
-public boolean estDeplacementConforme(int i, int j) {
-    return false;
-}
+    public Carte getCartesSurLeTerrain(int i) {
+       try {
+           return cartesDuJeu.get(i);
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+    }
 
-public boolean estPartieFinie() {
-    return false;
-}
+    public Joueur getJoueur(int id) {
+        return (id == ID_JOUEUR_1) ? joueur1 : joueur2;
+    }
 
-public List<Coup> getCoupsPossibles(Point positionPion, Carte carteJoue) {
-    return null;
-}
+    public boolean estDeplacementConforme(int i, int j) {
+        return false;
+    }
 
-public void jouerCoup(Coup c) {
+    public boolean estPartieFinie() {
+        return partieFinie;
+    }
 
-}
+    public List<Coup> getCoupsPossibles(Point positionPion, Carte carteJoue) {
+        return null;
+    }
+
+    public void jouerCoup(Coup c) {
+
+    }
 }

@@ -15,6 +15,9 @@ public class Config {
 
     public static final int TAILLE_VECTEUR_BITS = 96;
 
+    public static final int ID_JOUEUR_1 = 1;
+    public static final int ID_JOUEUR_2 = 2;
+
     // -- TYPE ELEMENT SUR LE TERRAIN DE JEU --
     public static enum ROLEPION {
         PION_ETUDIANT,
