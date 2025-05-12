@@ -12,7 +12,7 @@ public class IADifficile extends IA {
 
     /**
      * Calcul un Coup à suggérer ou à jouer
-     * @return Coup calculé
+     * @return Coup calculé, null si aucun Coup possible
      */
     @Override
     Coup calculerCoup() {
