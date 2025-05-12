@@ -39,8 +39,10 @@ public class CasePlateau {
         switch (jeu.getRolePionAt(position.x, position.y)) {
             case PION_MAITRE:
                 tc = TYPE_ELEMENT_SUR_CASE.PION_MAITRE;
+                break;
             case PION_ETUDIANT:
                 tc = TYPE_ELEMENT_SUR_CASE.PION_ETUDIANT;
+                break;
         }
         return tc;
     }
