@@ -9,10 +9,10 @@ import static Global.Config.TYPE_ELEMENT_TERRAIN.*;
 /**
  * Représente une case du plateau de jeu, pouvant contenir un pion ou rien. */
 public class CasePlateau {
-    private Pion pion;                      // Le pion actuellement sur la case, s'il y en a un
-    private TYPE_ELEMENT_TERRAIN type;      //Le type de terrain de la case (ex. : VIDE, PION_MAITRE ou PION_ETUDIANT, etc.) */
-    private final Point coordonnes;         // Coordonnées (ligne, colonne) de la case sur le plateau
-    private Path chemainImagePion;          // Chemin vers l’image du pion présent sur la case, ou null
+    private Pion pion;
+    private TYPE_ELEMENT_TERRAIN type;
+    private final Point coordonnes;
+    private Path cheminImagePion;
 
 
     /**
@@ -22,7 +22,7 @@ public class CasePlateau {
         this.pion = pion;
         this.type = pion.getType();
         this.coordonnes = pion.getPosition();
-        this.chemainImagePion = pion.getChemainImage();
+        this.cheminImagePion = pion.getCheminImage();
     }
 
     /**
@@ -33,7 +33,7 @@ public class CasePlateau {
         this.pion = pion;
         this.type = pion.getType();
         this.coordonnes = coordonnes;
-        this.chemainImagePion = pion.getChemainImage();
+        this.cheminImagePion = pion.getCheminImage();
     }
 
 
@@ -44,7 +44,7 @@ public class CasePlateau {
         this.type = VIDE;
         this.pion = null;
         this.coordonnes = coordonnes;
-        this.chemainImagePion = null;
+        this.cheminImagePion = null;
     }
 
 
@@ -53,7 +53,7 @@ public class CasePlateau {
     public void removePion(){
         this.pion = null;
         this.type = VIDE;
-        this.chemainImagePion = null;
+        this.cheminImagePion = null;
     }
 
 
@@ -63,7 +63,7 @@ public class CasePlateau {
     public void setPion(Pion pion){
         this.pion = pion;
         this.type = pion.getType();
-        this.chemainImagePion = pion.getChemainImage();
+        this.cheminImagePion = pion.getCheminImage();
     }
 
 
@@ -79,7 +79,7 @@ public class CasePlateau {
      * Retourne le chemin de l’image du pion présent sur la case.
      * @return le chemin d’image ou null si aucun pion    */
     public Path getCheminImage(){
-        return chemainImagePion;
+        return cheminImagePion;
     }
 
     /**

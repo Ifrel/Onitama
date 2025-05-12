@@ -55,7 +55,7 @@ public class PionMaitre implements Pion {
     public int getProprietaire() { return idJoueur; }
 
     @Override
-    public Path getChemainImage() {  return chemainImage; }
+    public Path getCheminImage() {  return chemainImage; }
 
     @Override
     public Point getPosition(){ return position; }

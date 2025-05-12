@@ -27,7 +27,7 @@ public interface Pion {
     /**
      * Retourne le chemin vers l'image associée à ce pion.
      * @return le chemin de l'image du pion    */
-     Path getChemainImage();
+     Path getCheminImage();
 
 
 

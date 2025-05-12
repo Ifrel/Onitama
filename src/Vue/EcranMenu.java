@@ -2,19 +2,21 @@ package Vue;
 
 import Modele.Jeu;
 import Patterns.Observateur;
+import Vue.Utils.JPanelAvecCouleurDebraille;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.Duration;
 
+import static Global.Config.COULEUR_BLOC_MENU;
 import static Vue.Utils.MethodsStaticsUtils.creerBouton;
 
 /**
  * La classe EcranMenu représente l'écran de menu principal avec les statistiques du jeu.
  * Elle est liée au modèle (Jeu) et agit en tant qu'observateur pour réagir aux mises à jour.
  */
-public class EcranMenu extends JPanel implements Observateur {
+public class EcranMenu extends JPanelAvecCouleurDebraille implements Observateur {
 
     private final Jeu jeu;
     private final CollecteurEvenements collecteurEv;
@@ -35,6 +37,7 @@ public class EcranMenu extends JPanel implements Observateur {
      * @param interfaceGraphique L'interface graphique principale contenant ce menu.
      */
     public EcranMenu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
+        super(COULEUR_BLOC_MENU, new Color(185, 185, 185, 255));
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;

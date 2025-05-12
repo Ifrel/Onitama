@@ -54,7 +54,7 @@ public class PionEtudiant implements Pion {
     public int getProprietaire() { return proprietaire; }
 
     @Override
-    public Path getChemainImage() {  return chemainImage; }
+    public Path getCheminImage() {  return chemainImage; }
 
     @Override
     public Point getPosition(){ return position; }
