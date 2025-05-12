@@ -30,22 +30,19 @@ public class CasePlateau {
      * Retourne le type de terrain de la case.
      * @return le type d’élément de terrain     */
     public TYPE_ELEMENT_SUR_CASE getTypeElement() {
-        try {
-            ROLEPION rp = jeu.getRolePionAt(position.x, position.y);
 
-            switch (rp) {
-                case PION_MAITRE:
-                    return TYPE_ELEMENT_SUR_CASE.PION_MAITRE;
-                case PION_ETUDIANT:
-                    return TYPE_ELEMENT_SUR_CASE.PION_ETUDIANT;
-                default:
-                    return TYPE_ELEMENT_SUR_CASE.VIDE;
-            }
-        } catch (NullPointerException e) {
+        // impossible d'obtenir le role d'un pion sur une case vide car pas de pion
+        if (jeu.estCaseVide(position.x, position.y)) {
             return TYPE_ELEMENT_SUR_CASE.VIDE;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
+        TYPE_ELEMENT_SUR_CASE tc = TYPE_ELEMENT_SUR_CASE.VIDE;
+        switch (jeu.getRolePionAt(position.x, position.y)) {
+            case PION_MAITRE:
+                tc = TYPE_ELEMENT_SUR_CASE.PION_MAITRE;
+            case PION_ETUDIANT:
+                tc = TYPE_ELEMENT_SUR_CASE.PION_ETUDIANT;
+        }
+        return tc;
     }
 
 
