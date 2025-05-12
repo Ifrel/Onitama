@@ -33,7 +33,7 @@ public class InterfaceTextuelle implements Observateur {
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.scanner = new Scanner(System.in);
-        this.jeuTermine = jeu.estTermine();
+        this.jeuTermine = jeu.estPartieFinie();
         this.afficherToutesCartes = false;
         this.carteSelectionnee = false;
         this.rafraichirInterface = true;
@@ -45,7 +45,7 @@ public class InterfaceTextuelle implements Observateur {
     @Override
     public void miseAJour(){
         rafraichirAffichage();
-        this.jeuTermine = jeu.estTermine();
+        this.jeuTermine = jeu.estPartieFinie();
     }
 
 
@@ -77,8 +77,8 @@ public class InterfaceTextuelle implements Observateur {
         System.out.println("     --- Informations de la Partie ---       |");
         System.out.printf("         Round : %d | Temps : %02d:%02d           |%n",
                 jeu.getNumeroRound(),
-                TimeUnit.SECONDS.toMinutes(jeu.getTempsJeuSecondes()),
-                jeu.getTempsJeuSecondes() % 60);
+                TimeUnit.SECONDS.toMinutes(jeu.getTempsDeJeu()),
+                jeu.getTempsDeJeu() % 60);
 
         System.out.println("                                             |");
         System.out.println("             C'est au tour de :              |");
@@ -143,7 +143,7 @@ public class InterfaceTextuelle implements Observateur {
         int espace = 22;
         System.out.println("                                             |");
         System.out.println("           --- Cartes du jeu ---             |");
-        System.out.printf("      %s%s%s%n",jeu.getJoueur(1).getNom(), espace(espace, jeu.getJoueur(1).getNom().length()), jeu.getJoueur(2).getNom());
+        System.out.printf("      %s%s%s%n",jeu.getNomJoueur1(), espace(espace, jeu.getNomJoueur1().length()), jeu.getNomJoueur2());
         System.out.printf("  Carte %d: %s%sCarte %d: %s%n", 1, jeu.getCartesSurLeTerrain(0).getNom(), espace(espace-10,jeu.getCartesSurLeTerrain(0).getNom().length()), 3, jeu.getCartesSurLeTerrain(2).getNom());
         System.out.printf("  Carte %d: %s%sCarte %d: %s%n", 2, jeu.getCartesSurLeTerrain(1).getNom(), espace(espace-10,jeu.getCartesSurLeTerrain(1).getNom().length()), 4, jeu.getCartesSurLeTerrain(3).getNom());
         System.out.printf("\n         Carte %d: %s  %s%n", 5, jeu.getCartesSurLeTerrain(4).getNom(), "(reservée)");
@@ -257,7 +257,7 @@ public class InterfaceTextuelle implements Observateur {
                                             int xDest = Integer.parseInt(coordDest[0]);
                                             int yDest = Integer.parseInt(coordDest[1]);
 
-                                            if (xDest >= 0 && xDest < 5 && yDest >= 0 && yDest < 5 && jeu.estDeplacementConforme()) {
+                                            if (xDest >= 0 && xDest < 5 && yDest >= 0 && yDest < 5 && jeu.estDeplacementConforme(xDest, yDest)) {
                                                 System.out.println("Déplacement de (" + xDepart + ", " + yDepart + ") vers (" + xDest + ", " + yDest + ")");
 
                                                 // Informer le modèle du déplacement
@@ -291,7 +291,7 @@ public class InterfaceTextuelle implements Observateur {
                     break;
             }
 
-            jeuTermine = jeu.estTermine();
+            jeuTermine = jeu.estPartieFinie();
         }
 
         scanner.close();

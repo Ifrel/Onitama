@@ -124,8 +124,12 @@ public void nouvellePartie() {
     return;
 }
 
-public long tempsDeJeu() {
+public long getTempsDeJeu() {
     return 1234;
+}
+
+public void setTempsDeJeu(long temp) {
+        return;
 }
 
 public void setNomJoueur1() {
@@ -149,7 +153,7 @@ public String getNomJoueurCourant() {
 }
 
 public Joueur getJoueurCourant() {
-    return null;
+    return new Joueur(1, "nom Joueur 1");
 }
 
 public int getNumeroRound() {
@@ -173,7 +177,7 @@ public boolean estDeplacementConforme(int i, int j) {
     return false;
 }
 
-public boolean partieEstFinie() {
+public boolean estPartieFinie() {
     return false;
 }
 
