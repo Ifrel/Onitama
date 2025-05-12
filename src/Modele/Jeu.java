@@ -312,11 +312,19 @@ public class Jeu extends Observable {
     }
 
     public List<Pion> getPionsJoueur1() {
-        return pionsJoueurUn;
+        return new ArrayList<>(pionsJoueurUn);
     }
 
     public List<Pion> getPionsJoueur2() {
-        return pionsJoueurDeux;
+        return new ArrayList<>(pionsJoueurDeux);
+    }
+
+    public List<Pion> getPionsJoueurCourant() {
+        if (getIdJoueurCourant() == ID_JOUEUR_1) {
+            return new ArrayList<>(pionsJoueurUn);
+        } else {
+            return new ArrayList<>(pionsJoueurDeux);
+        }
     }
 
     public List<Carte> getCartesJoueur1() {
@@ -325,6 +333,14 @@ public class Jeu extends Observable {
 
     public List<Carte> getCartesJoueur2() {
         return joueur2.getCartesEnMain();
+    }
+
+    public List<Carte> getCartesJoueurCourant() {
+        if (getIdJoueurCourant() == ID_JOUEUR_1) {
+            return joueur1.getCartesEnMain();
+        } else {
+            return joueur2.getCartesEnMain();
+        }
     }
 
     public Carte getCarteSupplementaire() {
@@ -404,6 +420,10 @@ public class Jeu extends Observable {
 
     public Joueur getJoueurCourant() {
         return (idJoueurCourant == ID_JOUEUR_1) ? joueur1 : joueur2;
+    }
+
+    public int getIdJoueurCourant() {
+        return idJoueurCourant;
     }
 
     public int getNumeroRound() {
