@@ -3,6 +3,7 @@ package Controleur;
 import Global.Config;
 import Modele.CasePlateau;
 import Modele.Jeu;
+import Modele.Pion;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceGraphique;
 import Vue.InterfaceUser;
@@ -112,4 +113,25 @@ public class Mediateur implements CollecteurEvenements {
     public void configSonMuet(boolean muet) {
 
     }
+
+    @Override
+    public void setCiblePion(int xDest, int yDest) {
+
+    }
+
+    @Override
+    public void setCiblePion(CasePlateau casePlateau) {
+
+    }
+
+    @Override
+    public void setPionSelectionne(int xDepart, int yDepart) {
+
+    }
+
+    @Override
+    public void setPionSelectionne(Pion pion) {
+
+    }
+
 }
