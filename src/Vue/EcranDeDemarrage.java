@@ -59,7 +59,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // Créer et ajouter les onglets
         addTab(null, creerOngletGeneral());
-        setTabComponentAt(0, creerJPanel(TITRE_ONGLET_GENERAL)); // Supposons que creerTitreOnglets fonctionne
+        setTabComponentAt(0, creerJPanel(TITRE_ONGLET_GENERAL));
 
         addTab(null, creerOngletIA());
         setTabComponentAt(1, creerJPanel(TITRE_ONGLET_IA));
@@ -82,7 +82,6 @@ public class EcranDeDemarrage extends JTabbedPane {
      * @return Le JPanel de l'onglet Général.
      */
     private JPanel creerOngletGeneral() {
-//        JPanel ongletGeneral = new JPanel(new GridBagLayout());
         PanelAvecImage ongletGeneral = new PanelAvecImage(PATH_ARRIERE_PLAN_ED_O2);
         ongletGeneral.setLayout(new GridBagLayout());
 
@@ -92,17 +91,17 @@ public class EcranDeDemarrage extends JTabbedPane {
         contraintes.weighty = 0.2;
         contraintes.gridx = COLONNE_ETIQUETTE;
         contraintes.gridy = 3;
-        contraintes.gridwidth = 2; // S'étend sur les deux colonnes
+        contraintes.gridwidth = 2;
         contraintes.insets = MARGES_TITRE;
         JLabel titre = new JLabel(LBL_TITRE_CONFIG);
         titre.setFont(FONT_TITRE);
         ongletGeneral.add(titre, contraintes);
 
-        int ligneCourante = 6; // Commencer à ajouter les composants à partir de la ligne 2
+        int ligneCourante = 6;
 
 
         // --- Ligne 1 : Mode Auto ---
-        boutonModeAuto = creerBoutonAvecImage(PATH_BTN_MODE_AUTO_OFF).bouton; // État par défaut
+        boutonModeAuto = creerBoutonAvecImage(PATH_BTN_MODE_AUTO_OFF.toString()); // État par défaut
         boutonModeAuto.setPreferredSize(new Dimension(62,35));
         boutonModeAuto.setFont(FONT_COMPOSANT);
         boutonModeAuto.addActionListener(e -> {
@@ -131,7 +130,7 @@ public class EcranDeDemarrage extends JTabbedPane {
             partieSelectionnee = listeDeroulanteReprendre.getItemAt(indexSelectionne);
             adaptateurBoutonEntrer.setPartieSelectionnee(partieSelectionnee);
 
-            //On gele toutes les autres options de config
+            //On gele le champ du joueur 2
             champJoueur2.setEnabled(indexSelectionne == 0);
         });
         ajouterLigne(ongletGeneral, LBL_REPRENDRE, listeDeroulanteReprendre, ligneCourante++, FONT_LABEL);
@@ -166,8 +165,7 @@ public class EcranDeDemarrage extends JTabbedPane {
             }
         });
         // Pré-remplir éventuellement avec un nom par défaut depuis modèle/config
-        // champJoueur1.setText(jeu.getNomJoueur(1)); TODO à décider
-        champJoueur1.setText("Rinel");
+        champJoueur1.setText(jeu.getJoueur(1).getNom());
         ajouterLigne(ongletGeneral, LBL_JOUEUR_1, champJoueur1, ligneCourante++, FONT_LABEL);
 
 
@@ -183,8 +181,7 @@ public class EcranDeDemarrage extends JTabbedPane {
             }
         });
         // Pré-remplir éventuellement avec un nom par défaut depuis modèle/config
-        // champJoueur2.setText(jeu.getNomJoueur(2)); TODO à décider
-        champJoueur2.setText("Arthur");
+        champJoueur2.setText(jeu.getJoueur(2).getNom());
         ajouterLigne(ongletGeneral, LBL_JOUEUR_2, champJoueur2, ligneCourante++, FONT_LABEL);
 
         // -- bouton enter
@@ -192,17 +189,15 @@ public class EcranDeDemarrage extends JTabbedPane {
         entrer.setPreferredSize(new Dimension(98, 98));
         contraintes = new GridBagConstraints();
         contraintes.gridx = 6;
-        contraintes.gridy = ligneCourante ; // Placer dans la prochaine ligne disponible
+        contraintes.gridy = ligneCourante ;
         contraintes.fill = GridBagConstraints.NONE;
         entrer.addActionListener(adaptateurBoutonEntrer);
         ongletGeneral.add(entrer, contraintes);
 
-        // --- Espace Vertical Flexible (Glue) ---
-        // Pousse tous les composants vers le haut lorsque le panneau est redimensionné verticalement.
         contraintes = new GridBagConstraints();
         contraintes.gridx = 0;
-        contraintes.gridy = ligneCourante; // Placer dans la prochaine ligne disponible
-        contraintes.weighty = 0.5;        // Prend tout l'espace vertical supplémentaire
+        contraintes.gridy = ligneCourante;
+        contraintes.weighty = 0.5;
         contraintes.fill = GridBagConstraints.VERTICAL;
         ongletGeneral.add(Box.createVerticalGlue(), contraintes);
 
@@ -217,9 +212,7 @@ public class EcranDeDemarrage extends JTabbedPane {
      * @return Le JPanel de l'onglet IA.
      */
     private JPanel creerOngletIA() {
-//        JPanel ongletIA = new JPanel(new GridBagLayout());
-
-        JPanelAvecCouleurDebraille ongletIA = new JPanelAvecCouleurDebraille(new Color(127, 157, 172),new Color(112, 112, 112) );
+        JPanelAvecCouleurDebraille ongletIA = new JPanelAvecCouleurDebraille(new Color(127, 157, 172), new Color(112, 112, 112) );
         ongletIA.setLayout(new GridBagLayout());
         GridBagConstraints contraintes;
         int ligneCourante = 0;
@@ -305,7 +298,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         contraintes.gridx = 0;
         contraintes.gridy = ligneCourante++;
         contraintes.weighty = 0.5;
-        contraintes.gridwidth = 3; // S'étend sur 3 colonnes (Label, Preview, Button)
+        contraintes.gridwidth = 3;
         contraintes.anchor = GridBagConstraints.CENTER;
         contraintes.insets = MARGES_TITRE;
         JLabel titre = new JLabel(LBL_TITRE_COULEUR);
@@ -372,7 +365,7 @@ public class EcranDeDemarrage extends JTabbedPane {
             );
             if (couleurChoisie != null) {
                 previewPanel.setBackground(couleurChoisie); // Mettre à jour la prévisualisation
-                collecteurEvenements.configCouleur(cible, couleurChoisie); // Notifier le contrôleur avec la couleur choisie ET la cible
+                collecteurEvenements.configCouleur(cible, couleurChoisie);
             }
         });
         GridBagConstraints contraintesBouton = new GridBagConstraints();
@@ -391,7 +384,6 @@ public class EcranDeDemarrage extends JTabbedPane {
      * @return Le JPanel de l'onglet Animation.
      */
     private JPanel creerOngletAnimation() {
-//        JPanel ongletAnimation = new JPanel(new GridBagLayout());
         BruitGrisAvecPointsPanel ongletAnimation = new BruitGrisAvecPointsPanel();
         ongletAnimation.setLayout(new GridBagLayout());
         GridBagConstraints contraintes;
