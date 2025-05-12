@@ -5,6 +5,7 @@ import static Global.Config.*;
 import Patterns.Observable;
 
 import java.awt.*;
+import java.time.Duration;
 import java.util.*;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class Jeu extends Observable {
     // -- Boucle de jeu -- //
     private Pion pionSelectionne;   // Pion en cours de selection
     private etatCoup etatCoupEnCours;       // Etat du coup en cours
+
 
 
     public enum etatCoup
@@ -266,7 +268,9 @@ public class Jeu extends Observable {
     }
 
     /**
-     *
+     *public Duration getDureePartie() {
+        return Duration.ofSeconds(120);
+    }
      * @return vrai si on peut annuler un coup, faux sinon
      */
     public boolean peutAnnulerCoup(){
@@ -290,6 +294,25 @@ public class Jeu extends Observable {
 
     public boolean estTermine() {
         return false;
+    }
+
+    public boolean estPionDuJoueurCourant(int xDepart, int yDepart) {
+        return  true;
+    }
+
+    public boolean estPionDuJoueurCourant(Pion pion) {
+        return true;
+    }
+
+    /**
+     * Verifie si le deplacement est valide, par rapport à la au joueur courant, carte, pion et coordonnées cibles choisies
+     * @return true ou false     */
+    public boolean estDeplacementConforme() {
+        return true;
+    }
+
+    public Duration getDureePartie() {
+        return Duration.ofSeconds(120);
     }
 
     public Joueur getJoueur(int idJoueur) {
