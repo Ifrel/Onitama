@@ -234,7 +234,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         buttonsCartes = new BoutonAvecImage[NOMBRES_CARTES_PLATEAU];
         for (int i = 0; i < buttonsCartes.length; i++) {
             Carte carte = jeu.getCartesSurLeTerrain(i);
-            BoutonAvecImage boutonCarte = creerBoutonAvecImage(carte.getCheminImage());
+            BoutonAvecImage boutonCarte = creerBoutonAvecImage(PATH_CARTE_DRAGON);
             configurerBoutonCarte(boutonCarte, carte );
             boutonCarte.bouton.addActionListener(new AdaptateurCarte(carte, i, collecteurEv));
             buttonsCartes[i] = boutonCarte;
@@ -408,7 +408,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     private void configurerBoutonCarte(BoutonAvecImage bouton, Carte carteSurLeTerrain) {
-        bouton.panel.setImage(carteSurLeTerrain.getCheminImage());
+        bouton.panel.setImage(PATH_CARTE_DRAGON);
     }
 
     private BoutonAvecImage configurerCaseTerrain(CasePlateau casePlateau) {
