@@ -9,14 +9,12 @@ import Vue.Adaptateurs.AdaptateurCarte;
 import Vue.Adaptateurs.AdaptateurRefaire;
 import Vue.Animations.BruitGrisAvecPointsPanel;
 import Modele.Carte;
-import Modele.Pion;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
@@ -143,7 +141,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.insets = new Insets(0, 0, ESPACE*3, 0);
 
         JPanel panelCentreEmpile = new JPanel(new GridBagLayout());
         panelCentreEmpile.setOpaque(false);
@@ -236,7 +234,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         buttonsCartes = new BoutonAvecImage[NOMBRES_CARTES_PLATEAU];
         for (int i = 0; i < buttonsCartes.length; i++) {
             Carte carte = jeu.getCartesSurLeTerrain(i);
-            BoutonAvecImage boutonCarte = creerBoutonAvecImage(carte.getCheminImage());
+            BoutonAvecImage boutonCarte = creerBoutonAvecImage(PATH_CARTE_DRAGON);
             configurerBoutonCarte(boutonCarte, carte );
             boutonCarte.bouton.addActionListener(new AdaptateurCarte(carte, i, collecteurEv));
             buttonsCartes[i] = boutonCarte;
@@ -339,7 +337,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private JButton creerBoutonSon() {
         boutonSon = new JButton("son");
         boutonSon.setForeground(Color.WHITE);
-        boutonSon.setFont(new Font("Arial", Font.PLAIN, 33));
+        boutonSon.setFont(new Font("Arial", Font.PLAIN, 30));
         boutonSon.setBackground(new Color(237, 237, 237, 16));
         boutonSon.setContentAreaFilled(false);
         boutonSon.setFocusPainted(false);
@@ -402,7 +400,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         menu.setContentAreaFilled(false);
         menu.setFocusPainted(false);
         menu.setForeground(Color.WHITE);
-        menu.setFont(new Font("Arial", Font.PLAIN, 40));
+        menu.setFont(new Font("Arial", Font.PLAIN, 30));
         menu.setPreferredSize(new Dimension(60, 40));
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
 
@@ -410,7 +408,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     private void configurerBoutonCarte(BoutonAvecImage bouton, Carte carteSurLeTerrain) {
-        bouton.panel.setImage(carteSurLeTerrain.getCheminImage());
+        bouton.panel.setImage(PATH_CARTE_DRAGON);
     }
 
     private BoutonAvecImage configurerCaseTerrain(CasePlateau casePlateau) {

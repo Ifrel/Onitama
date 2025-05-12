@@ -10,24 +10,23 @@ import java.awt.*;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * Classe représentant l'interface textuelle (console) du jeu.
  * Elle affiche l'état du jeu dans le terminal.
  */
 public class InterfaceTextuelle implements Observateur {
-    private static Logger logger = Logger.getLogger(InterfaceTextuelle.class.getName());
-    private static int NOMBRES_CARTES_PLATEAU = 5;
     private static final int LIGNES = 5;
     private static final int COLONNES = 5;
+
     private final Jeu jeu;
     private final CollecteurEvenements collecteurEv;
     private Scanner scanner;
     private  boolean jeuTermine;
-    private int idJoeurEnCours;
-    private boolean afficherAllCartes;
-    private boolean uneCarteEstSelectionne;
+
+    private boolean afficherToutesCartes;
+    private boolean carteSelectionnee;
+    private boolean rafraichirInterface;
 
 
     public  InterfaceTextuelle(Jeu jeu, CollecteurEvenements collecteurEv){
@@ -35,9 +34,9 @@ public class InterfaceTextuelle implements Observateur {
         this.collecteurEv = collecteurEv;
         this.scanner = new Scanner(System.in);
         this.jeuTermine = jeu.estTermine();
-        this.idJoeurEnCours = jeu.getJoueurCourant().getId();
-        this.afficherAllCartes = false;
-        this.uneCarteEstSelectionne = false;
+        this.afficherToutesCartes = false;
+        this.carteSelectionnee = false;
+        this.rafraichirInterface = true;
 
         lancerBoucleJeu();
     }
@@ -45,6 +44,7 @@ public class InterfaceTextuelle implements Observateur {
 
     @Override
     public void miseAJour(){
+        rafraichirAffichage();
         this.jeuTermine = jeu.estTermine();
     }
 
@@ -53,13 +53,18 @@ public class InterfaceTextuelle implements Observateur {
     /**
      * Met à jour l'affichage complet de l'interface textuelle.
      * Cette méthode combine l'affichage de tous les éléments.*/
-    public void miseAJourTextuelle() {
-        afficherInfosHaut();
-        afficherPlateau();
-        afficherCartesEtOptions();
-        System.out.println("                                             |");
-        System.out.println("---------------------------------------------|\n");
-        afficherCartesJeu();
+    public void rafraichirAffichage() {
+        if (rafraichirInterface) {
+            afficherInfosHaut();
+            afficherPlateau();
+            afficherCartesEtOptions();
+            System.out.println("                                             |");
+            System.out.println("---------------------------------------------|\n");
+            afficherCartesJeu();
+        }
+        else {
+            rafraichirInterface = true;
+        }
     }
 
 
@@ -115,25 +120,18 @@ public class InterfaceTextuelle implements Observateur {
         System.out.println("                                             |");
     }
 
-    
+
 
     /**
      * Méthode utilitaire pour obtenir un symbole textuel pour une case.
      * @param casePlateau La case à représenter.
      * @return Une chaîne de 3 caractères représentant le contenu de la case.     */
     private String getSymboleCase(CasePlateau casePlateau) {
-        if (casePlateau == null) {
-            return " ? ";
-        }
         switch (casePlateau.getTypeElement()) {
-            case VIDE:
-                return " . ";
-            case PION_ETUDIANT:
-                return " E"+casePlateau.getPion().getProprietaire();
-            case PION_MAITRE:
-                return " M"+casePlateau.getPion().getProprietaire();
-            default:
-                return " ? "; // Type inconnu
+            case VIDE: return " . ";
+            case PION_ETUDIANT: return " E"+casePlateau.getProprietaire();
+            case PION_MAITRE: return " M"+casePlateau.getId();
+            default: return " ? "; // Type inconnu
         }
     }
 
@@ -142,117 +140,160 @@ public class InterfaceTextuelle implements Observateur {
     /**
      * Affiche les informations sur les cartes et les options Annuler/Refaire.*/
     private void afficherCartesEtOptions() {
+        int espace = 22;
         System.out.println("                                             |");
         System.out.println("           --- Cartes du jeu ---             |");
-        System.out.printf("    %s             %s%n",jeu.getJoueur(1).getNom(), jeu.getJoueur(2).getNom());
-        System.out.printf("Carte %d: %s          Carte %d: %s%n", 1, jeu.getCartesSurLeTerrain(0).getNom(), 3, jeu.getCartesSurLeTerrain(2).getNom());
-        System.out.printf("Carte %d: %s          Carte %d: %s%n", 2, jeu.getCartesSurLeTerrain(1).getNom(), 4, jeu.getCartesSurLeTerrain(3).getNom());
+        System.out.printf("      %s%s%s%n",jeu.getJoueur(1).getNom(), espace(espace, jeu.getJoueur(1).getNom().length()), jeu.getJoueur(2).getNom());
+        System.out.printf("  Carte %d: %s%sCarte %d: %s%n", 1, jeu.getCartesSurLeTerrain(0).getNom(), espace(espace-10,jeu.getCartesSurLeTerrain(0).getNom().length()), 3, jeu.getCartesSurLeTerrain(2).getNom());
+        System.out.printf("  Carte %d: %s%sCarte %d: %s%n", 2, jeu.getCartesSurLeTerrain(1).getNom(), espace(espace-10,jeu.getCartesSurLeTerrain(1).getNom().length()), 4, jeu.getCartesSurLeTerrain(3).getNom());
         System.out.printf("\n         Carte %d: %s  %s%n", 5, jeu.getCartesSurLeTerrain(4).getNom(), "(reservée)");
 
 
-        System.out.println();
+        System.out.println("                                             |");
 
         System.out.println("           ----- Options -----               |");
-        System.out.println("A|a: Annuler("+ jeu.peutAnnulerCoup()+")      C|c: aff. Cartes     |");
-        System.out.println("R|r: Refaire("+ jeu.peutRefaireCoup()+")      N|n: Nouv. partie    |");
+        String peutAnnuler = jeu.peutAnnulerCoup() ? "oui": "non";
+        String peutRefaire = jeu.peutRefaireCoup() ? "oui": "non";
+
+        System.out.println("A|a: Annuler("+ peutAnnuler +")       C|c: aff. Cartes     |");
+        System.out.println("R|r: Refaire("+ peutRefaire +")       N|n: Nouv. partie    |");
         System.out.println("Q|q: Quitter            S|s: Sauvegarder     |");
-        System.out.println("Z|z: <--                Y|y: -->             |");
+        System.out.println("Z|z: <--                                     |");
     }
 
 
 
     /**
      * Lance la boucle principale de l'interface textuelle pour le jeu.
-     * Cette boucle affiche l'état du jeu et attend les commandes de l'utilisateur.     */
+     * L'utilisateur interagit via la console : sélection de carte, pion, et coordonnées de destination.
+     */
     private void lancerBoucleJeu() {
         String input;
-        Integer numCarteSelectionne = 0;
+        int indiceCarte = 0;
 
         while (!jeuTermine) {
-            miseAJourTextuelle();
-            System.out.print("Choisissez une Carte: \n_> ");
+            rafraichirAffichage();
+            System.out.print("Choisissez une Carte (1-4) :\n_> ");
+            input = scanner.nextLine().trim();
 
-            input = scanner.nextLine().trim(); // Lire la ligne et retirer les espaces blancs début/fin
-
-            // Traiter la commande saisie
-            switch (input){
-                case  "":
+            switch (input.toLowerCase()) {
+                case "":
                 case "z":
-                case "Z":
                     break;
                 case "q":
-                case "Q":
-                    System.out.println("Quitter le jeu...");
                     collecteurEv.clavier("exit");
                     return;
-                    // break; TODO à revoir si moteur de jeu complet
                 case "a":
-                case "A":
-                    System.out.println("Annuler Coup");
                     collecteurEv.clavier("annuler");
                     break;
                 case "r":
-                case "R":
-                    System.out.println("Refaire Coup");
                     collecteurEv.clavier("refaire");
                     break;
                 case "n":
-                case "N":
-                    System.out.println("Nouvelle partie");
                     collecteurEv.clavier("nouvellePartie");
                     break;
                 case "s":
-                case "S":
-                    System.out.println("Sauvegarder la partie");
                     collecteurEv.clavier("sauvegarder");
                     break;
                 case "c":
-                case "C":
-                        afficherAllCartes = true;
+                    afficherToutesCartes = true;
+                    break;
+                case "5":
+                    rafraichirInterface = false;
+                    System.out.println("carte réservée");
                     break;
                 case "1":
                 case "2":
                 case "3":
                 case "4":
-                    numCarteSelectionne = Integer.parseInt(input);
-                    Carte carte = jeu.getCartesSurLeTerrain(numCarteSelectionne);
-                    collecteurEv.carteSelectionne(numCarteSelectionne);
+                    try {
+                        indiceCarte = Integer.parseInt(input)-1;
 
-                    while (uneCarteEstSelectionne) {
-                        System.out.println("Carte sélectionnée : " + carte.getNom());
-                        System.out.print("Choisissez un Pion (ex: 4 2 ): \n_>");
-
-                        input = scanner.nextLine().trim();
-
-                        switch (input) {
-                            case "r":
-                            case "R":
-                                uneCarteEstSelectionne = false;
-                                break;
-                            case "y":
-                            case "Y":
-                                break;
-                            default:
-                                int x = Integer.parseInt(String.valueOf(input.charAt(0)));
-                                int y = Integer.parseInt(String.valueOf(input.charAt(1)));
-
-                                if (x > 0 && x < 5 && y > 0 && y < 5) {
-                                    System.out.println("Carte sélectionnée : " + carte.getNom());
-                                    System.out.println("Pion selection :(" + x + ", " + y + ")");
-                                }
-                                break;
+                        // verification si choix valide selon du joueur courant
+                        int idJoueur = jeu.getJoueurCourant().getId();
+                        if ((idJoueur == 1 && (indiceCarte != 0 && indiceCarte != 1)) ||
+                                (idJoueur == 2 && (indiceCarte != 2 && indiceCarte != 3))) {
+                            System.out.println("Cette carte n'appartient pas à votre camp.");
+                            rafraichirInterface = false;
+                            break;
                         }
+
+                        Carte carte = jeu.getCartesSurLeTerrain(indiceCarte);
+                        collecteurEv.carteSelectionne(indiceCarte);
+                        carteSelectionnee = true;
+
+                        while (carteSelectionnee) {
+                            System.out.println("Carte sélectionnée : " + carte.getNom());
+                            System.out.print("Choisissez un pion (ex: 2 3) ou Z|z pour annuler :\n_> ");
+                            input = scanner.nextLine().trim();
+
+                            if (input.equalsIgnoreCase("z")) {
+                                carteSelectionnee = false;
+                                System.out.println("Sélection annulée.");
+                                break;
+                            }
+
+                            String[] coordDepart = input.split("\\s+");
+                            if (coordDepart.length == 2) {
+                                try {
+                                    int xDepart = Integer.parseInt(coordDepart[0]);
+                                    int yDepart = Integer.parseInt(coordDepart[1]);
+
+                                    if (xDepart >= 0 && xDepart < 5 && yDepart >= 0 && yDepart < 5 && jeu.estPionDuJoueurCourant(xDepart,yDepart)) {
+                                        System.out.println("Pion sélectionné à (" + xDepart + ", " + yDepart + ")");
+                                        collecteurEv.setPionSelectionne(xDepart,yDepart);
+
+                                        // Étape suivante : demander la position cible
+                                        System.out.print("Coordonnées de destination (ex: 1 2) ou Z pour annuler :\n_> ");
+                                        input = scanner.nextLine().trim();
+
+                                        if (input.equalsIgnoreCase("z")) {
+                                            System.out.println("Déplacement annulé.");
+                                            continue;  // Retourne à la sélection du pion
+                                        }
+
+                                        String[] coordDest = input.split("\\s+");
+                                        if (coordDest.length == 2) {
+                                            int xDest = Integer.parseInt(coordDest[0]);
+                                            int yDest = Integer.parseInt(coordDest[1]);
+
+                                            if (xDest >= 0 && xDest < 5 && yDest >= 0 && yDest < 5 && jeu.estDeplacementConforme()) {
+                                                System.out.println("Déplacement de (" + xDepart + ", " + yDepart + ") vers (" + xDest + ", " + yDest + ")");
+
+                                                // Informer le modèle du déplacement
+                                                collecteurEv.setCiblePion(xDest, yDest);
+
+                                                carteSelectionnee = false; // Fin de sélection
+                                            } else {
+                                                System.out.println("Coordonnées cibles invalides.");
+                                            }
+                                        } else {
+                                            System.out.println("Format invalide pour la destination. Entrez deux chiffres séparés par un espace.");
+                                        }
+                                    } else {
+                                        System.out.println("Coordonnées du pion incorrectes.");
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Entrée invalide. Utilisez des chiffres pour les coordonnées.");
+                                }
+                            } else {
+                                System.out.println("Format invalide. Entrez deux coordonnées séparées par un espace.");
+                            }
+                        }
+                    } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                        System.out.println("Carte invalide. Choisissez un numéro entre 1 et 4.");
                     }
                     break;
+
                 default:
-                    System.out.println("Commande non valide. Entrez une commande valide.");
+                    rafraichirInterface = false;
+                    System.out.println("Commande inconnue : \"" + input + "\". Réessayez.");
                     break;
             }
 
             jeuTermine = jeu.estTermine();
         }
 
-        // Fermer le scanner lorsque la boucle se termine
         scanner.close();
         System.out.println("Interface textuelle terminée.");
     }
@@ -260,12 +301,11 @@ public class InterfaceTextuelle implements Observateur {
 
 
 
+
     /**
-     *
-     * Affiche les 5 cartes actuellement sur le terrain sous forme de grilles 5x5 si {@code afficheAllCartes ==  true},
-     * chacune encadrée par des bordures, affichées côte à côte avec leurs numéros respectifs.   */
+     * Affiche les 5 cartes actuellement sur le terrain sous forme de grilles 5x5 si {@code afficheAllCartes ==  true} */
     private void afficherCartesJeu() {
-        if (afficherAllCartes) {
+        if (afficherToutesCartes) {
             // Récupère les versions affichables (grilles 5x5) des cartes
             String[][] carte1 = getVersionAffichable(jeu.getCartesSurLeTerrain(0));
             String[][] carte2 = getVersionAffichable(jeu.getCartesSurLeTerrain(1));
@@ -280,9 +320,11 @@ public class InterfaceTextuelle implements Observateur {
             int nbrColonne = 5;
             int nbrCartes = 5;
 
-            // Affiche les numéros des cartes au-dessus
+            // Affiche les noms des cartes au-dessus
             for (int i = 0; i < nbrCartes; i++) {
-                System.out.print(jeu.getCartesSurLeTerrain(i).getNom()+ "         ");
+                Carte carte = jeu.getCartesSurLeTerrain(i);
+                String espace = espace(15, carte.getNom().length());
+                System.out.print(carte.getNom()+ espace);
             }
             System.out.println();
 
@@ -311,7 +353,7 @@ public class InterfaceTextuelle implements Observateur {
             System.out.println();
 
 
-            afficherAllCartes = false; // resset
+            afficherToutesCartes = false; // resset
         }
     }
 
@@ -358,8 +400,32 @@ public class InterfaceTextuelle implements Observateur {
     }
 
 
-
-    public static void lancerInterfaceTextuelle(Jeu jeu, CollecteurEvenements collecteurEvenements){
-        new InterfaceTextuelle(jeu, collecteurEvenements);
+    /**
+     * Renvoie une chaîne composée d'espaces dont la longueur est
+     * la différence entre a et b, uniquement si a > b.
+     * Sinon, renvoie une chaîne vide.
+     *
+     * @param a Premier entier
+     * @param b Deuxième entier
+     * @return Une chaîne de (a - b) espaces si a > b, sinon ""
+     */
+    public static String espace(int a, int b) {
+        if (a > b) {
+            return " ".repeat(a - b);
+        } else {
+            return " ";
+        }
     }
+
+
+
+    /**
+     * Lance l'interface textuelle du jeu en initialisant l'interface
+     *
+     * @param jeu Le jeu à exécuter.
+     * @param collecteurEvenements Le collecteur d'événements pour gérer les actions de l'utilisateur.     */
+    public static void lancerInterfaceTextuelle(Jeu jeu, CollecteurEvenements collecteurEvenements) {
+        InterfaceTextuelle interfaceTextuelle = new InterfaceTextuelle(jeu, collecteurEvenements);
+    }
+
 }

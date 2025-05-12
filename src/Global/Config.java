@@ -16,8 +16,7 @@ public class Config {
     public static final int TAILLE_VECTEUR_BITS = 96;
 
     // -- TYPE ELEMENT SUR LE TERRAIN DE JEU --
-    public static enum TYPE_ELEMENT_TERRAIN {
-        VIDE,
+    public static enum ROLEPION {
         PION_ETUDIANT,
         PION_MAITRE
     }
@@ -39,7 +38,7 @@ public class Config {
     public static final Color COULEUR_CASE_MAITRE_JOUEUR_2  = new Color(255, 255, 255);
     public static final Color COULEUR_CASE_ELEVE_JOUEUR_1   = new Color(255, 255, 255);
     public static final Color COULEUR_CASE_ELEVE_JOUEUR_2   = new Color(255, 255, 255);
-    public static final Color COULEUR_BLOC_MENU             = new Color(211, 142, 44);
+    public static final Color COULEUR_BLOC_MENU             = new Color(31, 116, 116);
     // Enum pour identifier la cible de la couleur (simplifie le listener)
     public enum CiblesDesCouleurs {
         PLATEAU_DE_JEU,
@@ -323,7 +322,4 @@ public class Config {
                     add(new Point(1,1));
                 }});
     }};
-
-    // -- PIONS --
-    public enum ROLEPION { Maitre, Etudiant }
 }

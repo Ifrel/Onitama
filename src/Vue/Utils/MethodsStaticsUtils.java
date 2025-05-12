@@ -5,6 +5,7 @@ import Vue.Animations.Animations;
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import static Vue.ConfigUI.FONT_LABEL;
 
@@ -26,8 +27,6 @@ public class MethodsStaticsUtils {
 
 
 
-
-
     /**
      * Crée un JLabel stylisé pouvant être utilisé comme un onglet ou une étiquette.
      *
@@ -39,6 +38,22 @@ public class MethodsStaticsUtils {
         label.setPreferredSize(new Dimension(160, 40));  // Taille fixe de l’onglet
         label.setHorizontalAlignment(SwingConstants.CENTER);
         return label;
+    }
+
+
+    public static JButton creerBoutonAvecImage(String cheminImage) {
+        // Chargement de l'image à partir du chemin donné
+        ImageIcon icone = new ImageIcon(cheminImage);
+
+        // Création du bouton avec l'image
+        JButton bouton = new JButton(icone);
+
+        bouton.setContentAreaFilled(false);  // Supprime le fond par défaut
+        bouton.setBorderPainted(true);
+        bouton.setFocusPainted(false);  // Supprime l'effet de surbrillance lors du focus
+        bouton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  // Change le curseur en main lors du survol
+
+        return bouton;
     }
 
 

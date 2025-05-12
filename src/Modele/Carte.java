@@ -20,15 +20,10 @@ import java.util.Objects;
 public class Carte {
     private String nom;                 // Nom unique ou identifiant de la carte
     private TYPECARTE type;             // Type de la carte
-    private String description;         // Description textuelle de l'effet de la carte
-    private Path cheminImage;         // Chemin relatif ou nom de fichier de l'image de la carte
-    // Ajout d'autres attributs si nécessaire (par ex. force, coût, etc.)
 
     public Carte(TYPECARTE type){
         this.type = type;
         nom = type.name();
-        description = "";
-        cheminImage = PATH_CARTE_TIGRE;
     }
 
     /**
@@ -43,41 +38,6 @@ public class Carte {
      * @return Le type de la carte.
      */
     public TYPECARTE getType() { return type; }
-
-
-    /**
-     * Retourne la description de l'effet de la carte.
-     * @return La description de l'effet.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-
-    /**
-     * Retourne le chemin de l'image de la carte.
-     * Peut être null si la carte n'a pas d'image associée.
-     * @return Le chemin de l'image, ou null.
-     */
-    public Path getCheminImage() {
-        return cheminImage;
-    }
-
-
-    /**
-     * Assigne la description de l'effet de la carte.
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    /**
-     * Assigne le chemin de l'image de la carte.
-     * Peut être null si la carte n'a pas d'image associée.*/
-    public void setCheminImage(Path cheminImage) {
-        this.cheminImage = cheminImage;
-    }
 
 
     public List<Coup> getMoves(Point origin)

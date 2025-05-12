@@ -2,6 +2,7 @@ package Vue;
 
 import Global.Config;
 import Modele.CasePlateau;
+import Modele.Pion;
 
 import java.awt.*;
 
@@ -38,9 +39,21 @@ public interface CollecteurEvenements {
 
 
 
+    /**
+     * Définit la case de destination du pion sélectionné sur le Plateau.
+     * @param casePlateau la case du plateau représentant la cible du déplacement.    */
+    void setCiblePion(CasePlateau casePlateau);
+
+
+    /**
+     * Définit le pion sélectionné du joueur courant.
+     * @param pion L'objet représentant le pion sélectionné.     */
+    void setPionSelectionne(Pion pion);
+
+
 
     /*****************************************************
-     * ÉCRAN DE DÉMARRAGE / CONFIGURATION      ***
+     *      ÉCRAN DE DÉMARRAGE / CONFIGURATION         ***
      * (Événements venant des menus de config) ***
      *****************************************************/
 
@@ -147,4 +160,27 @@ public interface CollecteurEvenements {
      * Gère l'activation ou la désactivation du mode muet.
      * @param muet True pour activer le mode muet, false pour le désactiver.     */
     void configSonMuet(boolean muet);
+
+
+
+
+    /*****************************************************
+     *               INTERFACE TEXTUELLE                ***
+     *****************************************************/
+
+    /**
+     * Définit la case de destination du pion sélectionné à l'aide de coordonnées.
+     * Cette méthode est appelée après que le joueur a choisi la case cible vers laquelle déplacer un pion.
+     * @param xDest La coordonnée X de la case cible.
+     * @param yDest La coordonnée Y de la case cible.   */
+    void setCiblePion(int xDest, int yDest);
+
+
+    /**
+     * Définit le pion sélectionné pour un déplacement en spécifiant ses coordonnées actuelles.
+     * Cette méthode est utilisée lorsqu'un joueur choisit un pion à déplacer.
+     * @param xDepart La coordonnée X du pion sélectionné.
+     * @param yDepart La coordonnée Y du pion sélectionné.     */
+    void setPionSelectionne(int xDepart, int yDepart);
+
 }

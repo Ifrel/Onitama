@@ -18,12 +18,10 @@ import static Vue.ConfigUI.WIDTH_MENU;
  * Classe principale pour l'affichage graphique du jeu Onitama......
  * Gère la fenêtre, le plateau, les couches superposées, et les interactions comme le menu latéral.*/
 public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur {
-    // --- Attributs principaux ---
     private CollecteurEvenements collecteurEvent;
     private boolean maximized;
     private Jeu jeu;
 
-    // --- MethodsStaticsUtils Swing ---
     private JFrame frame;
     private JLayeredPane layeredPane;
     private JPanel backgroundBlur;
@@ -81,7 +79,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         initialiserMenu();
         ajouterComportementRedimensionnement();
 
-        frame.setContentPane(ecranPlateauDeJeu);
+        frame.setContentPane(ecranDeDemarrage);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -217,7 +215,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
 
 
     /**
-     * Lance l'interface graphique (à utiliser depuis le collecteur)     */
+     * Lance l'interface graphique      */
     public static  void lancerInterfaceGraphique(Jeu jeu, CollecteurEvenements collecteurEvenements) {
         try {
             logger.info("Lancement interface graphique");
