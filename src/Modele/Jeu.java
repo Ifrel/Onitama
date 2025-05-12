@@ -456,7 +456,41 @@ public class Jeu extends Observable {
     }
 
     public List<Coup> getCoupsPossibles(Point positionPion, Carte carteJoue) {
-        return null;
+        List<Coup> coups = new ArrayList<>();
+
+        List<Point> deplacements = carteJoue.getMoves();
+
+        int idJoueurCourant = getIdJoueurCourant();
+        Point direction;
+        if (idJoueurCourant == ID_JOUEUR_1) {
+            direction = new Point(1, 1);
+        } else {
+            direction = new Point(-1, -1);
+        }
+
+        int x, y;
+        for (int i = 0; i < deplacements.size(); i++) {
+            Point deplacement = deplacements.get(i);
+            x = positionPion.x + deplacement.x * direction.x;
+            y = positionPion.y + deplacement.y * direction.y;
+
+            try {
+                verifieSiDansGrille(x, y);
+            } catch (Exception e) {
+                continue;
+            }
+
+            // ne pas manger son propre pion
+            if (getProprietairePionAt(x, y) == getIdJoueurCourant()) {
+                continue;
+            }
+
+            // origine / position pion -> case arrivée possible
+            coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y)));
+        }
+
+
+        return coups;
     }
 
     public void jouerCoup(Coup c) {
