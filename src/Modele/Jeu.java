@@ -148,6 +148,31 @@ public String getNomJoueurCourant() {
     return "bonjour";
 }
 
+public Joueur getJoueurCourant() {
+    return null;
+}
+
+public int getNumeroRound() {
+    return 1;
+}
+
+public CasePlateau getCasePlateau(int row, int col) {
+    //TODO
+    return new CasePlateau(this, new Point(row, col));
+}
+
+public Carte getCartesSurLeTerrain(int i) {
+    return null;
+}
+
+public Joueur getJoueur(int id) {
+    return null;
+}
+
+public boolean estDeplacementConforme(int i, int j) {
+    return false;
+}
+
 public boolean partieEstFinie() {
     return false;
 }
