@@ -17,19 +17,19 @@ public class ConfigurationPlateauTest {
     @Test
     void constructionDeBase() {
 
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(null);});
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, null, null, null, null, null);});
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(COBRA), null, null, null, null);});
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(null));
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, null, null, null, null, null));
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, new Carte(COBRA), null, null, null, null));
         List<Carte> lc1 = new ArrayList<>() {{
             add(new Carte(OIE));
             add(new Carte(COQ));
         }};
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(BOEUF), lc1, null, null, null);});
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, new Carte(BOEUF), lc1, null, null, null));
         List<Carte> lc2 = new ArrayList<>() {{
             add(new Carte(CRABE));
             add(new Carte(SINGE));
         }};
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(GRUE), lc1, lc2, null, null);});
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, new Carte(GRUE), lc1, lc2, null, null));
         List<Modele.Pion> lp1 = new ArrayList<>() {{
             add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
             add(new Modele.Pion(1, new Point(0, 0), PION_ETUDIANT));
@@ -37,7 +37,7 @@ public class ConfigurationPlateauTest {
             add(new Modele.Pion(1, new Point(0, 3), PION_ETUDIANT));
             add(new Modele.Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(SANGLIER), lc1, lc2, lp1, null);});
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, new Carte(SANGLIER), lc1, lc2, lp1, null));
         List<Modele.Pion> lp2 = new ArrayList<>() {{
             add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
             add(new Modele.Pion(2, new Point(4, 0), PION_ETUDIANT));
@@ -493,19 +493,19 @@ public class ConfigurationPlateauTest {
         }};
 
         List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+            add(new Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
         List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+            add(new Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_MAITRE));
+            add(new Pion(2, new Point(4, 1), PION_MAITRE));
+            add(new Pion(2, new Point(4, 3), PION_MAITRE));
+            add(new Pion(2, new Point(4, 4), PION_MAITRE));
 
         }};
 
