@@ -1,5 +1,8 @@
-package Modele;
+package Modele.IA;
 
+
+import Modele.Carte;
+import Modele.Pion;
 
 import java.awt.*;
 import java.util.*;
@@ -36,7 +39,7 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
     // -> Position Maitres : possible d'utiliser 2 vecteurs de 5 bits car 1 seul maitre par joueur donc aucune ambiguité
 
 
-    public ConfigurationPlateau(int joueurCourantID, Carte carteEnPlus, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2,  List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
+    public ConfigurationPlateau(int joueurCourantID, Carte carteEnPlus, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
         Objects.requireNonNull(carteEnPlus, "La Carte Supplémentaire ne peut pas valoir null");
         Objects.requireNonNull(cartesJoueur1, "La liste des cartes du joueur 1 ne peut pas valoir null");
         Objects.requireNonNull(cartesJoueur2, "La liste des cartes du joueur 2 ne peut pas valoir null");

@@ -4,7 +4,7 @@ import static Global.Config.TYPECARTE.*;
 import static Global.Config.ROLEPION.*;
 
 
-import Global.Config;
+import Modele.IA.ConfigurationPlateau;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
