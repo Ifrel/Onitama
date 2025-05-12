@@ -1,70 +1,77 @@
 package Modele;
 
+
 import Global.Config.ROLEPION;
-import Global.Config.TYPE_ELEMENT_TERRAIN;
 
 import java.awt.*;
-import java.nio.file.Path;
+
+import static Global.Config.*;
 
 /**
  * Représente un pion dans le modèle du jeu.
  * Un pion a une position, une couleur, un propriétaire, une image et un type spécifique. */
-public interface Pion {
+public class Pion {
+    private final int proprietaire;
+    private Color couleur;
+    private final ROLEPION role;
+    private Point position;
+
+
+    public Pion(int proprietaire, Point position, ROLEPION role) {
+        this.proprietaire = proprietaire;
+        this.role = role;
+        this.position = position;
+
+        if (this.proprietaire == 1) this.couleur = COULEUR_CASE_ELEVE_JOUEUR_1;
+        else this.couleur = COULEUR_CASE_ELEVE_JOUEUR_2;
+    }
+
 
     /**
      * Retourne la couleur actuelle du pion.
      * @return la couleur du pion   */
-    Color getCouleur();
+    public Color getCouleur() { return couleur; }
 
 
     /**
      * Retourne l'identifiant du joueur propriétaire de ce pion.
      * @return l'ID du propriétaire (habituellement un entier associé à un joueur)     */
-     int getProprietaire();
+    public int getProprietaire() { return proprietaire; }
 
 
 
     /**
-     * Retourne le chemin vers l'image associée à ce pion.
-     * @return le chemin de l'image du pion    */
-     Path getCheminImage();
+     * Retourne le role d'élément du terrain que représente ce pion.
+     * @return le role d'élément terrain (e.g., ETUDIANT ou MAITRE.)     */
+    public ROLEPION getRole() { return role;}
 
-
-
-    /**
-     * Retourne le type d'élément du terrain que représente ce pion.
-     * @return le type d'élément terrain (e.g., PION_ETUDIANT ou PION_MAITRE.)     */
-     TYPE_ELEMENT_TERRAIN getType();
 
 
     /**
      * Retourne la position actuelle du pion sur la grille.
      * @return la position du pion sous forme de Point (x, y)   */
-     Point getPosition();
+    public Point getPosition(){ return position; }
 
 
     /**
      * revoie le statut di pion : Maitre ou Eleve
      * @return un type ROLEPION     */
-    public ROLEPION getStatut();
+    public ROLEPION getStatut() { return role; }
+
 
 
 
     /**
      * Définit une nouvelle position pour le pion.
      * @param position la nouvelle position à attribuer     */
-    void setNewPosition(Point position);
+    public void setNewPosition(Point position) {
+        this.position = position;
+    }
 
 
     /**
      * Modifie la couleur du pion.
      * @param couleur la nouvelle couleur   */
-    void setCouleur(Color couleur);
+    public void setCouleur(Color couleur) { this.couleur = couleur; }
 
-
-
-    /**
-     * Modifie le chemin de l'image représentant ce pion.
-     * @param chemainImage le nouveau chemin de l'image     */
-    void setChemainImage(Path chemainImage);
 }

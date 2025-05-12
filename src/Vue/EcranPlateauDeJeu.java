@@ -9,14 +9,12 @@ import Vue.Adaptateurs.AdaptateurCarte;
 import Vue.Adaptateurs.AdaptateurRefaire;
 import Vue.Animations.BruitGrisAvecPointsPanel;
 import Modele.Carte;
-import Modele.Pion;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;

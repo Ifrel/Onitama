@@ -177,7 +177,7 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
     private boolean [] pionsEtudiantsToBits(List<Pion> lp) {
         boolean [] res = new boolean[25];
         for (Pion p: lp) {
-            if (p.getStatut() == ROLEPION.Etudiant) {
+            if (p.getStatut() == ROLEPION.PION_ETUDIANT) {
                 Point pos = p.getPosition();
                 int x, y;
                 x = pos.x;
@@ -198,7 +198,7 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
     private boolean [] pionMaitreToBits(List<Pion> lp) {
         boolean [] res = new boolean[10];
         for (Pion p: lp) {
-            if (p.getStatut() == ROLEPION.Maitre) {
+            if (p.getStatut() == ROLEPION.PION_MAITRE) {
                 Point pos = p.getPosition();
                 int x, y;
                 x = pos.x;

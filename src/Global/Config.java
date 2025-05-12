@@ -16,8 +16,7 @@ public class Config {
     public static final int TAILLE_VECTEUR_BITS = 96;
 
     // -- TYPE ELEMENT SUR LE TERRAIN DE JEU --
-    public static enum TYPE_ELEMENT_TERRAIN {
-        VIDE,
+    public static enum ROLEPION {
         PION_ETUDIANT,
         PION_MAITRE
     }
@@ -323,7 +322,4 @@ public class Config {
                     add(new Point(1,1));
                 }});
     }};
-
-    // -- PIONS --
-    public enum ROLEPION { Maitre, Etudiant }
 }

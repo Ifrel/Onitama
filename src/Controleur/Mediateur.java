@@ -5,7 +5,6 @@ import Modele.CasePlateau;
 import Modele.Jeu;
 import Modele.Pion;
 import Vue.CollecteurEvenements;
-import Vue.InterfaceGraphique;
 import Vue.InterfaceUser;
 
 import java.awt.*;

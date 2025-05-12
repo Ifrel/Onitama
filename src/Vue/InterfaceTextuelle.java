@@ -129,8 +129,8 @@ public class InterfaceTextuelle implements Observateur {
     private String getSymboleCase(CasePlateau casePlateau) {
         switch (casePlateau.getTypeElement()) {
             case VIDE: return " . ";
-            case PION_ETUDIANT: return " E"+casePlateau.getPion().getProprietaire();
-            case PION_MAITRE: return " M"+casePlateau.getPion().getProprietaire();
+            case PION_ETUDIANT: return " E"+casePlateau.getProprietaire();
+            case PION_MAITRE: return " M"+casePlateau.getId();
             default: return " ? "; // Type inconnu
         }
     }

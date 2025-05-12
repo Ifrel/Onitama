@@ -145,18 +145,18 @@ public class Jeu extends Observable {
             add(new Point(0,1));
             add(new Point(0,3));
             add(new Point(0,4));
-        }}, 1, ROLEPION.Etudiant);
+        }}, 1, ROLEPION.PION_ETUDIANT);
         ajouterPion(new ArrayList<Point>()
         {{
             add(new Point(4,0));
             add(new Point(4,1));
             add(new Point(4,3));
             add(new Point(4,4));
-        }}, 2, ROLEPION.Etudiant);
+        }}, 2, ROLEPION.PION_ETUDIANT);
 
         // Ajouter pion maitre
-        ajouterPion(new ArrayList<Point>(){{add(new Point(0, 2));}}, 1, ROLEPION.Maitre);
-        ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, 2, ROLEPION.Maitre);
+        ajouterPion(new ArrayList<Point>(){{add(new Point(0, 2));}}, 1, ROLEPION.PION_MAITRE);
+        ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, 2, ROLEPION.PION_MAITRE);
     }
 
     /**
@@ -249,6 +249,13 @@ public class Jeu extends Observable {
         return joueursEnPartie.get(joueurCourant);
     }
 
+    public int getProprietairePionAt(int row, int col) {
+        return 1;
+    }
+
+    public ROLEPION getRolePionAt(int x, int y) {
+        return ROLEPION.PION_ETUDIANT;
+    }
 
     public int getNumeroRound(){
         return round;
@@ -264,7 +271,7 @@ public class Jeu extends Observable {
 
     public CasePlateau getCasePlateau(int row, int col) {
         //TODO
-        return new CasePlateau(new Point(row,col));
+        return new CasePlateau(this, new Point(row, col));
     }
 
     /**
@@ -366,10 +373,10 @@ public class Jeu extends Observable {
     {
         for (Point p: _coordonnes)
         {
-            if (_role == ROLEPION.Etudiant){
-                grille[p.x][p.y] = new PionEtudiant(_proprietaire, p);
+            if (_role == ROLEPION.PION_ETUDIANT){
+                grille[p.x][p.y] = new Pion(_proprietaire, p, ROLEPION.PION_ETUDIANT);
             }else{
-                grille[p.x][p.y] = new PionMaitre(_proprietaire, p);
+                grille[p.x][p.y] = new Pion(_proprietaire, p, ROLEPION.PION_MAITRE);
             }
         }
     }

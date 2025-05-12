@@ -1,6 +1,10 @@
 package Modele;
 
 import static Global.Config.TYPECARTE.*;
+import static Global.Config.ROLEPION.*;
+
+
+import Global.Config;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -26,20 +30,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
         assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(GRUE), lc1, lc2, null, null);});
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Modele.Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Modele.Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Modele.Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Modele.Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
         assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(SANGLIER), lc1, lc2, lp1, null);});
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Modele.Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Modele.Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Modele.Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Modele.Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
         new ConfigurationPlateau(1, new Carte(LAPIN), lc1, lc2, lp1, lp2);
@@ -60,20 +64,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
 
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
 
@@ -101,20 +105,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
 
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
 
@@ -142,20 +146,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
 
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
 
@@ -184,20 +188,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
 
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Modele.Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Modele.Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
 
@@ -242,20 +246,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
 
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
 
@@ -298,20 +302,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
 
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
 
@@ -345,20 +349,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
 
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
 
@@ -392,20 +396,20 @@ public class ConfigurationPlateauTest {
             add(new Carte(SINGE));
         }};
 
-        List<Pion> lp1 = new ArrayList<>() {{
-            add(new PionMaitre(1, new Point(0, 2)));
-            add(new PionEtudiant(1, new Point(0, 0)));
-            add(new PionEtudiant(1, new Point(0, 1)));
-            add(new PionEtudiant(1, new Point(0, 3)));
-            add(new PionEtudiant(1, new Point(0, 4)));
+        List<Modele.Pion> lp1 = new ArrayList<>() {{
+            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
 
-        List<Pion> lp2 = new ArrayList<>() {{
-            add(new PionMaitre(2, new Point(4, 2)));
-            add(new PionEtudiant(2, new Point(4, 0)));
-            add(new PionEtudiant(2, new Point(4, 1)));
-            add(new PionEtudiant(2, new Point(4, 3)));
-            add(new PionEtudiant(2, new Point(4, 4)));
+        List<Modele.Pion> lp2 = new ArrayList<>() {{
+            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
 
