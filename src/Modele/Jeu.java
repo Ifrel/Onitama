@@ -53,7 +53,10 @@ public class Jeu extends Observable {
         initGrille();
 
         initJoueurs();
+
         idJoueurCourant = 1;
+        numRound = 1;
+        partieFinie = false;
 
     }
 
@@ -200,7 +203,9 @@ public class Jeu extends Observable {
         Coup c = historique.annuler();
 
         // faire des choses avec le coup
-        return;
+
+        // met à jour l'interface
+        metAJour();
     }
 
     public void refaireCoup() {
@@ -212,7 +217,9 @@ public class Jeu extends Observable {
         Coup c = historique.refaire();
 
         // faire des choses avec le coup
-        return;
+
+        // met à jour l'interface
+        metAJour();
     }
 
     // ######### CHARGER / SAUVEGARDER ########
@@ -493,7 +500,61 @@ public class Jeu extends Observable {
         return coups;
     }
 
-    public void jouerCoup(Coup c) {
+    private void changerJoueur() {
+        idJoueurCourant = (idJoueurCourant % 2) + 1;
+    }
 
+    private void deplacerPion(Point depart, Point arrivee) {
+        Pion p = getCase(depart.x, depart.y);
+        setCase(depart.x, depart.y, null);
+        setCase(arrivee.x, arrivee.y, p);
+    }
+
+    private void majPionsJoueur1() {
+
+    }
+
+    private void majPionsJoueur2() {
+
+    }
+
+    private void majPions() {
+        majPionsJoueur1();
+        majPionsJoueur2();
+    }
+
+    private boolean verifierVictoire() {
+        return false;
+    }
+
+    public void jouerCoup(Coup c) {
+        try {
+            Point depart = c.getDepart();
+            Point arrivee = c.getArrivee();
+            int x, y;
+            x = arrivee.x;
+            y = arrivee.y;
+            verifieSiDansGrille(x, y);
+
+            if (!estCaseVide(x, y) && getProprietairePionAt(x, y) == getIdJoueurCourant()) {
+                throw new RuntimeException("Impossible de capturer son propre pion");
+            }
+
+            // met à jour la grille
+            deplacerPion(depart, arrivee);
+            if(verifierVictoire()) {
+                partieFinie = true;
+                return;
+            }
+
+            // met à jour la liste de pions des joueurs
+            majPions();
+            changerJoueur();
+
+            // met à jour l'interface
+            metAJour();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
