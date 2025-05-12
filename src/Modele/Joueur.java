@@ -15,7 +15,7 @@ import static Global.Config.COULEUR_CASE_MAITRE_JOUEUR_2;
 public class Joueur {
 
     // Attributs représentant les propriétés du joueur
-    private final String nom;           // Nom du joueur (ne doit pas être null ou vide)
+    private String nom;           // Nom du joueur (ne doit pas être null ou vide)
     private Color couleur;              // Couleur associée au joueur (pour l'affichage, par ex.)
     private final int id;               // Identifiant unique du joueur (par ex. 1, 2, etc.)
 
@@ -62,6 +62,9 @@ public class Joueur {
         return id;
     }
 
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 
     /**
      * Retourne le nom du joueur.

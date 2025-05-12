@@ -357,7 +357,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         txt.setAlignmentX(Component.CENTER_ALIGNMENT);
         txt.setForeground(new Color(232, 231, 231));
 
-        nomJoueurCourantLabel = new JLabel(jeu.getJoueurCourant().getNom());
+        nomJoueurCourantLabel = new JLabel(jeu.getNomJoueurCourant());
         nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 30));
         nomJoueurCourantLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         // Changer la couleur du texte du joueur courant pour qu'elle corresponde à sa couleur de pion

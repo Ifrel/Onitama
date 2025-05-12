@@ -165,7 +165,7 @@ public class EcranDeDemarrage extends JTabbedPane {
             }
         });
         // Pré-remplir éventuellement avec un nom par défaut depuis modèle/config
-        champJoueur1.setText(jeu.getJoueur(1).getNom());
+        champJoueur1.setText(jeu.getNomJoueur1());
         ajouterLigne(ongletGeneral, LBL_JOUEUR_1, champJoueur1, ligneCourante++, FONT_LABEL);
 
 
@@ -181,7 +181,7 @@ public class EcranDeDemarrage extends JTabbedPane {
             }
         });
         // Pré-remplir éventuellement avec un nom par défaut depuis modèle/config
-        champJoueur2.setText(jeu.getJoueur(2).getNom());
+        champJoueur2.setText(jeu.getNomJoueur2());
         ajouterLigne(ongletGeneral, LBL_JOUEUR_2, champJoueur2, ligneCourante++, FONT_LABEL);
 
         // -- bouton enter
