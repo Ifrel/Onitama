@@ -143,7 +143,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.insets = new Insets(0, 0, ESPACE*3, 0);
 
         JPanel panelCentreEmpile = new JPanel(new GridBagLayout());
         panelCentreEmpile.setOpaque(false);
@@ -339,7 +339,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private JButton creerBoutonSon() {
         boutonSon = new JButton("son");
         boutonSon.setForeground(Color.WHITE);
-        boutonSon.setFont(new Font("Arial", Font.PLAIN, 33));
+        boutonSon.setFont(new Font("Arial", Font.PLAIN, 30));
         boutonSon.setBackground(new Color(237, 237, 237, 16));
         boutonSon.setContentAreaFilled(false);
         boutonSon.setFocusPainted(false);
@@ -402,7 +402,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         menu.setContentAreaFilled(false);
         menu.setFocusPainted(false);
         menu.setForeground(Color.WHITE);
-        menu.setFont(new Font("Arial", Font.PLAIN, 40));
+        menu.setFont(new Font("Arial", Font.PLAIN, 30));
         menu.setPreferredSize(new Dimension(60, 40));
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
 
