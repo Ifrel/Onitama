@@ -17,19 +17,19 @@ public class ConfigurationPlateauTest {
     @Test
     void constructionDeBase() {
 
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(null);});
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, null, null, null, null, null);});
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(COBRA), null, null, null, null);});
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(null));
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, null, null, null, null, null));
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, new Carte(COBRA), null, null, null, null));
         List<Carte> lc1 = new ArrayList<>() {{
             add(new Carte(OIE));
             add(new Carte(COQ));
         }};
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(BOEUF), lc1, null, null, null);});
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, new Carte(BOEUF), lc1, null, null, null));
         List<Carte> lc2 = new ArrayList<>() {{
             add(new Carte(CRABE));
             add(new Carte(SINGE));
         }};
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(GRUE), lc1, lc2, null, null);});
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, new Carte(GRUE), lc1, lc2, null, null));
         List<Modele.Pion> lp1 = new ArrayList<>() {{
             add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
             add(new Modele.Pion(1, new Point(0, 0), PION_ETUDIANT));
@@ -37,7 +37,7 @@ public class ConfigurationPlateauTest {
             add(new Modele.Pion(1, new Point(0, 3), PION_ETUDIANT));
             add(new Modele.Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
-        assertThrows(NullPointerException.class, () -> {new ConfigurationPlateau(1, new Carte(SANGLIER), lc1, lc2, lp1, null);});
+        assertThrows(NullPointerException.class, () -> new ConfigurationPlateau(1, new Carte(SANGLIER), lc1, lc2, lp1, null));
         List<Modele.Pion> lp2 = new ArrayList<>() {{
             add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
             add(new Modele.Pion(2, new Point(4, 0), PION_ETUDIANT));
@@ -469,6 +469,102 @@ public class ConfigurationPlateauTest {
         // -------------- 1-3 / 5 bits (Positions Colonne Pion Maitre Joueur 2)
         // 00001 001
         assertEquals(9, etat[10]);
+
+        // -------------- 4-5 / 5 bits (Positions Colonne Pion Maitre Joueur 2)
+        // -------------- 1-6 / 6 bits inutilisés
+        // 00 000 000
+        assertEquals(0, etat[11]);
+    }
+
+    @Test
+    void valeurVecteurTotalScenario1() {
+        ConfigurationPlateau cp;
+
+        byte [] etat;
+
+        List<Carte> lc1 = new ArrayList<>() {{
+            add(new Carte(SANGLIER));
+            add(new Carte(GRENOUILLE));
+        }};
+
+        List<Carte> lc2 = new ArrayList<>() {{
+            add(new Carte(BOEUF));
+            add(new Carte(GRUE));
+        }};
+
+        List<Pion> lp1 = new ArrayList<>() {{
+            add(new Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
+        }};
+
+        List<Pion> lp2 = new ArrayList<>() {{
+            add(new Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_MAITRE));
+            add(new Pion(2, new Point(4, 1), PION_MAITRE));
+            add(new Pion(2, new Point(4, 3), PION_MAITRE));
+            add(new Pion(2, new Point(4, 4), PION_MAITRE));
+
+        }};
+
+        cp = new ConfigurationPlateau(1, new Carte(COQ), lc1, lc2, lp1, lp2);
+
+        etat = cp.getEtat();
+
+        // SANGLIER = 13; GRENOUILLE = 2
+        // 1101 0010 = 210 = -46
+        assertEquals(-46, etat[0]);
+
+        // BOEUF = 11; GRUE = 12
+        // 1011 1100 = 188 = -68
+        assertEquals(-68, etat[1]);
+
+        // COQ = 7; 1-4 / 25 bits (Positions Pions Joueur 1)
+        // 0111 1000 = 120
+        assertEquals(120, etat[2]);
+
+
+
+        // -------------- 5-12 / 25 bits (Positions Pions Joueur 1)
+        // 1 00100 00 = 144 = -112
+        assertEquals(-112, etat[3]);
+
+
+        // -------------- 13-20 / 25 bits (Positions Pions Joueur 1)
+        // 100 00000 = 128 = -128
+        assertEquals(-128, etat[4]);
+
+
+        // -------------- 21-25 / 25 bits (Positions Pions Joueur 1)
+        // -------------- 1-3 / 25 bits (Positions Pions Joueur 2)
+        // 00000 O10
+        assertEquals(2, etat[5]);
+
+        // -------------- 4-11 / 25 bits (Positions Pions Joueur 2)
+        // 00 01000 0 = 16
+        assertEquals(16, etat[6]);
+
+        // -------------- 12-19 / 25 bits (Positions Pions Joueur 2)
+        // 0100 0010 = 66
+        assertEquals(66, etat[7]);
+
+
+        // -------------- 20-25 / 25 bits (Positions Pions Joueur 2)
+        // -------------- 1-2 / 5 bits (Positions Ligne Pion Maitre Joueur 1)
+        // 0 00000 00
+        assertEquals(0, etat[8]);
+
+        // -------------- 3-5 / 5 bits (Positions Ligne Pion Maitre Joueur 1)
+        // -------------- 1-5 / 5 bits (Positions Colonne Pion Maitre Joueur 1)
+        // 100 00001 = 129 = -127
+        assertEquals(-127, etat[9]);
+
+        // -------------- 1-5 / 5 bits (Positions Ligne Pion Maitre Joueur 2)
+        // -------------- 1-3 / 5 bits (Positions Colonne Pion Maitre Joueur 2)
+        // 01001 100 = 76
+        assertEquals(76, etat[10]);
 
         // -------------- 4-5 / 5 bits (Positions Colonne Pion Maitre Joueur 2)
         // -------------- 1-6 / 6 bits inutilisés
