@@ -639,6 +639,8 @@ public class Jeu extends Observable {
             setCase(arrivee.x, arrivee.y, p);
             // Mise à jour des listes de pions
             majPions();
+        } catch (CaseVideException ignored) {
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -736,8 +738,11 @@ public class Jeu extends Observable {
         return false;
     }
 
-    public void jouerCoup(Carte carteSelectionee, Coup c) {
+    public void jouerCoup(Coup c) {
         try {
+            if (carteSelectionee == null) {
+                throw new IllegalStateException("Il faut d'abord choisir une carte avant de jouer un Coup");
+            }
             if (c == null) {
                 logger.info("Coup invalide");
                 return;
@@ -768,6 +773,7 @@ public class Jeu extends Observable {
 
             echangerCartes(getJoueurCourant(), getCarteSelectionnee());
             changerJoueur();
+            //carteSelectionee = null;
 
             // met à jour l'interface
             metAJour();

@@ -130,10 +130,10 @@ class JeuTest {
             }
             System.err.println(jeu.toString());
             jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(0));
-            jeu.jouerCoup(jeu.getCarteSelectionnee(), jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(0, 2), new Point(1, 2)));
+            jeu.jouerCoup(jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(0, 2), new Point(1, 2)));
             System.err.println(jeu.toString());
             jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(1));
-            jeu.jouerCoup(jeu.getCarteSelectionnee(), jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(4, 0), new Point(3, 1)));
+            jeu.jouerCoup(jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(4, 0), new Point(3, 1)));
             System.err.println(jeu.toString());
             jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(0));
         } catch (Exception e) {
