@@ -4,7 +4,7 @@ import Modele.IA.IA;
 import Modele.IA.IAFaible;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IAFaibleTest {
 
