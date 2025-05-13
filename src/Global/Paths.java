@@ -50,6 +50,20 @@ public class Paths {
 
 
     /********************************************
+     *              IMAGES BOUTONS              *
+     *******************************************/
+    public final static Path PATH_BOUTON_SAUVEGARDER     = Path.of("res/vue/images/buttons/button_sauvegarder.png");
+    public final static Path PATH_BOUTON_DECLINER        = Path.of("res/vue/images/buttons/button_decliner.png");
+    public final static Path PATH_BOUTON_ANNULER         = Path.of("res/vue/images/buttons/button_annuler.png");
+    public final static Path PATH_BOUTON_ANNULER_ROUGE   = Path.of("res/vue/images/buttons/button_annuler_rouge.png");
+    public final static Path PATH_BOUTON_VALIDER         = Path.of("res/vue/images/buttons/button_valider.png");
+    public final static Path PATH_BOUTON_REFAIRE         = Path.of("res/vue/images/buttons/button_refaire.png");
+    public final static Path PATH_BOUTON_ENTRER          = Path.of("res/vue/images/buttons/button_entrer.png");
+    public final static Path PATH_BOUTON_RETOUR          = Path.of("res/vue/images/buttons/button_retour.png");
+    public final static Path PATH_BOUTON_EXIT            = Path.of("res/vue/images/buttons/button_exit.png");
+    public final static Path PATH_BOUTON_OFF             = Path.of("res/vue/images/buttons/button_off.png");
+    public final static Path PATH_BOUTON_ON              = Path.of("res/vue/images/buttons/button_on.png");
+    /********************************************
      *              MUSIQUES                      *
      *******************************************/
     public static Path PATH_SON_1             = Path.of("/vue/musique/son_1.wav");
