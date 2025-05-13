@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Config {
+    // -- MODE INTERFACE --
+
+    public static final boolean MODE_GRAPHIQUE = true;
+
+
     // -- IA --
     public static enum NIVEAU_IA {
         FAIBLE,
@@ -17,6 +22,8 @@ public class Config {
 
     public static final int ID_JOUEUR_1 = 1;
     public static final int ID_JOUEUR_2 = 2;
+    public static final int ID_IA_1 = 3;
+    public static final int ID_IA_2 = 4;
 
     // -- TYPE ELEMENT SUR LE TERRAIN DE JEU --
     public static enum ROLEPION {

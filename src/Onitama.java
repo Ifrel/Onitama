@@ -1,5 +1,6 @@
 import Controleur.Mediateur;
 import Global.LogManagerSetup;
+import static Global.Config.MODE_GRAPHIQUE;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceGraphique;
@@ -24,11 +25,13 @@ public class Onitama {
             logger.info("Initialisation du collecteur d'évènements");
             CollecteurEvenements collecteurEvenements = new Mediateur(jeu);
 
-            logger.info("Lancement de l'interface graphique du jeu");
-            InterfaceGraphique.lancerInterfaceGraphique(jeu, collecteurEvenements);
-
-//            logger.info("Lancement de l'interface Textuelle du jeu");
-//            InterfaceTextuelle.lancerInterfaceTextuelle(jeu, collecteurEvenements);
+            if (MODE_GRAPHIQUE) {
+                logger.info("Lancement de l'interface graphique du jeu");
+                InterfaceGraphique.lancerInterfaceGraphique(jeu, collecteurEvenements);
+            } else {
+                logger.info("Lancement de l'interface Textuelle du jeu");
+                InterfaceTextuelle.lancerInterfaceTextuelle(jeu, collecteurEvenements);
+            }
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur au démarrage de l'application : " + e.getMessage(), e);

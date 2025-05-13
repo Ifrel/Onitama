@@ -28,6 +28,7 @@ public class Jeu extends Observable {
     private long tempsJeu; // temps écoulé depuis le début de la partie
     private int numRound; // à quel round on en est
     private boolean partieFinie;
+    boolean IA1Activee, IA2Activee;
 
     // --- CARTES -- //
     private List<Carte> toutesLesCartes; //Toutes les cartes confondues
@@ -60,6 +61,8 @@ public class Jeu extends Observable {
         idJoueurCourant = 1;
         numRound = 1;
         partieFinie = false;
+
+        IA1Activee = IA2Activee = false;
     }
 
 
@@ -399,6 +402,14 @@ public class Jeu extends Observable {
 
 // ######## PARTIE ########
 
+    public void activerIA1() {
+        IA1Activee = true;
+    }
+
+    public void activerIA2() {
+        IA2Activee = true;
+    }
+
     public void nouvellePartie() {
         return;
     }
@@ -507,22 +518,50 @@ public class Jeu extends Observable {
 
     private void changerJoueur() {
         idJoueurCourant = (idJoueurCourant % 2) + 1;
+
     }
 
     private void deplacerPion(Point depart, Point arrivee) {
+        // Récupère l'éventuel pion présent sur la case d'arrivée
+        Pion cible = getCase(arrivee.x, arrivee.y);
+        // Si c'est un pion adverse, il sera écrasé par le setCase suivant
+        if (cible != null && cible.getProprietaire() != idJoueurCourant) {
+
+        }
+        // On déplace le pion
         Pion p = getCase(depart.x, depart.y);
         setCase(depart.x, depart.y, null);
         setCase(arrivee.x, arrivee.y, p);
+        // Mise à jour des listes de pions
         majPions();
     }
 
-    private void majPionsJoueur1() {
 
+    private void majPionsJoueur1() {
+        pionsJoueurUn.clear();
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {
+                Pion p = grille[i][j];
+                if (p != null && p.getProprietaire() == ID_JOUEUR_1) {
+                    pionsJoueurUn.add(p);
+                }
+            }
+        }
     }
+
 
     private void majPionsJoueur2() {
-
+        pionsJoueurDeux.clear();
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {
+                Pion p = grille[i][j];
+                if (p != null && p.getProprietaire() == ID_JOUEUR_2) {
+                    pionsJoueurDeux.add(p);
+                }
+            }
+        }
     }
+
 
     private void majPions() {
         majPionsJoueur1();
@@ -538,12 +577,46 @@ public class Jeu extends Observable {
 
     }
 
+    private void faireSetup() {
+
+    }
+
+    public Coup preparerCoup(Carte carteSelectionee, Point depart, Point arrivee) {
+        Coup c = new Coup(depart, arrivee);
+        List<Coup> coupsPossibles = getCoupsPossibles(depart, carteSelectionee);
+
+        if (! coupsPossibles.contains(c)) {
+            return null;
+        }
+
+        return c;
+    }
+
+    public Coup preparerCoup(Carte carteSelectionee, CasePlateau depart, CasePlateau arrivee) {
+        Point d = depart.position;
+        Point a = arrivee.position;
+        Coup c = new Coup(d, a);
+        List<Coup> coupsPossibles = getCoupsPossibles(d, carteSelectionee);
+
+        if (! coupsPossibles.contains(c)) {
+            return null;
+        }
+
+        return c;
+    }
+
     private boolean verifierVictoire() {
         return false;
     }
 
     public void jouerCoup(Coup c) {
         try {
+            if (c == null) {
+                return;
+            }
+
+            faireSetup();
+
             Point depart = c.getDepart();
             Point arrivee = c.getArrivee();
             int x, y;
@@ -559,6 +632,7 @@ public class Jeu extends Observable {
             deplacerPion(depart, arrivee);
             if(verifierVictoire()) {
                 partieFinie = true;
+                metAJour();
                 return;
             }
 
