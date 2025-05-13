@@ -63,9 +63,18 @@ public class Paths {
     public final static Path PATH_BOUTON_EXIT            = Path.of("res/vue/images/buttons/button_exit.png");
     public final static Path PATH_BOUTON_OFF             = Path.of("res/vue/images/buttons/button_off.png");
     public final static Path PATH_BOUTON_ON              = Path.of("res/vue/images/buttons/button_on.png");
+
+
+
     /********************************************
      *              MUSIQUES                      *
      *******************************************/
     public static Path PATH_SON_1             = Path.of("/vue/musique/son_1.wav");
+
+
+    /********************************************
+     *              DEBUT PATHS                      *
+     *******************************************/
+    public static Path PATH_DEBUT_PION = Path.of("res/vue/images/pions/pion_");
 
 }

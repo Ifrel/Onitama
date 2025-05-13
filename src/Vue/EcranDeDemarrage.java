@@ -170,10 +170,10 @@ public class EcranDeDemarrage extends JTabbedPane {
         champJoueur1 = new JTextField(LARGEUR_CHAMP_TEXTE);
         champJoueur1.setFont(FONT_COMPOSANT);
         champJoueur1.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {mettreAjour();} // Si le style du texte change
-            public void removeUpdate(DocumentEvent e) {mettreAjour(); }  // Si le texte est suppromer
-            public void insertUpdate(DocumentEvent e) {mettreAjour(); }  // Si un nouveau text est insérer
-            private void mettreAjour(){
+            public void changedUpdate(DocumentEvent e) {update();} // Si le style du texte change
+            public void removeUpdate(DocumentEvent e) {update(); }  // Si le texte est supprimer
+            public void insertUpdate(DocumentEvent e) {update(); }  // Si un nouveau text est insérer
+            private void update(){
                 champJoueur1.setBorder(UIManager.getBorder("TextField.border"));
                 adaptateurBoutonEntrer.setChampJoueur(1, champJoueur1);
             }
@@ -186,10 +186,10 @@ public class EcranDeDemarrage extends JTabbedPane {
         // --- Ligne 5 : Nom Joueur 2 ---
         champJoueur2 = new JTextField(LARGEUR_CHAMP_TEXTE);
         champJoueur2.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {mettreAjour();  }
-            public void removeUpdate(DocumentEvent e) {mettreAjour(); }
-            public void insertUpdate(DocumentEvent e) {mettreAjour(); }
-            private void mettreAjour(){
+            public void changedUpdate(DocumentEvent e) { update(); }
+            public void removeUpdate(DocumentEvent e) { update(); }
+            public void insertUpdate(DocumentEvent e) { update(); }
+            private void update(){
                 champJoueur2.setBorder(UIManager.getBorder("TextField.border"));
                 adaptateurBoutonEntrer.setChampJoueur(2, champJoueur2);
             }

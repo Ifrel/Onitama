@@ -1,11 +1,19 @@
 package Vue.Utils;
 
+import Global.Config.*;
+import Global.Config.ROLEPION.*;
+import Global.Config.ROLEPION;
+import Modele.CasePlateau;
+import Modele.Pion;
 import Vue.Animations.Animations;
+import Vue.InfosDeConfigUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.nio.file.Path;
+
+import static Global.Paths.PATH_DEBUT_PION;
 
 /**
  * Classe utilitaire regroupant des méthodes statiques pour la création
@@ -199,6 +207,21 @@ public class MethodsStaticsUtils {
 
         return bouton;
     }
+
+
+
+    public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, CasePlateau casePlateau){
+            String nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(casePlateau.getProprietaire());
+            String rolePion =  casePlateau.getRole().name().toLowerCase().split("_")[1]; // PION_ETUDIANT -> pion_etudiant -> etudiant
+
+            String suite = nomCouleurPion + "_" + rolePion + ".png";
+
+            Path rinel = Path.of(PATH_DEBUT_PION.toString() + suite);
+            System.err.println(rinel);
+        return rinel;
+    }
+
+
 
 
 

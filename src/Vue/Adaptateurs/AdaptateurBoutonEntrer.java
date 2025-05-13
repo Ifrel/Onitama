@@ -1,6 +1,7 @@
 package Vue.Adaptateurs;
 
 import Vue.CollecteurEvenements;
+import Vue.InfosDeConfigUI;
 import Vue.InterfaceGraphique;
 
 import javax.swing.*;
@@ -105,7 +106,8 @@ public class AdaptateurBoutonEntrer implements ActionListener {
             }
         }
 
-
+        InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
+        infosDeConfigUI.afficherEtatConfigUI();
         interfaceGraphique.lancerPlatauDeJeu();
     }
 

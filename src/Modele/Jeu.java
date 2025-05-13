@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import Global.Config.ROLEPION;
+import Vue.InfosDeConfigUI;
 
 import static Global.Config.*;
 import static Global.Config.ROLEPION.PION_ETUDIANT;
@@ -39,7 +40,7 @@ public class Jeu extends Observable {
     private final List<Pion> pionsJoueurUn = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
     private final List<Pion> pionsJoueurDeux = new ArrayList<>(); //idem pour le deuxième joueur
 
-
+    CasePlateau casePlateau ;
 
 
     public Jeu() {
@@ -60,6 +61,7 @@ public class Jeu extends Observable {
         numRound = 1;
         partieFinie = false;
 
+        casePlateau = CasePlateau.getInstance(this);
     }
 
 
@@ -444,8 +446,7 @@ public class Jeu extends Observable {
     }
 
     public CasePlateau getCasePlateau(int row, int col) {
-        //TODO
-        return new CasePlateau(this, new Point(row, col));
+        return casePlateau.getCasePlateau(row, col);
     }
 
     public Carte getCartesSurLeTerrain(int i) {
@@ -476,9 +477,9 @@ public class Jeu extends Observable {
         int idJoueurCourant = getIdJoueurCourant();
         Point direction;
         if (idJoueurCourant == ID_JOUEUR_1) {
-            direction = new Point(1, 1);
-        } else {
             direction = new Point(-1, -1);
+        } else {
+            direction = new Point(1, 1);
         }
 
         int x, y;
