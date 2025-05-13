@@ -1,20 +1,22 @@
 package Modele;
 
 import Exceptions.CaseVideException;
-import Exceptions.ConfigurationIllegaleException;
 import Exceptions.DeplacementIllegalExcpetion;
 import Modele.IA.IA;
 import Patterns.Observable;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
 import static Global.Config.ROLEPION.PION_ETUDIANT;
 import static Global.Config.ROLEPION.PION_MAITRE;
 import static Global.Config.TYPECARTE.*;
+import static Modele.Utils.verifierSelectionCartesConforme;
+import static Modele.Utils.verifierSelectionPionsConforme;
 
 
 public class Jeu extends Observable {
@@ -163,89 +165,6 @@ public class Jeu extends Observable {
         }
     }
 
-    /**
-     * Vérifie que chaque carte de la liste est unique
-     *
-     * @param listeCartes liste de cartes
-     */
-    private void cartesToutesDifferentes(List<TYPECARTE> listeCartes) throws ConfigurationIllegaleException {
-        HashSet<TYPECARTE> hs = new HashSet<>();
-
-        for (TYPECARTE tc : listeCartes) {
-            if (hs.contains(tc)) {
-                throw new ConfigurationIllegaleException("ERREUR La carte " + tc + " apparait plus d'une fois, chaque carte doit etre unique");
-            }
-            hs.add(tc);
-        }
-    }
-
-    /**
-     * Vérifie que la séléction de cartes est conforme aux règles du jeu (toutes les cartes sont uniques, 2 cartes seulement par joueur + 1 carte supplémentaire)
-     *
-     * @param carteEnPlus   carte supplémentaire du jeu
-     * @param cartesJoueur1 cartes du joueur 1
-     * @param cartesJoueur2 cartes du joueur 2
-     */
-    private void verifierSelectionCartesConforme(TYPECARTE carteEnPlus, List<TYPECARTE> cartesJoueur1, List<TYPECARTE> cartesJoueur2) throws ConfigurationIllegaleException {
-        try {
-            List<TYPECARTE> cartesSelectionnees = new ArrayList<>(cartesJoueur1);
-            cartesSelectionnees.addAll(cartesJoueur2);
-            cartesSelectionnees.add(carteEnPlus);
-            cartesToutesDifferentes(cartesSelectionnees);
-        } catch (ConfigurationIllegaleException e) {
-            throw new ConfigurationIllegaleException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void verifierSelectionPionsConforme(List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) throws ConfigurationIllegaleException {
-        if (pionsJoueur1.size() > 5) {
-            throw new ConfigurationIllegaleException("Le joueur 1 ne peux pas avoir plus de 5 pions, pourtant " + pionsJoueur1.size() + " ont été fournis");
-        }
-        if (pionsJoueur2.size() > 5) {
-            throw new ConfigurationIllegaleException("Le joueur 2 ne peux pas avoir plus de 5 pions, pourtant " + pionsJoueur2.size() + " ont été fournis");
-        }
-
-        HashSet<Point> coordonneesOccupees = new HashSet<>();
-        int nbEleves, nbMaitre;
-
-        HashMap<Integer, List<Pion>> listePions = new HashMap<>();
-        listePions.put(ID_JOUEUR_1, pionsJoueur1);
-        listePions.put(ID_JOUEUR_2, pionsJoueur2);
-
-        for (int i = 0; i < 2; i++){
-            List<Pion> lp = listePions.get(i + 1);
-            nbEleves = nbMaitre = 0;
-            for (Pion p : lp) {
-                Point pos = p.getPosition();
-                if (coordonneesOccupees.contains(pos)) {
-                    throw new ConfigurationIllegaleException("Il y a déjà un pion à la position (" + pos.x + "," + pos.y + ")");
-                }
-                coordonneesOccupees.add(pos);
-                if (p.getRole() == PION_ETUDIANT) {
-                    nbEleves++;
-                } else {
-                    nbMaitre++;
-                }
-                int prop = p.getIDProprietaire();
-                if (prop != i + 1) {
-                    throw new ConfigurationIllegaleException("Le pion " + p.toString() + " est possédé par " + prop + " alors qu'il devrait etre possédé par " + (i + 1));
-                }
-            }
-
-            if (nbEleves > 4) {
-                throw new ConfigurationIllegaleException("Le joueur " + (i + 1) + " a plus de 4 pions élèves (" + nbEleves + "), impossible");
-            }
-
-            if (nbMaitre > 1) {
-                throw new ConfigurationIllegaleException("Le joueur " + (i + 1) + " a plus d'un pions maitre (" + nbMaitre + "), impossible");
-            }
-        }
-
-
-    }
-
     private void setPionsJeu(List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
         List<Pion> listePions = new ArrayList<>();
         listePions.addAll(pionsJoueur1);
@@ -329,7 +248,7 @@ public class Jeu extends Observable {
         for (int i = 0; i < coordonnees.size(); i++) {
             Point p = coordonnees.get(i);
             Pion pion = new Pion(proprietaire, p, role);
-            grille[p.x][p.y] = pion; // ajout grille jeu
+            setCase(p.x, p.y, pion); // ajout grille jeu
             if (proprietaire == 1) { // ajout dans liste joueur
                 pionsJoueurUn.add(pion);
             } else {
@@ -460,7 +379,7 @@ public class Jeu extends Observable {
         return lignes() * colonnes();
     }
 
-    private void verifieSiDansGrille(int i, int j) {
+    public void verifieSiDansGrille(int i, int j) {
         if (i < 0 || i >= lignes() || j < 0 || j >= colonnes()) {
             throw new IndexOutOfBoundsException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + lignes() + "x" + colonnes());
         }
@@ -696,51 +615,7 @@ public class Jeu extends Observable {
     }
 
     public List<Coup> getCoupsPossibles(int carteSelectionee, Point positionPion) throws IllegalStateException {
-
-        if (carteSelectionee < 1 || carteSelectionee > 2) {
-            throw new IllegalStateException("Il faut choisir la carte 1 ou 2");
-        }
-        carteSelectionee--;
-
-        List<Coup> coups = new ArrayList<>();
-
-        Carte c = getCartesJoueurCourant().get(carteSelectionee);
-        List<Point> deplacements = c.getMoves();
-
-        int idJoueurCourant = getIdJoueurCourant();
-        Point direction;
-        if (idJoueurCourant == ID_JOUEUR_1) {
-            direction = new Point(-1, -1);
-        } else {
-            direction = new Point(1, 1);
-        }
-
-        int x, y;
-        for (int i = 0; i < deplacements.size(); i++) {
-            Point deplacement = deplacements.get(i);
-            x = positionPion.x + deplacement.x * direction.x;
-            y = positionPion.y + deplacement.y * direction.y;
-
-            try {
-                verifieSiDansGrille(x, y);
-            } catch (Exception e) {
-                continue;
-            }
-
-            // ne pas manger son propre pion
-            try {
-                if (getProprietairePionAt(x, y) == getIdJoueurCourant()) {
-                    continue;
-                }
-            } catch (CaseVideException ignored) {
-            }
-
-            // origine / position pion -> case arrivée possible
-            coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y)));
-        }
-
-
-        return coups;
+        return Utils.getCoupsPossibles(this, carteSelectionee, positionPion);
     }
 
     private void changerJoueur() {
