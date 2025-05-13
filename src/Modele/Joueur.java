@@ -13,15 +13,11 @@ import static Global.Config.COULEUR_CASE_MAITRE_JOUEUR_2;
  * Un joueur possède un nom, une couleur, un identifiant, un score,
  * une main de cartes et potentiellement des pions sur le plateau. */
 public class Joueur {
-
-    // Attributs représentant les propriétés du joueur
-    private String nom;           // Nom du joueur (ne doit pas être null ou vide)
-    private Color couleur;              // Couleur associée au joueur (pour l'affichage, par ex.)
-    private final int id;               // Identifiant unique du joueur (par ex. 1, 2, etc.)
-
-    private int score;                  // Score actuel du joueur
-    private List<Carte> mainCartes;     // Liste des cartes que le joueur a en main
-    private List<Pion> pions;           // Liste des pions appartenant à ce joueur
+    private String nom;
+    private final int id;
+    private int score;
+    private List<Carte> mainCartes;
+    private List<Pion> pions;
 
 
     /**
@@ -39,8 +35,6 @@ public class Joueur {
         if (this.nom.trim().isEmpty()) throw new IllegalArgumentException("Le nom du joueur ne peut pas être vide.");
 
         this.id = id;
-        if (id == 1) this.couleur = COULEUR_CASE_MAITRE_JOUEUR_1;
-        else this.couleur = COULEUR_CASE_MAITRE_JOUEUR_2;
 
         // Initialisation des attributs variables
         this.score = 0;
@@ -74,27 +68,12 @@ public class Joueur {
         return nom;
     }
 
-
-    /**
-     * Retourne la couleur associée au joueur.
-     * @return La couleur du joueur.
-     */
-    public Color getCouleur() { // Méthode potentiellement utilisée pour la couleur des pions sur l'UI
-        return couleur;
-    }
-
-
     /**
      * Retourne le score actuel du joueur.
      * @return Le score du joueur.
      */
     public int getScore() {
         return score;
-    }
-
-
-    public Color getCouleurPion() {
-        return couleur;
     }
 
 
@@ -133,14 +112,6 @@ public class Joueur {
         this.score = score;
         // Dans une application réelle, vous pourriez notifier des observateurs ici
         // si d'autres parties du système doivent réagir aux changements de score.
-    }
-
-    /**
-     * Définit La nouvelle couleur du joueur.
-     * @param couleur La nouvelle couleur du joueur.
-     */
-    public void setCouleurJoueur(Color couleur){
-        this.couleur = couleur;
     }
 
 
@@ -280,7 +251,6 @@ public class Joueur {
         return "Joueur{" +
                 "id=" + id +
                 ", nom='" + nom + '\'' +
-                ", couleur=" + couleur +
                 ", score=" + score +
                 ", cartesEnMain=" + mainCartes.size() + // Afficher juste le nombre de cartes
                 '}';
