@@ -8,9 +8,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
+import java.util.logging.Logger;
 
-import static Vue.ConfigUI.INDICATION_SELECTION;
-import static Vue.ConfigUI.OPTION_IA_NON;
+import static Vue.ConstantesConfigurationUI.INDICATION_SELECTION;
+import static Vue.ConstantesConfigurationUI.OPTION_IA_NON;
 
 /**
  * Adaptateur pour le bouton "Entrer" de l'interface de configuration.
@@ -23,6 +24,7 @@ public class AdaptateurBoutonEntrer implements ActionListener {
     private String niveauIAselectione;      // Niveau de difficulté de l'IA sélectionné.
     private JTextField champJoueur1;        // Champ de texte pour le nom du joueur 1.
     private JTextField champJoueur2;        // Champ de texte pour le nom du joueur 2.
+    private static final Logger logger = Logger.getLogger(AdaptateurBoutonEntrer.class.getName());
 
     private final CollecteurEvenements collecteurEvent; // Interface pour notifier les événements au contrôleur.
     InterfaceGraphique interfaceGraphique;
@@ -50,12 +52,12 @@ public class AdaptateurBoutonEntrer implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.err.println("bouton: Entrer préssé");
+        logger.info("bouton: Entrer préssé");
 
         // Si le mode Auto IA est activé (IA vs IA)
         if (modeAutoIA) {
-            collecteurEvent.configModeAuto(modeAutoIA); // Notifie le collecteur d'événements du mode Auto IA.
-            System.err.println("Mode Auto (IA vs IA) activé");
+            collecteurEvent.setModeAuto(modeAutoIA); // Notifie le collecteur d'événements du mode Auto IA.
+            logger.info("Mode Auto (IA vs IA) activé");
         }
         // Si le mode Auto IA n'est pas activé
         else {
@@ -64,40 +66,40 @@ public class AdaptateurBoutonEntrer implements ActionListener {
                 // Vérifie si le nom du joueur 1 a été saisi
                 if (Objects.equals(champJoueur1.getText(), "")) {
                     champJoueur1.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Définit une bordure rouge pour indiquer une erreur de saisie.
-                    System.err.println("Erreur saisie nom 1");
+                    logger.severe("Erreur saisie nom 1");
                     return;
                 } else {
-                    collecteurEvent.configNiveauIA(niveauIAselectione); // Notifie le collecteur du niveau de l'IA.
-                    collecteurEvent.configNomJoueur(1, champJoueur1.getText()); // Notifie le collecteur du nom du joueur 1.
-                    System.err.println("Mode IA (" + niveauIAselectione + ") vs " + champJoueur1.getText() + " activé");
+                    collecteurEvent.setNiveauIA(niveauIAselectione); // Notifie le collecteur du niveau de l'IA.
+                    collecteurEvent.setNomJoueur(1, champJoueur1.getText()); // Notifie le collecteur du nom du joueur 1.
+                    logger.info("Mode IA (" + niveauIAselectione + ") vs " + champJoueur1.getText() + " activé");
                 }
             }
             // Si aucun niveau d'IA n'est sélectionné ("Non")
             else {
                 // Si une partie à reprendre a été sélectionnée
                 if (!partieSelectionnee.equals(INDICATION_SELECTION)) {
-                    collecteurEvent.configChargerPartie(partieSelectionnee); // Notifie le collecteur de la partie à charger.
-                    System.err.println("Mode Reprendre une partie (" + partieSelectionnee + ") activé");
+                    collecteurEvent.setNouvellePartie(partieSelectionnee); // Notifie le collecteur de la partie à charger.
+                    logger.info("Mode Reprendre une partie (" + partieSelectionnee + ") activé");
                 }
                 // Si aucune partie à reprendre n'a été sélectionnée (nouveau jeu Joueur vs Joueur)
                 else {
                     // Vérifie si le nom du joueur 1 a été saisi
                     if (Objects.equals(champJoueur1.getText(), "")) {
                         champJoueur1.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Indique une erreur de saisie pour le joueur 1.
-                        System.err.println("Erreur saisie nom 1");
+                        logger.severe("Erreur saisie nom 1");
                         return;
                     }
                     // Vérifie si le nom du joueur 2 a été saisi
                     else if (Objects.equals(champJoueur2.getText(), "")) {
                         champJoueur2.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Indique une erreur de saisie pour le joueur 2.
-                        System.err.println("Erreur saisie nom 2");
+                        logger.severe("Erreur saisie nom 2");
                         return;
                     }
                     // Si les noms des deux joueurs ont été saisis
                     else {
-                        collecteurEvent.configNomJoueur(1, champJoueur1.getText()); // Notifie le nom du joueur 1.
-                        collecteurEvent.configNomJoueur(2, champJoueur2.getText()); // Notifie le nom du joueur 2.
-                        System.err.println("Mode " + champJoueur1.getText() + " vs " + champJoueur2.getText() + " activé");
+                        collecteurEvent.setNomJoueur(1, champJoueur1.getText()); // Notifie le nom du joueur 1.
+                        collecteurEvent.setNomJoueur(2, champJoueur2.getText()); // Notifie le nom du joueur 2.
+                        logger.info("Mode " + champJoueur1.getText() + " vs " + champJoueur2.getText() + " activé");
                     }
                 }
             }
