@@ -6,12 +6,10 @@ import Vue.Adaptateurs.AdaptateurClavier;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.logging.Logger;
 
 import static Global.Config.DIM_SCENE;
-import static Vue.ConfigUI.WIDTH_MENU;
+import static Vue.ConstantesConfigurationUI.WIDTH_MENU;
 
 
 /**
