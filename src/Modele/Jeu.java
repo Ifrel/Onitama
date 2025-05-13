@@ -494,7 +494,7 @@ public class Jeu extends Observable {
             }
 
             // ne pas manger son propre pion
-            if (getProprietairePionAt(x, y) == getIdJoueurCourant()) {
+            if (! estCaseVide(x, y) && getProprietairePionAt(x, y) == getIdJoueurCourant()) {
                 continue;
             }
 
