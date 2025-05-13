@@ -1,9 +1,6 @@
 package Modele;
 
-import Global.Config.ROLEPION;
-
 import java.awt.*;
-import java.nio.file.Path;
 
 /**
  * Représente une case du plateau de jeu, pouvant contenir un pion ou rien. */
@@ -48,11 +45,6 @@ public class CasePlateau {
     }
 
 
-    public Path getCheminImage() {
-
-        return Path.of("jzefheuhf");
-    }
-
     public int getProprietaire() {
         return jeu.getProprietairePionAt(position.x, position.y);
     }
@@ -60,4 +52,5 @@ public class CasePlateau {
     public int getId() {
         return getProprietaire();
     }
+
 }
