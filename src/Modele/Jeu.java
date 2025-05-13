@@ -514,6 +514,7 @@ public class Jeu extends Observable {
         Pion p = getCase(depart.x, depart.y);
         setCase(depart.x, depart.y, null);
         setCase(arrivee.x, arrivee.y, p);
+        majPions();
     }
 
     private void majPionsJoueur1() {
@@ -563,7 +564,6 @@ public class Jeu extends Observable {
             }
 
             // met à jour la liste de pions des joueurs
-            majPions();
             echangerCartes(getJoueurCourant(), getCarteJouee());
             changerJoueur();
 
