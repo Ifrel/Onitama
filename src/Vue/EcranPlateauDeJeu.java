@@ -414,18 +414,22 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     private BoutonAvecImage configurerCaseTerrain(CasePlateau casePlateau) {
-        BoutonAvecImage boutonAvecImage = creerBoutonAvecImage(Path.of("casePlateau.getCheminImage()"));
+        BoutonAvecImage boutonAvecImage ;
             switch (casePlateau.getTypeElement()){
                 case VIDE: // case vide
+                        boutonAvecImage = creerBoutonAvecImage(Path.of(""));
                         boutonAvecImage.setAnimation(null);
                     break;
                 case PION_ETUDIANT:
+                        boutonAvecImage = creerBoutonAvecImage(getCheminImagePion(infosDeConfigUI, casePlateau));
                         boutonAvecImage.setAnimation(null);
                     break;
                 case PION_MAITRE:
+                        boutonAvecImage = creerBoutonAvecImage(getCheminImagePion(infosDeConfigUI, casePlateau));
                         boutonAvecImage.setAnimation(null);
                     break;
                 default:
+                    boutonAvecImage = creerBoutonAvecImage(Path.of(""));
                     logger.logp(Level.SEVERE, EcranPlateauDeJeu.class.getName(),"configurerCaseTerrain","Erreur, type INCONNU: "+casePlateau.getTypeElement().name());
                     break;
             }
