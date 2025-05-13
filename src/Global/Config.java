@@ -25,6 +25,9 @@ public class Config {
     public static final int ID_IA_1 = 3;
     public static final int ID_IA_2 = 4;
 
+    public static final Point TEMPLE_JOUEUR_1 = new Point(0,2);
+    public static final Point TEMPLE_JOUEUR_2 = new Point(4,2);
+
     // -- TYPE ELEMENT SUR LE TERRAIN DE JEU --
     public static enum ROLEPION {
         PION_ETUDIANT,

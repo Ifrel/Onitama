@@ -12,11 +12,9 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
-import static Global.Config.ROLEPION.PION_ETUDIANT;
-import static Global.Config.ROLEPION.PION_MAITRE;
+import static Global.Config.ROLEPION.*;
 import static Global.Config.TYPECARTE.*;
-import static Modele.Utils.verifierSelectionCartesConforme;
-import static Modele.Utils.verifierSelectionPionsConforme;
+import static Modele.Utils.*;
 
 
 public class Jeu extends Observable {
@@ -31,8 +29,8 @@ public class Jeu extends Observable {
     private int numRound; // à quel round on en est
     private boolean partieFinie;
     private boolean IA1Activee, IA2Activee;
-    private boolean lockCarte;
-    private boolean lockPion;
+    private boolean partieACommence;
+    private boolean roiMort;
 
     // --- CARTES -- //
     private List<Carte> toutesLesCartes; //Toutes les cartes confondues
@@ -155,9 +153,9 @@ public class Jeu extends Observable {
             joueur1 = new Joueur(1, "Joueur 1");
             joueur2 = new Joueur(2, "Joueur 2");
             toutesLesCartes = initCartes();
-            lockCarte = false;
-            lockPion = false;
             carteSelectionee = null;
+            partieACommence = false;
+            roiMort = false;
 
             IA1Activee = IA2Activee = false;
         } catch (Exception e) {
@@ -625,18 +623,25 @@ public class Jeu extends Observable {
     // code santiago
     // --------------------
     private void deplacerPion(Point depart, Point arrivee) {
-        // Récupère l'éventuel pion présent sur la case d'arrivée
-        Pion cible = getCase(arrivee.x, arrivee.y);
-        // Si c'est un pion adverse, il sera écrasé par le setCase suivant
-        if (cible != null && cible.getIDProprietaire() != idJoueurCourant) {
+        try {
+            // Récupère l'éventuel pion présent sur la case d'arrivée
+            Pion cible = getCase(arrivee.x, arrivee.y);
+            // Si c'est un pion adverse, il sera écrasé par le setCase suivant
+            if (cible != null && cible.getIDProprietaire() != idJoueurCourant) {
 
+            }
+            // On déplace le pion
+            Pion p = getCase(depart.x, depart.y);
+            setCase(depart.x, depart.y, null);
+            if (getRolePionAt(arrivee.x, arrivee.y) == PION_MAITRE) {
+                roiMort = true;
+            }
+            setCase(arrivee.x, arrivee.y, p);
+            // Mise à jour des listes de pions
+            majPions();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        // On déplace le pion
-        Pion p = getCase(depart.x, depart.y);
-        setCase(depart.x, depart.y, null);
-        setCase(arrivee.x, arrivee.y, p);
-        // Mise à jour des listes de pions
-        majPions();
     }
 
 
@@ -682,6 +687,12 @@ public class Jeu extends Observable {
     // --------------------
 
     private void faireSetup() {
+        if (partieACommence) {
+            return;
+        } else {
+            partieACommence = true;
+        }
+
 
     }
 
@@ -712,6 +723,16 @@ public class Jeu extends Observable {
     }
 
     private boolean verifierVictoire() {
+        try {
+            return (getPionsJoueur1().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_2)
+                    || (getPionsJoueur2().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_1)
+                    || roiMort
+                    || (getRolePionAt(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y) == PION_MAITRE && getProprietairePionAt(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y) == ID_JOUEUR_2)
+                    || (getRolePionAt(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y) == PION_MAITRE && getProprietairePionAt(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y) == ID_JOUEUR_1);
+        } catch (CaseVideException ignored) {
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return false;
     }
 
