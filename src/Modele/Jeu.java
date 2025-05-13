@@ -224,7 +224,7 @@ public class Jeu extends Observable {
 
     // ######### CHARGER / SAUVEGARDER ########
 
-    public void sauvegarderJeu(String fichier) {
+    public void sauvegarderJeu() {
         return;
     }
 
@@ -402,15 +402,15 @@ public class Jeu extends Observable {
     }
 
     public void setTempsDeJeu(long temp) {
-        tempsJeu = temp;
+        this.tempsJeu = temp;
     }
 
     public void setNomJoueur1(String nom) {
-        joueur1.setNom(nom);
+        this.joueur1.setNom(nom);
     }
 
     public void setNomJoueur2(String nom) {
-        joueur2.setNom(nom);
+        this.joueur2.setNom(nom);
     }
 
     public String getNomJoueur1() {
@@ -557,4 +557,164 @@ public class Jeu extends Observable {
             throw new RuntimeException(e);
         }
     }
+
+
+
+    /**
+     * @return Temps de réflexion en millisecondes configuré pour l'IA.
+     */
+    public int getConfigIAReflexion() {
+        //TODO À implémenter
+        return 1000;
+    }
+
+    /**
+     * @return true si l'IA utilise une heuristique, false sinon.
+     */
+    public boolean getConfigIAHeuristique() {
+        //TODO À implémenter
+        return false;
+    }
+
+    /**
+     * @return Nom de l'algorithme actuellement utilisé par l'IA (ex: "Minimax Simple").
+     */
+    public String getConfigIAAlgorithme() {
+        //TODO À implémenter
+        return "Minimax Simple";
+    }
+
+
+    /**
+     * @return Vitesse d'animation configurée.
+     */
+    public int getConfigAnimationVitesse() {
+        //TODO À implémenter
+        return 0;
+    }
+
+    /**
+     * Change l'algorithme d'IA utilisé.
+     * @param nomAlgorithme Le nom de l'algorithme (ex: "Minimax", "AlphaBeta", etc.)
+     */
+    public void setIAAlgorithme(String nomAlgorithme) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Active ou désactive l'utilisation d'une heuristique par l'IA.
+     * @param active true pour activer l'heuristique, false pour la désactiver.
+     */
+    public void setIAHeuristique(boolean active) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Définit le temps de réflexion alloué à l'IA.
+     * @param tempsMs Temps en millisecondes.
+     */
+    public void setIAReflexion(int tempsMs) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Active ou désactive le mode automatique (jeu sans intervention utilisateur).
+     * @param nouvelEtat true pour activer le mode automatique, false pour le désactiver.
+     */
+    public void setModeAuto(boolean nouvelEtat) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Définit le niveau de difficulté de l’IA.
+     * @param niveauIA Chaîne représentant le niveau (ex: "Facile", "Moyen", "Difficile").
+     */
+    public void setNiveauIA(String niveauIA) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Démarre une nouvelle partie à partir d'une sélection donnée.
+     * @param partieSelectionee Identifiant ou nom de la partie sélectionnée.
+     */
+    public void setNouvellePartie(String partieSelectionee) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Définit la carte sélectionnée pour le jeu (ex: avant placement).
+     * @param carte Carte sélectionnée.
+     */
+    public void setCarteSelectionne(Carte carte) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Termine la partie en cours avec sauvegarde (ex: quitter).
+     */
+    public void setTerminerJeu() {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Met le jeu en pause ou le reprend.
+     */
+    public void setPause() {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Active ou désactive la présence de l'IA (mode manuel <-> IA).
+     */
+    public void basculeIA() {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Définit la case de destination ciblée sur le plateau.
+     * @param casePlateau La case cible.
+     */
+    public void setCasePlateauCible(CasePlateau casePlateau) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Définit la case de destination ciblée sur le plateau via ses coordonnées.
+     * @param xDest Abscisse de la case cible.
+     * @param yDest Ordonnée de la case cible.
+     */
+    public void setCasePlateauCible(int xDest, int yDest) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Sélectionne un pion à déplacer via ses coordonnées.
+     * @param xDepart Abscisse du pion.
+     * @param yDepart Ordonnée du pion.
+     */
+    public void setPionSelectionne(int xDepart, int yDepart) {
+        //TODO À implémenter
+    }
+
+
+    /**
+     * Sélectionne un pion à déplacer via une instance de Pion.
+     * @param pion Le pion à sélectionner.
+     */
+    public void setPionSelectionne(Pion pion) {
+        //TODO À implémenter
+    }
+
 }
