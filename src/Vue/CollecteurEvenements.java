@@ -1,6 +1,7 @@
 package Vue;
 
 import Global.Config;
+import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Pion;
 
@@ -34,8 +35,8 @@ public interface CollecteurEvenements {
 
     /**
      * Gère la sélection d'une carte par l'utilisateur.
-     * @param numCarte Le numéro ou l'identifiant de la carte sélectionnée.     */
-    void carteSelectionne(int numCarte);
+     * @param carte La carte sélectionnée.     */
+    void carteSelectionne(Carte carte);
 
 
 
@@ -60,20 +61,20 @@ public interface CollecteurEvenements {
     /**
      * Gère la sélection d'une partie sauvegardée à charger.
      * @param partieSelectionee Le nom ou l'identifiant de la partie à charger.     */
-    void configChargerPartie(String partieSelectionee);
+    void setNouvellePartie(String partieSelectionee);
 
 
     /**
      * Gère le réglage du niveau de difficulté pour une IA.
      * @param niveauIA Une chaîne représentant le niveau de l'IA (ex: "Facile", "Normal", "Difficile").     */
-    void configNiveauIA(String niveauIA);
+    void setNiveauIA(String niveauIA);
 
 
     /**
      * Gère le chargement du nom d'un joueur.
      * @param num Le numéro du joueur (ex: 1 pour joueur 1, 2 pour joueur 2).
      * @param nom Le nouveau nom du joueur.     */
-    void configNomJoueur(int num, String nom);
+    void setNomJoueur(int num, String nom);
 
 
 
@@ -81,27 +82,27 @@ public interface CollecteurEvenements {
      * Gère l'activation ou la désactivation d'un mode de jeu automatique
      * impliquant potentiellement des IA.
      * @param nouvelEtat Le nouvel état du mode automatique (true pour activé, false pour désactivé).     */
-    void configModeAuto(boolean nouvelEtat);
+    void setModeAuto(boolean nouvelEtat);
 
 
     /**
      * Gère le réglage du temps de réflexion accordé à une IA (en millisecondes).
      * @param tempsMs Le temps de réflexion en millisecondes.     */
-    void configIAReflexion(int tempsMs);
+    void setIAReflexion(int tempsMs);
 
 
 
     /**
      * Gère l'activation ou la désactivation d'une heuristique spécifique pour l'IA.
      * @param active True pour activer l'heuristique, false pour la désactiver.     */
-    void configIAHeuristique(boolean active);
+    void setIAHeuristique(boolean active);
 
 
 
     /**
      * Gère la sélection de l'algorithme utilisé par l'IA.
      * @param nomAlgorithme Le nom de l'algorithme d'IA sélectionné.     */
-    void configIAAlgorithme(String nomAlgorithme);
+    void setIAAlgorithme(String nomAlgorithme);
 
 
 
@@ -110,56 +111,56 @@ public interface CollecteurEvenements {
      * Nécessite l'énumération CiblesDesCouleurs pour identifier ce qui doit être coloré.
      * @param cible La cible du changement de couleur (définie dans Global.Config.CiblesDesCouleurs).
      * @param couleur La nouvelle couleur à appliquer.     */
-    void configCouleur(Config.CiblesDesCouleurs cible, Color couleur);
+    void setCouleur(Config.CiblesDesCouleurs cible, Color couleur);
 
 
 
     /**
      * Gère le réglage de la vitesse des animations dans le jeu.
      * @param vitesse La nouvelle vitesse des animations (valeur typiquement comprise dans une plage prédéfinie).     */
-    void configAnimationVitesse(int vitesse);
+    void setAnimationVitesse(int vitesse);
 
 
 
     /**
      * Gère l'activation ou la désactivation des animations pour les pièces (pions, etc.) sur le plateau.
      * @param active True pour activer les animations des pièces, false pour les désactiver.     */
-    void configAnimationPieces(boolean active);
+    void setAnimationPieces(boolean active);
 
 
     /**
      * Gère l'activation ou la désactivation des animations de surbrillance
      * (par exemple, pour indiquer les coups possibles ou les éléments sélectionnés).
      * @param active True pour activer la surbrillance animée, false pour la désactiver.*/
-    void configAnimationSurbrillance(boolean active);
+    void setAnimationSurbrillance(boolean active);
 
 
 
     /**
      * Gère le réglage du volume général du son de l'application.
      * @param volume Le nouveau niveau de volume général.   */
-    void configSonVolumeGeneral(int volume);
+    void setSonVolumeGeneral(int volume);
 
 
 
     /**
      * Gère le réglage du volume des effets sonores.
      * @param volume Le nouveau niveau de volume des effets.    */
-    void configSonVolumeEffets(int volume);
+    void setSonVolumeEffets(int volume);
 
 
 
     /**
      * Gère le réglage du volume de la musique de fond.
      * @param volume Le nouveau niveau de volume de la musique.   */
-    void configSonVolumeMusique(int volume);
+    void setSonVolumeMusique(int volume);
 
 
 
     /**
      * Gère l'activation ou la désactivation du mode muet.
      * @param muet True pour activer le mode muet, false pour le désactiver.     */
-    void configSonMuet(boolean muet);
+    void setSonMuet(boolean muet);
 
 
 

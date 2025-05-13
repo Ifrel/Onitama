@@ -182,7 +182,7 @@ public class InterfaceTextuelle implements Observateur {
                     break;
                 case "q":
                     collecteurEv.clavier("exit");
-                    return;
+                    break;
                 case "a":
                     collecteurEv.clavier("annuler");
                     break;
@@ -219,7 +219,7 @@ public class InterfaceTextuelle implements Observateur {
                         }
 
                         Carte carte = jeu.getCartesSurLeTerrain(indiceCarte);
-                        collecteurEv.carteSelectionne(indiceCarte);
+                        collecteurEv.carteSelectionne(carte);
                         carteSelectionnee = true;
 
                         while (carteSelectionnee) {

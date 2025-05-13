@@ -12,7 +12,6 @@ import static Global.Config.*;
  * Un pion a une position, une couleur, un propriétaire, une image et un type spécifique. */
 public class Pion {
     private final int proprietaire;
-    private Color couleur;
     private final ROLEPION role;
     private Point position;
 
@@ -21,17 +20,7 @@ public class Pion {
         this.proprietaire = proprietaire;
         this.role = role;
         this.position = position;
-
-        if (this.proprietaire == 1) this.couleur = COULEUR_CASE_ELEVE_JOUEUR_1;
-        else this.couleur = COULEUR_CASE_ELEVE_JOUEUR_2;
     }
-
-
-    /**
-     * Retourne la couleur actuelle du pion.
-     * @return la couleur du pion   */
-    public Color getCouleur() { return couleur; }
-
 
     /**
      * Retourne l'identifiant du joueur propriétaire de ce pion.
@@ -67,11 +56,5 @@ public class Pion {
     public void setNewPosition(Point position) {
         this.position = position;
     }
-
-
-    /**
-     * Modifie la couleur du pion.
-     * @param couleur la nouvelle couleur   */
-    public void setCouleur(Color couleur) { this.couleur = couleur; }
 
 }

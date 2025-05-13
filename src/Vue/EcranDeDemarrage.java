@@ -11,11 +11,14 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 import static Global.Config.*;
+import static Global.Config.CiblesDesCouleurs.*;
 import static Global.Paths.*;
-import static Vue.ConfigUI.*;
+import static Vue.ConstantesConfigurationUI.*;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
 
@@ -37,7 +40,21 @@ public class EcranDeDemarrage extends JTabbedPane {
     String partieSelectionnee, niveauIAselectione;
     AdaptateurBoutonEntrer adaptateurBoutonEntrer;
 
+    InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
 
+    // Constantes
+    private final Color COLOR_ONGLET_IA_1 = new Color(127, 157, 172);
+    private final Color COLOR_ONGLET_IA_2 = new Color(112, 112, 112);
+    private final int COLONNE_ETIQUETTE = 4;
+    private final int COLONNE_COMPOSANT = 5;
+    private final String POLICE_1 = "Arial";
+    private final String POLICE_2 = "Times New Roman";
+    private final String POLICE_3 = "Georgia";
+    private final Font FONT_TITRE = new Font(POLICE_1, Font.BOLD, 40);
+    private final Font FONT_LABEL = new Font(POLICE_1, Font.PLAIN, 25);
+    private final Font FONT_COMPOSANT = new Font(POLICE_1, Font.PLAIN, 20);
+    // Pour la reinitialisation des couleurs
+    private final Map<CiblesDesCouleurs, Color> couleursInitiales = new HashMap<>();
 
 
     public EcranDeDemarrage(Jeu jeu, CollecteurEvenements collecteurEvenements, InterfaceGraphique interfaceGraphique) {
@@ -48,7 +65,6 @@ public class EcranDeDemarrage extends JTabbedPane {
         this.adaptateurBoutonEntrer = new AdaptateurBoutonEntrer(collecteurEvenements, interfaceGraphique);
         creerInterface();
     }
-
 
 
     /** Création de l'Interface */
@@ -73,8 +89,6 @@ public class EcranDeDemarrage extends JTabbedPane {
         addTab(null, creerOngletSon());
         setTabComponentAt(4, creerJPanel(TITRE_ONGLET_SON));
     }
-
-
 
 
     /**
@@ -205,14 +219,12 @@ public class EcranDeDemarrage extends JTabbedPane {
     }
 
 
-
-
     /**
      * Crée l'onglet de configuration de l'IA.
      * @return Le JPanel de l'onglet IA.
      */
     private JPanel creerOngletIA() {
-        JPanelAvecCouleurDebraille ongletIA = new JPanelAvecCouleurDebraille(new Color(127, 157, 172), new Color(112, 112, 112) );
+        JPanelAvecCouleurDebraille ongletIA = new JPanelAvecCouleurDebraille(COLOR_ONGLET_IA_1, COLOR_ONGLET_IA_2);
         ongletIA.setLayout(new GridBagLayout());
         GridBagConstraints contraintes;
         int ligneCourante = 0;
@@ -231,7 +243,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         titre.setFont(FONT_TITRE);
         ongletIA.add(titre, contraintes);
 
-        // --- Temps de réflexion IA ---
+        // Temps de réflexion IA
         JSlider sliderTempsReflexion = new JSlider(100, 5000, 1000); // min, max, valeur initiale (en ms)
         sliderTempsReflexion.setMajorTickSpacing(1000);
         sliderTempsReflexion.setMinorTickSpacing(100);
@@ -240,21 +252,21 @@ public class EcranDeDemarrage extends JTabbedPane {
         sliderTempsReflexion.setPreferredSize(new Dimension(300,50));
         sliderTempsReflexion.addChangeListener(e -> {
             if (!sliderTempsReflexion.getValueIsAdjusting()) { // Agir seulement quand on relâche le curseur
-                collecteurEvenements.configIAReflexion(sliderTempsReflexion.getValue());
+                collecteurEvenements.setIAReflexion(sliderTempsReflexion.getValue());
             }
         });
-        // TODO Pré-remplir avec la valeur actuelle du modèle/config si disponible
-        // sliderTempsReflexion.setValue(jeu.getConfigIAReflexion());
+        //Préremplir avec la valeur actuelle du modèle/config si disponible
+        sliderTempsReflexion.setValue(jeu.getConfigIAReflexion());
         ajouterLigne(ongletIA, LBL_TEMPS_REFLEXION, sliderTempsReflexion, ligneCourante++, FONT_LABEL);
 
         // --- Heuristique Avancée ---
         JCheckBox checkHeuristique = new JCheckBox();
         checkHeuristique.setFont(FONT_COMPOSANT);
         checkHeuristique.addActionListener(e -> {
-            collecteurEvenements.configIAHeuristique(checkHeuristique.isSelected());
+            collecteurEvenements.setIAHeuristique(checkHeuristique.isSelected());
         });
-        // TODO Pré-remplir avec la valeur actuelle du modèle/config si disponible
-        // checkHeuristique.setSelected(jeu.getConfigIAHeuristique());
+        // Préremplir avec la valeur actuelle du modèle/config si disponible
+         checkHeuristique.setSelected(jeu.getConfigIAHeuristique());
         ajouterLigne(ongletIA, LBL_HEURISTIQUE_AVANCEE, checkHeuristique, ligneCourante++, FONT_LABEL);
 
 
@@ -263,10 +275,10 @@ public class EcranDeDemarrage extends JTabbedPane {
         comboAlgoIA.setFont(FONT_COMPOSANT);
         comboAlgoIA.addActionListener(e -> {
             String selection = (String) comboAlgoIA.getSelectedItem();
-            collecteurEvenements.configIAAlgorithme(selection);
+            collecteurEvenements.setIAAlgorithme(selection);
         });
-        // TODO Pré-remplir avec la valeur actuelle du modèle/config si disponible
-        // comboAlgoIA.setSelectedItem(jeu.getConfigIAAlgorithme());
+        // Préremplir avec la valeur actuelle du modèle/config si disponible
+        comboAlgoIA.setSelectedItem(jeu.getConfigIAAlgorithme());
         ajouterLigne(ongletIA, LBL_ALGORITHME_IA, comboAlgoIA, ligneCourante++, FONT_LABEL);
 
 
@@ -280,8 +292,6 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         return ongletIA;
     }
-
-
 
 
     /**
@@ -298,7 +308,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         contraintes.gridx = 0;
         contraintes.gridy = ligneCourante++;
         contraintes.weighty = 0.5;
-        contraintes.gridwidth = 3;
+        contraintes.gridwidth = 5;
         contraintes.anchor = GridBagConstraints.CENTER;
         contraintes.insets = MARGES_TITRE;
         JLabel titre = new JLabel(LBL_TITRE_COULEUR);
@@ -306,13 +316,13 @@ public class EcranDeDemarrage extends JTabbedPane {
         ongletCouleur.add(titre, contraintes);
 
         // Ajouter les sélecteurs de couleur
-        ajouterLigneCouleur(ongletCouleur, LBL_PLATEAU_DE_JEU, COULEUR_PLATEAU_DE_JEU, ligneCourante++, Config.CiblesDesCouleurs.PLATEAU_DE_JEU);
-        ajouterLigneCouleur(ongletCouleur, LBL_CASE_TERRAIN, COULEUR_CASE_TERRAIN, ligneCourante++, Config.CiblesDesCouleurs.CASE_TERRAIN);
-        ajouterLigneCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_1,COULEUR_CASE_MAITRE_JOUEUR_1, ligneCourante++, Config.CiblesDesCouleurs.CASE_MAITRE_JOUEUR_1);
-        ajouterLigneCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_2, COULEUR_CASE_MAITRE_JOUEUR_2, ligneCourante++, Config.CiblesDesCouleurs.CASE_MAITRE_JOUEUR_2);
-        ajouterLigneCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_1, COULEUR_CASE_ELEVE_JOUEUR_1, ligneCourante++, Config.CiblesDesCouleurs.CASE_ELEVE_JOUEUR_1);
-        ajouterLigneCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_2, COULEUR_CASE_ELEVE_JOUEUR_2, ligneCourante++, Config.CiblesDesCouleurs.CASE_ELEVE_JOUEUR_2);
-        ajouterLigneCouleur(ongletCouleur, LBL_BLOC_MENU, COULEUR_BLOC_MENU, ligneCourante++, Config.CiblesDesCouleurs.BLOC_MENU);
+        ajouterLigneCouleur(ongletCouleur, LBL_PLATEAU_DE_JEU, COULEUR_PLATEAU_DE_JEU, ligneCourante++, PLATEAU_DE_JEU);
+        ajouterLigneCouleur(ongletCouleur, LBL_CASE_TERRAIN, COULEUR_CASE_TERRAIN, ligneCourante++, CASE_TERRAIN);
+        ajouterLigneCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_1,COULEUR_CASE_MAITRE_JOUEUR_1, ligneCourante++, CASE_MAITRE_JOUEUR_1);
+        ajouterLigneCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_2, COULEUR_CASE_MAITRE_JOUEUR_2, ligneCourante++, CASE_MAITRE_JOUEUR_2);
+        ajouterLigneCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_1, COULEUR_CASE_ELEVE_JOUEUR_1, ligneCourante++, CASE_ELEVE_JOUEUR_1);
+        ajouterLigneCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_2, COULEUR_CASE_ELEVE_JOUEUR_2, ligneCourante++, CASE_ELEVE_JOUEUR_2);
+        ajouterLigneCouleur(ongletCouleur, LBL_BLOC_MENU, COULEUR_BLOC_MENU, ligneCourante++, BLOC_MENU);
 
 
         // --- Espace Vertical Flexible ---
@@ -327,56 +337,97 @@ public class EcranDeDemarrage extends JTabbedPane {
     }
 
 
-
-
     /**
-     * Méthode utilitaire pour ajouter une ligne de sélection de couleur.
+     * Ajoute une ligne dans le panneau pour permettre la sélection d'une couleur.
+     * *
+     * @param panneau         Le conteneur dans lequel ajouter les composants.
+     * @param texteEtiquette  Le texte affiché à gauche de la ligne (ex: "Plateau de jeu").
+     * @param couleurInitiale La couleur initiale à afficher dans le bouton de prévisualisation.
+     * @param ligne           L'index de la ligne dans le GridBagLayout.
+     * @param cible           La cible de la configuration de couleur.
      */
     private void ajouterLigneCouleur(JPanel panneau, String texteEtiquette, Color couleurInitiale, int ligne, Config.CiblesDesCouleurs cible) {
-        // --- Étiquette ---
+        couleursInitiales.put(cible, couleurInitiale); // Enregistre la couleur de départ
+
+        // Étiquette descriptive
+        JLabel etiquette = new JLabel(texteEtiquette);
+        etiquette.setFont(FONT_LABEL);
         GridBagConstraints contraintesLabel = new GridBagConstraints();
         contraintesLabel.gridx = 0;
         contraintesLabel.gridy = ligne;
         contraintesLabel.anchor = GridBagConstraints.LINE_END;
         contraintesLabel.insets = MARGES_DEFAUT;
-        JLabel etiquette = new JLabel(texteEtiquette);
-        etiquette.setFont(FONT_LABEL);
+        contraintesLabel.fill = GridBagConstraints.VERTICAL;
+        contraintesLabel.weightx = 0.5;
+        contraintesLabel.weighty = 0.25;
         panneau.add(etiquette, contraintesLabel);
 
-        // --- Panneau de prévisualisation ---
-        JPanel previewPanel = new JPanel();
-        previewPanel.setPreferredSize(DIM_PREVIEW_COULEUR);
-        previewPanel.setBackground(couleurInitiale);
-        previewPanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-        GridBagConstraints contraintesPreview = new GridBagConstraints();
-        contraintesPreview.gridx = 1;
-        contraintesPreview.gridy = ligne;
-        contraintesPreview.insets = new Insets(5, 5, 5, 5); // Marges plus serrées
-        panneau.add(previewPanel, contraintesPreview);
+        // Espace extensible
+        GridBagConstraints contraintesEspace = new GridBagConstraints();
+        contraintesEspace.gridx = 1;
+        contraintesEspace.gridy = ligne;
+        contraintesEspace.fill = GridBagConstraints.BOTH;
+        contraintesEspace.weightx = 0.04;
+        contraintesEspace.weighty = 0.25;
+        panneau.add(Box.createGlue(), contraintesEspace);
 
-        // --- Bouton Choisir ---
-        JButton boutonChoisir = new JButton(BTN_CHOISIR_COULEUR);
-        boutonChoisir.setFont(FONT_COMPOSANT);
-        boutonChoisir.addActionListener(e -> {
+        // Bouton de prévisualisation de couleur
+        JButton boutonCouleur = new JButton();
+        boutonCouleur.setPreferredSize(DIM_PREVIEW_COULEUR);
+        boutonCouleur.setBackground(couleurInitiale);
+        boutonCouleur.setFocusPainted(true);
+        boutonCouleur.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+
+        boutonCouleur.addActionListener(e -> {
             Color couleurChoisie = JColorChooser.showDialog(
-                    EcranDeDemarrage.this, // Parent component
-                    "Choisir " + texteEtiquette, // Titre de la boîte de dialogue
-                    previewPanel.getBackground() // Couleur initiale
+                    EcranDeDemarrage.this,
+                    "Couleur " + texteEtiquette,
+                    boutonCouleur.getBackground()
             );
             if (couleurChoisie != null) {
-                previewPanel.setBackground(couleurChoisie); // Mettre à jour la prévisualisation
-                collecteurEvenements.configCouleur(cible, couleurChoisie);
+                boutonCouleur.setBackground(couleurChoisie);
+                collecteurEvenements.setCouleur(cible, couleurChoisie);
             }
         });
+
         GridBagConstraints contraintesBouton = new GridBagConstraints();
         contraintesBouton.gridx = 2;
         contraintesBouton.gridy = ligne;
         contraintesBouton.anchor = GridBagConstraints.LINE_START;
         contraintesBouton.insets = MARGES_DEFAUT;
-        panneau.add(boutonChoisir, contraintesBouton);
+        contraintesBouton.fill = GridBagConstraints.BOTH;
+        contraintesBouton.weightx = 0.05;
+        contraintesBouton.weighty = 0.01;
+        panneau.add(boutonCouleur, contraintesBouton);
+
+        // Bouton de réinitialisation
+        JButton boutonReset = creerBoutonAvecImage(PATH_BOUTON_ANNULER_ROUGE.toString(),0,17,Color.GRAY);
+        boutonReset.setPreferredSize(DIM_PREVIEW_COULEUR);
+        boutonReset.setToolTipText("Réinitialiser à la couleur par défaut");
+        boutonReset.addActionListener(e -> {
+            Color couleurDefaut = couleursInitiales.get(cible);
+            boutonCouleur.setBackground(couleurDefaut);
+            collecteurEvenements.setCouleur(cible, couleurDefaut);
+        });
+
+
+        GridBagConstraints contraintesReset = new GridBagConstraints();
+        contraintesReset.gridx = 3;
+        contraintesReset.gridy = ligne;
+        contraintesReset.anchor = GridBagConstraints.LINE_START;
+        contraintesReset.insets = MARGES_DEFAUT;
+        contraintesReset.fill = GridBagConstraints.BOTH;
+        contraintesReset.weightx = 0.05;
+        contraintesReset.weighty = 0.01;
+        panneau.add(boutonReset, contraintesReset);
+
+        // --- Espace Horizontale Flexible ---
+        contraintesReset.gridx = 4;
+        contraintesReset.gridy = ligne;
+        contraintesReset.weightx = 0.55;
+        contraintesReset.fill = GridBagConstraints.HORIZONTAL;
+        panneau.add(Box.createVerticalGlue(), contraintesReset);
     }
-
-
 
 
     /**
@@ -411,31 +462,31 @@ public class EcranDeDemarrage extends JTabbedPane {
         sliderVitesse.setPaintLabels(true);
         sliderVitesse.addChangeListener(e -> {
             if (!sliderVitesse.getValueIsAdjusting()) {
-                collecteurEvenements.configAnimationVitesse(sliderVitesse.getValue());
+                collecteurEvenements.setAnimationVitesse(sliderVitesse.getValue());
             }
         });
-        // TODO potentiellement une valeur par défaut
-        //  sliderVitesse.setValue(jeu.getConfigAnimationVitesse());
+        // potentiellement une valeur par défaut
+        sliderVitesse.setValue(jeu.getConfigAnimationVitesse());
         ajouterLigne(ongletAnimation, LBL_VITESSE_ANIMATION, sliderVitesse, ligneCourante++, FONT_LABEL);
 
         // --- Activer/Désactiver Animation Pièces ---
         JCheckBox checkAnimPieces = new JCheckBox();
         checkAnimPieces.setFont(FONT_COMPOSANT);
         checkAnimPieces.addActionListener(e -> {
-            collecteurEvenements.configAnimationPieces(checkAnimPieces.isSelected());
+            collecteurEvenements.setAnimationPieces(checkAnimPieces.isSelected());
         });
-        // TODO potentiellement une valeur par défaut
-        //  checkAnimPieces.setSelected(jeu.getConfigAnimationPieces());
+        // potentiellement une valeur par défaut
+        checkAnimPieces.setSelected(infosDeConfigUI.isAnimerDeplacementPiece());
         ajouterLigne(ongletAnimation, LBL_ANIMATION_PIECES, checkAnimPieces, ligneCourante++, FONT_LABEL);
 
         // --- Activer/Désactiver Animation Surbrillance ---
         JCheckBox checkAnimSurbrillance = new JCheckBox();
         checkAnimSurbrillance.setFont(FONT_COMPOSANT);
         checkAnimSurbrillance.addActionListener(e -> {
-            collecteurEvenements.configAnimationSurbrillance(checkAnimSurbrillance.isSelected());
+            collecteurEvenements.setAnimationSurbrillance(checkAnimSurbrillance.isSelected());
         });
-        // TODO potentiellement une valeur par défaut
-        //  checkAnimSurbrillance.setSelected(jeu.getConfigAnimationSurbrillance());
+        // potentiellement une valeur par défaut
+        checkAnimSurbrillance.setSelected(infosDeConfigUI.isAnimerSurbrillace());
         ajouterLigne(ongletAnimation, LBL_ANIMATION_SURBRILLANCE, checkAnimSurbrillance, ligneCourante++, FONT_LABEL);
 
         // --- Espace Vertical Flexible ---
@@ -448,8 +499,6 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         return ongletAnimation;
     }
-
-
 
 
     /**
@@ -482,7 +531,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         sliderVolumeGeneral.setPaintLabels(true);
         sliderVolumeGeneral.addChangeListener(e -> {
             if (!sliderVolumeGeneral.getValueIsAdjusting()) {
-                collecteurEvenements.configSonVolumeGeneral(sliderVolumeGeneral.getValue());
+                collecteurEvenements.setSonVolumeGeneral(sliderVolumeGeneral.getValue());
                 // Peut-être ajuster les autres sliders ou l'état Muet
             }
         });
@@ -497,7 +546,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         sliderVolumeEffets.setPaintLabels(true);
         sliderVolumeEffets.addChangeListener(e -> {
             if (!sliderVolumeEffets.getValueIsAdjusting()) {
-                collecteurEvenements.configSonVolumeEffets(sliderVolumeEffets.getValue());
+                collecteurEvenements.setSonVolumeEffets(sliderVolumeEffets.getValue());
             }
         });
         // TODO potentiellement une valeur par défaut
@@ -512,7 +561,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         sliderVolumeMusique.setPaintLabels(true);
         sliderVolumeMusique.addChangeListener(e -> {
             if (!sliderVolumeMusique.getValueIsAdjusting()) {
-                collecteurEvenements.configSonVolumeMusique(sliderVolumeMusique.getValue());
+                collecteurEvenements.setSonVolumeMusique(sliderVolumeMusique.getValue());
             }
         });
         // TODO potentiellement une valeur par défaut
@@ -525,7 +574,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         checkMuet.setFont(FONT_COMPOSANT);
         checkMuet.addActionListener(e -> {
             boolean estMuet = checkMuet.isSelected();
-            collecteurEvenements.configSonMuet(estMuet);
+            collecteurEvenements.setSonMuet(estMuet);
             // Désactiver les sliders si muet est coché
             sliderVolumeGeneral.setEnabled(!estMuet);
             sliderVolumeEffets.setEnabled(!estMuet);
@@ -550,8 +599,6 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         return ongletSon;
     }
-
-
 
 
     /**
@@ -591,8 +638,6 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         panneau.add(composant, contraintesComp);
     }
-
-
 
 
     /**

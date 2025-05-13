@@ -20,6 +20,6 @@ public class AdaptateurCarte implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         System.err.println("CarteUI: "+ carte.getNom()+" préssé");
-        collecteurEvent.carteSelectionne(num);
+        collecteurEvent.carteSelectionne(carte);
     }
 }

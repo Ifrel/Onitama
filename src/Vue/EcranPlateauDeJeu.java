@@ -15,6 +15,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
@@ -32,6 +33,7 @@ import static Vue.Utils.MethodsStaticsUtils.*;
  */
 public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Observateur {
     private static final Logger logger = Logger.getLogger(EcranPlateauDeJeu.class.getName());
+    InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
 
     private final Jeu jeu;
     private final InterfaceGraphique interfaceGraphique;
@@ -128,7 +130,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         gbc.weightx = 0;
         gbc.weighty = 0;
         gbc.insets = new Insets(15, 0, 0, 0);
-        contenu.add(creerContenuCentre(), gbc);
+        contenu.add(creerPanelNomJoueurCourant(), gbc);
 
         // === Saut de ligne entre ligne 1 et 2 ===
         gbc.gridy = 2;
@@ -347,7 +349,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         return boutonSon;
     }
 
-    private JPanel creerContenuCentre()  {
+    private JPanel creerPanelNomJoueurCourant()  {
         JPanel textNomPanel = new JPanel(); // Renommé
         textNomPanel.setLayout(new BoxLayout(textNomPanel, BoxLayout.Y_AXIS));
         textNomPanel.setOpaque(false);
@@ -361,7 +363,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 30));
         nomJoueurCourantLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         // Changer la couleur du texte du joueur courant pour qu'elle corresponde à sa couleur de pion
-        nomJoueurCourantLabel.setForeground(jeu.getJoueurCourant().getCouleurPion());
+        nomJoueurCourantLabel.setForeground(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()));
 
         textNomPanel.add(txt);
         textNomPanel.add(Box.createRigidArea(new Dimension(0, 2)));
@@ -412,7 +414,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     private BoutonAvecImage configurerCaseTerrain(CasePlateau casePlateau) {
-        BoutonAvecImage boutonAvecImage = creerBoutonAvecImage(casePlateau.getCheminImage());
+        BoutonAvecImage boutonAvecImage = creerBoutonAvecImage(Path.of("casePlateau.getCheminImage()"));
             switch (casePlateau.getTypeElement()){
                 case VIDE: // case vide
                         boutonAvecImage.setAnimation(null);
@@ -525,7 +527,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
             roundLabel.setText("Round: " + numRound);
 
             // Changer la couleur du texte du joueur courant pour qu'elle corresponde à sa couleur de pion
-             nomJoueurCourantLabel.setForeground(jeu.getJoueurCourant().getCouleurPion());
+             nomJoueurCourantLabel.setForeground(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()));
         }
     }
 
