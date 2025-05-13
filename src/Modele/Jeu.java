@@ -253,7 +253,7 @@ public class Jeu extends Observable {
     }
 
     private void verifieSiDansGrille(int i, int j) {
-        if (i < 0 || i > lignes() || j < 0 || j > colonnes()) {
+        if (i < 0 || i >= lignes() || j < 0 || j >= colonnes()) {
             throw new RuntimeException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + lignes() + "x" + colonnes());
         }
     }
