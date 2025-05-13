@@ -1,12 +1,9 @@
 package Vue;
 
-import Modele.Jeu;
-
 import java.awt.*;
-import java.nio.file.Path;
 
 
-public class ConfigUI {
+public class ConstantesConfigurationUI {
 
     // --- INTERFACES
     public final static int WIDTH_MENU = 500;
@@ -14,9 +11,7 @@ public class ConfigUI {
 
     // --- POLICES
     // Constantes pour les noms de polices utilisées.
-    public  final static String POLICE_1 = "Arial";
-    public  final static String POLICE_2 = "Times New Roman";
-    public  final static String POLICE_3 = "Georgia";
+
 
 
     /******************************************
@@ -47,9 +42,7 @@ public class ConfigUI {
 
 
     // Définition des polices (Fonts) utilisées avec des tailles ajustées.
-    public static final Font FONT_TITRE = new Font(POLICE_1, Font.BOLD, 40);
-    public static final Font FONT_LABEL = new Font(POLICE_1, Font.PLAIN, 25);
-    public static final Font FONT_COMPOSANT = new Font(POLICE_1, Font.PLAIN, 20); // Police pour les composants standards
+
 
     // Définition des marges (Insets) pour l'espacement des composants.
     public static final Insets MARGES_DEFAUT = new Insets(5, 10, 5, 10); // Espacement par défaut (haut, gauche, bas, droite)
@@ -64,8 +57,7 @@ public class ConfigUI {
     public static final Dimension DIMENSION_CHAMP_LISTE_DEROULANTE = new Dimension(LARGEUR_LISTE_DEROULANTE, HAUTEUR_LISTE_DEROULANTE);
 
     // Constantes pour GridBagConstraints, indiquant les colonnes standard pour libellés et composants.
-    public static final int COLONNE_ETIQUETTE = 4;
-    public static final int COLONNE_COMPOSANT = 5;
+
 
 
     // --- Onglet IA ---
@@ -81,7 +73,7 @@ public class ConfigUI {
     // Constantes spécifiques à l'onglet de personnalisation des couleurs.
     public static final String LBL_TITRE_COULEUR         = "Personnalisation des Couleurs";
     public static final String LBL_PLATEAU_DE_JEU        = "Plateau de Jeu";
-    public static final String LBL_CASE_TERRAIN          = "Case Terain"; // Note : faute de frappe "Terain" au lieu de "Terrain" ?
+    public static final String LBL_CASE_TERRAIN          = "Case Terrain"; // Note : faute de frappe "Terain" au lieu de "Terrain" ?
     public static final String LBL_CASE_MAITRE_JOUEUR_1  = "Case Maitre Joueur 1"; // Note : faute de frappe "Maitre" au lieu de "Maître" ?
     public static final String LBL_CASE_MAITRE_JOUEUR_2  = "Case Maitre Joueur 2"; // Note : faute de frappe "Maitre" au lieu de "Maître" ?
     public static final String LBL_CASE_ELEVE_JOUEUR_1   = "Case Elève Joueur 1"; // Note : faute de frappe "Elève" au lieu de "Élève" ?
