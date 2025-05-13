@@ -477,9 +477,9 @@ public class Jeu extends Observable {
         int idJoueurCourant = getIdJoueurCourant();
         Point direction;
         if (idJoueurCourant == ID_JOUEUR_1) {
-            direction = new Point(1, 1);
-        } else {
             direction = new Point(-1, -1);
+        } else {
+            direction = new Point(1, 1);
         }
 
         int x, y;
