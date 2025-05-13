@@ -8,14 +8,16 @@ public abstract class IA {
 
     /**
      * Calcul un Coup à suggérer ou à jouer
+     *
      * @return Coup calculé, null si aucun Coup possible
      */
-    abstract Coup calculerCoup();
+    public abstract Coup calculerCoup();
 
 
     /**
      * Renvoie le niveau de l'IA
+     *
      * @return FAIBLE | MOYEN | FORT
      */
-    abstract NIVEAU_IA getNiveau();
+    public abstract NIVEAU_IA getNiveau();
 }

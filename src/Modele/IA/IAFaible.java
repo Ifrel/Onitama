@@ -1,6 +1,5 @@
 package Modele.IA;
 
-import static Global.Config.NIVEAU_IA.*;
 import Global.Config.NIVEAU_IA;
 import Modele.Carte;
 import Modele.Coup;
@@ -10,8 +9,10 @@ import Modele.Pion;
 import java.util.List;
 import java.util.Random;
 
+import static Global.Config.NIVEAU_IA.FAIBLE;
+
 public class IAFaible extends IA {
-    private Jeu jeu;
+    private final Jeu jeu;
 
     public IAFaible(Jeu jeu) {
         this.jeu = jeu;
@@ -19,10 +20,11 @@ public class IAFaible extends IA {
 
     /**
      * Calcul un Coup à suggérer ou à jouer
+     *
      * @return Coup calculé, null si aucun Coup possible
      */
     @Override
-    Coup calculerCoup() {
+    public Coup calculerCoup() {
         Coup c = null;
         Random r = new Random();
         List<Carte> cartesIA = jeu.getCartesJoueurCourant();
@@ -32,9 +34,9 @@ public class IAFaible extends IA {
         Pion pionChoisi;
 
 
-        while (! cartesIA.isEmpty()) {
+        while (!cartesIA.isEmpty()) {
             carteChoisie = cartesIA.remove(r.nextInt(cartesIA.size()));
-            while (! pionsIA.isEmpty()) {
+            while (!pionsIA.isEmpty()) {
                 pionChoisi = pionsIA.remove(r.nextInt(pionsIA.size()));
                 List<Coup> coupsPossibles = jeu.getCoupsPossibles(pionChoisi.getPosition(), carteChoisie);
                 if (coupsPossibles.isEmpty()) { // pas de coup possible pour la carte et le pion courants
@@ -51,10 +53,11 @@ public class IAFaible extends IA {
 
     /**
      * Renvoie le niveau de l'IA
+     *
      * @return FAIBLE | MOYEN | FORT
      */
     @Override
-    NIVEAU_IA getNiveau() {
+    public NIVEAU_IA getNiveau() {
         return FAIBLE;
     }
 }
