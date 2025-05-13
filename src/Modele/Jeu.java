@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import Global.Config.ROLEPION;
+
 import static Global.Config.*;
 import static Global.Config.ROLEPION.PION_ETUDIANT;
 import static Global.Config.ROLEPION.PION_MAITRE;
@@ -354,6 +356,10 @@ public class Jeu extends Observable {
         return carteEchange;
     }
 
+    public void setCarteSupplementaire(Carte c) {
+        carteEchange = c;
+    }
+
     public Carte getCarteJouee() {
         return carteSelectionee;
     }
@@ -523,6 +529,15 @@ public class Jeu extends Observable {
         majPionsJoueur2();
     }
 
+    private void echangerCartes(Joueur joueur, Carte carteSelectionne) {
+       
+        joueur.removeCard(carteSelectionne);
+        Carte nouvelleCarteJoueurCourant = getCarteSupplementaire();
+        setCarteSupplementaire(carteSelectionne);
+        joueur.addCard(nouvelleCarteJoueurCourant);
+
+    }
+
     private boolean verifierVictoire() {
         return false;
     }
@@ -549,6 +564,7 @@ public class Jeu extends Observable {
 
             // met à jour la liste de pions des joueurs
             majPions();
+            echangerCartes(getJoueurCourant(), getCarteJouee());
             changerJoueur();
 
             // met à jour l'interface
