@@ -30,13 +30,12 @@ public class IAFaible extends IA {
         List<Carte> cartesIA = jeu.getCartesJoueurCourant();
         List<Pion> pionsIA = jeu.getPionsJoueurCourant();
 
-        int carteChoisie;
+        Carte carteChoisie;
         Pion pionChoisi;
 
 
         while (!cartesIA.isEmpty()) {
-            carteChoisie = r.nextInt(cartesIA.size());
-            cartesIA.remove(carteChoisie);
+            carteChoisie = cartesIA.remove(r.nextInt(cartesIA.size()));
             while (!pionsIA.isEmpty()) {
                 pionChoisi = pionsIA.remove(r.nextInt(pionsIA.size()));
                 List<Coup> coupsPossibles = jeu.getCoupsPossibles(carteChoisie, pionChoisi.getPosition());

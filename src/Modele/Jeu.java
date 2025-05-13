@@ -245,8 +245,7 @@ public class Jeu extends Observable {
     }
 
     private void ajouterPion(List<Point> coordonnees, int proprietaire, ROLEPION role) {
-        for (int i = 0; i < coordonnees.size(); i++) {
-            Point p = coordonnees.get(i);
+        for (Point p : coordonnees) {
             Pion pion = new Pion(proprietaire, p, role);
             setCase(p.x, p.y, pion); // ajout grille jeu
             if (proprietaire == 1) { // ajout dans liste joueur
@@ -495,11 +494,11 @@ public class Jeu extends Observable {
         carteEchange = c;
     }
 
-    public Carte getCarteSelectionee() {
+    public Carte getCarteSelectionnee() {
         return carteSelectionee;
     }
 
-    public void setCarteSelectionee(Carte c) {
+    public void setCarteSelectionnee(Carte c) {
         carteSelectionee = c;
     }
 
@@ -614,7 +613,7 @@ public class Jeu extends Observable {
         return partieFinie;
     }
 
-    public List<Coup> getCoupsPossibles(int carteSelectionee, Point positionPion) throws IllegalStateException {
+    public List<Coup> getCoupsPossibles(Carte carteSelectionee, Point positionPion) throws IllegalStateException {
         return Utils.getCoupsPossibles(this, carteSelectionee, positionPion);
     }
 
@@ -623,6 +622,8 @@ public class Jeu extends Observable {
 
     }
 
+    // code santiago
+    // --------------------
     private void deplacerPion(Point depart, Point arrivee) {
         // Récupère l'éventuel pion présent sur la case d'arrivée
         Pion cible = getCase(arrivee.x, arrivee.y);
@@ -678,12 +679,13 @@ public class Jeu extends Observable {
         joueur.addCard(nouvelleCarteJoueurCourant);
 
     }
+    // --------------------
 
     private void faireSetup() {
 
     }
 
-    public Coup preparerCoup(int carteSelectionee, Point depart, Point arrivee) {
+    public Coup preparerCoup(Carte carteSelectionee, Point depart, Point arrivee) {
         Coup c = new Coup(depart, arrivee);
         List<Coup> coupsPossibles = getCoupsPossibles(carteSelectionee, depart);
 
@@ -696,7 +698,7 @@ public class Jeu extends Observable {
        return null;
     }
 
-    public Coup preparerCoup(int carteSelectionee, CasePlateau depart, CasePlateau arrivee) {
+    public Coup preparerCoup(Carte carteSelectionee, CasePlateau depart, CasePlateau arrivee) {
         Point d = depart.position;
         Point a = arrivee.position;
         Coup c = new Coup(d, a);
@@ -713,7 +715,7 @@ public class Jeu extends Observable {
         return false;
     }
 
-    public void jouerCoup(int carteChoisie, Coup c) {
+    public void jouerCoup(Carte carteSelectionee, Coup c) {
         try {
             if (c == null) {
                 logger.info("Coup invalide");
@@ -735,6 +737,7 @@ public class Jeu extends Observable {
 
             // met à jour la grille
             deplacerPion(depart, arrivee);
+            historique.add(c);
             if(verifierVictoire()) {
                 partieFinie = true;
                 metAJour();
@@ -742,7 +745,7 @@ public class Jeu extends Observable {
             }
 
 
-            echangerCartes(getJoueurCourant(), getCarteSelectionee());
+            echangerCartes(getJoueurCourant(), getCarteSelectionnee());
             changerJoueur();
 
             // met à jour l'interface

@@ -5,9 +5,7 @@ import Exceptions.ConfigurationIllegaleException;
 import Global.Config;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
 
 import static Global.Config.*;
@@ -118,17 +116,14 @@ public class Utils {
      * @return liste des coups possibles
      * @throws IllegalStateException
      */
-    public static List<Coup> getCoupsPossibles(Jeu jeu, int carteSelectionee, Point positionPion) throws IllegalStateException {
-
-        if (carteSelectionee < 1 || carteSelectionee > 2) {
-            throw new IllegalStateException("Il faut choisir la carte 1 ou 2");
-        }
-        carteSelectionee--;
+    public static List<Coup> getCoupsPossibles(Jeu jeu, Carte carteSelectionee, Point positionPion) throws IllegalStateException {
+        Objects.requireNonNull(jeu, "Nécessite une référence non null au jeu");
+        Objects.requireNonNull(carteSelectionee, "Nécessite une référence non null à la carte séléctionnée");
+        Objects.requireNonNull(positionPion, "Nécessite une référence non null au point qui contient la position du point");
 
         List<Coup> coups = new ArrayList<>();
 
-        Carte c = jeu.getCartesJoueurCourant().get(carteSelectionee);
-        List<Point> deplacements = c.getMoves();
+        List<Point> deplacements = carteSelectionee.getMoves();
 
         int idJoueurCourant = jeu.getIdJoueurCourant();
         Point direction;

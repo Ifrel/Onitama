@@ -102,7 +102,7 @@ class JeuTest {
     }
 
     @Test
-    void testPartiePeuDeMouvements() {
+    void scenarion1DebutPartie() {
         try {
             Jeu jeu;
             // on choisit un jeu avec des cartes arbitraires et des pions en positions initiale pour tester un scénario simplr
@@ -129,8 +129,13 @@ class JeuTest {
                 }
             }
             System.err.println(jeu.toString());
-            jeu.jouerCoup(jeu.preparerCoup(1, new Point(0, 2), new Point(1, 2)));
+            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(0));
+            jeu.jouerCoup(jeu.getCarteSelectionnee(), jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(0, 2), new Point(1, 2)));
             System.err.println(jeu.toString());
+            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(1));
+            jeu.jouerCoup(jeu.getCarteSelectionnee(), jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(4, 0), new Point(3, 1)));
+            System.err.println(jeu.toString());
+            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(0));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
