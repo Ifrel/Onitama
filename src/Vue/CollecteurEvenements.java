@@ -66,7 +66,7 @@ public interface CollecteurEvenements {
 
     /**
      * Gère le réglage du niveau de difficulté pour une IA.
-     * @param niveauIA Une chaîne représentant le niveau de l'IA (ex: "Facile", "Normal", "Difficile").     */
+     * @param niveauIA Une chaîne représentant le niveau de l'IA (ex: "Facile", "Normal", "Fort").     */
     void setNiveauIA(String niveauIA);
 
 

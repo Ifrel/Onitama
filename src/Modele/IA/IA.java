@@ -1,7 +1,7 @@
 package Modele.IA;
 
+import Global.Config.NIVEAU_IA;
 import Modele.Coup;
-import Modele.Jeu;
 
 
 public abstract class IA {
@@ -11,4 +11,11 @@ public abstract class IA {
      * @return Coup calculé, null si aucun Coup possible
      */
     abstract Coup calculerCoup();
+
+
+    /**
+     * Renvoie le niveau de l'IA
+     * @return FAIBLE | MOYEN | FORT
+     */
+    abstract NIVEAU_IA getNiveau();
 }

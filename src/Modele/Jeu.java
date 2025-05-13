@@ -647,7 +647,7 @@ public class Jeu extends Observable {
 
     /**
      * Définit le niveau de difficulté de l’IA.
-     * @param niveauIA Chaîne représentant le niveau (ex: "Facile", "Moyen", "Difficile").
+     * @param niveauIA Chaîne représentant le niveau (ex: "Facile", "Moyen", "Fort").
      */
     public void setNiveauIA(String niveauIA) {
         //TODO À implémenter

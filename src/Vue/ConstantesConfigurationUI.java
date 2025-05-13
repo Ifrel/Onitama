@@ -38,7 +38,7 @@ public class ConstantesConfigurationUI {
 
     // TODO Exemples de données. À supprimer ou gérer dynamiquement dans la version finale.
     public static final String[] OPTIONS_REPRENDRE = new String[]{INDICATION_SELECTION, "Partie 1", "Partie 2", "Partie 3"}; // <-- SUPPRIMER
-    public static final String[] OPTIONS_IA = new String[]{OPTION_IA_NON, "Facile", "Intermédiaire", "Difficile"}; // <-- SUPPRIMER
+    public static final String[] OPTIONS_IA = new String[]{OPTION_IA_NON, "Facile", "Intermédiaire", "Fort"}; // <-- SUPPRIMER
 
 
     // Définition des polices (Fonts) utilisées avec des tailles ajustées.

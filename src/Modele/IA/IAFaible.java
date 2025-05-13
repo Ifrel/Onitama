@@ -1,5 +1,7 @@
 package Modele.IA;
 
+import static Global.Config.NIVEAU_IA.*;
+import Global.Config.NIVEAU_IA;
 import Modele.Carte;
 import Modele.Coup;
 import Modele.Jeu;
@@ -45,5 +47,14 @@ public class IAFaible extends IA {
 
         }
         return c;
+    }
+
+    /**
+     * Renvoie le niveau de l'IA
+     * @return FAIBLE | MOYEN | FORT
+     */
+    @Override
+    NIVEAU_IA getNiveau() {
+        return FAIBLE;
     }
 }

@@ -6,10 +6,10 @@ import Global.Config;
 import Modele.Coup;
 import Modele.Jeu;
 
-public class IAMoyen extends IA {
+public class IAFort extends IA {
     private Jeu jeu;
 
-    public IAMoyen(Jeu jeu) {
+    public IAFort(Jeu jeu) {
         this.jeu = jeu;
     }
 
@@ -28,6 +28,6 @@ public class IAMoyen extends IA {
      */
     @Override
     NIVEAU_IA getNiveau() {
-        return MOYEN;
+        return FORT;
     }
 }
