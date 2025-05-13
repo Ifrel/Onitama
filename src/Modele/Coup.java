@@ -42,9 +42,9 @@ public class Coup {
      */
     public String toString() {
         StringBuilder S = new StringBuilder();
-        S.append("(").append(depart.getX()).append(",").append(depart.getY()).append(")");
+        S.append("(").append((int) depart.getX()).append(",").append((int) depart.getY()).append(")");
         S.append(" -> ");
-        S.append("(").append(arrivee.getX()).append(",").append(arrivee.getY()).append(")");
+        S.append("(").append((int) arrivee.getX()).append(",").append((int) arrivee.getY()).append(")");
         return S.toString();
     }
 }

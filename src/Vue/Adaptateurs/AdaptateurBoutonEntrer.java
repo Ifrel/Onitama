@@ -53,7 +53,7 @@ public class AdaptateurBoutonEntrer implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        logger.info("bouton: Entrer préssé");
+        logger.info("bouton: Entrer pressé");
 
         // Si le mode Auto IA est activé (IA vs IA)
         if (modeAutoIA) {

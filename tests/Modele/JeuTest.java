@@ -1,13 +1,18 @@
 package Modele;
 
+import Exceptions.CaseVideException;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
-import static Global.Config.TYPECARTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static Global.Config.*;
+import static Global.Config.ROLEPION.*;
+import static Global.Config.TYPECARTE.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 // ces tests ne prennent pas encore en compte le joueur IA
 class JeuTest {
@@ -93,6 +98,41 @@ class JeuTest {
         for (Carte c : jeu.getCartesJoueur2()) {
             assertFalse(vues.contains(c.getType()));
             vues.add(c.getType());
+        }
+    }
+
+    @Test
+    void testPartiePeuDeMouvements() {
+        try {
+            Jeu jeu;
+            // on choisit un jeu avec des cartes arbitraires et des pions en positions initiale pour tester un scénario simplr
+            jeu = new Jeu(CRABE, new ArrayList<>(Arrays.asList(BOEUF, MANTE)), new ArrayList<>(Arrays.asList(COQ, LAPIN)));
+
+            /*
+             * | E1 | E1 | M1 | E1 | E1 |
+             * |    |    |    |    |    |
+             * |    |    |    |    |    |
+             * |    |    |    |    |    |
+             * | E2 | E2 | M2 | E2 | E2 |
+             */
+
+            for (int i = 0; i < jeu.lignes(); i += 4) {
+                for (int j = 0; j < jeu.colonnes(); j++) {
+                    assertFalse(jeu.estCaseVide(i, j));
+                    if (j == 2) {
+                        assertEquals(PION_MAITRE, jeu.getRolePionAt(i, j));
+                    } else {
+
+                        assertEquals(PION_ETUDIANT, jeu.getRolePionAt(i, j));
+                    }
+                    assertEquals((i == 0 ? ID_JOUEUR_1 : ID_JOUEUR_2), jeu.getProprietairePionAt(i, j));
+                }
+            }
+            System.err.println(jeu.toString());
+            jeu.jouerCoup(jeu.preparerCoup(1, new Point(0, 2), new Point(1, 2)));
+            System.err.println(jeu.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }

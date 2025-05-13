@@ -1,6 +1,8 @@
 package Modele;
 
-import Global.Config;
+import static Global.Config.*;
+
+import Exceptions.CaseVideException;
 import Vue.InfosDeConfigUI;
 
 import java.awt.*;
@@ -38,7 +40,13 @@ public class CasePlateau {
             return TYPE_ELEMENT_SUR_CASE.VIDE;
         }
         TYPE_ELEMENT_SUR_CASE tc = TYPE_ELEMENT_SUR_CASE.VIDE;
-        switch (jeu.getRolePionAt(position.x, position.y)) {
+        ROLEPION rp;
+        try {
+            rp = jeu.getRolePionAt(position.x, position.y);
+        } catch (CaseVideException e) {
+            throw new RuntimeException(e);
+        }
+        switch (rp) {
             case PION_MAITRE:
                 tc = TYPE_ELEMENT_SUR_CASE.PION_MAITRE;
                 break;
@@ -52,11 +60,19 @@ public class CasePlateau {
 
     public int getProprietaire() {
         if (jeu.estCaseVide(position.x, position.y)) return 0;
-        return jeu.getProprietairePionAt(position.x, position.y);
+        try {
+            return jeu.getProprietairePionAt(position.x, position.y);
+        } catch (CaseVideException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Config.ROLEPION getRole(){
-        return  jeu.getRolePionAt(position.x, position.y);
+    public ROLEPION getRole(){
+        try {
+            return  jeu.getRolePionAt(position.x, position.y);
+        } catch (CaseVideException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int getId() {

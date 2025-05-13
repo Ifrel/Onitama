@@ -3,9 +3,10 @@ package Modele;
 
 import Global.Config.ROLEPION;
 
-import java.awt.*;
-
 import static Global.Config.*;
+import static Global.Config.ROLEPION.*;
+
+import java.awt.*;
 
 /**
  * Représente un pion dans le modèle du jeu.
@@ -25,7 +26,7 @@ public class Pion {
     /**
      * Retourne l'identifiant du joueur propriétaire de ce pion.
      * @return l'ID du propriétaire (habituellement un entier associé à un joueur)     */
-    public int getProprietaire() { return proprietaire; }
+    public int getIDProprietaire() { return proprietaire; }
 
 
 
@@ -55,6 +56,22 @@ public class Pion {
      * @param position la nouvelle position à attribuer     */
     public void setNewPosition(Point position) {
         this.position = position;
+    }
+
+    /**
+     * Renvoie la représentation textuelle du pion
+     * 'E' pour étudiant, 'M' pour maitre
+     * ex: M2:(0,2) -> le pions maitre du joueur 2 est en position (0,2)
+     * @return chaine de caractères représentant le pion
+     */
+    @Override
+    public String toString() {
+        String S = "";
+        S += (getRole() == PION_ETUDIANT ? "E" : "M");
+        S += (getIDProprietaire() == ID_JOUEUR_1 ? "1" : "2");
+        Point pos = getPosition();
+        S += ":(" + pos.x + "," + pos.y + ")";
+        return S;
     }
 
 }

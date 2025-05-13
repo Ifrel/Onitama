@@ -1,12 +1,12 @@
 package Modele; // Exemple de package, ajustez si nécessaire
 
-import java.awt.Color; // Pour représenter la couleur du joueur
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects; // Pour la méthode Objects.requireNonNull
+import java.util.Objects;
 
-import static Global.Config.COULEUR_CASE_MAITRE_JOUEUR_1;
-import static Global.Config.COULEUR_CASE_MAITRE_JOUEUR_2;
+import Modele.Carte;
+
+import static Global.Config.*;
 
 /**
  * Représente un joueur participant à la partie.
@@ -133,12 +133,27 @@ public class Joueur {
 
     /**
      * Ajoute une carte à la main du joueur.
-     * @param carte liste des cartes à ajouter (ne doit pas être null).
+     * @param cartes liste des cartes à ajouter (ne doit pas être null).
      * @throws NullPointerException si la carte est null.
      */
-    public void addCard(ArrayList<Carte> carte) {
-        Objects.requireNonNull(carte, "La carte à ajouter ne peut pas être null.");
-        this.mainCartes.addAll(carte);
+    public void addCards(List<Carte> cartes) {
+        Objects.requireNonNull(cartes, "Les cartes à ajouter ne peuvent pas être null.");
+        this.mainCartes.addAll(cartes);
+        // Logique de notification si besoin (ex: main changée)
+    }
+
+
+    /**
+     * Ajoute une carte à la main du joueur.
+     *
+     * @param typeCartes liste des cartes à ajouter (ne doit pas être null).
+     * @throws NullPointerException si la carte est null.
+     */
+    public void addCardsType(List<TYPECARTE> typeCartes) {
+        Objects.requireNonNull(typeCartes, "Les cartes à ajouter ne peuvent pas être null.");
+        for (int i = 0; i < typeCartes.size(); i++) {
+            this.mainCartes.add(new Carte(typeCartes.get(i)));
+        }
         // Logique de notification si besoin (ex: main changée)
     }
 

@@ -1,5 +1,6 @@
 package Vue;
 
+import Exceptions.CaseVideException;
 import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Jeu;
@@ -275,6 +276,8 @@ public class InterfaceTextuelle implements Observateur {
                                     }
                                 } catch (NumberFormatException e) {
                                     System.out.println("Entrée invalide. Utilisez des chiffres pour les coordonnées.");
+                                } catch (CaseVideException e) {
+                                    throw new RuntimeException(e);
                                 }
                             } else {
                                 System.out.println("Format invalide. Entrez deux coordonnées séparées par un espace.");

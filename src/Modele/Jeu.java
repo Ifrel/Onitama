@@ -1,15 +1,15 @@
 package Modele;
 
+import Exceptions.CaseVideException;
+import Exceptions.ConfigurationIllegaleException;
+import Exceptions.DeplacementIllegalExcpetion;
 import Modele.IA.IA;
 import Patterns.Observable;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
-
-import Global.Config.ROLEPION;
-import Vue.InfosDeConfigUI;
+import java.util.logging.Logger;
 
 import static Global.Config.*;
 import static Global.Config.ROLEPION.PION_ETUDIANT;
@@ -28,11 +28,13 @@ public class Jeu extends Observable {
     private long tempsJeu; // temps écoulé depuis le début de la partie
     private int numRound; // à quel round on en est
     private boolean partieFinie;
-    boolean IA1Activee, IA2Activee;
+    private boolean IA1Activee, IA2Activee;
+    private boolean lockCarte;
+    private boolean lockPion;
 
     // --- CARTES -- //
     private List<Carte> toutesLesCartes; //Toutes les cartes confondues
-    private List<Carte> cartesDuJeu; //5 cartes, les cartes qui circulent dans le jeu.
+    private List<Carte> cartesDuJeu; // 5 cartes, les cartes qui circulent dans le jeu.
 
     // --- Carte d'échange -- //
     private Carte carteEchange; //La carte qui sera en échange
@@ -43,29 +45,233 @@ public class Jeu extends Observable {
 
     CasePlateau casePlateau ;
 
+    private static final Logger logger = Logger.getLogger(Jeu.class.getName());
 
+    /**
+     * Crée un Jeu de base, avec des paramètres par défaut
+     */
     public Jeu() {
-        lignes = colonnes = 5;
+        try {
+            _Jeu();
 
-        grille = new Pion[LIGNES][COLONNES];
+            cartesDuJeu = initCartesJeu();
 
-        historique = new Historique<>();
+            initGrille();
 
-        toutesLesCartes = initCartes();
-        cartesDuJeu = initCartesJeu();
+            initJoueursCartes();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        initGrille();
-
-        initJoueurs();
-
-        idJoueurCourant = 1;
-        numRound = 1;
-        partieFinie = false;
-
-
-        IA1Activee = IA2Activee = false;
     }
 
+
+    /**
+     * Crée un jeu avec les cartes fournies en paramètres et des pions positionnés par défaut
+     *
+     * @param carteEnPlus   carte supplémentaire du jeu
+     * @param cartesJoueur1 cartes du joueur 1
+     * @param cartesJoueur2 cartes du joueur 2
+     */
+    public Jeu(TYPECARTE carteEnPlus, List<TYPECARTE> cartesJoueur1, List<TYPECARTE> cartesJoueur2) {
+        try {
+            verifierSelectionCartesConforme(carteEnPlus, cartesJoueur1, cartesJoueur2);
+
+            _Jeu();
+
+            setCarteSupplementaire(new Carte(carteEnPlus));
+            joueur1.addCardsType(cartesJoueur1);
+            joueur2.addCardsType(cartesJoueur2);
+
+            initGrille();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Crée un jeu avec les cartes et les pions fournis en paramètres
+     *
+     * @param carteEnPlus     carte supplémentaire du jeu
+     * @param cartesJoueur1   cartes du joueur 1
+     * @param cartesJoueur2   cartes du joueur 2
+     * @param pionsJoueur1   pions du joueur 1
+     * @param pionsJoueur2 pions du joueur 2
+     */
+    public Jeu(TYPECARTE carteEnPlus, List<TYPECARTE> cartesJoueur1, List<TYPECARTE> cartesJoueur2, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
+        try {
+            verifierSelectionCartesConforme(carteEnPlus, cartesJoueur1, cartesJoueur2);
+            verifierSelectionPionsConforme(pionsJoueurUn, pionsJoueurDeux);
+
+            _Jeu();
+
+            setCarteSupplementaire(new Carte(carteEnPlus));
+            joueur1.addCardsType(cartesJoueur1);
+            joueur2.addCardsType(cartesJoueur2);
+
+            setPionsJeu(pionsJoueur1, pionsJoueur2);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Crée un jeu avec les pions fournis en paramètres et des cartes tirées aléatoirement
+     * @param pionsJoueur1 pions du joueur 1
+     * @param pionsJoueur2 pions du joueur 2
+     */
+    public Jeu(List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
+        try {
+            verifierSelectionPionsConforme(pionsJoueur1, pionsJoueur2);
+
+            _Jeu();
+
+            toutesLesCartes = initCartes();
+            cartesDuJeu = initCartesJeu();
+            initJoueursCartes();
+
+            setPionsJeu(pionsJoueur1, pionsJoueur2);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * pseudo constructeur commun aux constructeurs publics
+     */
+    private void _Jeu() {
+        try {
+            lignes = colonnes = 5;
+            grille = new Pion[LIGNES][COLONNES];
+            historique = new Historique<>();
+            idJoueurCourant = ID_JOUEUR_1;
+            numRound = 1;
+            partieFinie = false;
+            tempsJeu = 0;
+            joueur1 = new Joueur(1, "Joueur 1");
+            joueur2 = new Joueur(2, "Joueur 2");
+            toutesLesCartes = initCartes();
+            lockCarte = false;
+            lockPion = false;
+            carteSelectionee = null;
+
+            IA1Activee = IA2Activee = false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Vérifie que chaque carte de la liste est unique
+     *
+     * @param listeCartes liste de cartes
+     */
+    private void cartesToutesDifferentes(List<TYPECARTE> listeCartes) throws ConfigurationIllegaleException {
+        HashSet<TYPECARTE> hs = new HashSet<>();
+
+        for (TYPECARTE tc : listeCartes) {
+            if (hs.contains(tc)) {
+                throw new ConfigurationIllegaleException("ERREUR La carte " + tc + " apparait plus d'une fois, chaque carte doit etre unique");
+            }
+            hs.add(tc);
+        }
+    }
+
+    /**
+     * Vérifie que la séléction de cartes est conforme aux règles du jeu (toutes les cartes sont uniques, 2 cartes seulement par joueur + 1 carte supplémentaire)
+     *
+     * @param carteEnPlus   carte supplémentaire du jeu
+     * @param cartesJoueur1 cartes du joueur 1
+     * @param cartesJoueur2 cartes du joueur 2
+     */
+    private void verifierSelectionCartesConforme(TYPECARTE carteEnPlus, List<TYPECARTE> cartesJoueur1, List<TYPECARTE> cartesJoueur2) throws ConfigurationIllegaleException {
+        try {
+            List<TYPECARTE> cartesSelectionnees = new ArrayList<>(cartesJoueur1);
+            cartesSelectionnees.addAll(cartesJoueur2);
+            cartesSelectionnees.add(carteEnPlus);
+            cartesToutesDifferentes(cartesSelectionnees);
+        } catch (ConfigurationIllegaleException e) {
+            throw new ConfigurationIllegaleException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void verifierSelectionPionsConforme(List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) throws ConfigurationIllegaleException {
+        if (pionsJoueur1.size() > 5) {
+            throw new ConfigurationIllegaleException("Le joueur 1 ne peux pas avoir plus de 5 pions, pourtant " + pionsJoueur1.size() + " ont été fournis");
+        }
+        if (pionsJoueur2.size() > 5) {
+            throw new ConfigurationIllegaleException("Le joueur 2 ne peux pas avoir plus de 5 pions, pourtant " + pionsJoueur2.size() + " ont été fournis");
+        }
+
+        HashSet<Point> coordonneesOccupees = new HashSet<>();
+        int nbEleves, nbMaitre;
+
+        HashMap<Integer, List<Pion>> listePions = new HashMap<>();
+        listePions.put(ID_JOUEUR_1, pionsJoueur1);
+        listePions.put(ID_JOUEUR_2, pionsJoueur2);
+
+        for (int i = 0; i < 2; i++){
+            List<Pion> lp = listePions.get(i + 1);
+            nbEleves = nbMaitre = 0;
+            for (Pion p : lp) {
+                Point pos = p.getPosition();
+                if (coordonneesOccupees.contains(pos)) {
+                    throw new ConfigurationIllegaleException("Il y a déjà un pion à la position (" + pos.x + "," + pos.y + ")");
+                }
+                coordonneesOccupees.add(pos);
+                if (p.getRole() == PION_ETUDIANT) {
+                    nbEleves++;
+                } else {
+                    nbMaitre++;
+                }
+                int prop = p.getIDProprietaire();
+                if (prop != i + 1) {
+                    throw new ConfigurationIllegaleException("Le pion " + p.toString() + " est possédé par " + prop + " alors qu'il devrait etre possédé par " + (i + 1));
+                }
+            }
+
+            if (nbEleves > 4) {
+                throw new ConfigurationIllegaleException("Le joueur " + (i + 1) + " a plus de 4 pions élèves (" + nbEleves + "), impossible");
+            }
+
+            if (nbMaitre > 1) {
+                throw new ConfigurationIllegaleException("Le joueur " + (i + 1) + " a plus d'un pions maitre (" + nbMaitre + "), impossible");
+            }
+        }
+
+
+    }
+
+    private void setPionsJeu(List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
+        List<Pion> listePions = new ArrayList<>();
+        listePions.addAll(pionsJoueur1);
+        listePions.addAll(pionsJoueur2);
+
+        resetGrilleAvecPions(listePions);
+    }
+
+    /**
+     * Rempli la grille de pions suivant les coordonnées de chaque pion dans la liste, le reste de la grille est vide
+     * @param pions liste de pions
+     */
+    private void resetGrilleAvecPions(List<Pion> pions) {
+        resetGrille();
+        for (Pion p : pions) {
+            Point pos = p.getPosition();
+            setCase(pos.x, pos.y, p);
+        }
+    }
+
+    /**
+     * Remet la grille du jeu à zéro, toutes les cases sont vides
+     */
+    private void resetGrille() {
+        grille = new Pion[LIGNES][COLONNES];
+    }
 
     /**
      * renvoie une liste qui contient toutes les cartes du jeu
@@ -164,7 +370,7 @@ public class Jeu extends Observable {
         ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, 2, PION_MAITRE);
     }
 
-    private void initJoueurs() {
+    private void initJoueursCartes() {
         //Initialisation des joueurs de la partie
         //Pour chaque joueur, on accorde deux cartes des 5 cartes de la partie:
         Carte carte1Joueur1 = cartesDuJeu.get(0);
@@ -174,8 +380,6 @@ public class Jeu extends Observable {
         //La carte qui reste est la carte d'échange
         carteEchange = cartesDuJeu.get(4);
         //On crée la classe des deux joueurs
-        joueur1 = new Joueur(1, "Joueur 1");
-        joueur2 = new Joueur(2, "Joueur 2");
 
         joueur1.addCard(carte1Joueur1);
         joueur1.addCard(carte2Joueur1);
@@ -196,8 +400,8 @@ public class Jeu extends Observable {
     }
 
     public void annulerCoup() {
-        if (! peutAnnulerCoup()) {
-            System.err.println("Impossible d'annuler un Coup");
+        if (!peutAnnulerCoup()) {
+            logger.info("Impossible d'annuler un Coup");
             return;
         }
 
@@ -215,8 +419,8 @@ public class Jeu extends Observable {
     }
 
     public void refaireCoup() {
-        if (! peutRefaireCoup()) {
-            System.err.println("Impossible de refaire un Coup");
+        if (!peutRefaireCoup()) {
+            logger.info("Impossible de refaire un Coup");
             return;
         }
 
@@ -242,14 +446,14 @@ public class Jeu extends Observable {
         return null;
     }
 
-// ######## STATUT / DONNEES ########
+    // ######## STATUT / DONNEES ########
 
     public int lignes() {
-        return 5;
+        return lignes;
     }
 
     public int colonnes() {
-        return 5;
+        return colonnes;
     }
 
     public int casesTotales() {
@@ -258,7 +462,7 @@ public class Jeu extends Observable {
 
     private void verifieSiDansGrille(int i, int j) {
         if (i < 0 || i >= lignes() || j < 0 || j >= colonnes()) {
-            throw new RuntimeException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + lignes() + "x" + colonnes());
+            throw new IndexOutOfBoundsException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + lignes() + "x" + colonnes());
         }
     }
 
@@ -288,37 +492,45 @@ public class Jeu extends Observable {
         }
     }
 
-    public boolean estPionEtudiantJoueur1(int i, int j) {
+    public boolean estPionEtudiantJoueur1(int i, int j) throws CaseVideException {
         try {
             Pion p = getCase(i, j);
-            return p.getProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_ETUDIANT;
+            return p.getIDProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_ETUDIANT;
+        } catch (NullPointerException e) {
+            throw new CaseVideException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public boolean estPionEtudiantJoueur2(int i, int j) {
+    public boolean estPionEtudiantJoueur2(int i, int j) throws CaseVideException {
         try {
             Pion p = getCase(i, j);
-            return p.getProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_ETUDIANT;
+            return p.getIDProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_ETUDIANT;
+        } catch (NullPointerException e) {
+            throw new CaseVideException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public boolean estPionMaitreJoueur1(int i, int j) {
+    public boolean estPionMaitreJoueur1(int i, int j) throws CaseVideException {
         try {
             Pion p = getCase(i, j);
-            return p.getProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_MAITRE;
+            return p.getIDProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_MAITRE;
+        } catch (NullPointerException e) {
+            throw new CaseVideException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public boolean estPionMaitreJoueur2(int i, int j) {
+    public boolean estPionMaitreJoueur2(int i, int j) throws CaseVideException {
         try {
             Pion p = getCase(i, j);
-            return p.getProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_MAITRE;
+            return p.getIDProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_MAITRE;
+        } catch (NullPointerException e) {
+            throw new CaseVideException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -364,44 +576,48 @@ public class Jeu extends Observable {
         carteEchange = c;
     }
 
-    public Carte getCarteJouee() {
+    public Carte getCarteSelectionee() {
         return carteSelectionee;
     }
 
-    public boolean estPionDuJoueurCourant(int i, int j) {
+    public void setCarteSelectionee(Carte c) {
+        carteSelectionee = c;
+    }
+
+    public boolean estPionDuJoueurCourant(int i, int j) throws CaseVideException {
         try {
             Pion p = getCase(i, j);
-            return p.getProprietaire() == idJoueurCourant ;
+            return p.getIDProprietaire() == getIdJoueurCourant();
+        } catch (NullPointerException e) {
+            throw new CaseVideException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public boolean estCoupConforme(int i, int j) {
-        return false;
-    }
-
-    public int getProprietairePionAt(int i, int j) {
+    public int getProprietairePionAt(int i, int j) throws CaseVideException {
         try {
             Pion p = getCase(i, j);
-            return p.getProprietaire();
+            return p.getIDProprietaire();
+        } catch (NullPointerException e) {
+            throw new CaseVideException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ROLEPION getRolePionAt(int i, int j) {
+    public ROLEPION getRolePionAt(int i, int j) throws CaseVideException {
         try {
             Pion p = getCase(i, j);
             return p.getRole();
         } catch (NullPointerException e) {
-            throw new NullPointerException();
+            throw new CaseVideException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-// ######## PARTIE ########
+    // ######## PARTIE ########
 
     public void activerIA1() {
         IA1Activee = true;
@@ -419,8 +635,8 @@ public class Jeu extends Observable {
         return tempsJeu;
     }
 
-    public void setTempsDeJeu(long temp) {
-        this.tempsJeu = temp;
+    public void setTempsDeJeu(long secondes) {
+        this.tempsJeu = secondes;
     }
 
     public void setNomJoueur1(String nom) {
@@ -479,10 +695,17 @@ public class Jeu extends Observable {
         return partieFinie;
     }
 
-    public List<Coup> getCoupsPossibles(Point positionPion, Carte carteJoue) {
+    public List<Coup> getCoupsPossibles(int carteSelectionee, Point positionPion) throws IllegalStateException {
+
+        if (carteSelectionee < 1 || carteSelectionee > 2) {
+            throw new IllegalStateException("Il faut choisir la carte 1 ou 2");
+        }
+        carteSelectionee--;
+
         List<Coup> coups = new ArrayList<>();
 
-        List<Point> deplacements = carteJoue.getMoves();
+        Carte c = getCartesJoueurCourant().get(carteSelectionee);
+        List<Point> deplacements = c.getMoves();
 
         int idJoueurCourant = getIdJoueurCourant();
         Point direction;
@@ -505,8 +728,11 @@ public class Jeu extends Observable {
             }
 
             // ne pas manger son propre pion
-            if (! estCaseVide(x, y) && getProprietairePionAt(x, y) == getIdJoueurCourant()) {
-                continue;
+            try {
+                if (getProprietairePionAt(x, y) == getIdJoueurCourant()) {
+                    continue;
+                }
+            } catch (CaseVideException ignored) {
             }
 
             // origine / position pion -> case arrivée possible
@@ -526,7 +752,7 @@ public class Jeu extends Observable {
         // Récupère l'éventuel pion présent sur la case d'arrivée
         Pion cible = getCase(arrivee.x, arrivee.y);
         // Si c'est un pion adverse, il sera écrasé par le setCase suivant
-        if (cible != null && cible.getProprietaire() != idJoueurCourant) {
+        if (cible != null && cible.getIDProprietaire() != idJoueurCourant) {
 
         }
         // On déplace le pion
@@ -543,7 +769,7 @@ public class Jeu extends Observable {
         for (int i = 0; i < lignes; i++) {
             for (int j = 0; j < colonnes; j++) {
                 Pion p = grille[i][j];
-                if (p != null && p.getProprietaire() == ID_JOUEUR_1) {
+                if (! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_1) {
                     pionsJoueurUn.add(p);
                 }
             }
@@ -556,7 +782,7 @@ public class Jeu extends Observable {
         for (int i = 0; i < lignes; i++) {
             for (int j = 0; j < colonnes; j++) {
                 Pion p = grille[i][j];
-                if (p != null && p.getProprietaire() == ID_JOUEUR_2) {
+                if (! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_2) {
                     pionsJoueurDeux.add(p);
                 }
             }
@@ -582,22 +808,24 @@ public class Jeu extends Observable {
 
     }
 
-    public Coup preparerCoup(Carte carteSelectionee, Point depart, Point arrivee) {
+    public Coup preparerCoup(int carteSelectionee, Point depart, Point arrivee) {
         Coup c = new Coup(depart, arrivee);
-        List<Coup> coupsPossibles = getCoupsPossibles(depart, carteSelectionee);
+        List<Coup> coupsPossibles = getCoupsPossibles(carteSelectionee, depart);
 
-        if (! coupsPossibles.contains(c)) {
-            return null;
-        }
 
-        return c;
+       for (Coup cp : coupsPossibles) {
+           if (cp.equals(c)) {
+               return c;
+           }
+       }
+       return null;
     }
 
-    public Coup preparerCoup(Carte carteSelectionee, CasePlateau depart, CasePlateau arrivee) {
+    public Coup preparerCoup(int carteSelectionee, CasePlateau depart, CasePlateau arrivee) {
         Point d = depart.position;
         Point a = arrivee.position;
         Coup c = new Coup(d, a);
-        List<Coup> coupsPossibles = getCoupsPossibles(d, carteSelectionee);
+        List<Coup> coupsPossibles = getCoupsPossibles(carteSelectionee, d);
 
         if (! coupsPossibles.contains(c)) {
             return null;
@@ -610,9 +838,10 @@ public class Jeu extends Observable {
         return false;
     }
 
-    public void jouerCoup(Coup c) {
+    public void jouerCoup(int carteChoisie, Coup c) {
         try {
             if (c == null) {
+                logger.info("Coup invalide");
                 return;
             }
 
@@ -626,7 +855,7 @@ public class Jeu extends Observable {
             verifieSiDansGrille(x, y);
 
             if (!estCaseVide(x, y) && getProprietairePionAt(x, y) == getIdJoueurCourant()) {
-                throw new RuntimeException("Impossible de capturer son propre pion");
+                throw new DeplacementIllegalExcpetion("Impossible de capturer son propre pion");
             }
 
             // met à jour la grille
@@ -637,8 +866,8 @@ public class Jeu extends Observable {
                 return;
             }
 
-            // met à jour la liste de pions des joueurs
-            echangerCartes(getJoueurCourant(), getCarteJouee());
+
+            echangerCartes(getJoueurCourant(), getCarteSelectionee());
             changerJoueur();
 
             // met à jour l'interface
@@ -807,4 +1036,36 @@ public class Jeu extends Observable {
         //TODO À implémenter
     }
 
+    /**
+     * Renvoie la représentation textuelle du jeu
+      * @return chaine de caractères représentant le jeu
+     */
+    @Override
+    public String toString() {
+        try {
+            StringBuilder S = new StringBuilder();
+            for (int i = 0; i < lignes(); i++) {
+                for (int j = 0; j < colonnes(); j++) {
+                    if (estCaseVide(i, j)) {
+                        S.append("  ");
+                    } else if (estPionEtudiantJoueur1(i, j)) {
+                        S.append("E1");
+                    } else if (estPionEtudiantJoueur2(i, j)) {
+                        S.append("E2");
+                    } else if (estPionMaitreJoueur1(i, j)) {
+                        S.append("M1");
+                    } else if (estPionMaitreJoueur2(i, j)) {
+                        S.append("M2");
+                    } else {
+                        S.append("??");
+                    }
+                }
+                S.append("\n");
+            }
+
+            return S.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
