@@ -212,9 +212,22 @@ public class MethodsStaticsUtils {
 
     public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, CasePlateau casePlateau){
             String nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(casePlateau.getProprietaire());
-            String rolePion =  casePlateau.getRole().name().toLowerCase().split("_")[1]; // PION_ETUDIANT -> pion_etudiant -> etudiant
+//            String rolePion =  casePlateau.getRole().name().toLowerCase().split("_")[1]; // PION_ETUDIANT -> pion_etudiant -> etudiant
+      //  String rolePion =  casePlateau.getRole().name().toLowerCase(); // PION_ETUDIANT -> pion_etudiant -> etudiant
+        String rolePion =  null;
+        ROLEPION rp = casePlateau.getRole();
+        switch(rp) {
+            case PION_ETUDIANT:
+                rolePion = "etudiant";
+                break;
+            case PION_MAITRE:
+                rolePion = "maitre";
+                break;
+        }
 
-            String suite = nomCouleurPion + "_" + rolePion + ".png";
+
+
+        String suite = nomCouleurPion + "_" + rolePion + ".png";
 
             Path rinel = Path.of(PATH_DEBUT_PION.toString() + suite);
             System.err.println(rinel);

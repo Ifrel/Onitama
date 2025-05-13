@@ -8,11 +8,9 @@ import java.awt.*;
 /**
  * Représente une case du plateau de jeu, pouvant contenir un pion ou rien. */
 public class CasePlateau {
-    /**L'instance unique de la classe {@code CasePlateau}. Elle est initialisée à {@code null}    */
-    private static CasePlateau instance;
-
     Jeu jeu;
     Point position;
+
 
     public static enum TYPE_ELEMENT_SUR_CASE {
         VIDE,
@@ -23,27 +21,10 @@ public class CasePlateau {
 
 
 
-
-
-
-    private CasePlateau(Jeu jeu){
+    CasePlateau(Jeu jeu, Point position){
         this.jeu = jeu;
-        this.position = new Point();
+        this.position = position;
         // Le constructeur est privé pour implémenter le pattern Singleton.
-    }
-
-
-
-    /**
-     * Retourne l'instance unique de la classe {@code CasePlateau}.
-     * Si aucune instance n'existe, une nouvelle est créée avant d'être retournée.
-     *
-     * @return L'instance unique de {@code CasePlateau}.     */
-    public static CasePlateau getInstance(Jeu jeu) {
-        if (instance == null) {
-            instance = new CasePlateau(jeu);
-        }
-        return instance;
     }
 
 
@@ -83,11 +64,8 @@ public class CasePlateau {
     }
 
 
-    public CasePlateau getCasePlateau(int row, int col) {
-        this.position.x = row;
-        this.position.y = col;
-        return instance;
+    public Point getCoordonne() {
+        return position;
     }
-
 
 }
