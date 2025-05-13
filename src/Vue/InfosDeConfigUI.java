@@ -3,6 +3,7 @@ package Vue;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static Global.Config.*;
 
@@ -20,12 +21,13 @@ public class InfosDeConfigUI {
     /**
      * L'instance unique de la classe {@code InfosDeConfigUI}. Elle est initialisée à {@code null}    */
     private static InfosDeConfigUI instance;
+    private static final Logger logger = Logger.getLogger(InfosDeConfigUI.class.getName());
 
     private String nomCouleurPionJoueur1;
     private String nomCouleurPionJoueur2;
 
-    private Color CouleurPionJoueur1;
-    private Color CouleurPionJoueur2;
+    private Color couleurPionJoueur1;
+    private Color couleurPionJoueur2;
     private Color couleurPlateauDejeu       = COULEUR_PLATEAU_DE_JEU;
     private Color couleurCaseTerrain        = COULEUR_CASE_TERRAIN;
     private Color couleurCaseMaitreJoueur1  = COULEUR_CASE_MAITRE_JOUEUR_1;
@@ -45,8 +47,8 @@ public class InfosDeConfigUI {
     private boolean couperToutSon           = false;
 
     // Pour la couleur aléatoire
-    Color BLEU = new Color(22, 118, 214);
-    Color ROUGE = new Color(221, 103, 103);
+    Color BLEU = new Color(86, 155, 223);
+    Color ROUGE = new Color(219, 111, 61);
     Color NOIRE = new Color(1,1,1);
     Map<Color, String> nomsCouleurs = new HashMap<>();
 
@@ -58,14 +60,15 @@ public class InfosDeConfigUI {
     private InfosDeConfigUI() {
         List<Color> valeurs = new ArrayList<>(Arrays.asList(BLEU, ROUGE, NOIRE));
         Collections.shuffle(valeurs); // Mélange aléatoire
-        this.CouleurPionJoueur1 = valeurs.get(0);
-        this.CouleurPionJoueur2 = valeurs.get(1);
+        this.couleurPionJoueur1 = valeurs.get(0);
+        this.couleurPionJoueur2 = valeurs.get(1);
 
-        this.nomsCouleurs.put(BLEU, "BLEU");
-        this.nomsCouleurs.put(ROUGE, "ROUGE");
-        this.nomsCouleurs.put(NOIRE, "NOIRE");
-        this.nomCouleurPionJoueur1 = nomsCouleurs.get(CouleurPionJoueur1);
-        this.nomCouleurPionJoueur2 = nomsCouleurs.get(CouleurPionJoueur2);
+        this.nomsCouleurs.put(BLEU, "bleu");
+        this.nomsCouleurs.put(ROUGE, "rouge");
+        this.nomsCouleurs.put(NOIRE, "noir");
+        this.nomCouleurPionJoueur1 = nomsCouleurs.get(couleurPionJoueur1);
+        this.nomCouleurPionJoueur2 = nomsCouleurs.get(couleurPionJoueur2);
+        afficherEtatConfigUI();
         // Le constructeur est privé pour implémenter le pattern Singleton.
     }
 
@@ -374,7 +377,7 @@ public class InfosDeConfigUI {
      * @return la couleur du pion du joueur 1
      */
     public Color getCouleurPionJoueur1() {
-        return CouleurPionJoueur1;
+        return couleurPionJoueur1;
     }
 
 
@@ -384,7 +387,7 @@ public class InfosDeConfigUI {
      * @param couleurPionJoueur1 la nouvelle couleur à affecter
      */
     public void setCouleurPionJoueur1(Color couleurPionJoueur1) {
-        CouleurPionJoueur1 = couleurPionJoueur1;
+        this.couleurPionJoueur1 = couleurPionJoueur1;
     }
 
 
@@ -394,7 +397,7 @@ public class InfosDeConfigUI {
      * @return la couleur du pion du joueur 2
      */
     public Color getCouleurPionJoueur2() {
-        return CouleurPionJoueur2;
+        return couleurPionJoueur2;
     }
 
 
@@ -404,7 +407,37 @@ public class InfosDeConfigUI {
      * @param couleurPionJoueur2 la nouvelle couleur à affecter
      */
     public void setCouleurPionJoueur2(Color couleurPionJoueur2) {
-        CouleurPionJoueur2 = couleurPionJoueur2;
+        this.couleurPionJoueur2 = couleurPionJoueur2;
     }
 
+
+    public void afficherEtatConfigUI(){
+        logger.info("\nnomCouleurPionJoueur1 :" + nomCouleurPionJoueur1+
+                        "\nnomCouleurPionJoueur2 :"+ nomCouleurPionJoueur2 +
+                        "\ncouleurPionJoueur1 :"+ couleurPionJoueur1 +
+                        "\ncouleurPionJoueur2 :" + couleurPionJoueur2 +
+                        "\ncouleurPlateauDejeu :" + couleurPlateauDejeu +
+                        "\ncouleurCaseTerrain :" + couleurCaseTerrain +
+                        "\ncouleurCaseMaitreJoueur1 :" + couleurCaseMaitreJoueur1 +
+                        "\ncouleurCaseMaitreJoueur2 :" + couleurCaseMaitreJoueur2 +
+                        "\ncouleurCaseEleveJoueur1 :" + couleurCaseEleveJoueur1 +
+                        "\ncouleurCaseEleveJoueur2 :" + couleurCaseEleveJoueur2 +
+                        "\ncouleurBlocMenu1 :" + couleurBlocMenu1 +
+                        "\ncouleurBlocMenu2 :" + couleurBlocMenu2 +
+                        "\nvitesseAnimation :" + vitesseAnimation +
+                        "\nanimerDeplacementPiece :" + animerDeplacementPiece +
+                        "\nanimerSurbrillace :" + animerSurbrillace +
+                        "\nvolumeGeneral :" + volumeGeneral +
+                        "\nvolumeEffetSonore :" + volumeEffetSonore +
+                        "\nvolumeMusique :" +  volumeMusique+
+                        "\ncouperToutSon :" + couperToutSon
+        );
+
+    }
+
+
+    public String getNomCouleurPionJoueur(int idJoueur) {
+        if (idJoueur == 1) return getNomCouleurPionJoueur1();
+        else return getNomCouleurPionJoueur2();
+    }
 }
