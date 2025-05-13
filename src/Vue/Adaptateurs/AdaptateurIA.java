@@ -1,4 +1,4 @@
-package Vue;
+package Vue.Adaptateurs;
 /*
  * Sokoban - Encore une nouvelle version (à but pédagogique) du célèbre jeu
  * Copyright (C) 2018 Guillaume Huard
@@ -25,6 +25,8 @@ package Vue;
  *          Domaine universitaire
  *          38401 Saint Martin d'Hères
  */
+
+import Vue.CollecteurEvenements;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
