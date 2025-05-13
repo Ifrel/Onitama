@@ -79,6 +79,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
         creerButtonsCartes();
         initialiserInterface();
+
+        miseAJour();
     }
 
 
@@ -238,7 +240,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
             Carte carte = jeu.getCartesSurLeTerrain(i);
             BoutonAvecImage boutonCarte = creerBoutonAvecImage(PATH_CARTE_DRAGON);
             configurerBoutonCarte(boutonCarte, carte );
-            boutonCarte.bouton.addActionListener(new AdaptateurCarte(carte, i, collecteurEv));
+            boutonCarte.bouton.addActionListener(new AdaptateurCarte(i, carte, jeu.getCartesJoueurCourant(), collecteurEv));
             buttonsCartes[i] = boutonCarte;
         }
     }
@@ -538,7 +540,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     // Met à jour l'état des boutons Annuler/Refaire
     private void updateUndoRedoButtons() {
         if (jeu != null && annuler != null && refaire != null) {
-            // Suppose que jeu.peutAnnuler() et jeu.peutRefaire() existent et retournent boolean
             annuler.setEnabled(jeu.peutAnnulerCoup());
             refaire.setEnabled(jeu.peutRefaireCoup());
         }

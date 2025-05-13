@@ -60,8 +60,6 @@ public class Jeu extends Observable {
         idJoueurCourant = 1;
         numRound = 1;
         partieFinie = false;
-
-        casePlateau = CasePlateau.getInstance(this);
     }
 
 
@@ -446,7 +444,7 @@ public class Jeu extends Observable {
     }
 
     public CasePlateau getCasePlateau(int row, int col) {
-        return casePlateau.getCasePlateau(row, col);
+        return new CasePlateau(this,new Point(row,col));
     }
 
     public Carte getCartesSurLeTerrain(int i) {

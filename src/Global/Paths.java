@@ -75,6 +75,6 @@ public class Paths {
     /********************************************
      *              DEBUT PATHS                      *
      *******************************************/
-    public static Path PATH_DEBUT_PION = Path.of("res/vue/images/pions/pion_");
+    public static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions", "pion_");
 
 }
