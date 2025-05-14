@@ -894,7 +894,7 @@ public class Jeu extends Observable {
         }
     }
 
-    public void jouerCoup(Coup c) {
+    public boolean jouerCoup(Coup c) {
         try {
             if (pionSelectionne == null) {
                 throw new IllegalStateException("Il faut d'abord choisir un pion avant de jouer un Coup");
@@ -902,7 +902,7 @@ public class Jeu extends Observable {
             if (c == null) {
                 logger.info("Aucun coup fourni, au tour du joueur suivant");
                 changerJoueur();
-                return;
+                return false;
             }
 
             faireSetup();
@@ -917,7 +917,7 @@ public class Jeu extends Observable {
 
             if (! estDansListeDeCoups(coupsPossibles, c)) {
                 logger.info("Le coup fourni est invalide, il ne sera pas joué");
-                return;
+                return false;
             }
 
             // met à jour la grille
@@ -932,7 +932,7 @@ public class Jeu extends Observable {
                 partieFinie = true;
                 logger.info("Le joueur" + getIdJoueurCourant() + " a gagné !!!!!!!!!");
                 metAJour();
-                return;
+                return true;
             }
 
 
@@ -945,6 +945,7 @@ public class Jeu extends Observable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
 
