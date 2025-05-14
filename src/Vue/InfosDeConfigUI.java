@@ -47,8 +47,8 @@ public class InfosDeConfigUI {
     private boolean couperToutSon           = false;
 
     // Pour la couleur aléatoire
-    Color BLEU = new Color(86, 155, 223);
-    Color ROUGE = new Color(219, 111, 61);
+    Color BLEU = new Color(26, 67, 104);
+    Color ROUGE = new Color(200, 85, 27);
     Color NOIRE = new Color(1,1,1);
     Map<Color, String> nomsCouleurs = new HashMap<>();
 
@@ -299,7 +299,7 @@ public class InfosDeConfigUI {
     /**
      * Obtient le volume général de l'application.
      * @return Le volume général (un entier entre 0 et 100).    */
-    public int getVolumeGeneral() {
+    public int getConfigSonVolumeGeneral() {
         return volumeGeneral;
     }
 
@@ -307,7 +307,7 @@ public class InfosDeConfigUI {
     /**
      * Définit le volume général de l'application.
      * @param volumeGeneral Le nouveau volume général (un entier entre 0 et 100).    */
-    public void setVolumeGeneral(int volumeGeneral) {
+    public void setConfigSonVolumeGeneral(int volumeGeneral) {
         this.volumeGeneral = volumeGeneral;
     }
 
@@ -315,7 +315,7 @@ public class InfosDeConfigUI {
     /**
      * Obtient le volume de la musique de fond.
      * @return Le volume de la musique (un entier entre 0 et 100).     */
-    public int getVolumeMusique() {
+    public int getConfigSonVolumeMusique() {
         return volumeMusique;
     }
 
@@ -324,7 +324,7 @@ public class InfosDeConfigUI {
     /**
      * Définit le volume de la musique de fond.
      * @param volumeMusique Le nouveau volume de la musique (un entier entre 0 et 100).     */
-    public void setVolumeMusique(int volumeMusique) {
+    public void setConfigSonVolumeMusique(int volumeMusique) {
         this.volumeMusique = volumeMusique;
     }
 
@@ -332,7 +332,7 @@ public class InfosDeConfigUI {
     /**
      * Obtient le volume des effets sonores.
      * @return Le volume des effets sonores (un entier entre 0 et 100).     */
-    public int getVolumeEffetSonore() {
+    public int getConfigSonVolumeEffets() {
         return volumeEffetSonore;
     }
 
@@ -340,7 +340,7 @@ public class InfosDeConfigUI {
     /**
      * Définit le volume des effets sonores.
      * @param volumeEffetSonore Le nouveau volume des effets sonores (un entier entre 0 et 100).    */
-    public void setVolumeEffetSonore(int volumeEffetSonore) {
+    public void setConfigSonVolumeEffets(int volumeEffetSonore) {
         this.volumeEffetSonore = volumeEffetSonore;
     }
 
@@ -348,7 +348,7 @@ public class InfosDeConfigUI {
     /**
      * Vérifie si tout le son est coupé.
      * @return {@code true} si tout le son est coupé, {@code false} sinon.    */
-    public boolean isCouperToutSon() {
+    public boolean getConfigSonMuet() {
         return couperToutSon;
     }
 
