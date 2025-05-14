@@ -128,14 +128,16 @@ class JeuTest {
                     assertEquals((i == 0 ? ID_JOUEUR_1 : ID_JOUEUR_2), jeu.getProprietairePionAt(i, j));
                 }
             }
+
             System.err.println(jeu.toString());
-            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(0));
-            jeu.jouerCoup(jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(0, 2), new Point(1, 2)));
+            jeu.preparerCoup(0, new Point(0, 2));
+            jeu.jouerCoup(new Coup(new Point(0, 2), new Point(1, 2)));
             System.err.println(jeu.toString());
-            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(1));
-            jeu.jouerCoup(jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(4, 0), new Point(3, 1)));
+
+            jeu.preparerCoup(1, new Point(4, 0));
+            jeu.jouerCoup(new Coup(new Point(4, 0), new Point(3, 1)));
             System.err.println(jeu.toString());
-            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(0));
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

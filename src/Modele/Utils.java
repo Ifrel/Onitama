@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 
 import static Global.Config.*;
-import static Global.Config.ROLEPION.*;
+import static Global.Config.ROLEPION.PION_ETUDIANT;
 
 /**
  * Classe qui a pour but de stocker des méthodes utilitaires et aussi génériques que possibles,
@@ -134,8 +134,7 @@ public class Utils {
         }
 
         int x, y;
-        for (int i = 0; i < deplacements.size(); i++) {
-            Point deplacement = deplacements.get(i);
+        for (Point deplacement : deplacements) {
             x = positionPion.x + deplacement.x * direction.x;
             y = positionPion.y + deplacement.y * direction.y;
 
@@ -161,4 +160,21 @@ public class Utils {
         return coups;
     }
 
+
+    /**
+     * Vérifie si un coup est présent dans une liste de coups
+     *
+     * @param listeCoups liste de coups contenant ou non le coup
+     * @param coup       coup dont on veut vérifier l'appartenance à la liste de coups
+     * @return vrai si le coup appartient à la liste, faux sinon
+     */
+    public static boolean estDansListeDeCoups(List<Coup> listeCoups, Coup coup) {
+
+        for (Coup c : listeCoups) {
+            if(c.equals(coup)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -12,7 +12,8 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
-import static Global.Config.ROLEPION.*;
+import static Global.Config.ROLEPION.PION_ETUDIANT;
+import static Global.Config.ROLEPION.PION_MAITRE;
 import static Global.Config.TYPECARTE.*;
 import static Modele.Utils.*;
 
@@ -24,13 +25,15 @@ public class Jeu extends Observable {
     private IA IA_1, IA_2;
     private int lignes, colonnes;
     private int idJoueurCourant; // identifiant du joueur courant
-    private Carte carteSelectionee;
+    private int carteSelectionee;
     private long tempsJeu; // temps écoulé depuis le début de la partie
     private int numRound; // à quel round on en est
     private boolean partieFinie;
     private boolean IA1Activee, IA2Activee;
     private boolean partieACommence;
     private boolean roiMort;
+    private Pion pionSelectionne;
+
 
     // --- CARTES -- //
     private List<Carte> toutesLesCartes; //Toutes les cartes confondues
@@ -153,7 +156,8 @@ public class Jeu extends Observable {
             joueur1 = new Joueur(1, "Joueur 1");
             joueur2 = new Joueur(2, "Joueur 2");
             toutesLesCartes = initCartes();
-            carteSelectionee = null;
+            carteSelectionee = 0;
+            pionSelectionne = null;
             partieACommence = false;
             roiMort = false;
 
@@ -492,12 +496,12 @@ public class Jeu extends Observable {
         carteEchange = c;
     }
 
-    public Carte getCarteSelectionnee() {
-        return carteSelectionee;
+    public int getCarteSelectionnee() {
+        return this.carteSelectionee;
     }
 
-    public void setCarteSelectionnee(Carte c) {
-        carteSelectionee = c;
+    public Pion getPionSelectionne() {
+        return this.pionSelectionne;
     }
 
     public boolean estPionDuJoueurCourant(int i, int j) throws CaseVideException {
@@ -698,30 +702,34 @@ public class Jeu extends Observable {
 
     }
 
-    public Coup preparerCoup(Carte carteSelectionee, Point depart, Point arrivee) {
-        Coup c = new Coup(depart, arrivee);
-        List<Coup> coupsPossibles = getCoupsPossibles(carteSelectionee, depart);
+    /**
+     * Séléctionne une carte et un pion pour préparer un déplacement
+     *
+     * @param carteSelectionee
+     * @param pionPosition
+     */
+    public void preparerCoup(int carteSelectionee, Point pionPosition) {
+        try {
+            if (estCaseVide(pionPosition.x, pionPosition.y)) {
+                logger.info("La case séléctionnée n'est pas un pion");
+                return;
+            }
+            if (getProprietairePionAt(pionPosition.x, pionPosition.y) != getIdJoueurCourant()) {
+                logger.info("La pion séléctionné n'est pas au joueur courant");
+                return;
+            }
+            this.carteSelectionee = carteSelectionee;
+            this.pionSelectionne = getCase(pionPosition.x, pionPosition.y);
+            metAJour();
+        } catch (CaseVideException ignored) {
 
-
-       for (Coup cp : coupsPossibles) {
-           if (cp.equals(c)) {
-               return c;
-           }
-       }
-       return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Coup preparerCoup(Carte carteSelectionee, CasePlateau depart, CasePlateau arrivee) {
-        Point d = depart.position;
-        Point a = arrivee.position;
-        Coup c = new Coup(d, a);
-        List<Coup> coupsPossibles = getCoupsPossibles(carteSelectionee, d);
-
-        if (! coupsPossibles.contains(c)) {
-            return null;
-        }
-
-        return c;
+    private void resetPionSelectionne() {
+        this.pionSelectionne = null;
     }
 
     private boolean verifierVictoire() {
@@ -740,11 +748,12 @@ public class Jeu extends Observable {
 
     public void jouerCoup(Coup c) {
         try {
-            if (carteSelectionee == null) {
-                throw new IllegalStateException("Il faut d'abord choisir une carte avant de jouer un Coup");
+            if (pionSelectionne == null) {
+                throw new IllegalStateException("Il faut d'abord choisir un pion avant de jouer un Coup");
             }
             if (c == null) {
-                logger.info("Coup invalide");
+                logger.info("Aucun coup fourni, au tour du joueur suivant");
+                changerJoueur();
                 return;
             }
 
@@ -755,15 +764,20 @@ public class Jeu extends Observable {
             int x, y;
             x = arrivee.x;
             y = arrivee.y;
-            verifieSiDansGrille(x, y);
 
-            if (!estCaseVide(x, y) && getProprietairePionAt(x, y) == getIdJoueurCourant()) {
-                throw new DeplacementIllegalExcpetion("Impossible de capturer son propre pion");
+            List<Coup> coupsPossibles = getCoupsPossibles(getCartesJoueurCourant().get(this.carteSelectionee), getPionSelectionne().getPosition());
+
+            if (! estDansListeDeCoups(coupsPossibles, c)) {
+                logger.info("Le coup fourni est invalide, il ne sera pas joué");
+                return;
             }
 
             // met à jour la grille
             deplacerPion(depart, arrivee);
             historique.add(c);
+
+            resetPionSelectionne();
+
             if(verifierVictoire()) {
                 partieFinie = true;
                 metAJour();
@@ -771,7 +785,7 @@ public class Jeu extends Observable {
             }
 
 
-            echangerCartes(getJoueurCourant(), getCarteSelectionnee());
+            echangerCartes(getJoueurCourant(), getCartesJoueurCourant().get(getCarteSelectionnee()));
             changerJoueur();
             //carteSelectionee = null;
 
