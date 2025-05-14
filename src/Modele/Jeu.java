@@ -341,12 +341,55 @@ public class Jeu extends Observable {
 
         }
         Coup c = historique.annuler();
+        Point depart = c.getDepart();
+        Point arrivee = c.getArrivee();
+        boolean pionMange = c.getPionMange();
+        //Restaurer la grille avant de jouer le coup
+        restaurerGrille(depart,arrivee,pionMange);
+        //Restaurer la main du joueur avant de joueur le coup
+        restaurerMainJoueur(c.getJoueurQuiJoue(), c.getCarteJoue(), c.getCarteEchange());
+        //Restaurer le joueur qui avait joué le coup
+        idJoueurCourant = c.getJoueurQuiJoue();
 
         // faire des choses avec le coup
 
         // met à jour l'interface
         metAJour();
     }
+
+    private void restaurerMainJoueur(int joueurQuiJoue, Carte carteJoue, Carte carteEchangeCoup) {
+        Joueur joueur;
+        if(joueurQuiJoue == 1) joueur = joueur1;
+        else joueur = joueur2;
+        joueur.removeCard(carteEchangeCoup);
+        joueur.addCard(carteEchange);
+        carteEchange = carteEchangeCoup;
+
+    }
+
+
+    private void restaurerGrille(Point depart, Point arrivee, boolean pionMange) {
+        //Mon pion de ce coup est maintenant à la position arrivee (car le coup a été joué)
+        // Il faut le deplacer à la position départ
+        //recupération du pion à la case vide
+        Pion p = getCase((int)arrivee.getX(), (int)arrivee.getY());
+        //Le mettre à la case du départ
+        setCase((int)depart.getX(), (int)depart.getY(), p);
+        setCase((int)arrivee.getX(), (int) arrivee.getY(), null);
+        //Si un pion a été mangé
+        if(pionMange)
+        {
+            //Necessairement, il s'agit d'un pion du joueur actuel (car c'est celui qui doit jouer maintenant, autrement dit c'est celui qui n'a pas joué le dernier coup)
+            //et nécessairement, il s'agit d'un pion étudiant (sinon la partie est terminé!)
+            //La position de ce pion est la position d'arrivée (car il a été mangé)
+            Pion pionM = new Pion(idJoueurCourant, arrivee, PION_ETUDIANT);
+            setCase((int) arrivee.getX(), (int) arrivee.getY(), pionM);
+        }
+        majPions();
+
+
+    }
+
 
     public void refaireCoup() {
         if (!peutRefaireCoup()) {
@@ -355,7 +398,7 @@ public class Jeu extends Observable {
         }
 
         Coup c = historique.refaire();
-
+        jouerCoup(c);
         // faire des choses avec le coup
 
         // met à jour l'interface
@@ -640,13 +683,14 @@ public class Jeu extends Observable {
 
     // code santiago
     // --------------------
-    private void deplacerPion(Point depart, Point arrivee) {
+    private boolean deplacerPion(Point depart, Point arrivee) {
         try {
+            boolean aManger = false;
             // Récupère l'éventuel pion présent sur la case d'arrivée
             Pion cible = getCase(arrivee.x, arrivee.y);
             // Si c'est un pion adverse, il sera écrasé par le setCase suivant
             if (cible != null && cible.getIDProprietaire() != idJoueurCourant) {
-
+                aManger = true;
             }
             // On déplace le pion
             Pion p = getCase(depart.x, depart.y);
@@ -659,7 +703,9 @@ public class Jeu extends Observable {
             p.setNewPosition(arrivee);
             // Mise à jour des listes de pions
             majPions();
+            return aManger;
         } catch (CaseVideException ignored) {
+            return false;
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -706,6 +752,35 @@ public class Jeu extends Observable {
         joueur.addCard(nouvelleCarteJoueurCourant);
         nouvelleCarteJoueurCourant.setProprietaire(joueur.getId());
 
+
+    
+
+    }
+
+
+
+    private Carte getCarteSelectionneJoueur()
+    {
+        if (carteSelectionee == 0)
+        {
+            return joueur1.getCartesEnMain().get(0);
+        }
+        else if(carteSelectionee == 1)
+        {
+            return joueur1.getCartesEnMain().get(1); //Honnetement y'a pas besoin d'une liste de cartes qui sera toujours égales à 2, vaut mieux créer deux variables 
+        }
+        else if (carteSelectionee == 2)
+        {
+            return joueur2.getCartesEnMain().get(0);
+        }
+        else if(carteSelectionee == 3)
+        {
+            return joueur2.getCartesEnMain().get(1);
+        }
+        else
+        {
+            return null;
+        }
     }
     // --------------------
 
@@ -812,7 +887,7 @@ public class Jeu extends Observable {
                     return;
                 }
                 // peut etre utilisée par l'IA directement d'où son existence (?)
-                jouerCoup(new Coup(getPionSelectionne().getPosition(), p));
+                jouerCoup(new Coup(getPionSelectionne().getPosition(), p, idJoueurCourant, getCarteSelectionneJoueur(),carteEchange));
                 etatGrille = DEFAUT;
                 break;
 
@@ -846,7 +921,8 @@ public class Jeu extends Observable {
             }
 
             // met à jour la grille
-            deplacerPion(depart, arrivee);
+            boolean mangerPion = deplacerPion(depart, arrivee);
+            c.setAMangerPion(mangerPion);
             historique.add(c);
             this.dernierCoupJoue = c;
 
