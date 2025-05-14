@@ -6,6 +6,12 @@ import Modele.IA.IA;
 import Patterns.Observable;
 
 import java.awt.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -407,12 +413,31 @@ public class Jeu extends Observable {
 
     // ######### CHARGER / SAUVEGARDER ########
 
-    public void sauvegarderJeu() {
-        return;
+    public void sauvegarderJeu() throws FileNotFoundException, IOException {
+        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("res/fichier_de_sauvegarde/fich1.txt")))
+        {
+            out.writeObject(idJoueurCourant);
+            out.writeObject(grille);
+            out.writeObject(joueur1);
+            out.writeObject(joueur2);
+            out.writeObject(carteEchange);
+            out.writeObject(historique);
+
+        }
     }
 
-    public void chargerJeu(String fichier) {
-        return;
+    @SuppressWarnings("unchecked")
+    public void chargerJeu(String fichier) throws FileNotFoundException, IOException, ClassNotFoundException {
+        try(ObjectInputStream in = new ObjectInputStream(new FileInputStream(fichier)))
+        {
+            idJoueurCourant =(int) in.readObject();
+            grille = (Pion[][]) in.readObject();
+            joueur1 = (Joueur) in.readObject();
+            joueur2 = (Joueur) in.readObject();
+            carteEchange = (Carte) in.readObject();
+            historique = (Historique<Coup>) in.readObject();
+            majPions();
+        }
     }
 
     public List<String> listerSauvegardes() {

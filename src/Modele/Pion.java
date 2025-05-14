@@ -7,11 +7,12 @@ import static Global.Config.*;
 import static Global.Config.ROLEPION.*;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * Représente un pion dans le modèle du jeu.
  * Un pion a une position, une couleur, un propriétaire, une image et un type spécifique. */
-public class Pion {
+public class Pion implements Serializable{
     private final int proprietaire;
     private final ROLEPION role;
     private Point position;

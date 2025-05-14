@@ -5,6 +5,7 @@ import static Global.Config.MOUVEMENTCARTE;
 import static Global.Paths.PATH_CARTE_TIGRE;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.Objects;
  * Cette classe est axée sur les propriétés de la carte; la logique d'application de l'effet
  * sera généralement gérée ailleurs (par exemple, dans la classe Jeu ou un gestionnaire d'effets).
  */
-public class Carte {
+public class Carte implements Serializable{
     private String nom;                 // Nom unique ou identifiant de la carte
     private TYPECARTE type;             // Type de la carte
     private int proprietaire;

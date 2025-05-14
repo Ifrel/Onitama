@@ -1,5 +1,6 @@
 package Modele; // Exemple de package, ajustez si nécessaire
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +13,7 @@ import static Global.Config.*;
  * Représente un joueur participant à la partie.
  * Un joueur possède un nom, une couleur, un identifiant, un score,
  * une main de cartes et potentiellement des pions sur le plateau. */
-public class Joueur {
+public class Joueur implements Serializable{
     private String nom;
     private final int id;
     private int score;
