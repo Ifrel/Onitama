@@ -80,7 +80,7 @@ public class CasePlateau {
     }
 
 
-    public Point getCoordonne() {
+    public Point getCoordonnee() {
         return position;
     }
 

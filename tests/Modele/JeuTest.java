@@ -140,6 +140,21 @@ class JeuTest {
             jeu.jouerCoup(new Coup(new Point(4, 0), new Point(3, 1)));
             System.err.println(jeu.toString());
 
+
+            jeu.setCarteSelectionnee(0);
+            jeu.selectionneCase(new Point(1, 2));
+            System.err.println(jeu.toString());
+
+            jeu.selectionneCase(new Point(2, 1));
+            System.err.println(jeu.toString());
+
+            jeu.setCarteSelectionnee(1);
+            jeu.selectionneCase(new Point(3, 1));
+            System.err.println(jeu.toString());
+            jeu.selectionneCase(new Point(2, 1));
+            System.err.println(jeu.toString());
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

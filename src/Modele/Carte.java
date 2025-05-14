@@ -41,12 +41,12 @@ public class Carte {
     public TYPECARTE getType() { return type; }
 
 
-    public List<Coup> getMoves(Point origin)
+    public List<Coup> getMoves(Point origin, int joueurAct, Carte CE)
     {
         List<Coup> allMoves = new ArrayList<Coup>();
         for (Point p : MOUVEMENTCARTE.get(type)) {
             Point nouveauPoint = new Point(origin.x + p.x, origin.y + p.y);
-            Coup nouveauCoup = new Coup(origin, nouveauPoint);
+            Coup nouveauCoup = new Coup(origin, nouveauPoint,joueurAct, this,CE );
             allMoves.add(nouveauCoup);
         }
         return allMoves;
