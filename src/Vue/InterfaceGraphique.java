@@ -93,7 +93,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
 
 
     private void initialiserEcranDeDemarage(){
-        ecranDeDemarrage = new EcranDeDemarrage(jeu, collecteurEvent, this);
+        ecranDeDemarrage = new EcranDeDemarrage(jeu, this);
         ecranDeDemarrage.setBounds(0, 0, frame.getWidth(), frame.getHeight());
     }
 

@@ -1,5 +1,6 @@
 package Vue;
 
+import Controleur.ControleurEcranDeDemarrage;
 import Global.Config;
 import Modele.Jeu;
 import Vue.Adaptateurs.AdaptateurBoutonEntrer;
@@ -32,7 +33,7 @@ public class EcranDeDemarrage extends JTabbedPane {
     private final CollecteurEvenements collecteurEvenements;
     private final InterfaceGraphique interfaceGraphique;
 
-    // --- Onglet General
+    // Onglet General
     private boolean modeAutoIA;
     JButton boutonModeAuto;
     JComboBox<String> listeDeroulanteReprendre, listeDeroulanteIA;
@@ -46,10 +47,7 @@ public class EcranDeDemarrage extends JTabbedPane {
     private final Color COLOR_ONGLET_IA_1 = new Color(127, 157, 172);
     private final Color COLOR_ONGLET_IA_2 = new Color(112, 112, 112);
     private final int COLONNE_ETIQUETTE = 4;
-    private final int COLONNE_COMPOSANT = 5;
     private final String POLICE_1 = "Arial";
-    private final String POLICE_2 = "Times New Roman";
-    private final String POLICE_3 = "Georgia";
     private final Font FONT_TITRE = new Font(POLICE_1, Font.BOLD, 40);
     private final Font FONT_LABEL = new Font(POLICE_1, Font.PLAIN, 25);
     private final Font FONT_COMPOSANT = new Font(POLICE_1, Font.PLAIN, 20);
@@ -57,9 +55,9 @@ public class EcranDeDemarrage extends JTabbedPane {
     private final Map<CiblesDesCouleurs, Color> couleursInitiales = new HashMap<>();
 
 
-    public EcranDeDemarrage(Jeu jeu, CollecteurEvenements collecteurEvenements, InterfaceGraphique interfaceGraphique) {
+    public EcranDeDemarrage(Jeu jeu, InterfaceGraphique interfaceGraphique) {
         this.jeu = jeu;
-        this.collecteurEvenements = collecteurEvenements;
+        this.collecteurEvenements = new ControleurEcranDeDemarrage(jeu);
         this.interfaceGraphique = interfaceGraphique;
         this.modeAutoIA = false;
         this.adaptateurBoutonEntrer = new AdaptateurBoutonEntrer(collecteurEvenements, interfaceGraphique);
@@ -535,8 +533,8 @@ public class EcranDeDemarrage extends JTabbedPane {
                 // Peut-être ajuster les autres sliders ou l'état Muet
             }
         });
-        // TODO potentiellement une valeur par défaut
-        //  sliderVolumeGeneral.setValue(jeu.getConfigSonVolumeGeneral());
+        // potentiellement une valeur par défaut
+          sliderVolumeGeneral.setValue(infosDeConfigUI.getConfigSonVolumeGeneral());
         ajouterLigne(ongletSon, LBL_VOLUME_GENERAL, sliderVolumeGeneral, ligneCourante++, FONT_LABEL);
 
         // --- Volume Effets Sonores ---
@@ -549,8 +547,8 @@ public class EcranDeDemarrage extends JTabbedPane {
                 collecteurEvenements.setSonVolumeEffets(sliderVolumeEffets.getValue());
             }
         });
-        // TODO potentiellement une valeur par défaut
-        //  sliderVolumeEffets.setValue(jeu.getConfigSonVolumeEffets());
+        // potentiellement une valeur par défaut
+        sliderVolumeEffets.setValue(infosDeConfigUI.getConfigSonVolumeEffets());
         ajouterLigne(ongletSon, LBL_VOLUME_EFFETS, sliderVolumeEffets, ligneCourante++, FONT_LABEL);
 
 
@@ -564,8 +562,8 @@ public class EcranDeDemarrage extends JTabbedPane {
                 collecteurEvenements.setSonVolumeMusique(sliderVolumeMusique.getValue());
             }
         });
-        // TODO potentiellement une valeur par défaut
-        //  sliderVolumeMusique.setValue(jeu.getConfigSonVolumeMusique());
+        // potentiellement une valeur par défaut
+        sliderVolumeMusique.setValue(infosDeConfigUI.getConfigSonVolumeMusique());
         ajouterLigne(ongletSon, LBL_VOLUME_MUSIQUE, sliderVolumeMusique, ligneCourante++, FONT_LABEL);
 
 
@@ -580,12 +578,12 @@ public class EcranDeDemarrage extends JTabbedPane {
             sliderVolumeEffets.setEnabled(!estMuet);
             sliderVolumeMusique.setEnabled(!estMuet);
         });
-        // TODO potentiellement une valeur par défaut
-        //  boolean isMuted = jeu.getConfigSonMuet();
-        //  checkMuet.setSelected(isMuted);
-        //  sliderVolumeGeneral.setEnabled(!isMuted);
-        //  sliderVolumeEffets.setEnabled(!isMuted);
-        //  sliderVolumeMusique.setEnabled(!isMuted);
+        // potentiellement une valeur par défaut
+          boolean isMuted = infosDeConfigUI.getConfigSonMuet();
+          checkMuet.setSelected(isMuted);
+          sliderVolumeGeneral.setEnabled(!isMuted);
+          sliderVolumeEffets.setEnabled(!isMuted);
+          sliderVolumeMusique.setEnabled(!isMuted);
         ajouterLigne(ongletSon, LBL_SON_MUET, checkMuet, ligneCourante++, FONT_LABEL);
 
 
@@ -627,7 +625,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // --- Contraintes du Composant ---
         GridBagConstraints contraintesComp = new GridBagConstraints();
-        contraintesComp.gridx = COLONNE_COMPOSANT;
+        contraintesComp.gridx = 5;
         contraintesComp.gridy = ligne;
         contraintesComp.anchor = GridBagConstraints.LINE_START; // Aligner le composant à gauche
         contraintesComp.weighty = 0.1;
