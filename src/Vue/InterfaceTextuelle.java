@@ -242,7 +242,7 @@ public class InterfaceTextuelle implements Observateur {
 
                                     if (xDepart >= 0 && xDepart < 5 && yDepart >= 0 && yDepart < 5 && jeu.estPionDuJoueurCourant(xDepart,yDepart)) {
                                         System.out.println("Pion sélectionné à (" + xDepart + ", " + yDepart + ")");
-                                        collecteurEv.setPionSelectionne(xDepart,yDepart);
+                                        collecteurEv.setPionSelectionne(xDepart,yDepart); //Problem ici? N'affiche pas la suite
 
                                         // Étape suivante : demander la position cible
                                         System.out.print("Coordonnées de destination (ex: 1 2) ou Z pour annuler :\n_> ");

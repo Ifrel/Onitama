@@ -128,7 +128,9 @@ public class Utils {
         int idJoueurCourant = jeu.getIdJoueurCourant();
         Point direction;
         if (idJoueurCourant == ID_JOUEUR_1) {
+            
             direction = new Point(-1, -1);
+            
         } else {
             direction = new Point(1, 1);
         }

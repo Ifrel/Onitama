@@ -8,7 +8,7 @@ import java.util.List;
 public class Config {
     // -- MODE INTERFACE --
 
-    public static final boolean MODE_GRAPHIQUE = true;
+    public static final boolean MODE_GRAPHIQUE = false;
 
 
     // -- IA --

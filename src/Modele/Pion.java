@@ -74,4 +74,16 @@ public class Pion {
         return S;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+
+    Pion pion = (Pion) obj;
+
+    if (proprietaire != pion.proprietaire) return false;
+    if (role != pion.role) return false;
+    return (position != null ? position.equals(pion.position) : pion.position == null);
+}
+
 }
