@@ -871,14 +871,14 @@ public class Jeu extends Observable {
     public boolean setPionSelectionne(int x, int y) {
         try {
             if (estCaseVide(x, y)) {
-                logger.info("La case séléctionnée n'est pas un pion");
+                logger.info("La case sélectionnée n'est pas un pion");
                 return false;
             }
             if (getProprietairePionAt(x, y) != getIdJoueurCourant()) {
-                logger.info("La pion séléctionné n'appartient pas au joueur courant");
+                logger.info("La pion sélectionné n'appartient pas au joueur courant");
                 return false;
             }
-            logger.info("Pion à la position (" + x + "," + y + ") séléctionné");
+            logger.info("Pion à la position (" + x + "," + y + ") sélectionné");
             this.pionSelectionne = getCase(x, y);
             metAJour();
             return true;
@@ -892,6 +892,7 @@ public class Jeu extends Observable {
 
     private void resetPionSelectionne() {
         this.pionSelectionne = null;
+        metAJour();
     }
 
     private boolean verifierVictoire() {
@@ -921,6 +922,7 @@ public class Jeu extends Observable {
             case PION_SELECTIONNE:
                 if (getPionSelectionne() != null && getPionSelectionne().getPosition().equals(p)) {
                     resetPionSelectionne();
+                    logger.info("Pion à la position (" + p.x + "," + p.y + ") désélectionné");
                     etatGrille = DEFAUT;
                     return;
                 }
