@@ -702,29 +702,53 @@ public class Jeu extends Observable {
 
     }
 
-    /**
-     * Séléctionne une carte et un pion pour préparer un déplacement
-     *
-     * @param carteSelectionee
-     * @param pionPosition
-     */
-    public void preparerCoup(int carteSelectionee, Point pionPosition) {
+    public void setCarteSelectionee(int c) {
+        if (c > 1 || c < 0) {
+            throw new IllegalStateException("La carte à choisir est une des 2 cartes du joueur courant (0 ou 1), pas " + c);
+        }
+        this.carteSelectionee = c;
+        metAJour();
+    }
+
+    public void setPionSelectionne(Point positionPion) {
         try {
-            if (estCaseVide(pionPosition.x, pionPosition.y)) {
+            if (estCaseVide(positionPion.x, positionPion.y)) {
                 logger.info("La case séléctionnée n'est pas un pion");
                 return;
             }
-            if (getProprietairePionAt(pionPosition.x, pionPosition.y) != getIdJoueurCourant()) {
-                logger.info("La pion séléctionné n'est pas au joueur courant");
+            if (getProprietairePionAt(positionPion.x, positionPion.y) != getIdJoueurCourant()) {
+                logger.info("La pion séléctionné n'appartient pas au joueur courant");
                 return;
             }
-            this.carteSelectionee = carteSelectionee;
-            this.pionSelectionne = getCase(pionPosition.x, pionPosition.y);
+            this.pionSelectionne = getCase(positionPion.x, positionPion.y);
             metAJour();
         } catch (CaseVideException ignored) {
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * Sélectionne un pion à déplacer via ses coordonnées.
+     * @param x Abscisse du pion.
+     * @param y Ordonnée du pion.
+     */
+    public void setPionSelectionne(int x, int y) {
+        try {
+            if (estCaseVide(x, y)) {
+                logger.info("La case séléctionnée n'est pas un pion");
+                return;
+            }
+            if (getProprietairePionAt(x, y) != getIdJoueurCourant()) {
+                logger.info("La pion séléctionné n'appartient pas au joueur courant");
+                return;
+            }
+            this.pionSelectionne = getCase(x, y);
+        } catch (CaseVideException ignored) {
+
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
     }
 
@@ -927,23 +951,6 @@ public class Jeu extends Observable {
     }
 
 
-    /**
-     * Sélectionne un pion à déplacer via ses coordonnées.
-     * @param xDepart Abscisse du pion.
-     * @param yDepart Ordonnée du pion.
-     */
-    public void setPionSelectionne(int xDepart, int yDepart) {
-        //TODO À implémenter
-    }
-
-
-    /**
-     * Sélectionne un pion à déplacer via une instance de Pion.
-     * @param pion Le pion à sélectionner.
-     */
-    public void setPionSelectionne(Pion pion) {
-        //TODO À implémenter
-    }
 
     /**
      * Renvoie la représentation textuelle du jeu

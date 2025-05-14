@@ -191,7 +191,7 @@ public class Mediateur implements CollecteurEvenements {
 
     @Override
     public void setPionSelectionne(Pion pion) {
-        jeu.setPionSelectionne(pion);
+        jeu.setPionSelectionne(pion.getPosition());
     }
 
 }
