@@ -1,6 +1,5 @@
 package Modele.IA;
 
-import Global.Config.NIVEAU_IA;
 import Modele.Carte;
 import Modele.Coup;
 import Modele.Jeu;
@@ -9,6 +8,7 @@ import Modele.Pion;
 import java.util.List;
 import java.util.Random;
 
+import static Global.Config.NIVEAU_IA;
 import static Global.Config.NIVEAU_IA.FAIBLE;
 
 public class IAFaible extends IA {
@@ -32,7 +32,6 @@ public class IAFaible extends IA {
 
         Carte carteChoisie;
         Pion pionChoisi;
-
 
         while (!cartesIA.isEmpty()) {
             carteChoisie = cartesIA.remove(r.nextInt(cartesIA.size()));
@@ -60,4 +59,5 @@ public class IAFaible extends IA {
     public NIVEAU_IA getNiveau() {
         return FAIBLE;
     }
+
 }

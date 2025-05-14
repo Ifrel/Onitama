@@ -18,6 +18,12 @@ public class Config {
         FORT
     }
 
+    public static enum VITESSE_IA {
+        LENTE,
+        MOYENNE,
+        RAPIDE
+    }
+
     public static final int TAILLE_VECTEUR_BITS = 96;
 
     public static final int ID_JOUEUR_1 = 1;
