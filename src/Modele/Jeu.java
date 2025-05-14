@@ -633,7 +633,7 @@ public class Jeu extends Observable {
             // On déplace le pion
             Pion p = getCase(depart.x, depart.y);
             setCase(depart.x, depart.y, null);
-            if (getRolePionAt(arrivee.x, arrivee.y) == PION_MAITRE) {
+            if (! estCaseVide(arrivee.x, arrivee.y) && getRolePionAt(arrivee.x, arrivee.y) == PION_MAITRE) {
                 roiMort = true;
             }
             setCase(arrivee.x, arrivee.y, p);
