@@ -14,7 +14,7 @@ import static Global.Config.ROLEPION;
 /**
  * Représentation compacte de l'état du plateau de jeu à un moment donné de la partie
  */
-public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
+public class EtatPlateau implements Comparable<EtatPlateau> {
     private byte [] config; // 12 octets = 96 bits; BIG ENDIAN
     //  4    4     4    4     4           25 (5 x 5)                 25 (5 x 5)            5     5      5     5      6
     // 1111 1111  1111 1111  1111  1111111111111111111111111  1111111111111111111111111  11111 11111  11111 11111  XXXXXX
@@ -39,7 +39,7 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
     // -> Position Maitres : possible d'utiliser 2 vecteurs de 5 bits car 1 seul maitre par joueur donc aucune ambiguité
 
 
-    public ConfigurationPlateau(int joueurCourantID, Carte carteEnPlus, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
+    public EtatPlateau(int joueurCourantID, Carte carteEnPlus, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
         Objects.requireNonNull(carteEnPlus, "La Carte Supplémentaire ne peut pas valoir null");
         Objects.requireNonNull(cartesJoueur1, "La liste des cartes du joueur 1 ne peut pas valoir null");
         Objects.requireNonNull(cartesJoueur2, "La liste des cartes du joueur 2 ne peut pas valoir null");
@@ -85,7 +85,7 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
 
     }
 
-    public ConfigurationPlateau(byte [] etatJeu) {
+    public EtatPlateau(byte [] etatJeu) {
         Objects.requireNonNull(etatJeu, "L'état du jeu ne peut pas valoir null");
         this.config = etatJeu.clone();
     }
@@ -266,7 +266,7 @@ public class ConfigurationPlateau implements Comparable<ConfigurationPlateau> {
     }
 
     @Override
-    public int compareTo(ConfigurationPlateau cp) {
+    public int compareTo(EtatPlateau cp) {
         return hashCode() - cp.hashCode();
     }
 }
