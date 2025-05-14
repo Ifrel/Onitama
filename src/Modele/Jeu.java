@@ -35,6 +35,7 @@ public class Jeu extends Observable {
     private boolean roiMort;
     private Pion pionSelectionne;
     private ETAT_GRILLE etatGrille;
+    private Coup dernierCoupJoue;
 
 
     // --- CARTES -- //
@@ -164,6 +165,7 @@ public class Jeu extends Observable {
             partieACommence = false;
             roiMort = false;
             etatGrille = DEFAUT;
+            dernierCoupJoue = null;
 
             IA1Activee = IA2Activee = false;
         } catch (Exception e) {
@@ -599,6 +601,10 @@ public class Jeu extends Observable {
         return numRound;
     }
 
+    public Coup getDernierCoupJoue() {
+        return this.dernierCoupJoue;
+    }
+
     public CasePlateau getCasePlateau(int row, int col) {
         return new CasePlateau(this,new Point(row,col));
     }
@@ -842,6 +848,7 @@ public class Jeu extends Observable {
             // met à jour la grille
             deplacerPion(depart, arrivee);
             historique.add(c);
+            this.dernierCoupJoue = c;
 
             resetPionSelectionne();
 
