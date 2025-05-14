@@ -130,12 +130,12 @@ class JeuTest {
             }
 
             System.err.println(jeu.toString());
-            jeu.setCarteSelectionee(0);
+            jeu.setCarteSelectionnee(0);
             jeu.setPionSelectionne(new Point(0, 2));
             jeu.jouerCoup(new Coup(new Point(0, 2), new Point(1, 2)));
             System.err.println(jeu.toString());
 
-            jeu.setCarteSelectionee(1);
+            jeu.setCarteSelectionnee(1);
             jeu.setPionSelectionne(new Point(4, 0));
             jeu.jouerCoup(new Coup(new Point(4, 0), new Point(3, 1)));
             System.err.println(jeu.toString());

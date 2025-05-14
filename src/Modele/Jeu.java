@@ -702,7 +702,7 @@ public class Jeu extends Observable {
 
     }
 
-    public void setCarteSelectionee(int c) {
+    public void setCarteSelectionnee(int c) {
         if (c > 1 || c < 0) {
             throw new IllegalStateException("La carte à choisir est une des 2 cartes du joueur courant (0 ou 1), pas " + c);
         }
