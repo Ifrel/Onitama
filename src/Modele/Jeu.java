@@ -32,13 +32,12 @@ public class Jeu extends Observable {
     private int lignes, colonnes;
     private int idJoueurCourant; // identifiant du joueur courant
     private int numCarteSelectionee;
-    private Carte carteSelectionee_;
     private long tempsJeu; // temps écoulé depuis le début de la partie
     private int numRound; // à quel round on en est
     private boolean partieFinie;
     private boolean IA1Activee, IA2Activee;
     private boolean partieACommence;
-    private boolean roiMort;
+    private boolean maitreMort;
     private Pion pionSelectionne;
     private ETAT_GRILLE etatGrille;
     private Coup dernierCoupJoue;
@@ -169,7 +168,7 @@ public class Jeu extends Observable {
             numCarteSelectionee = 0;
             pionSelectionne = null;
             partieACommence = false;
-            roiMort = false;
+            maitreMort = false;
             etatGrille = DEFAUT;
             dernierCoupJoue = null;
 
@@ -723,7 +722,7 @@ public class Jeu extends Observable {
             setCase(depart.x, depart.y, null);
             if (! estCaseVide(arrivee.x, arrivee.y) && getRolePionAt(arrivee.x, arrivee.y) == PION_MAITRE) {
                 logger.info("Le maitre adverse vient d'etre capturé");
-                roiMort = true;
+                maitreMort = true;
             }
             setCase(arrivee.x, arrivee.y, p);
             p.setNewPosition(arrivee);
@@ -829,14 +828,12 @@ public class Jeu extends Observable {
                 logger.info("Carte du Joueur 1 sélectionnée alors que c'est au tour du Joueur 2\nSéléction ignorée");
                 return;
             }
-            this.carteSelectionee_ = getCartesJoueur1().get(c);
             logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
         } else {
             if (getIdJoueurCourant() == ID_JOUEUR_1) {
                 logger.info("Carte du Joueur 2 sélectionnée alors que c'est au tour du Joueur 1\nSélection ignorée");
                 return;
             }
-            this.carteSelectionee_ = getCartesJoueur1().get(c - 2);
             logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c - 2).getNom() +")");
         }
         this.numCarteSelectionee = c;
@@ -901,7 +898,7 @@ public class Jeu extends Observable {
         try {
             return (getPionsJoueur1().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_2)
                     || (getPionsJoueur2().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_1)
-                    || roiMort
+                    || maitreMort
                     || (getRolePionAt(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y) == PION_MAITRE && getProprietairePionAt(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y) == ID_JOUEUR_2)
                     || (getRolePionAt(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y) == PION_MAITRE && getProprietairePionAt(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y) == ID_JOUEUR_1);
         } catch (CaseVideException ignored) {
