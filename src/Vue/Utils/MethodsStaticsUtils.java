@@ -14,6 +14,7 @@ import java.awt.event.*;
 import java.nio.file.Path;
 
 import static Global.Paths.PATH_DEBUT_PION;
+import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
 
 /**
  * Classe utilitaire regroupant des méthodes statiques pour la création
@@ -211,27 +212,21 @@ public class MethodsStaticsUtils {
 
 
     public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, CasePlateau casePlateau){
+        Path pathImage = Path.of("") ;
+        if (casePlateau.getTypeElement() != VIDE) {
             String nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(casePlateau.getProprietaire());
-//            String rolePion =  casePlateau.getRole().name().toLowerCase().split("_")[1]; // PION_ETUDIANT -> pion_etudiant -> etudiant
-      //  String rolePion =  casePlateau.getRole().name().toLowerCase(); // PION_ETUDIANT -> pion_etudiant -> etudiant
-        String rolePion =  null;
-        ROLEPION rp = casePlateau.getRole();
-        switch(rp) {
-            case PION_ETUDIANT:
-                rolePion = "etudiant";
-                break;
-            case PION_MAITRE:
-                rolePion = "maitre";
-                break;
+            String rolePion = casePlateau.getRole().toString().toLowerCase();
+            String suite = rolePion + "_" + nomCouleurPion + ".png";
+            pathImage = PATH_DEBUT_PION.resolve(suite);
+//            System.err.println(pathImage);
         }
 
+        return pathImage;
+    }
 
 
-        String suite = nomCouleurPion + "_" + rolePion + ".png";
-
-            Path rinel = Path.of(PATH_DEBUT_PION.toString() + suite);
-            System.err.println(rinel);
-        return rinel;
+    public static Path getCheminImagePionClique(Path cheminImageActuelle){
+        return Path.of(cheminImageActuelle.toString().split(".png")[0] + "_clique.png");
     }
 
 
@@ -260,7 +255,10 @@ public class MethodsStaticsUtils {
         PanelAvecImage panel = new PanelAvecImage(cheminImage);
         bouton.add(panel);
 
-        return new BoutonAvecImage(bouton, panel);
+        BoutonAvecImage boutonAvecImage = new BoutonAvecImage(bouton, panel);
+        boutonAvecImage.setPathBouton(cheminImage);
+
+        return boutonAvecImage;
     }
 
 
@@ -278,6 +276,8 @@ public class MethodsStaticsUtils {
         /** Animation associée au bouton (peut être null) */
         public Animations animation;
 
+        public Path pathBouton;
+
 
         /**
          * Constructeur du bouton avec panneau image.
@@ -287,6 +287,7 @@ public class MethodsStaticsUtils {
             this.bouton = bouton;
             this.panel = panel;
             this.animation = null;
+            this.pathBouton = null;
         }
 
         /**
@@ -294,6 +295,10 @@ public class MethodsStaticsUtils {
          * @param animation l’objet animation à lier         */
         public void setAnimation(Animations animation) {
             this.animation = animation;
+        }
+
+        public void setPathBouton(Path pathBouton){
+            this.pathBouton = pathBouton;
         }
     }
 }
