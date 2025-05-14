@@ -1,7 +1,6 @@
 package Modele;
 
 import Exceptions.CaseVideException;
-import Exceptions.DeplacementIllegalExcpetion;
 import Modele.IA.IA;
 import Patterns.Observable;
 
@@ -32,7 +31,7 @@ public class Jeu extends Observable {
     private IA IA_1, IA_2;
     private int lignes, colonnes;
     private int idJoueurCourant; // identifiant du joueur courant
-    private int carteSelectionee;
+    private int numCarteSelectionee;
     private Carte carteSelectionee_;
     private long tempsJeu; // temps écoulé depuis le début de la partie
     private int numRound; // à quel round on en est
@@ -167,7 +166,7 @@ public class Jeu extends Observable {
             joueur1 = new Joueur(1, "Joueur 1");
             joueur2 = new Joueur(2, "Joueur 2");
             toutesLesCartes = initCartes();
-            carteSelectionee = 0;
+            numCarteSelectionee = 0;
             pionSelectionne = null;
             partieACommence = false;
             roiMort = false;
@@ -575,13 +574,10 @@ public class Jeu extends Observable {
         carteEchange = c;
     }
 
-    public int getCarteSelectionnee() {
-        return this.carteSelectionee;
+    public int getNumCarteSelectionnee() {
+        return this.numCarteSelectionee;
     }
 
-    public Carte getCarteSelectionee() {
-        return this.carteSelectionee_;
-    }
 
     public Pion getPionSelectionne() {
         return this.pionSelectionne;
@@ -789,21 +785,21 @@ public class Jeu extends Observable {
 
 
 
-    private Carte getCarteSelectionneJoueur()
+    public Carte getCarteSelectionnee()
     {
-        if (carteSelectionee == 0)
+        if (numCarteSelectionee == 0)
         {
             return joueur1.getCartesEnMain().get(0);
         }
-        else if(carteSelectionee == 1)
+        else if(numCarteSelectionee == 1)
         {
             return joueur1.getCartesEnMain().get(1); //Honnetement y'a pas besoin d'une liste de cartes qui sera toujours égales à 2, vaut mieux créer deux variables 
         }
-        else if (carteSelectionee == 2)
+        else if (numCarteSelectionee == 2)
         {
             return joueur2.getCartesEnMain().get(0);
         }
-        else if(carteSelectionee == 3)
+        else if(numCarteSelectionee == 3)
         {
             return joueur2.getCartesEnMain().get(1);
         }
@@ -843,7 +839,7 @@ public class Jeu extends Observable {
             this.carteSelectionee_ = getCartesJoueur1().get(c - 2);
             logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c - 2).getNom() +")");
         }
-        this.carteSelectionee = c;
+        this.numCarteSelectionee = c;
 
         metAJour();
     }
@@ -932,7 +928,7 @@ public class Jeu extends Observable {
                     return;
                 }
                 // peut etre utilisée par l'IA directement d'où son existence (?)
-                if(! jouerCoup(new Coup(getPionSelectionne().getPosition(), p, idJoueurCourant, getCarteSelectionneJoueur(),carteEchange))) {
+                if(! jouerCoup(new Coup(getPionSelectionne().getPosition(), p, idJoueurCourant, getCarteSelectionnee(),carteEchange))) {
                     return;
                 }
                 etatGrille = DEFAUT;
@@ -960,7 +956,7 @@ public class Jeu extends Observable {
             x = arrivee.x;
             y = arrivee.y;
 
-            List<Coup> coupsPossibles = getCoupsPossibles(getCartesJoueurCourant().get(this.carteSelectionee), getPionSelectionne().getPosition());
+            List<Coup> coupsPossibles = getCoupsPossibles(getCartesJoueurCourant().get(this.numCarteSelectionee), getPionSelectionne().getPosition());
 
             if (! estDansListeDeCoups(coupsPossibles, c)) {
                 logger.info("Le coup fourni est invalide, il ne sera pas joué");
@@ -983,7 +979,7 @@ public class Jeu extends Observable {
             }
 
 
-            echangerCartes(getJoueurCourant(), getCartesJoueurCourant().get(getCarteSelectionnee()));
+            echangerCartes(getJoueurCourant(), getCartesJoueurCourant().get(getNumCarteSelectionnee()));
             changerJoueur();
             //carteSelectionee = null;
 

@@ -88,7 +88,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     }
 
     public int getCarteSelectionee() {
-        return jeu.getCarteSelectionnee();
+        return jeu.getNumCarteSelectionnee();
     }
 
 
