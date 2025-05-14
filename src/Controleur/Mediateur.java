@@ -32,34 +32,38 @@ public class Mediateur implements CollecteurEvenements {
 
     @Override
     public void clavier(String touche) {
-        switch (touche){
-            case "exit":
-                jeu.setTerminerJeu();
-                System.exit(0);
-                break;
-            case "annuler":
-                jeu.annulerCoup();
-                break;
-            case "refaire":
-                jeu.refaireCoup();
-                break;
-            case "nouvellepartie":
-                jeu.nouvellePartie();
-                break;
-            case "sauvegarder":
-                jeu.sauvegarderJeu();
-            case "Pause":
-                jeu.setPause();
-                break;
-            case "IA":
-                jeu.basculeIA();
-                break;
-            case "Full":
-                vue.toggleFullScreen();
-                break;
-            default:
-                logger.severe("Touche inconnue : " + touche);
-                break;
+        try {
+            switch (touche) {
+                case "exit":
+                    jeu.setTerminerJeu();
+                    System.exit(0);
+                    break;
+                case "annuler":
+                    jeu.annulerCoup();
+                    break;
+                case "refaire":
+                    jeu.refaireCoup();
+                    break;
+                case "nouvellepartie":
+                    jeu.nouvellePartie();
+                    break;
+                case "sauvegarder":
+                    jeu.sauvegarderJeu();
+                case "Pause":
+                    jeu.setPause();
+                    break;
+                case "IA":
+                    jeu.basculeIA();
+                    break;
+                case "Full":
+                    vue.toggleFullScreen();
+                    break;
+                default:
+                    logger.severe("Touche inconnue : " + touche);
+                    break;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

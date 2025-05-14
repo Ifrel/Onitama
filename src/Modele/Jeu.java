@@ -33,6 +33,7 @@ public class Jeu extends Observable {
     private int lignes, colonnes;
     private int idJoueurCourant; // identifiant du joueur courant
     private int carteSelectionee;
+    private Carte carteSelectionee_;
     private long tempsJeu; // temps écoulé depuis le début de la partie
     private int numRound; // à quel round on en est
     private boolean partieFinie;
@@ -578,6 +579,10 @@ public class Jeu extends Observable {
         return this.carteSelectionee;
     }
 
+    public Carte getCarteSelectionee() {
+        return this.carteSelectionee_;
+    }
+
     public Pion getPionSelectionne() {
         return this.pionSelectionne;
     }
@@ -820,22 +825,35 @@ public class Jeu extends Observable {
     }
 
     public void setCarteSelectionnee(int c) {
-        if (c > 1 || c < 0) {
-            throw new IllegalStateException("La carte à choisir est une des 2 cartes du joueur courant (0 ou 1), pas " + c);
+        if (c > 3 || c < 0) {
+            throw new IllegalStateException("La carte à choisir est une des 2 cartes du joueur courant \n(0 ou 1) pour le joueur 1\n(2 ou 3) pour le joueur 2 ,\npas " + c);
+        }
+        if (c == 0 || c == 1) {
+            if (getIdJoueurCourant() == ID_JOUEUR_2) {
+                logger.info("Carte du Joueur 1 sélectionnée alors que c'est au tour du Joueur 2\nSéléction ignorée");
+                return;
+            }
+        } else {
+            if (getIdJoueurCourant() == ID_JOUEUR_1) {
+                logger.info("Carte du Joueur 2 sélectionnée alors que c'est au tour du Joueur 1\nSélection ignorée");
+                return;
+            }
         }
         this.carteSelectionee = c;
-        logger.info("Carte " + c + " séléctionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
+        this.carteSelectionee_ = getCartesJoueur1().get(c);
+
+        logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
         metAJour();
     }
 
     public boolean setPionSelectionne(Point positionPion) {
         try {
             if (estCaseVide(positionPion.x, positionPion.y)) {
-                logger.info("La case séléctionnée n'est pas un pion");
+                logger.info("La case sélectionnée n'est pas un pion");
                 return false;
             }
             if (getProprietairePionAt(positionPion.x, positionPion.y) != getIdJoueurCourant()) {
-                logger.info("La pion séléctionné n'appartient pas au joueur courant");
+                logger.info("La pion sélectionné n'appartient pas au joueur courant");
                 return false;
             }
             logger.info("Pion à la position (" + positionPion.x + "," + positionPion.y + ") séléctionné");
