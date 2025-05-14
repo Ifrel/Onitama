@@ -833,14 +833,15 @@ public class Jeu extends Observable {
                 logger.info("Carte du Joueur 1 sélectionnée alors que c'est au tour du Joueur 2\nSéléction ignorée");
                 return;
             }
+            this.carteSelectionee_ = getCartesJoueur1().get(c);
         } else {
             if (getIdJoueurCourant() == ID_JOUEUR_1) {
                 logger.info("Carte du Joueur 2 sélectionnée alors que c'est au tour du Joueur 1\nSélection ignorée");
                 return;
             }
+            this.carteSelectionee_ = getCartesJoueur1().get(c - 2);
         }
         this.carteSelectionee = c;
-        this.carteSelectionee_ = getCartesJoueur1().get(c);
 
         logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
         metAJour();
@@ -930,7 +931,9 @@ public class Jeu extends Observable {
                     return;
                 }
                 // peut etre utilisée par l'IA directement d'où son existence (?)
-                jouerCoup(new Coup(getPionSelectionne().getPosition(), p, idJoueurCourant, getCarteSelectionneJoueur(),carteEchange));
+                if(! jouerCoup(new Coup(getPionSelectionne().getPosition(), p, idJoueurCourant, getCarteSelectionneJoueur(),carteEchange))) {
+                    return;
+                }
                 etatGrille = DEFAUT;
                 break;
 
