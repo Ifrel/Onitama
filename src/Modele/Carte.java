@@ -20,6 +20,7 @@ import java.util.Objects;
 public class Carte {
     private String nom;                 // Nom unique ou identifiant de la carte
     private TYPECARTE type;             // Type de la carte
+    private int proprietaire;
 
     public Carte(TYPECARTE type){
         this.type = type;
@@ -53,6 +54,18 @@ public class Carte {
 
     public List<Point> getMoves() {
         return MOUVEMENTCARTE.get(type);
+    }
+
+
+    public int getProprietaire() {
+        return this.proprietaire;
+    }
+
+    public void setProprietaire(int p) {
+        if (p > 2 || p < 1) {
+            throw new RuntimeException("Propriétaire invalide, devrait 1 ou 2, pas " + p);
+        }
+       this.proprietaire = p;
     }
 
 

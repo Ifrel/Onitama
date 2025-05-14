@@ -294,9 +294,13 @@ public class Jeu extends Observable {
         //Initialisation des joueurs de la partie
         //Pour chaque joueur, on accorde deux cartes des 5 cartes de la partie:
         Carte carte1Joueur1 = cartesDuJeu.get(0);
+        carte1Joueur1.setProprietaire(1);
         Carte carte2Joueur1 = cartesDuJeu.get(1);
+        carte2Joueur1.setProprietaire(1);
         Carte carte1Joueur2 = cartesDuJeu.get(2);
+        carte1Joueur2.setProprietaire(2);
         Carte carte2Joueur2 = cartesDuJeu.get(3);
+        carte2Joueur2.setProprietaire(2);
         //La carte qui reste est la carte d'échange
         carteEchange = cartesDuJeu.get(4);
         //On crée la classe des deux joueurs
@@ -688,6 +692,7 @@ public class Jeu extends Observable {
         Carte nouvelleCarteJoueurCourant = getCarteSupplementaire();
         setCarteSupplementaire(carteSelectionne);
         joueur.addCard(nouvelleCarteJoueurCourant);
+        nouvelleCarteJoueurCourant.setProprietaire(joueur.getId());
 
     }
     // --------------------
