@@ -834,16 +834,17 @@ public class Jeu extends Observable {
                 return;
             }
             this.carteSelectionee_ = getCartesJoueur1().get(c);
+            logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
         } else {
             if (getIdJoueurCourant() == ID_JOUEUR_1) {
                 logger.info("Carte du Joueur 2 sélectionnée alors que c'est au tour du Joueur 1\nSélection ignorée");
                 return;
             }
             this.carteSelectionee_ = getCartesJoueur1().get(c - 2);
+            logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c - 2).getNom() +")");
         }
         this.carteSelectionee = c;
 
-        logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
         metAJour();
     }
 
