@@ -68,7 +68,7 @@ public class Mediateur implements CollecteurEvenements {
 
     @Override
     public void carteSelectionne(Carte carte) {
-        jeu.setCarteSelectionne(carte);
+        jeu.setCarteSelectionnee(carte);
     }
 
     @Override

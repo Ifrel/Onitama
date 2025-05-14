@@ -870,16 +870,6 @@ public class Jeu extends Observable {
         //TODO À implémenter
     }
 
-
-    /**
-     * Définit la carte sélectionnée pour le jeu (ex: avant placement).
-     * @param carte Carte sélectionnée.
-     */
-    public void setCarteSelectionne(Carte carte) {
-        //TODO À implémenter
-    }
-
-
     /**
      * Termine la partie en cours avec sauvegarde (ex: quitter).
      */
