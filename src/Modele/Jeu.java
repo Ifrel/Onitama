@@ -15,6 +15,7 @@ import static Global.Config.*;
 import static Global.Config.ROLEPION.PION_ETUDIANT;
 import static Global.Config.ROLEPION.PION_MAITRE;
 import static Global.Config.TYPECARTE.*;
+import static Global.Config.ETAT_GRILLE.*;
 import static Modele.Utils.*;
 
 
@@ -33,6 +34,7 @@ public class Jeu extends Observable {
     private boolean partieACommence;
     private boolean roiMort;
     private Pion pionSelectionne;
+    private ETAT_GRILLE etatGrille;
 
 
     // --- CARTES -- //
@@ -47,6 +49,7 @@ public class Jeu extends Observable {
     private final List<Pion> pionsJoueurDeux = new ArrayList<>(); //idem pour le deuxième joueur
 
     CasePlateau casePlateau ;
+
 
     private static final Logger logger = Logger.getLogger(Jeu.class.getName());
 
@@ -160,6 +163,7 @@ public class Jeu extends Observable {
             pionSelectionne = null;
             partieACommence = false;
             roiMort = false;
+            etatGrille = DEFAUT;
 
             IA1Activee = IA2Activee = false;
         } catch (Exception e) {
@@ -642,9 +646,11 @@ public class Jeu extends Observable {
             Pion p = getCase(depart.x, depart.y);
             setCase(depart.x, depart.y, null);
             if (! estCaseVide(arrivee.x, arrivee.y) && getRolePionAt(arrivee.x, arrivee.y) == PION_MAITRE) {
+                logger.info("Le maitre adverse vient d'etre capturé");
                 roiMort = true;
             }
             setCase(arrivee.x, arrivee.y, p);
+            p.setNewPosition(arrivee);
             // Mise à jour des listes de pions
             majPions();
         } catch (CaseVideException ignored) {
@@ -716,24 +722,26 @@ public class Jeu extends Observable {
         metAJour();
     }
 
-    public void setPionSelectionne(Point positionPion) {
+    public boolean setPionSelectionne(Point positionPion) {
         try {
             if (estCaseVide(positionPion.x, positionPion.y)) {
                 logger.info("La case séléctionnée n'est pas un pion");
-                return;
+                return false;
             }
             if (getProprietairePionAt(positionPion.x, positionPion.y) != getIdJoueurCourant()) {
                 logger.info("La pion séléctionné n'appartient pas au joueur courant");
-                return;
+                return false;
             }
             logger.info("Pion à la position (" + positionPion.x + "," + positionPion.y + ") séléctionné");
             this.pionSelectionne = getCase(positionPion.x, positionPion.y);
             metAJour();
+            return true;
         } catch (CaseVideException ignored) {
 
         } catch (Exception e) {
             throw new RuntimeException();
         }
+        return false;
     }
 
     /**
@@ -741,23 +749,26 @@ public class Jeu extends Observable {
      * @param x Abscisse du pion.
      * @param y Ordonnée du pion.
      */
-    public void setPionSelectionne(int x, int y) {
+    public boolean setPionSelectionne(int x, int y) {
         try {
             if (estCaseVide(x, y)) {
                 logger.info("La case séléctionnée n'est pas un pion");
-                return;
+                return false;
             }
             if (getProprietairePionAt(x, y) != getIdJoueurCourant()) {
                 logger.info("La pion séléctionné n'appartient pas au joueur courant");
-                return;
+                return false;
             }
-            this.pionSelectionne = getCase(x, y);
             logger.info("Pion à la position (" + x + "," + y + ") séléctionné");
+            this.pionSelectionne = getCase(x, y);
+            metAJour();
+            return true;
         } catch (CaseVideException ignored) {
 
         } catch (Exception e) {
             throw new RuntimeException();
         }
+        return false;
     }
 
     private void resetPionSelectionne() {
@@ -776,6 +787,30 @@ public class Jeu extends Observable {
             throw new RuntimeException(e);
         }
         return false;
+    }
+
+    public void selectionneCase(Point p) {
+        switch (etatGrille) {
+            case DEFAUT:
+                if(estCaseVide(p.x, p.y)) {
+                    return;
+                }
+                if(setPionSelectionne(p)) {
+                    etatGrille = PION_SELECTIONNE;
+                }
+                break;
+            case PION_SELECTIONNE:
+                if (getPionSelectionne() != null && getPionSelectionne().getPosition().equals(p)) {
+                    resetPionSelectionne();
+                    etatGrille = DEFAUT;
+                    return;
+                }
+                // peut etre utilisée par l'IA directement d'où son existence (?)
+                jouerCoup(new Coup(getPionSelectionne().getPosition(), p));
+                etatGrille = DEFAUT;
+                break;
+
+        }
     }
 
     public void jouerCoup(Coup c) {
@@ -812,6 +847,7 @@ public class Jeu extends Observable {
 
             if(verifierVictoire()) {
                 partieFinie = true;
+                logger.info("Le joueur" + getIdJoueurCourant() + " a gagné !!!!!!!!!");
                 metAJour();
                 return;
             }
@@ -986,6 +1022,12 @@ public class Jeu extends Observable {
                 }
                 S.append("\n");
             }
+
+            List<Carte> lc1 = getCartesJoueur1();
+            List<Carte> lc2 = getCartesJoueur2();
+            S.append("J1 : ").append(lc1.get(0).getNom()).append(", ").append(lc1.get(1).getNom()).append("\n");
+            S.append("J2 : ").append(lc2.get(0).getNom()).append(", ").append(lc2.get(1).getNom()).append("\n");
+            S.append("Carte Supp : ").append(getCarteSupplementaire().getNom()).append("\n");
 
             return S.toString();
         } catch (Exception e) {

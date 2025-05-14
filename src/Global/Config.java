@@ -40,6 +40,12 @@ public class Config {
         PION_MAITRE
     }
 
+    // automate, inspiré de Kevin
+    public static enum ETAT_GRILLE {
+        DEFAUT,
+        PION_SELECTIONNE,
+    }
+
     // -- DIMENSION --
     public static final Dimension DIM_SCENE = new Dimension(1000, 900);
 
