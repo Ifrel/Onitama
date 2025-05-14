@@ -712,6 +712,7 @@ public class Jeu extends Observable {
             throw new IllegalStateException("La carte à choisir est une des 2 cartes du joueur courant (0 ou 1), pas " + c);
         }
         this.carteSelectionee = c;
+        logger.info("Carte " + c + " séléctionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
         metAJour();
     }
 
@@ -725,6 +726,7 @@ public class Jeu extends Observable {
                 logger.info("La pion séléctionné n'appartient pas au joueur courant");
                 return;
             }
+            logger.info("Pion à la position (" + positionPion.x + "," + positionPion.y + ") séléctionné");
             this.pionSelectionne = getCase(positionPion.x, positionPion.y);
             metAJour();
         } catch (CaseVideException ignored) {
@@ -750,6 +752,7 @@ public class Jeu extends Observable {
                 return;
             }
             this.pionSelectionne = getCase(x, y);
+            logger.info("Pion à la position (" + x + "," + y + ") séléctionné");
         } catch (CaseVideException ignored) {
 
         } catch (Exception e) {
