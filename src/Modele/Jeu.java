@@ -353,7 +353,7 @@ public class Jeu extends Observable {
         restaurerGrille(depart,arrivee,pionMange);
         //Restaurer la main du joueur avant de joueur le coup
         changerJoueur();
-        restaurerMainJoueur(c.getCarteEchangee());
+        restaurerMainJoueur(c.getCarteEchangee(), getCarteSupplementaire());
         //Restaurer le joueur qui avait joué le coup
 
         // faire des choses avec le coup
@@ -362,14 +362,22 @@ public class Jeu extends Observable {
         metAJour();
     }
 
-    private void restaurerMainJoueur(Carte carteEchangee) {
-        Carte carteSup = getCarteSupplementaire();
-        Joueur joueur = getJoueurCourant();
-        joueur.removeCard(carteEchangee);
-        joueur.addCard(carteSup);
-        carteSup.setProprietaire(joueur.getId());
-        carteEchangee.setProprietaire(0);
-        setCarteSupplementaire(carteEchangee);
+    private void restaurerMainJoueur(Carte c1, Carte c2) {
+       Joueur joueur = getJoueurCourant();
+       joueur.removeCard(c1);
+       c1.setProprietaire(0);
+       setCarteSupplementaire(c1);
+       joueur.addCard(c2);
+       c2.setProprietaire(joueur.getId());
+
+
+//        Carte carteSup = getCarteSupplementaire();
+//        Joueur joueur = getJoueurCourant();
+//        joueur.removeCard(carteEchangee);
+//        joueur.addCard(carteSup);
+//        carteSup.setProprietaire(joueur.getId());
+//        carteEchangee.setProprietaire(0);
+//        setCarteSupplementaire(carteEchangee);
     }
 
 
@@ -404,8 +412,11 @@ public class Jeu extends Observable {
         }
 
         Coup c = historique.refaire();
-        setPionSelectionne(c.getDepart());
-        jouerCoup(c);
+//        setPionSelectionne(c.getDepart());
+//        jouerCoup(c);
+        restaurerGrille(c.getArrivee(), c.getDepart(), c.getPionMange());
+        changerJoueur();
+        restaurerMainJoueur(getCarteSupplementaire(), c.getCarteEchangee());
         // faire des choses avec le coup
 
         // met à jour l'interface
