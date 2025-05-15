@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import Modele.Carte;
-
-import static Global.Config.*;
+import static Global.Config.TYPECARTE;
+import static Global.Config.TYPE_JOUEUR;
+import static Global.Config.TYPE_JOUEUR.JOUEUR_HUMAIN;
 
 /**
  * Représente un joueur participant à la partie.
@@ -75,6 +75,15 @@ public class Joueur implements Serializable{
      */
     public int getScore() {
         return score;
+    }
+
+    /**
+     * Renvoie le type du joueur courant
+     *
+     * @return HUMAIN | IA
+     */
+    public TYPE_JOUEUR getTypeJoueur() {
+        return JOUEUR_HUMAIN;
     }
 
 

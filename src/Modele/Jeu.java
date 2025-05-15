@@ -17,13 +17,15 @@ import java.util.logging.Logger;
 import static Global.Config.*;
 import static Global.Config.ETAT_GRILLE.DEFAUT;
 import static Global.Config.ETAT_GRILLE.PION_SELECTIONNE;
+import static Global.Config.ETAT_JEU.*;
 import static Global.Config.ROLEPION.PION_ETUDIANT;
 import static Global.Config.ROLEPION.PION_MAITRE;
 import static Global.Config.TYPECARTE.*;
+import static Global.Config.TYPE_JOUEUR.*;
 import static Modele.Utils.*;
 
 
-public class Jeu extends Observable {
+public class Jeu extends Observable implements Runnable {
     private Pion [][] grille; // grille de pions
     private Historique<Coup> historique;
     private Joueur joueur1, joueur2;
@@ -41,6 +43,7 @@ public class Jeu extends Observable {
     private boolean maitreMort;
     private Pion pionSelectionne;
     private ETAT_GRILLE etatGrille;
+    private ETAT_JEU etatJeu;
     private Coup dernierCoupJoue;
 
 
@@ -171,6 +174,7 @@ public class Jeu extends Observable {
             partieACommence = false;
             maitreMort = false;
             etatGrille = DEFAUT;
+            etatJeu = DEBUT;
             dernierCoupJoue = null;
             joueurCourant = joueur1;
 
@@ -639,31 +643,34 @@ public class Jeu extends Observable {
             logger.info("Il faut d'abord activer les IA avant de les lancer");
             return;
         }
-        while (! estPartieFinie()) {
 
-//            while (isIA1Thinking()) {
+        etatJeu = DEBUT_IA;
+
+//        while (! estPartieFinie()) {
 //
+////            while (isIA1Thinking()) {
+////
+////            }
+//            initJoueursCartes();
+//            Coup c;
+//
+//            System.err.println(toString());
+//
+//            c = IA_1.calculerCoup();
+//            jouerCoup(c);
+//
+//            System.err.println(toString());
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
 //            }
-            initJoueursCartes();
-            Coup c;
-
-            System.err.println(toString());
-
-            c = IA_1.calculerCoup();
-            jouerCoup(c);
-
-            System.err.println(toString());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            c = IA_2.calculerCoup();
-            jouerCoup(c);
-            System.err.println(toString());
-
-
-        }
+//            c = IA_2.calculerCoup();
+//            jouerCoup(c);
+//            System.err.println(toString());
+//
+//
+//        }
     }
 
     /**
@@ -675,6 +682,14 @@ public class Jeu extends Observable {
             return;
         }
         IA1Activee = !IA1Activee; // si l'IA est activée, la désactive, vice-versa
+
+        if (estActiveIA1()) {
+            int id = ID_JOUEUR_2;
+            if (estActiveIA2()) {
+               id = ID_JOUEUR_1;
+            }
+            IA_1 = new IAFaible(this, id, "IA 1");
+        }
 
         if (! estActiveIA1() && estActiveIA2()) {
             toggleIA2();
@@ -697,6 +712,7 @@ public class Jeu extends Observable {
             joueurCourant = joueur1;
             idJoueurCourant = ID_JOUEUR_1;
         }
+        initJoueursCartes();
     }
 
     /**
@@ -712,6 +728,9 @@ public class Jeu extends Observable {
             return;
         }
         IA2Activee = !IA2Activee;
+        if (estActiveIA2()) {
+            IA_2 = new IAFaible(this, ID_JOUEUR_2, "IA 2");
+        }
         if (estActiveIA2()) {
             joueur1 = IA_1;
             joueur2 = IA_2;
@@ -731,6 +750,7 @@ public class Jeu extends Observable {
                 idJoueurCourant = ID_JOUEUR_1;
             }
         }
+        initJoueursCartes();
     }
 
     /**
@@ -937,8 +957,10 @@ public class Jeu extends Observable {
         return Utils.getCoupsPossibles(this, carteSelectionee, positionPion);
     }
 
-    private void changerJoueur() {
+    private int changerJoueur() {
+        int previous = idJoueurCourant;
         idJoueurCourant = (idJoueurCourant % 2) + 1;
+        return previous;
     }
 
     // code santiago
@@ -1174,12 +1196,16 @@ public class Jeu extends Observable {
             }
 
             faireSetup();
+            System.err.println(toString());
+
+            System.err.println("Taille CARTES JOUEUR 1 : " + getCartesJoueur1());
+            System.err.println("Taille CARTES JOUEUR 2 : " + getCartesJoueur2());
 
             Point depart = c.getDepart();
             Point arrivee = c.getArrivee();
             List<Coup> coupsPossibles = getCoupsPossibles(getCartesJoueurCourant().get(this.numCarteSelectionee), getPionSelectionne().getPosition());
 
-            if (! estDansListeDeCoups(coupsPossibles, c)) {
+            if (! estDansListeDeCoupsPossibles(coupsPossibles, c)) {
                 logger.info("Le coup fourni est invalide, il ne sera pas joué");
                 return false;
             }
@@ -1190,22 +1216,35 @@ public class Jeu extends Observable {
             historique.add(c);
             this.dernierCoupJoue = c;
 
+
+
             resetPionSelectionne();
 
             if(verifierVictoire()) {
                 partieFinie = true;
                 logger.info("Le joueur" + getIdJoueurCourant() + " a gagné !!!!!!!!!");
                 metAJour();
+                etatJeu = FIN;
                 return true;
             }
 
 
             echangerCartes(getJoueurCourant(), getCartesJoueurCourant().get(getNumCarteSelectionnee()));
-            changerJoueur();
+            int previous = changerJoueur();
             //carteSelectionee = null;
 
             // met à jour l'interface
             metAJour();
+            // met à jour l'automate
+            System.err.print(etatJeu + " -> ");
+            if (previous == ID_JOUEUR_1 && joueur1.getTypeJoueur() == JOUEUR_HUMAIN) {
+                etatJeu = J1_A_JOUE;
+            } else if (previous == ID_JOUEUR_2 && joueur2.getTypeJoueur() == JOUEUR_HUMAIN) {
+                etatJeu = J2_A_JOUE;
+            }
+            System.err.println(etatJeu);
+
+            System.err.println(toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -1373,11 +1412,93 @@ public class Jeu extends Observable {
 
             List<Carte> lc1 = getCartesJoueur1();
             List<Carte> lc2 = getCartesJoueur2();
-            S.append("J1 : ").append(lc1.get(0).getNom()).append(", ").append(lc1.get(1).getNom()).append("\n");
-            S.append("J2 : ").append(lc2.get(0).getNom()).append(", ").append(lc2.get(1).getNom()).append("\n");
-            S.append("Carte Supp : ").append(getCarteSupplementaire().getNom()).append("\n");
+            Carte c;
+            S.append("J1 : ");
+            if (lc1 != null) {
+                c = lc1.get(0);
+                if (c != null) {
+                    S.append(c.getNom());
+                    S.append(", ");
+                }
+                c = lc1.get(1);
+                if (c != null) {
+                    S.append(c.getNom());
+                }
+            }
+            S.append("\n");
+            S.append("J2 : ");
+            if (lc2 != null) {
+                c = lc2.get(0);
+                if (c != null) {
+                    S.append(c.getNom());
+                    S.append(", ");
+                }
+                c = lc2.get(1);
+                if (c != null) {
+                    S.append(c.getNom());
+                }
+            }
+            S.append("\n");
+            S.append("Carte Supp : ");
+            c = getCarteSupplementaire();
+            if (c != null) {
+               S.append(c.getNom());
+            }
+            S.append("\n");
 
             return S.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            boucle:
+            while (true) {
+                Coup c;
+                synchronized (this) {
+                    switch (etatJeu) {
+                        case DEBUT:
+                            break;
+                        case DEBUT_IA:
+                            c = IA_1.calculerCoup();
+                            Thread.sleep(1000);
+                            jouerCoup(c);
+                            etatJeu = IA1_A_JOUE;
+                            break;
+                        case J1_A_JOUE:
+                            if (estActiveIA1()) {
+                                c = IA_1.calculerCoup();
+                                Thread.sleep(1000);
+                                jouerCoup(c);
+                                etatJeu = IA1_A_JOUE;
+                            }
+                            break;
+                        case J2_A_JOUE:
+                            break;
+                        case IA1_A_JOUE:
+                            if (estActiveIA2()) {
+                                c = IA_2.calculerCoup();
+                                Thread.sleep(1000);
+                                jouerCoup(c);
+                                etatJeu = IA2_A_JOUE;
+                                return;
+                            }
+                            break;
+                        case IA2_A_JOUE:
+                            c = IA_1.calculerCoup();
+                            Thread.sleep(1000);
+                            jouerCoup(c);
+                            etatJeu = IA1_A_JOUE;
+                            break;
+                        case FIN:
+                            break boucle;
+
+                    }
+                }
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

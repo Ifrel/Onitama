@@ -21,6 +21,9 @@ public class Onitama {
 
             logger.info("Lancement du modèle du jeu");
             Jeu jeu = new Jeu();
+            Thread t1 = new Thread(jeu);
+            jeu.toggleIA1();
+            t1.start();
 
             logger.info("Initialisation du collecteur d'évènements");
             CollecteurEvenements collecteurEvenements = new Mediateur(jeu);

@@ -28,8 +28,6 @@ public class Config {
 
     public static final int ID_JOUEUR_1 = 1;
     public static final int ID_JOUEUR_2 = 2;
-    public static final int ID_IA_1 = 3;
-    public static final int ID_IA_2 = 4;
 
     public static final Point TEMPLE_JOUEUR_1 = new Point(0,2);
     public static final Point TEMPLE_JOUEUR_2 = new Point(4,2);
@@ -44,6 +42,21 @@ public class Config {
     public static enum ETAT_GRILLE {
         DEFAUT,
         PION_SELECTIONNE,
+    }
+
+    public static enum ETAT_JEU {
+        DEBUT,
+        FIN,
+        DEBUT_IA,
+        J1_A_JOUE,
+        J2_A_JOUE,
+        IA1_A_JOUE,
+        IA2_A_JOUE
+    }
+
+    public static enum TYPE_JOUEUR {
+        JOUEUR_HUMAIN,
+        JOUEUR_IA
     }
 
     // -- DIMENSION --

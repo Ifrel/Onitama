@@ -35,13 +35,13 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
     public void setNiveauIA(String niveauIA) {
         switch (niveauIA){
             case "Faible":
-                jeu.setDifficulteIA1(FAIBLE);
+                jeu.setNiveauIA1(FAIBLE);
                 break;
             case "Moyen":
-                jeu.setDifficulteIA1(MOYEN);
+                jeu.setNiveauIA1(MOYEN);
                 break;
             case "Fort":
-                jeu.setDifficulteIA1(FORT);
+                jeu.setNiveauIA1(FORT);
                 break;
             default: break;
         }

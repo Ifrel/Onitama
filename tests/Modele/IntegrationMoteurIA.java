@@ -2,7 +2,7 @@ package Modele;
 
 import Global.Config;
 import static Global.Config.NIVEAU_IA.*;
-import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.Test;
 
 public class IntegrationMoteurIA {
 
@@ -10,6 +10,8 @@ public class IntegrationMoteurIA {
     void scenario1() {
         Jeu jeu;
         jeu = new Jeu();
+        Thread t1 = new Thread(jeu);
+        t1.start();
 
         jeu.toggleIA1();
         jeu.toggleIA2();

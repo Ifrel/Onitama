@@ -23,7 +23,7 @@ public class IAFaibleTest {
 
         for (int i = 0; i < 10_000; i++) {
             jeu = new Jeu();
-            ia = new IAFaible(jeu, ID_IA_1, "IA 1");
+            ia = new IAFaible(jeu, ID_JOUEUR_1, "IA 1");
             c = ia.calculerCoup();
             assertNotNull(c);
         }

@@ -46,18 +46,17 @@ public class IAFaible extends IA {
          */
         while (!cartesIA.isEmpty()) {
             int ca = r.nextInt(cartesIA.size());
-            System.err.println("taille cartes " + cartesIA.size());
             carteChoisie = cartesIA.remove(ca); // carte sélectionnée de manière aléatoire uniforme
-            jeu.setCarteSelectionnee(ca);
             while (!pionsIA.isEmpty()) {
                 int pi = r.nextInt(pionsIA.size());
                 pionChoisi = pionsIA.remove(pi); // pion sélectionné de manière aléatoire uniforme
-                jeu.setPionSelectionne(pionChoisi.getPosition());
                 List<Coup> coupsPossibles = jeu.getCoupsPossibles(carteChoisie, pionChoisi.getPosition()); // liste de tous les coups possibles étant donné une carte et un pion
                 if (coupsPossibles.isEmpty()) { // pas de coup possible pour la carte et le pion courants
                     continue; // donc on passe au pion suivant
                 }
                 c = coupsPossibles.get(r.nextInt(coupsPossibles.size())); // coup sélectionné de manière aléatoire uniforme
+                jeu.setCarteSelectionnee(ca);
+                jeu.setPionSelectionne(pionChoisi.getPosition());
                 return c; // après avoir trouvé un coup, on sort directement, sinon on continue à chercher
             }
             if (!cartesIA.isEmpty()) { // il n'est pas nécessaire de construire une liste de pions qui ne sera pas utilisée

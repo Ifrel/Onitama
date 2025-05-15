@@ -5,6 +5,9 @@ import Global.Config.VITESSE_IA;
 import Modele.Coup;
 import Modele.Joueur;
 
+import static Global.Config.TYPE_JOUEUR;
+import static Global.Config.TYPE_JOUEUR.JOUEUR_IA;
+
 
 public abstract class IA extends Joueur {
     private VITESSE_IA vitesseIa;
@@ -53,5 +56,15 @@ public abstract class IA extends Joueur {
      */
     public void setVitesse(VITESSE_IA vitesse) {
         vitesseIa = vitesse;
+    }
+
+    /**
+     * Renvoie le type du joueur courant
+     *
+     * @return HUMAIN | IA
+     */
+    @Override
+    public TYPE_JOUEUR getTypeJoueur() {
+        return JOUEUR_IA;
     }
 }

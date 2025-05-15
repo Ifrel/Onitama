@@ -171,10 +171,11 @@ public class Utils {
      * @param coup       coup dont on veut vérifier l'appartenance à la liste de coups
      * @return vrai si le coup appartient à la liste, faux sinon
      */
-    public static boolean estDansListeDeCoups(List<Coup> listeCoups, Coup coup) {
+    public static boolean estDansListeDeCoupsPossibles(List<Coup> listeCoups, Coup coup) {
 
         for (Coup c : listeCoups) {
-            if(c.equals(coup)) {
+            // ne pas utiliser equals() car on ne s'intéresse pas à quelle carte nous permet de faire le déplcacement ici
+            if(c.getDepart().equals(coup.getDepart()) && c.getArrivee().equals(coup.getArrivee())) {
                 return true;
             }
         }
