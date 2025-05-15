@@ -34,22 +34,29 @@ public class IAFaible extends IA {
         Pion pionChoisi;
 
         /*
-         * Preuve de correction totale (cf. ALGO5) :
-         * - Terminaison : le nombre de cartes à utiliser est strictement
+         * Preuve de correction totale :
+         * - Terminaison : Boucle externe : La taille de la liste des cartes à utiliser diminue à chaque itération
+         *                 Boucle interne : La taille de la liste des pions à utiliser diminue à chaque itération
+         * - Correction Partielle : Boucle externe : La liste des cartes contient les cartes uniques qui n'ont pas encore été traitées
+         *                                           On obtient à chaque itération une carte aléatoire non traitée
+         *                          Boucle interne : La liste des pions ne contient que des pions qui n'ont pas encore été traités pour la carte courante
+         *                                           On obtient un pion aléatoire à chaque itération
+         * Note : le générateur de nombres aléatoire est uniforme
          */
         while (!cartesIA.isEmpty()) {
-            carteChoisie = cartesIA.remove(r.nextInt(cartesIA.size()));
+            carteChoisie = cartesIA.remove(r.nextInt(cartesIA.size())); // carte sélectionnée de manière aléatoire uniforme
             while (!pionsIA.isEmpty()) {
-                pionChoisi = pionsIA.remove(r.nextInt(pionsIA.size()));
-                List<Coup> coupsPossibles = jeu.getCoupsPossibles(carteChoisie, pionChoisi.getPosition());
+                pionChoisi = pionsIA.remove(r.nextInt(pionsIA.size())); // pion sélectionné de manière aléatoire uniforme
+                List<Coup> coupsPossibles = jeu.getCoupsPossibles(carteChoisie, pionChoisi.getPosition()); // liste de tous les coups possibles étant donné une carte et un pion
                 if (coupsPossibles.isEmpty()) { // pas de coup possible pour la carte et le pion courants
-                    continue;
+                    continue; // donc on passe au pion suivant
                 }
-                c = coupsPossibles.get(r.nextInt(coupsPossibles.size()));
+                c = coupsPossibles.get(r.nextInt(coupsPossibles.size())); // coup sélectionné de manière aléatoire uniforme
                 return c; // après avoir trouvé un coup, on sort directement, sinon on continue à chercher
             }
-            pionsIA = jeu.getPionsJoueurCourant(); // on change de carte donc on récupère à nouveau les pions
-
+            if (!cartesIA.isEmpty()) { // il n'est pas nécessaire de construire une liste de pions qui ne sera pas utilisée
+                pionsIA = jeu.getPionsJoueurCourant(); // on change de carte donc on récupère à nouveau les pions
+            }
         }
         return c;
     }
