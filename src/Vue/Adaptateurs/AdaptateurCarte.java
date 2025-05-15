@@ -69,7 +69,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
     @Override
     public void miseAJour() {
         estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
-        logger.info("CarteUI n° "+idCarte+ ": " + carte.getNom() + " Sélectionnée pour le Joueur "+carte.getProprietaire());
+//        logger.info("CarteUI n° "+idCarte+ ": " + carte.getNom() + " Sélectionnée pour le Joueur "+carte.getProprietaire());
         animationCarte();
     }
 
