@@ -234,7 +234,7 @@ public class MethodsStaticsUtils {
 
     public static Path getCheminImageCarte(Carte carte){
         Path path = PATH_CARTE.resolve(carte.getNom() +".png");
-        System.err.println(path);
+//        System.err.println(path);
         return path;
     }
 

@@ -8,6 +8,8 @@ import Vue.InfosDeConfigUI;
 import java.awt.*;
 import java.util.logging.Logger;
 
+import static Global.Config.NIVEAU_IA.*;
+
 public class ControleurEcranDeDemarrage implements CollecteurEvenements {
     private final Jeu jeu;
 
@@ -31,7 +33,18 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
 
     @Override
     public void setNiveauIA(String niveauIA) {
-        jeu.setNiveauIA(niveauIA);
+        switch (niveauIA){
+            case "Faible":
+                jeu.setDifficulteIA1(FAIBLE);
+                break;
+            case "Moyen":
+                jeu.setDifficulteIA1(MOYEN);
+                break;
+            case "Fort":
+                jeu.setDifficulteIA1(FORT);
+                break;
+            default: break;
+        }
 
     }
 
@@ -43,7 +56,12 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
 
     @Override
     public void setModeAuto(boolean nouvelEtat) {
-        jeu.setModeAuto(nouvelEtat);
+        if (nouvelEtat) {
+            jeu.toggleIA1();
+            jeu.toggleIA2();
+        }else{
+            jeu.toggleIA1();
+        }
     }
 
     @Override
