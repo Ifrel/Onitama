@@ -2,7 +2,6 @@ package Modele;
 
 import Global.Config.TYPECARTE;
 import static Global.Config.MOUVEMENTCARTE;
-import static Global.Paths.PATH_CARTE_TIGRE;
 
 import java.awt.*;
 import java.io.Serializable;

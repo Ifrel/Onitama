@@ -1,6 +1,7 @@
 package Vue.Adaptateurs;
 
 import Modele.Carte;
+import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
@@ -24,6 +25,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
     private BoutonAvecImage boutonCarte = null;
     private Boolean estSelectionne;
     private EcranPlateauDeJeu ecranPlateauDeJeu;
+    private final Jeu jeu;
 
     private final Logger logger = Logger.getLogger(AdaptateurCarte.class.getName());
 
@@ -38,9 +40,11 @@ public class AdaptateurCarte implements ActionListener, Observateur {
         this.idCarte = idCarte;
         this.boutonCarte = boutonCarte;
         this.ecranPlateauDeJeu = ecranPlateauDeJeu;
-        this.estSelectionne = ecranPlateauDeJeu.getCarteSelectionee() == idCarte;
+        this.jeu = ecranPlateauDeJeu.jeu;
+        this.estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
 
-
+        //TODO voir Prof: pourquoi si activer, une exception est levée au niveau du pattern Obsevable/Observateur
+        // jeu.ajouteObservateur(this);
         miseAJour();
     }
 
@@ -55,19 +59,17 @@ public class AdaptateurCarte implements ActionListener, Observateur {
     @Override
     public void actionPerformed(ActionEvent e) {
         logger.info("CarteUI n° "+idCarte+ ": " + carte.getNom() + " pressé pour le Joueur "+carte.getProprietaire());
+
         animationCarte();
 
-        if (carte.getProprietaire() == ID_JOUEUR_2) {
-            collecteurEvent.setCarteSelectionne(idCarte-2);
-        }
-        else  collecteurEvent.setCarteSelectionne(idCarte);
+       collecteurEvent.setCarteSelectionne(idCarte);
     }
 
 
     @Override
     public void miseAJour() {
-        estSelectionne = ecranPlateauDeJeu.getCarteSelectionee() == idCarte;
-        System.err.println("################ carte selectionée: "+idCarte);
+        estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
+        logger.info("CarteUI n° "+idCarte+ ": " + carte.getNom() + " Sélectionnée pour le Joueur "+carte.getProprietaire());
         animationCarte();
     }
 
@@ -86,8 +88,8 @@ public class AdaptateurCarte implements ActionListener, Observateur {
         }
         estSelectionne = !estSelectionne;
 
-//        //        // Nécessaire pour redessiner la taille
-//                boutonCarte.bouton.revalidate();
-//                boutonCarte.bouton.repaint();
+        // Nécessaire pour redessiner la taille
+        boutonCarte.bouton.revalidate();
+        boutonCarte.bouton.repaint();
     }
 }
