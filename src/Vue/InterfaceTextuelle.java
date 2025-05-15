@@ -213,29 +213,30 @@ public class InterfaceTextuelle implements Observateur {
                 case "3":
                 case "4":
                     try {
-                        indiceCarte = Integer.parseInt(input)-1;
+                        indiceCarte = Integer.parseInt(input);
 
                         // verification si choix valide selon du joueur courant
                         int idJoueur = jeu.getJoueurCourant().getId();
                         List<Carte> carteListJoueur;
                         int idCarte = 0;
 
-                        if (idJoueur == ID_JOUEUR_1 && (indiceCarte != 1 && indiceCarte != 2)) {
-                            System.out.println("Cette carte n'appartient pas à "+ jeu.getNomJoueurCourant());
-                            rafraichirInterface = false;
-                            break;
-                        }else {
+                        if (idJoueur == ID_JOUEUR_1) {
+                            if (indiceCarte != 1 && indiceCarte != 2) {
+                                System.out.println("Cette carte n'appartient pas à " + jeu.getNomJoueurCourant());
+                                rafraichirInterface = false;
+                                break;
+                            }
                             carteListJoueur = jeu.getCartesJoueur1();
-                            idCarte = (indiceCarte +1)%2;
-                        }
+                            idCarte = (indiceCarte + 1) % 2;
 
-                        if (idJoueur == ID_JOUEUR_2 && (indiceCarte != 3 && indiceCarte != 4)) {
-                            System.out.println("Cette carte n'appartient pas à "+ jeu.getNomJoueurCourant());
-                            rafraichirInterface = false;
-                            break;
-                        }else {
+                        } else {
+                            if (indiceCarte != 3 && indiceCarte != 4) {
+                                System.out.println("Cette carte n'appartient pas à " + jeu.getNomJoueurCourant());
+                                rafraichirInterface = false;
+                                break;
+                            }
                             carteListJoueur = jeu.getCartesJoueur2();
-                            idCarte = (indiceCarte +1)%4;
+                            idCarte = (indiceCarte + 1) % 4;
                         }
 
 
@@ -305,6 +306,7 @@ public class InterfaceTextuelle implements Observateur {
                         }
                     } catch (NumberFormatException | IndexOutOfBoundsException e) {
                         System.out.println("Carte invalide. Choisissez un numéro entre 1 et 4.");
+                        rafraichirInterface = false;
                     }
                     break;
 
