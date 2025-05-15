@@ -133,6 +133,8 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         barreIndication.setLayout(new BoxLayout(barreIndication, BoxLayout.X_AXIS));
         barreIndication.setOpaque(false);
         barreIndication.add( creerBoutonSon());
+//        barreIndication.add(creerPanelRoundTemps());
+//        barreIndication.add(Box.createHorizontalStrut(ESPACE));
         barreIndication.add(Box.createGlue());
         barreIndication.add(creerPanelRoundTemps());
         barreIndication.add(Box.createHorizontalStrut(ESPACE));
@@ -256,32 +258,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         return terrain;
     }
 
-//    // Met à jour l'affichage du terrain en fonction de l'État du jeu
-//    private void updateTerrain() {
-//        Coup dernierCoup = jeu.getDernierCoupJoue();
-//
-//        if (dernierCoup != null) {
-//            terrain.removeAll();
-//            Point depart = dernierCoup.getDepart();
-//            Point arrive = dernierCoup.getArrivee();
-//
-//            // **Correction importante :** Mettez à jour la référence dans le tableau `buttonsTerrain`
-//            buttonsTerrain[arrive.x][arrive.y] = buttonsTerrain[depart.x][depart.y];
-//            // **Correction importante :** Créez un nouveau bouton vide pour l'ancienne position
-//            BoutonAvecImage boutonCase = creerBoutonAvecImage(Path.of(""));
-//            boutonCase.bouton.addActionListener(new AdaptateurBoutonTerrain(boutonCase, jeu.getCasePlateau(depart.x,depart.y), collecteurEv));
-//            buttonsTerrain[depart.x][depart.y] = boutonCase; // Ou une image de case vide si vous en avez une
-//            // **Important :** Assurez-vous que le nouvel ActionListener est bien nul ou géré ailleurs si nécessaire.
-//            buttonsTerrain[depart.x][depart.y].bouton.addActionListener(null);
-//
-//            // **Optimisation :** Invalidez et repeignez le terrain au lieu de tout reconstruire
-//            for (int row = 0; row < LIGNES; row++) {
-//                for (int col = 0; col < COLONNES; col++) {
-//                    terrain.add(buttonsTerrain[row][col].bouton);
-//                }
-//            }
-//        }
-//    }
 
     /** Crée les boutons représentant les cartes */
     private void creerButtonsCartes() {
@@ -301,7 +277,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         for (int idCarte = 0; idCarte < NOMBRE_CARTES_MAIN; idCarte++) {
             BoutonAvecImage boutonCarteJ1 = creerBoutonAvecImage(getCheminImageCarte(carteListJ1.get(idCarte)));
             BoutonAvecImage boutonCarteJ2 = creerBoutonAvecImage(getCheminImageCarte(carteListJ2.get(idCarte)));
-//            configurerBoutonCarte(boutonCarte, carte );
             boutonCarteJ1.bouton.addActionListener(new AdaptateurCarte(
                     idCarte, boutonCarteJ1,
                     carteListJ1.get(idCarte),
@@ -480,9 +455,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         return menu;
     }
 
-//    private void configurerBoutonCarte(BoutonAvecImage bouton, Carte carteSurLeTerrain) {
-//        bouton.panel.setImage(PATH_CARTE_DRAGON);
-//    }
 
 
 
