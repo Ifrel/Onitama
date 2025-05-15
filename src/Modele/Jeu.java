@@ -783,29 +783,27 @@ public class Jeu extends Observable {
     }
 
 
-
     public Carte getCarteSelectionnee()
     {
-        if (numCarteSelectionee == 0)
-        {
-            return joueur1.getCartesEnMain().get(0);
+        switch (numCarteSelectionee) {
+            case 0:
+                switch (idJoueurCourant) {
+                    case ID_JOUEUR_1:
+                        return joueur1.getCartesEnMain().get(numCarteSelectionee);
+                    case ID_JOUEUR_2:
+                        return joueur2.getCartesEnMain().get(numCarteSelectionee);
+                }
+            case 1:
+                switch (idJoueurCourant) {
+                    case ID_JOUEUR_1:
+                        return joueur1.getCartesEnMain().get(numCarteSelectionee);
+                    case ID_JOUEUR_2:
+                        return joueur2.getCartesEnMain().get(numCarteSelectionee);
+                }
+
         }
-        else if(numCarteSelectionee == 1)
-        {
-            return joueur1.getCartesEnMain().get(1); //Honnetement y'a pas besoin d'une liste de cartes qui sera toujours égales à 2, vaut mieux créer deux variables 
-        }
-        else if (numCarteSelectionee == 2)
-        {
-            return joueur2.getCartesEnMain().get(0);
-        }
-        else if(numCarteSelectionee == 3)
-        {
-            return joueur2.getCartesEnMain().get(1);
-        }
-        else
-        {
-            return null;
-        }
+        return null;
+
     }
     // --------------------
 
@@ -820,22 +818,10 @@ public class Jeu extends Observable {
     }
 
     public void setCarteSelectionnee(int c) {
-        if (c > 3 || c < 0) {
-            throw new IllegalStateException("La carte à choisir est une des 2 cartes du joueur courant \n(0 ou 1) pour le joueur 1\n(2 ou 3) pour le joueur 2 ,\npas " + c);
+        if (c > 1 || c < 0) {
+            throw new IllegalStateException("La carte à choisir est 0 ou 1 pas " + c);
         }
-        if (c == 0 || c == 1) {
-            if (getIdJoueurCourant() == ID_JOUEUR_2) {
-                logger.info("Carte du Joueur 1 sélectionnée alors que c'est au tour du Joueur 2\nSéléction ignorée");
-                return;
-            }
-            logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
-        } else {
-            if (getIdJoueurCourant() == ID_JOUEUR_1) {
-                logger.info("Carte du Joueur 2 sélectionnée alors que c'est au tour du Joueur 1\nSélection ignorée");
-                return;
-            }
-            logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c - 2).getNom() +")");
-        }
+        logger.info("Carte " + c + " sélectionnée (" + getCartesJoueurCourant().get(c).getNom() +")");
         this.numCarteSelectionee = c;
 
         metAJour();
