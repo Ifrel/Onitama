@@ -2,25 +2,24 @@ package Modele;
 
 import Exceptions.CaseVideException;
 import Modele.IA.IA;
+import Modele.IA.IAFaible;
+import Modele.IA.IAFort;
+import Modele.IA.IAMoyen;
 import Patterns.Observable;
 
 import java.awt.*;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
+import static Global.Config.ETAT_GRILLE.DEFAUT;
+import static Global.Config.ETAT_GRILLE.PION_SELECTIONNE;
 import static Global.Config.ROLEPION.PION_ETUDIANT;
 import static Global.Config.ROLEPION.PION_MAITRE;
 import static Global.Config.TYPECARTE.*;
-import static Global.Config.ETAT_GRILLE.*;
 import static Modele.Utils.*;
 
 
@@ -28,7 +27,8 @@ public class Jeu extends Observable {
     private Pion [][] grille; // grille de pions
     private Historique<Coup> historique;
     private Joueur joueur1, joueur2;
-    private IA IA_1, IA_2;
+    private Joueur JOUEUR_1, JOUEUR_2; // probablement pas incroyable, mais on garde une référence des deux joueurs au cas où, comme pour les IA
+    private Joueur joueurCourant;
     private int lignes, colonnes;
     private int idJoueurCourant; // identifiant du joueur courant
     private int numCarteSelectionee;
@@ -36,6 +36,7 @@ public class Jeu extends Observable {
     private int numRound; // à quel round on en est
     private boolean partieFinie;
     private boolean IA1Activee, IA2Activee;
+    private IA IA_1, IA_2;
     private boolean partieACommence;
     private boolean maitreMort;
     private Pion pionSelectionne;
@@ -162,8 +163,8 @@ public class Jeu extends Observable {
             numRound = 1;
             partieFinie = false;
             tempsJeu = 0;
-            joueur1 = new Joueur(1, "Joueur 1");
-            joueur2 = new Joueur(2, "Joueur 2");
+            joueur1 = JOUEUR_1 = new Joueur(1, "Joueur 1");
+            joueur2 = JOUEUR_2 = new Joueur(2, "Joueur 2");
             toutesLesCartes = initCartes();
             numCarteSelectionee = 0;
             pionSelectionne = null;
@@ -171,7 +172,9 @@ public class Jeu extends Observable {
             maitreMort = false;
             etatGrille = DEFAUT;
             dernierCoupJoue = null;
+            joueurCourant = joueur1;
 
+            IA_1 = IA_2 = null;
             IA1Activee = IA2Activee = false;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -630,12 +633,149 @@ public class Jeu extends Observable {
 
     // ######## PARTIE ########
 
-    public void activerIA1() {
-        IA1Activee = true;
+
+    public void toggleIA1() {
+        if (partieACommence) {
+            logger.info("Impossible de changer l'état de l'IA 1, la partie a commencé");
+            return;
+        }
+        IA1Activee = !IA1Activee; // si l'IA est activée, la désactive, vice-versa
+        // si l'IA 1 est activée, elle sera joueur 1 si face à l'IA 2, joueur 2 si face à un humain (joueur 1)
+        if (estActiveIA1()) {
+            joueurCourant = IA_1;
+            idJoueurCourant = ID_IA_1;
+            if (estActiveIA2()) {
+                joueur1 = IA_1;
+                joueur2 = IA_2;
+            } else {
+                joueur1 = JOUEUR_1;
+                joueur2 = IA_1;
+            }
+        } else {
+            joueurCourant = joueur1;
+            idJoueurCourant = ID_JOUEUR_1;
+            joueur1 = JOUEUR_1;
+            joueur2 = JOUEUR_2;
+        }
     }
 
-    public void activerIA2() {
-        IA2Activee = true;
+    public void toggleIA2() {
+        if (partieACommence) {
+            logger.info("Impossible de changer l'état de l'IA 2, la partie a commencé");
+            return;
+        }
+        if (!estActiveIA1()) {
+            logger.info("L'IA 2 ne peut pas être utilisée sans l'IA 1");
+            return;
+        }
+        IA2Activee = !IA2Activee;
+        if (estActiveIA2()) {
+            joueurCourant = IA_2;
+            idJoueurCourant = ID_IA_2;
+        } else {
+            joueurCourant = joueur2;
+            idJoueurCourant = ID_JOUEUR_2;
+        }
+    }
+
+    /**
+     * Vérifie si l'IA 1 est activée
+     *
+     * @return vrai si l'IA 1 est activée
+     */
+    public boolean estActiveIA1() {
+        return IA1Activee;
+    }
+
+    /**
+     * Vérifie si l'IA 2 est activée
+     *
+     * @return vrai si l'IA 2 est activée
+     */
+    public boolean estActiveIA2() {
+        return IA2Activee;
+    }
+
+    public VITESSE_IA getVitesseIA1() {
+        return IA_1.getVitesse();
+    }
+
+    public void setVitesseIA1(VITESSE_IA vitesse) {
+        IA_1.setVitesse(vitesse);
+    }
+
+    public VITESSE_IA getVitesseIA2() {
+        return IA_2.getVitesse();
+    }
+
+    public void setVitesseIA2(VITESSE_IA vitesse) {
+        IA_2.setVitesse(vitesse);
+    }
+
+    /**
+     * Vérifie si l'IA 1 est en train de réfléchir (calculer un coup)
+     *
+     * @return vrai si l'IA 1 est en train de réfléchir
+     */
+    public boolean isIA1Thinking() {
+        //return IA_1.isThinking();
+        return false;
+    }
+
+    /**
+     * Vérifie si l'IA 2 est en train de réfléchir (calculer un coup)
+     *
+     * @return vrai si l'IA 2 est en train de réfléchir
+     */
+    public boolean isIA2Thinking() {
+        //return IA_2.isThinking();
+        return false;
+    }
+
+    /**
+     * Définie le niveau de l'IA 1, si et seulement si l'IA 1 est active
+     *
+     * @param niveau FAIBLE | MOYEN | FORT
+     */
+    public void setDifficulteIA1(NIVEAU_IA niveau) {
+        if (!estActiveIA1()) {
+            logger.info("L'IA 1 n'est pas active, impossible de définir son niveau");
+            return;
+        }
+        switch (niveau) {
+            case FAIBLE:
+                IA_1 = new IAFaible(this, ID_IA_1, "IA 1");
+                break;
+            case MOYEN:
+                IA_1 = new IAMoyen(this, ID_IA_1, "IA 1");
+                break;
+            case FORT:
+                IA_1 = new IAFort(this, ID_IA_1, "IA 1");
+                break;
+        }
+    }
+
+    /**
+     * Définie le niveau de l'IA 2, si et seulement si l'IA 2 est active
+     *
+     * @param niveau FAIBLE | MOYEN | FORT
+     */
+    public void setDifficulteIA2(NIVEAU_IA niveau) {
+        if (!estActiveIA2()) {
+            logger.info("L'IA 2 n'est pas active, impossible de définir son niveau");
+            return;
+        }
+        switch (niveau) {
+            case FAIBLE:
+                IA_2 = new IAFaible(this, ID_IA_2, "IA 2");
+                break;
+            case MOYEN:
+                IA_2 = new IAMoyen(this, ID_IA_2, "IA 2");
+                break;
+            case FORT:
+                IA_2 = new IAFort(this, ID_IA_2, "IA 2");
+                break;
+        }
     }
 
     public void nouvellePartie() {
@@ -675,6 +815,7 @@ public class Jeu extends Observable {
     }
 
     public int getIdJoueurCourant() {
+        faireSetup();
         return idJoueurCourant;
     }
 
@@ -715,7 +856,30 @@ public class Jeu extends Observable {
     }
 
     private void changerJoueur() {
-        idJoueurCourant = (idJoueurCourant % 2) + 1;
+        //idJoueurCourant = (idJoueurCourant % 2) + 1;
+        switch (getIdJoueurCourant()) {
+            case ID_JOUEUR_1:
+                if (estActiveIA1()) {
+                    idJoueurCourant = ID_IA_1;
+                    return;
+                }
+                idJoueurCourant = ID_JOUEUR_2;
+                break;
+            case ID_JOUEUR_2:
+                if (estActiveIA1()) {
+                    idJoueurCourant = ID_IA_1;
+                    return;
+                }
+                idJoueurCourant = ID_JOUEUR_1;
+                break;
+            case ID_IA_1:
+                if (estActiveIA2()) {
+                    idJoueurCourant = ID_IA_2;
+                    return;
+                }
+                idJoueurCourant = ID_JOUEUR_1;
+            case ID_IA_2:
+        }
 
     }
 
@@ -824,10 +988,12 @@ public class Jeu extends Observable {
     private void faireSetup() {
         if (partieACommence) {
             return;
-        } else {
-            partieACommence = true;
         }
-
+        partieACommence = true;
+        if (estActiveIA1()) {
+            idJoueurCourant = ID_IA_1;
+            joueurCourant = IA_1;
+        }
 
     }
 

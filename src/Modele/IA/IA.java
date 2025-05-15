@@ -3,10 +3,24 @@ package Modele.IA;
 import Global.Config.NIVEAU_IA;
 import Global.Config.VITESSE_IA;
 import Modele.Coup;
+import Modele.Joueur;
 
 
-public abstract class IA {
+public abstract class IA extends Joueur {
     private VITESSE_IA vitesseIa;
+
+    /**
+     * Constructeur pour créer un nouveau joueur.
+     * Initialise les propriétés de base et crée des listes vides pour les cartes et les pions.
+     *
+     * @param id  L'identifiant unique du joueur (par ex. 1 pour Joueur 1).
+     * @param nom Le nom du joueur (ne doit pas être null ou vide).
+     * @throws NullPointerException     si nom ou couleur est null.
+     * @throws IllegalArgumentException si nom est vide ou id est invalide (par ex. < 1).
+     */
+    public IA(int id, String nom) {
+        super(id, nom);
+    }
 
     /**
      * Calcul un Coup à suggérer ou à jouer

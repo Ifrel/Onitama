@@ -9,7 +9,8 @@ import static Global.Config.NIVEAU_IA.FORT;
 public class IAFort extends IA {
     private final Jeu jeu;
 
-    public IAFort(Jeu jeu) {
+    public IAFort(Jeu jeu, int id, String nom) {
+        super(id, nom);
         this.jeu = jeu;
     }
 

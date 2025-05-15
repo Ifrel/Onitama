@@ -14,7 +14,8 @@ import static Global.Config.NIVEAU_IA.FAIBLE;
 public class IAFaible extends IA {
     private final Jeu jeu;
 
-    public IAFaible(Jeu jeu) {
+    public IAFaible(Jeu jeu, int id, String nom) {
+        super(id, nom);
         this.jeu = jeu;
     }
 

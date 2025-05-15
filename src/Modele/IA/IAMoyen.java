@@ -9,7 +9,8 @@ import static Global.Config.NIVEAU_IA.MOYEN;
 public class IAMoyen extends IA {
     private final Jeu jeu;
 
-    public IAMoyen(Jeu jeu) {
+    public IAMoyen(Jeu jeu, int id, String nom) {
+        super(id, nom);
         this.jeu = jeu;
     }
 
