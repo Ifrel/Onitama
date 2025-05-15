@@ -5,6 +5,7 @@ import static Global.Config.MOUVEMENTCARTE;
 import static Global.Paths.PATH_CARTE_TIGRE;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,10 @@ import java.util.Objects;
  * Cette classe est axée sur les propriétés de la carte; la logique d'application de l'effet
  * sera généralement gérée ailleurs (par exemple, dans la classe Jeu ou un gestionnaire d'effets).
  */
-public class Carte {
+public class Carte implements Serializable{
     private String nom;                 // Nom unique ou identifiant de la carte
     private TYPECARTE type;             // Type de la carte
+    private int proprietaire;
 
     public Carte(TYPECARTE type){
         this.type = type;
@@ -40,12 +42,12 @@ public class Carte {
     public TYPECARTE getType() { return type; }
 
 
-    public List<Coup> getMoves(Point origin)
+    public List<Coup> getMoves(Point origin, int joueurAct, Carte CE)
     {
         List<Coup> allMoves = new ArrayList<Coup>();
         for (Point p : MOUVEMENTCARTE.get(type)) {
             Point nouveauPoint = new Point(origin.x + p.x, origin.y + p.y);
-            Coup nouveauCoup = new Coup(origin, nouveauPoint);
+            Coup nouveauCoup = new Coup(origin, nouveauPoint,joueurAct, this,CE );
             allMoves.add(nouveauCoup);
         }
         return allMoves;
@@ -53,6 +55,18 @@ public class Carte {
 
     public List<Point> getMoves() {
         return MOUVEMENTCARTE.get(type);
+    }
+
+
+    public int getProprietaire() {
+        return this.proprietaire;
+    }
+
+    public void setProprietaire(int p) {
+        if (p > 2 || p < 1) {
+            throw new RuntimeException("Propriétaire invalide, devrait 1 ou 2, pas " + p);
+        }
+       this.proprietaire = p;
     }
 
 

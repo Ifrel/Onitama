@@ -33,6 +33,10 @@ public class IAFaible extends IA {
         Carte carteChoisie;
         Pion pionChoisi;
 
+        /*
+         * Preuve de correction totale (cf. ALGO5) :
+         * - Terminaison : le nombre de cartes à utiliser est strictement
+         */
         while (!cartesIA.isEmpty()) {
             carteChoisie = cartesIA.remove(r.nextInt(cartesIA.size()));
             while (!pionsIA.isEmpty()) {

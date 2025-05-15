@@ -56,8 +56,12 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
     private Instant debutTempsPartie;
     private Timer timerPartie;
 
+    private boolean estCarteDejaSelectionee = false;
+
     // Constantes
     private static final int ESPACE = 20;
+
+    JPanel terrain;
 
 
     /**
@@ -83,6 +87,9 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         miseAJour();
     }
 
+    public int getCarteSelectionee() {
+        return jeu.getNumCarteSelectionnee();
+    }
 
 
     @Override
@@ -210,7 +217,7 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
     /** Crée la grille du terrain de jeu */
     private JPanel  creerTerrain() {
-        JPanel terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
+        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
         buttonsTerrain = new BoutonAvecImage[LIGNES][COLONNES];
 
         terrain.setBorder(BorderFactory.createCompoundBorder(
@@ -219,15 +226,16 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         ));
         terrain.setBackground(new Color(226, 226, 226));
 
-        for (int row = 0; row < LIGNES; row++) {
-            for (int col = 0; col < COLONNES; col++) {
-                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
-                BoutonAvecImage boutonCase = configurerCaseTerrain(casePlateau);
-                boutonCase.bouton.addActionListener(new AdaptateurBoutonTerrain(casePlateau, collecteurEv));
-                buttonsTerrain[row][col] = boutonCase;
-                terrain.add(boutonCase.bouton);
-            }
-        }
+        updateTerrain();
+//        for (int row = 0; row < LIGNES; row++) {
+//            for (int col = 0; col < COLONNES; col++) {
+//                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
+//                BoutonAvecImage boutonCase = creerBoutonAvecImage(getCheminImagePion(infosDeConfigUI, jeu.getCasePlateau(row, col)));
+//                boutonCase.bouton.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv));
+//                buttonsTerrain[row][col] = boutonCase;
+//                terrain.add(boutonCase.bouton);
+//            }
+//        }
 
         return  terrain;
     }
@@ -240,7 +248,12 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
             Carte carte = jeu.getCartesSurLeTerrain(i);
             BoutonAvecImage boutonCarte = creerBoutonAvecImage(PATH_CARTE_DRAGON);
             configurerBoutonCarte(boutonCarte, carte );
-            boutonCarte.bouton.addActionListener(new AdaptateurCarte(i, carte, jeu.getCartesJoueurCourant(), collecteurEv));
+            boutonCarte.bouton.addActionListener(new AdaptateurCarte(
+                    i, boutonCarte,
+                    carte,
+                    this,
+                    collecteurEv)
+            );
             buttonsCartes[i] = boutonCarte;
         }
     }
@@ -415,29 +428,6 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
         bouton.panel.setImage(PATH_CARTE_DRAGON);
     }
 
-    private BoutonAvecImage configurerCaseTerrain(CasePlateau casePlateau) {
-        BoutonAvecImage boutonAvecImage ;
-            switch (casePlateau.getTypeElement()){
-                case VIDE: // case vide
-                        boutonAvecImage = creerBoutonAvecImage(Path.of(""));
-                        boutonAvecImage.setAnimation(null);
-                    break;
-                case PION_ETUDIANT:
-                        boutonAvecImage = creerBoutonAvecImage(getCheminImagePion(infosDeConfigUI, casePlateau));
-                        boutonAvecImage.setAnimation(null);
-                    break;
-                case PION_MAITRE:
-                        boutonAvecImage = creerBoutonAvecImage(getCheminImagePion(infosDeConfigUI, casePlateau));
-                        boutonAvecImage.setAnimation(null);
-                    break;
-                default:
-                    boutonAvecImage = creerBoutonAvecImage(Path.of(""));
-                    logger.logp(Level.SEVERE, EcranPlateauDeJeu.class.getName(),"configurerCaseTerrain","Erreur, type INCONNU: "+casePlateau.getTypeElement().name());
-                    break;
-            }
-
-        return boutonAvecImage;
-    }
 
 
 
@@ -503,11 +493,14 @@ public class EcranPlateauDeJeu extends BruitGrisAvecPointsPanel implements Obser
 
     // Met à jour l'affichage du terrain en fonction de l'État du jeu
     private void updateTerrain() {
-        if (jeu != null && buttonsTerrain != null) {
-            for (int row = 0; row < LIGNES; row++) {
-                for (int col = 0; col < COLONNES; col++) {
-                   buttonsTerrain[row][col] = configurerCaseTerrain(jeu.getCasePlateau(row, col));
-                }
+        terrain.removeAll();
+        for (int row = 0; row < LIGNES; row++) {
+            for (int col = 0; col < COLONNES; col++) {
+                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
+                BoutonAvecImage boutonCase = creerBoutonAvecImage(getCheminImagePion(infosDeConfigUI, jeu.getCasePlateau(row, col)));
+                boutonCase.bouton.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv));
+                buttonsTerrain[row][col] = boutonCase;
+                terrain.add(boutonCase.bouton);
             }
         }
     }

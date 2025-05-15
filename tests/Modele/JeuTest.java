@@ -128,14 +128,33 @@ class JeuTest {
                     assertEquals((i == 0 ? ID_JOUEUR_1 : ID_JOUEUR_2), jeu.getProprietairePionAt(i, j));
                 }
             }
+
             System.err.println(jeu.toString());
-            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(0));
-            jeu.jouerCoup(jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(0, 2), new Point(1, 2)));
+            jeu.setCarteSelectionnee(0);
+            jeu.setPionSelectionne(new Point(0, 2));
+            jeu.jouerCoup(new Coup(new Point(0, 2), new Point(1, 2)));
             System.err.println(jeu.toString());
-            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(1));
-            jeu.jouerCoup(jeu.preparerCoup(jeu.getCarteSelectionnee(), new Point(4, 0), new Point(3, 1)));
+
+            jeu.setCarteSelectionnee(1);
+            jeu.setPionSelectionne(new Point(4, 0));
+            jeu.jouerCoup(new Coup(new Point(4, 0), new Point(3, 1)));
             System.err.println(jeu.toString());
-            jeu.setCarteSelectionnee(jeu.getCartesJoueurCourant().get(0));
+
+
+            jeu.setCarteSelectionnee(0);
+            jeu.selectionneCase(new Point(1, 2));
+            System.err.println(jeu.toString());
+
+            jeu.selectionneCase(new Point(2, 1));
+            System.err.println(jeu.toString());
+
+            jeu.setCarteSelectionnee(1);
+            jeu.selectionneCase(new Point(3, 1));
+            System.err.println(jeu.toString());
+            jeu.selectionneCase(new Point(2, 1));
+            System.err.println(jeu.toString());
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

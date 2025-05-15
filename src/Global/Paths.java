@@ -40,13 +40,13 @@ public class Paths {
     /********************************************
      *              IMAGES PIONS              *
      *******************************************/
-    public final static Path PATH_PION_BLEU_ETUDIANT_CLIQUE     = Path.of("res/vue/images/pions/pion_bleu_etudiant_cliquer.png");
-    public final static Path PATH_PION_ROUGE_ETUDIANT           = Path.of("res/vue/images/pions/pion_rouge_etudiant.png");
-    public final static Path PATH_PION_BLEU_ETUDIANT            = Path.of("res/vue/images/pions/pion_bleu_etudiant.png");
-    public final static Path PATH_PION_NOIR_ETUDIANT            = Path.of("res/vue/images/pions/pion_noir_etudiant.png");
-    public final static Path PATH_PION_ROUGE_MAITRE             = Path.of("res/vue/images/pions/pion_rouge_maitre.png");
-    public final static Path PATH_PION_NOIR_MAITRE              = Path.of("res/vue/images/pions/pion_noir_maitre.png");
-    public final static Path PATH_PION_BLEU_MAITRE              = Path.of("res/vue/images/pions/pion_bleu_maitre.png");
+    public final static Path PATH_PION_BLEU_ETUDIANT_CLIQUE     = Path.of("res/vue/images/pions/pion_etudiant_bleu_clique.png");
+    public final static Path PATH_PION_ROUGE_ETUDIANT           = Path.of("res/vue/images/pions/pion_etudiant_rouge.png");
+    public final static Path PATH_PION_BLEU_ETUDIANT            = Path.of("res/vue/images/pions/pion_etudiant_bleu.png");
+    public final static Path PATH_PION_NOIR_ETUDIANT            = Path.of("res/vue/images/pions/pion_etudiant_noir.png");
+    public final static Path PATH_PION_ROUGE_MAITRE             = Path.of("res/vue/images/pions/pion_maitre_rouge.png");
+    public final static Path PATH_PION_NOIR_MAITRE              = Path.of("res/vue/images/pions/pion_maitre_noir.png");
+    public final static Path PATH_PION_BLEU_MAITRE              = Path.of("res/vue/images/pions/pion_maitre_bleu.png");
 
 
     /********************************************
@@ -75,6 +75,6 @@ public class Paths {
     /********************************************
      *              DEBUT PATHS                      *
      *******************************************/
-    public static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions", "pion_");
+    public static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions");
 
 }

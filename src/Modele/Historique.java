@@ -1,5 +1,6 @@
 package Modele;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -8,7 +9,7 @@ import java.util.Stack;
  * Gère la possibilité d'annuler et de refaire une série d'actions
  * @param <T> Action à stocker dans l'historique
  */
-public class Historique<T> {
+public class Historique<T> implements Serializable{
 
     private Stack<T> passe;
     private Stack<T> futur;
