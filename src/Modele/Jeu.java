@@ -352,9 +352,9 @@ public class Jeu extends Observable {
         //Restaurer la grille avant de jouer le coup
         restaurerGrille(depart,arrivee,pionMange);
         //Restaurer la main du joueur avant de joueur le coup
-        restaurerMainJoueur(c.getJoueurQuiJoue(), c.getCarteJoue(), c.getCarteEchange());
+        changerJoueur();
+        restaurerMainJoueur(c.getCarteEchangee());
         //Restaurer le joueur qui avait joué le coup
-        idJoueurCourant = c.getJoueurQuiJoue();
 
         // faire des choses avec le coup
 
@@ -362,14 +362,14 @@ public class Jeu extends Observable {
         metAJour();
     }
 
-    private void restaurerMainJoueur(int joueurQuiJoue, Carte carteJoue, Carte carteEchangeCoup) {
-        Joueur joueur;
-        if(joueurQuiJoue == 1) joueur = joueur1;
-        else joueur = joueur2;
-        joueur.removeCard(carteEchangeCoup);
-        joueur.addCard(carteEchange);
-        carteEchange = carteEchangeCoup;
-
+    private void restaurerMainJoueur(Carte carteEchangee) {
+        Carte carteSup = getCarteSupplementaire();
+        Joueur joueur = getJoueurCourant();
+        joueur.removeCard(carteEchangee);
+        joueur.addCard(carteSup);
+        carteSup.setProprietaire(joueur.getId());
+        carteEchangee.setProprietaire(0);
+        setCarteSupplementaire(carteEchangee);
     }
 
 
@@ -377,10 +377,11 @@ public class Jeu extends Observable {
         //Mon pion de ce coup est maintenant à la position arrivee (car le coup a été joué)
         // Il faut le deplacer à la position départ
         //recupération du pion à la case vide
-        Pion p = getCase((int)arrivee.getX(), (int)arrivee.getY());
-        //Le mettre à la case du départ
-        setCase((int)depart.getX(), (int)depart.getY(), p);
-        setCase((int)arrivee.getX(), (int) arrivee.getY(), null);
+//        Pion p = getCase((int)arrivee.getX(), (int)arrivee.getY());
+//        //Le mettre à la case du départ
+//        setCase((int)depart.getX(), (int)depart.getY(), p);
+//        setCase((int)arrivee.getX(), (int) arrivee.getY(), null);
+        deplacerPion(arrivee, depart);
         //Si un pion a été mangé
         if(pionMange)
         {
@@ -403,6 +404,7 @@ public class Jeu extends Observable {
         }
 
         Coup c = historique.refaire();
+        setPionSelectionne(c.getDepart());
         jouerCoup(c);
         // faire des choses avec le coup
 
@@ -773,6 +775,7 @@ public class Jeu extends Observable {
        
         joueur.removeCard(carteSelectionne);
         Carte nouvelleCarteJoueurCourant = getCarteSupplementaire();
+        carteSelectionne.setProprietaire(0);
         setCarteSupplementaire(carteSelectionne);
         joueur.addCard(nouvelleCarteJoueurCourant);
         nouvelleCarteJoueurCourant.setProprietaire(joueur.getId());
@@ -913,7 +916,10 @@ public class Jeu extends Observable {
                     return;
                 }
                 // peut etre utilisée par l'IA directement d'où son existence (?)
-                if(! jouerCoup(new Coup(getPionSelectionne().getPosition(), p, idJoueurCourant, getCarteSelectionnee(),carteEchange))) {
+//                if(! jouerCoup(new Coup(getPionSelectionne().getPosition(), p, idJoueurCourant, getCarteSelectionnee(),carteEchange))) {
+//                    return;
+//                }
+                if(! jouerCoup(new Coup(getPionSelectionne().getPosition(), p, getCarteSupplementaire()))) {
                     return;
                 }
                 etatGrille = DEFAUT;
@@ -941,10 +947,6 @@ public class Jeu extends Observable {
 
             Point depart = c.getDepart();
             Point arrivee = c.getArrivee();
-            int x, y;
-            x = arrivee.x;
-            y = arrivee.y;
-
             List<Coup> coupsPossibles = getCoupsPossibles(getCartesJoueurCourant().get(this.numCarteSelectionee), getPionSelectionne().getPosition());
 
             if (! estDansListeDeCoups(coupsPossibles, c)) {

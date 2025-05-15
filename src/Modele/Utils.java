@@ -155,7 +155,8 @@ public class Utils {
             }
 
             // origine / position pion -> case arrivée possible
-            coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y), jeu.getIdJoueurCourant(),carteSelectionee,jeu.getCarteSupplementaire()));
+            // coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y), jeu.getIdJoueurCourant(),carteSelectionee,jeu.getCarteSupplementaire()));
+            coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y), jeu.getCarteSupplementaire()));
         }
 
 
