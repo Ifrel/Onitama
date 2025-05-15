@@ -2,7 +2,6 @@ package Modele;
 
 import Global.Config.TYPECARTE;
 import static Global.Config.MOUVEMENTCARTE;
-import static Global.Paths.PATH_CARTE_TIGRE;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -42,16 +41,16 @@ public class Carte implements Serializable{
     public TYPECARTE getType() { return type; }
 
 
-    public List<Coup> getMoves(Point origin, int joueurAct, Carte CE)
-    {
-        List<Coup> allMoves = new ArrayList<Coup>();
-        for (Point p : MOUVEMENTCARTE.get(type)) {
-            Point nouveauPoint = new Point(origin.x + p.x, origin.y + p.y);
-            Coup nouveauCoup = new Coup(origin, nouveauPoint,joueurAct, this,CE );
-            allMoves.add(nouveauCoup);
-        }
-        return allMoves;
-    }
+//    public List<Coup> getMoves(Point origin, int joueurAct, Carte CE)
+//    {
+//        List<Coup> allMoves = new ArrayList<Coup>();
+//        for (Point p : MOUVEMENTCARTE.get(type)) {
+//            Point nouveauPoint = new Point(origin.x + p.x, origin.y + p.y);
+//            Coup nouveauCoup = new Coup(origin, nouveauPoint,joueurAct, this,CE );
+//            allMoves.add(nouveauCoup);
+//        }
+//        return allMoves;
+//    }
 
     public List<Point> getMoves() {
         return MOUVEMENTCARTE.get(type);
@@ -63,8 +62,8 @@ public class Carte implements Serializable{
     }
 
     public void setProprietaire(int p) {
-        if (p > 2 || p < 1) {
-            throw new RuntimeException("Propriétaire invalide, devrait 1 ou 2, pas " + p);
+        if (p > 2 || p < 0) {
+            throw new RuntimeException("Propriétaire invalide, devrait 0, 1 ou 2, pas " + p);
         }
        this.proprietaire = p;
     }

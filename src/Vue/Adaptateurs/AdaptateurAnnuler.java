@@ -16,6 +16,6 @@ public class AdaptateurAnnuler implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         System.err.println("bouton: annuler pressé");
-        collecteurEvent.clavier("Annuler");
+        collecteurEvent.clavier("annuler");
     }
 }

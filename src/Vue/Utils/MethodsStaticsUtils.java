@@ -3,6 +3,7 @@ package Vue.Utils;
 import Global.Config.*;
 import Global.Config.ROLEPION.*;
 import Global.Config.ROLEPION;
+import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Pion;
 import Vue.Animations.Animations;
@@ -13,6 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.nio.file.Path;
 
+import static Global.Paths.PATH_CARTE;
 import static Global.Paths.PATH_DEBUT_PION;
 import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
 
@@ -230,6 +232,11 @@ public class MethodsStaticsUtils {
     }
 
 
+    public static Path getCheminImageCarte(Carte carte){
+        Path path = PATH_CARTE.resolve(carte.getNom() +".png");
+        System.err.println(path);
+        return path;
+    }
 
 
 

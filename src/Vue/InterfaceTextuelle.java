@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import static Global.Config.ID_JOUEUR_1;
+import static Global.Config.ID_JOUEUR_2;
+
 /**
  * Classe représentant l'interface textuelle (console) du jeu.
  * Elle affiche l'état du jeu dans le terminal.
@@ -131,7 +134,7 @@ public class InterfaceTextuelle implements Observateur {
         switch (casePlateau.getTypeElement()) {
             case VIDE: return " . ";
             case PION_ETUDIANT: return " E"+casePlateau.getProprietaire();
-            case PION_MAITRE: return " M"+casePlateau.getId();
+            case PION_MAITRE: return " M"+casePlateau.getProprietaire();
             default: return " ? "; // Type inconnu
         }
     }
@@ -141,13 +144,15 @@ public class InterfaceTextuelle implements Observateur {
     /**
      * Affiche les informations sur les cartes et les options Annuler/Refaire.*/
     private void afficherCartesEtOptions() {
+        List<Carte> carteListJ1 = jeu.getCartesJoueur1();
+        List<Carte> carteListJ2 = jeu.getCartesJoueur2();
         int espace = 22;
         System.out.println("                                             |");
         System.out.println("           --- Cartes du jeu ---             |");
         System.out.printf("      %s%s%s%n",jeu.getNomJoueur1(), espace(espace, jeu.getNomJoueur1().length()), jeu.getNomJoueur2());
-        System.out.printf("  Carte %d: %s%sCarte %d: %s%n", 1, jeu.getCartesSurLeTerrain(0).getNom(), espace(espace-10,jeu.getCartesSurLeTerrain(0).getNom().length()), 3, jeu.getCartesSurLeTerrain(2).getNom());
-        System.out.printf("  Carte %d: %s%sCarte %d: %s%n", 2, jeu.getCartesSurLeTerrain(1).getNom(), espace(espace-10,jeu.getCartesSurLeTerrain(1).getNom().length()), 4, jeu.getCartesSurLeTerrain(3).getNom());
-        System.out.printf("\n         Carte %d: %s  %s%n", 5, jeu.getCartesSurLeTerrain(4).getNom(), "(reservée)");
+        System.out.printf("  Carte %d: %s%sCarte %d: %s%n", 1, carteListJ1.get(0).getNom(), espace(espace-10,jeu.getCartesSurLeTerrain(0).getNom().length()), 3, carteListJ2.get(0).getNom());
+        System.out.printf("  Carte %d: %s%sCarte %d: %s%n", 2, carteListJ1.get(1).getNom(), espace(espace-10,jeu.getCartesSurLeTerrain(1).getNom().length()), 4, carteListJ2.get(1).getNom());
+        System.out.printf("\n         Carte %d: %s  %s%n", 5, jeu.getCarteSupplementaire().getNom(), "(reservée)");
 
 
         System.out.println("                                             |");
@@ -208,19 +213,35 @@ public class InterfaceTextuelle implements Observateur {
                 case "3":
                 case "4":
                     try {
-                        indiceCarte = Integer.parseInt(input)-1;
+                        indiceCarte = Integer.parseInt(input);
 
                         // verification si choix valide selon du joueur courant
                         int idJoueur = jeu.getJoueurCourant().getId();
-                        if ((idJoueur == 1 && (indiceCarte != 0 && indiceCarte != 1)) ||
-                                (idJoueur == 2 && (indiceCarte != 2 && indiceCarte != 3))) {
-                            System.out.println("Cette carte n'appartient pas à votre camp.");
-                            rafraichirInterface = false;
-                            break;
+                        List<Carte> carteListJoueur;
+                        int idCarte = 0;
+
+                        if (idJoueur == ID_JOUEUR_1) {
+                            if (indiceCarte != 1 && indiceCarte != 2) {
+                                System.out.println("Cette carte n'appartient pas à " + jeu.getNomJoueurCourant());
+                                rafraichirInterface = false;
+                                break;
+                            }
+                            carteListJoueur = jeu.getCartesJoueur1();
+                            idCarte = (indiceCarte + 1) % 2;
+
+                        } else {
+                            if (indiceCarte != 3 && indiceCarte != 4) {
+                                System.out.println("Cette carte n'appartient pas à " + jeu.getNomJoueurCourant());
+                                rafraichirInterface = false;
+                                break;
+                            }
+                            carteListJoueur = jeu.getCartesJoueur2();
+                            idCarte = (indiceCarte + 1) % 4;
                         }
 
-                        Carte carte = jeu.getCartesSurLeTerrain(indiceCarte);
-                        collecteurEv.setCarteSelectionne(indiceCarte);
+
+                        Carte carte = carteListJoueur.get(idCarte);
+                        collecteurEv.setCarteSelectionne(idCarte);
                         carteSelectionnee = true;
 
                         while (carteSelectionnee) {
@@ -258,7 +279,7 @@ public class InterfaceTextuelle implements Observateur {
                                             int xDest = Integer.parseInt(coordDest[0]);
                                             int yDest = Integer.parseInt(coordDest[1]);
 
-                                            if (xDest >= 0 && xDest < 5 && yDest >= 0 && yDest < 5 && jeu.estDeplacementConforme(xDest, yDest)) {
+                                            if (xDest >= 0 && xDest < 5 && yDest >= 0 && yDest < 5 ) {
                                                 System.out.println("Déplacement de (" + xDepart + ", " + yDepart + ") vers (" + xDest + ", " + yDest + ")");
 
                                                 // Informer le modèle du déplacement
@@ -285,6 +306,7 @@ public class InterfaceTextuelle implements Observateur {
                         }
                     } catch (NumberFormatException | IndexOutOfBoundsException e) {
                         System.out.println("Carte invalide. Choisissez un numéro entre 1 et 4.");
+                        rafraichirInterface = false;
                     }
                     break;
 
