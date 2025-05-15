@@ -8,6 +8,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static Global.Config.*;
 import static Global.Config.TYPECARTE.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,7 @@ public class IAFaibleTest {
 
         for (int i = 0; i < 10_000; i++) {
             jeu = new Jeu();
-            ia = new IAFaible(jeu);
+            ia = new IAFaible(jeu, ID_IA_1, "IA 1");
             c = ia.calculerCoup();
             assertNotNull(c);
         }

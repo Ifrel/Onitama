@@ -45,9 +45,14 @@ public class IAFaible extends IA {
          * Note : le générateur de nombres aléatoire est uniforme
          */
         while (!cartesIA.isEmpty()) {
-            carteChoisie = cartesIA.remove(r.nextInt(cartesIA.size())); // carte sélectionnée de manière aléatoire uniforme
+            int ca = r.nextInt(cartesIA.size());
+            System.err.println("taille cartes " + cartesIA.size());
+            carteChoisie = cartesIA.remove(ca); // carte sélectionnée de manière aléatoire uniforme
+            jeu.setCarteSelectionnee(ca);
             while (!pionsIA.isEmpty()) {
-                pionChoisi = pionsIA.remove(r.nextInt(pionsIA.size())); // pion sélectionné de manière aléatoire uniforme
+                int pi = r.nextInt(pionsIA.size());
+                pionChoisi = pionsIA.remove(pi); // pion sélectionné de manière aléatoire uniforme
+                jeu.setPionSelectionne(pionChoisi.getPosition());
                 List<Coup> coupsPossibles = jeu.getCoupsPossibles(carteChoisie, pionChoisi.getPosition()); // liste de tous les coups possibles étant donné une carte et un pion
                 if (coupsPossibles.isEmpty()) { // pas de coup possible pour la carte et le pion courants
                     continue; // donc on passe au pion suivant
