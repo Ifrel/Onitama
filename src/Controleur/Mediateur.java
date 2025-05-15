@@ -79,12 +79,12 @@ public class Mediateur implements CollecteurEvenements {
 
     @Override
     public void setCiblePion(int xDest, int yDest) {
-        jeu.setCasePlateauCible(xDest, yDest);
+        jeu.selectionneCase(new Point(xDest, yDest));
     }
 
     @Override
     public void setCaseSelectionnee(int xDepart, int yDepart) {
-        jeu.setPionSelectionne(xDepart, yDepart);
+        jeu.selectionneCase(new Point(xDepart, yDepart));
     }
 
     @Override
