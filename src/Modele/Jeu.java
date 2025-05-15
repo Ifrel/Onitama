@@ -927,6 +927,10 @@ public class Jeu extends Observable {
             if (pionSelectionne == null) {
                 throw new IllegalStateException("Il faut d'abord choisir un pion avant de jouer un Coup");
             }
+            if (estPartieFinie()) {
+                logger.info("La partie est finie, impossible de jouer un coup");
+                return false;
+            }
             if (c == null) {
                 logger.info("Aucun coup fourni, au tour du joueur suivant");
                 changerJoueur();
