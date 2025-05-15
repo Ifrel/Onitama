@@ -76,6 +76,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
 
 
     private void animationCarte(){
+        boutonCarte.bouton.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId());
         if (estSelectionne) {
             boutonCarte.bouton.setBackground(activeBg);
             boutonCarte.bouton.setForeground(activeFg);
