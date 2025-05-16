@@ -14,7 +14,7 @@ import static Global.Config.ROLEPION;
 /**
  * Représentation compacte de l'état du plateau de jeu à un moment donné de la partie
  */
-public class EtatPlateau implements Comparable<EtatPlateau> {
+public class EtatJeu implements Comparable<EtatJeu> {
     private byte [] config; // 12 octets = 96 bits; BIG ENDIAN
     //  4    4     4    4     4           25 (5 x 5)                 25 (5 x 5)            5     5      5     5      6
     // 1111 1111  1111 1111  1111  1111111111111111111111111  1111111111111111111111111  11111 11111  11111 11111  XXXXXX
@@ -39,7 +39,7 @@ public class EtatPlateau implements Comparable<EtatPlateau> {
     // -> Position Maitres : possible d'utiliser 2 vecteurs de 5 bits car 1 seul maitre par joueur donc aucune ambiguité
 
 
-    public EtatPlateau(int joueurCourantID, Carte carteEnPlus, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
+    public EtatJeu(int joueurCourantID, Carte carteEnPlus, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
         Objects.requireNonNull(carteEnPlus, "La Carte Supplémentaire ne peut pas valoir null");
         Objects.requireNonNull(cartesJoueur1, "La liste des cartes du joueur 1 ne peut pas valoir null");
         Objects.requireNonNull(cartesJoueur2, "La liste des cartes du joueur 2 ne peut pas valoir null");
@@ -85,7 +85,7 @@ public class EtatPlateau implements Comparable<EtatPlateau> {
 
     }
 
-    public EtatPlateau(byte [] etatJeu) {
+    public EtatJeu(byte [] etatJeu) {
         Objects.requireNonNull(etatJeu, "L'état du jeu ne peut pas valoir null");
         this.config = etatJeu.clone();
     }
@@ -266,7 +266,7 @@ public class EtatPlateau implements Comparable<EtatPlateau> {
     }
 
     @Override
-    public int compareTo(EtatPlateau cp) {
+    public int compareTo(EtatJeu cp) {
         return hashCode() - cp.hashCode();
     }
 }
