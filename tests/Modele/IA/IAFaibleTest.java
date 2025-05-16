@@ -1,15 +1,10 @@
-package Modele;
+package Modele.IA;
 
-import Modele.IA.IA;
-import Modele.IA.IAFaible;
+import Modele.Coup;
+import Modele.Jeu;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import static Global.Config.*;
-import static Global.Config.TYPECARTE.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IAFaibleTest {

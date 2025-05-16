@@ -55,6 +55,11 @@ public abstract class IA extends Joueur {
     public abstract boolean isThinking();
 
     /**
+     * Termine le processus de calcul de l'IA de manière aussi propre que possible
+     */
+    public abstract void stop();
+
+    /**
      * Renvoie le niveau de l'IA
      *
      * @return FAIBLE | MOYEN | FORT

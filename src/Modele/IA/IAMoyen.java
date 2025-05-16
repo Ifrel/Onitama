@@ -56,6 +56,15 @@ public class IAMoyen extends IA {
     }
 
     /**
+     * Termine le processus de calcul de l'IA de manière aussi propre que possible
+     */
+    @Override
+    public void stop() {
+
+    }
+
+
+    /**
      * Renvoie le niveau de l'IA
      *
      * @return FAIBLE | MOYEN | FORT
