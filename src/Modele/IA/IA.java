@@ -4,6 +4,7 @@ import Global.Config.NIVEAU_IA;
 import Global.Config.VITESSE_IA;
 import Modele.Coup;
 import Modele.Joueur;
+import Modele.Pion;
 
 import static Global.Config.TYPE_JOUEUR;
 import static Global.Config.TYPE_JOUEUR.JOUEUR_IA;
@@ -32,6 +33,26 @@ public abstract class IA extends Joueur {
      */
     public abstract Coup calculerCoup();
 
+    /**
+     * Renvoie le pion choisi par l'IA
+     *
+     * @return Référence du pion choisi
+     */
+    public abstract Pion getPionChoisi();
+
+    /**
+     * Renvoie la carte choisie (relative au joueur courant)
+     *
+     * @return la carte choisie (0 ou 1)
+     */
+    public abstract int getCarteChoisie();
+
+    /**
+     * Vérifie si l'IA est en train de réfléchir (d'effectuer des calculs)
+     *
+     * @return vrai si l'IA réfléchit, faux sinon
+     */
+    public abstract boolean isThinking();
 
     /**
      * Renvoie le niveau de l'IA

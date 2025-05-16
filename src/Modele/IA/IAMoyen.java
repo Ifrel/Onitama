@@ -3,6 +3,7 @@ package Modele.IA;
 import Global.Config.NIVEAU_IA;
 import Modele.Coup;
 import Modele.Jeu;
+import Modele.Pion;
 
 import static Global.Config.NIVEAU_IA.MOYEN;
 
@@ -22,6 +23,36 @@ public class IAMoyen extends IA {
     @Override
     public Coup calculerCoup() {
         return null;
+    }
+
+    /**
+     * Renvoie le pion choisi par l'IA
+     *
+     * @return Référence du pion choisi
+     */
+    @Override
+    public Pion getPionChoisi() {
+        return null;
+    }
+
+    /**
+     * Renvoie la carte choisie (relative au joueur courant)
+     *
+     * @return la carte choisie (0 ou 1)
+     */
+    @Override
+    public int getCarteChoisie() {
+        return 0;
+    }
+
+    /**
+     * Vérifie si l'IA est en train de réfléchir (d'effectuer des calculs)
+     *
+     * @return vrai si l'IA réfléchit, faux sinon
+     */
+    @Override
+    public boolean isThinking() {
+        return false;
     }
 
     /**

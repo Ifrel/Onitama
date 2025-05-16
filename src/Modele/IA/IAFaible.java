@@ -13,6 +13,8 @@ import static Global.Config.NIVEAU_IA.FAIBLE;
 
 public class IAFaible extends IA {
     private final Jeu jeu;
+    private Pion pionChoisi;
+    private int carteChoisie;
 
     public IAFaible(Jeu jeu, int id, String nom) {
         super(id, nom);
@@ -31,8 +33,6 @@ public class IAFaible extends IA {
         List<Carte> cartesIA = jeu.getCartesJoueurCourant();
         List<Pion> pionsIA = jeu.getPionsJoueurCourant();
 
-        Carte carteChoisie;
-        Pion pionChoisi;
 
         /*
          * Preuve de correction totale :
@@ -44,19 +44,23 @@ public class IAFaible extends IA {
          *                                           On obtient un pion aléatoire à chaque itération
          * Note : le générateur de nombres aléatoire est uniforme
          */
+        Carte carteEnCours;
+        Pion pionEnCours;
         while (!cartesIA.isEmpty()) {
             int ca = r.nextInt(cartesIA.size());
-            carteChoisie = cartesIA.remove(ca); // carte sélectionnée de manière aléatoire uniforme
+            carteEnCours = cartesIA.remove(ca); // carte sélectionnée de manière aléatoire uniforme
             while (!pionsIA.isEmpty()) {
                 int pi = r.nextInt(pionsIA.size());
-                pionChoisi = pionsIA.remove(pi); // pion sélectionné de manière aléatoire uniforme
-                List<Coup> coupsPossibles = jeu.getCoupsPossibles(carteChoisie, pionChoisi.getPosition()); // liste de tous les coups possibles étant donné une carte et un pion
+                pionEnCours = pionsIA.remove(pi); // pion sélectionné de manière aléatoire uniforme
+                List<Coup> coupsPossibles = jeu.getCoupsPossibles(carteEnCours, pionEnCours.getPosition()); // liste de tous les coups possibles étant donné une carte et un pion
                 if (coupsPossibles.isEmpty()) { // pas de coup possible pour la carte et le pion courants
                     continue; // donc on passe au pion suivant
                 }
                 c = coupsPossibles.get(r.nextInt(coupsPossibles.size())); // coup sélectionné de manière aléatoire uniforme
                 jeu.setCarteSelectionnee(ca);
-                jeu.setPionSelectionne(pionChoisi.getPosition());
+                this.carteChoisie = ca;
+                jeu.setPionSelectionne(pionEnCours.getPosition());
+                this.pionChoisi = pionEnCours;
                 return c; // après avoir trouvé un coup, on sort directement, sinon on continue à chercher
             }
             if (!cartesIA.isEmpty()) { // il n'est pas nécessaire de construire une liste de pions qui ne sera pas utilisée
@@ -64,6 +68,36 @@ public class IAFaible extends IA {
             }
         }
         return c;
+    }
+
+    /**
+     * Renvoie le pion choisi par l'IA
+     *
+     * @return Référence du pion choisi
+     */
+    @Override
+    public Pion getPionChoisi() {
+        return this.pionChoisi;
+    }
+
+    /**
+     * Renvoie la carte choisie (relative au joueur courant)
+     *
+     * @return la carte choisie (0 ou 1)
+     */
+    @Override
+    public int getCarteChoisie() {
+        return this.carteChoisie;
+    }
+
+    /**
+     * Vérifie si l'IA est en train de réfléchir (d'effectuer des calculs)
+     *
+     * @return vrai si l'IA réfléchit, faux sinon
+     */
+    @Override
+    public boolean isThinking() {
+        return false;
     }
 
     /**
