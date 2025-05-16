@@ -38,3 +38,4 @@ build/
 .DS_Store
 testsUI/
 .log/
+launch_Intelliji.sh

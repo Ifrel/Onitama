@@ -1,4 +1,4 @@
-package Vue.Animations;
+package Vue.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +12,7 @@ import java.util.Random;
  * L'animation du bruit et des points peut être activée ou désactivée.
  * Une couleur de base est affichée lorsque l'animation est désactivée.
  */
-public class BruitGrisAvecPointsPanel extends JPanel {
+public class PanelBruitGris extends JPanel {
 
     private BufferedImage noiseTexture;                     // Texture de bruit gris pré-calculée pour l'arrière-plan
     private int textureWidth = 100;                         // Largeur de la texture de bruit (constante, impacte la finesse du bruit)
@@ -40,7 +40,7 @@ public class BruitGrisAvecPointsPanel extends JPanel {
      * Constructeur du panneau. Initialise la texture de bruit, les points animés et le timer pour l'animation.
      * Complexité de l'initialisation : O(NOMBRE_POINTS) pour la création des points + O(textureWidth * textureHeight) pour la création de la texture (constant ici).
      */
-    public BruitGrisAvecPointsPanel() {
+    public PanelBruitGris() {
         // Créer la texture de bruit pour l'arrière-plan une seule fois.
         // Complexité : O(textureWidth * textureHeight), constant car les dimensions de la texture sont fixes.
         noiseTexture = createNoiseTexture(textureWidth, textureHeight);

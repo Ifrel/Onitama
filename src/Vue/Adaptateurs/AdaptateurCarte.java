@@ -5,6 +5,7 @@ import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
+import Vue.testsUI.Bouton;
 import Vue.Utils.MethodsStaticsUtils.BoutonAvecImage;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
     private final CollecteurEvenements collecteurEvent;
     private final Carte carte;
     private final int  idCarte;
-    private BoutonAvecImage boutonCarte = null;
+    private Bouton boutonCarte = null;
     private Boolean estSelectionne;
     private EcranPlateauDeJeu ecranPlateauDeJeu;
     private final Jeu jeu;
@@ -31,7 +32,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
 
     public AdaptateurCarte(
                             int idCarte,
-                            BoutonAvecImage boutonCarte,
+                            Bouton boutonCarte,
                             Carte carte,
                             EcranPlateauDeJeu ecranPlateauDeJeu,
                             CollecteurEvenements collecteurEvent){
@@ -76,21 +77,16 @@ public class AdaptateurCarte implements ActionListener, Observateur {
 
 
     private void animationCarte(){
-        boutonCarte.bouton.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId());
+        boutonCarte.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId());
         if (estSelectionne) {
-            boutonCarte.bouton.setBackground(activeBg);
-            boutonCarte.bouton.setForeground(activeFg);
-            boutonCarte.bouton.setBorder(activeBorder);
+            boutonCarte.demarrerAnimation();
         } else {
-            boutonCarte.bouton.setBackground(null);
-            boutonCarte.bouton.setForeground(null);
-            boutonCarte.bouton.setPreferredSize(null);
-            boutonCarte.bouton.setBorder(null);
+            boutonCarte.arreterAnimation();
         }
         estSelectionne = !estSelectionne;
 
         // Nécessaire pour redessiner la taille
-        boutonCarte.bouton.revalidate();
-        boutonCarte.bouton.repaint();
+        boutonCarte.revalidate();
+        boutonCarte.repaint();
     }
 }

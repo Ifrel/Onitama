@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.logging.Logger;
 
 import static Global.Config.DIM_SCENE;
-import static Vue.ConstantesConfigurationUI.WIDTH_MENU;
+import static Vue.ConfigUI.WIDTH_MENU;
 
 
 /**
@@ -77,7 +77,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         initialiserMenu();
         ajouterComportementRedimensionnement();
 
-        frame.setContentPane(ecranDeDemarrage);
+        frame.setContentPane(ecranPlateauDeJeu);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
