@@ -5,19 +5,14 @@ import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
-import Vue.testsUI.Bouton;
-import Vue.Utils.MethodsStaticsUtils.BoutonAvecImage;
+import Vue.LABO.Bouton;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.logging.Logger;
-
-import static Global.Config.ID_JOUEUR_1;
-import static Global.Config.ID_JOUEUR_2;
 
 public class AdaptateurCarte implements ActionListener, Observateur {
     private final CollecteurEvenements collecteurEvent;

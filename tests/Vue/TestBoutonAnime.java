@@ -167,7 +167,7 @@ class Main {
 
         // Create your custom button instance
         // Example with text
-        Vue.testsUI.Bouton myButton = new Vue.testsUI.Bouton(PATH_CARTE.resolve("TIGRE.png"));
+        Vue.LABO.Bouton myButton = new Vue.LABO.Bouton(PATH_CARTE.resolve("TIGRE.png"));
 
         // Example with image (assuming PATH_CARTE is correctly defined and image exists)
         // Path testImagePath = PATH_CARTE.resolve("TIGRE.png");
