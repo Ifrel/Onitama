@@ -48,7 +48,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private BoutonAvecImage[][] buttonsTerrain;
     private Bouton[] buttonsCartesJoueur1;
     private Bouton[] buttonsCartesJoueur2;
-    private Bouton carteDeRotaion;
+    private Bouton carteDeRotation;
     private JButton boutonSon, annuler, refaire;
 
     private JLabel nomJoueurCourantLabel;
@@ -194,7 +194,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         centreGbc.weightx = 5;
         centreGbc.weighty = 5;
         centreGbc.insets = new Insets(20, 20, 20, 20);
-        panelCentreEmpile.add(terrain, centreGbc);
+        panelCentreEmpile.add(ContenatTerrain, centreGbc);
+//        panelCentreEmpile.add(terrain, centreGbc);
         centreGbc.insets = new Insets(0, 0, 0, 0);
 
         // Boutons à droite
@@ -237,8 +238,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
                 BoutonAvecImage boutonCase = creerBoutonAvecImage(getCheminImagePion(infosDeConfigUI, casePlateau));
                 boutonCase.bouton.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv));
                 buttonsTerrain[row][col] = boutonCase;
-//                terrain.add(boutonCase.bouton);
-                terrain.add(new PanelRatioFixe(new JButton("test"), 1));
+                terrain.add(boutonCase.bouton);
             }
         }
     }
@@ -256,7 +256,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
 
         initBoutonsTerrain();
 
-        return new PanelRatioFixe(terrain, 1);
+        return new PanelRatioFixe(terrain, 16.0/10.0);
     }
 
 
@@ -265,9 +265,9 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         buttonsCartesJoueur1 = new Bouton[NOMBRE_CARTES_MAIN];
         buttonsCartesJoueur2 = new Bouton[NOMBRE_CARTES_MAIN];
 
-        carteDeRotaion = new Bouton(getCheminImageCarte(jeu.getCarteSupplementaire()));
-        carteDeRotaion.addActionListener(new AdaptateurCarte(
-                0, carteDeRotaion,
+        carteDeRotation = new Bouton(getCheminImageCarte(jeu.getCarteSupplementaire()));
+        carteDeRotation.addActionListener(new AdaptateurCarte(
+                0, carteDeRotation,
                 jeu.getCarteSupplementaire(),
                 this,
                 collecteurEv)
@@ -339,7 +339,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
     private void creerCartesSud() {
-        cartesSud.setLayout(new BoxLayout(cartesSud, BoxLayout.X_AXIS));
+        cartesSud.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         cartesSud.setOpaque(false);
 
         cartesSud.add(Box.createGlue());
@@ -352,25 +352,20 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
     private void creerCarteGauche() {
-        JPanel gauche = new JPanel();
-        gauche.setLayout(new BoxLayout(gauche, BoxLayout.Y_AXIS));
-//        gauche.setOpaque(false);
-        gauche.add(Box.createVerticalStrut(50));
-        gauche.add(Box.createGlue());
-        gauche.add(Box.createGlue());
-        gauche.add(carteDeRotaion);
-        gauche.add(Box.createGlue());
-        gauche.add(Box.createGlue());
-        gauche.add(Box.createVerticalStrut(50));
+        JPanel vertical = new JPanel();
+        vertical.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+//
+        vertical.setBackground(new Color(117, 165, 139));
+        vertical.add(carteDeRotation);
 
 
 
-        cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.X_AXIS));
-        cartesEst.setPreferredSize(new Dimension(100, 50));
+
+        cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.Y_AXIS));
         cartesEst.add(Box.createGlue());
-        cartesEst.add(gauche);
+        cartesEst.add(vertical);
 //        cartesEst.add(Box.createGlue());
-        cartesEst.setOpaque(false);
+//        cartesEst.setOpaque(false);
     }
 
     private JPanel creerBoutonsDroite() {
@@ -560,9 +555,9 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
             buttonsCartesJoueur2[idCarte] = boutonCarteJ2;
         }
 
-        carteDeRotaion = new Bouton(getCheminImageCarte(jeu.getCarteSupplementaire()));
-        carteDeRotaion.addActionListener(new AdaptateurCarte(
-                0, carteDeRotaion,
+        carteDeRotation = new Bouton(getCheminImageCarte(jeu.getCarteSupplementaire()));
+        carteDeRotation.addActionListener(new AdaptateurCarte(
+                0, carteDeRotation,
                 jeu.getCarteSupplementaire(),
                 this,
                 collecteurEv)

@@ -72,7 +72,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
 
 
     private void animationCarte(){
-        boutonCarte.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId());
+        boutonCarte.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId() );
         if (estSelectionne) {
             boutonCarte.demarrerAnimation();
         } else {
