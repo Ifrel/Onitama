@@ -5,7 +5,7 @@ import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
-import Vue.LABO.Bouton;
+import Vue.LabO.Bouton;
 
 import javax.swing.*;
 import javax.swing.border.Border;

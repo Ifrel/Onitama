@@ -1,4 +1,4 @@
-package Vue.LABO;//package Vue.testsUI;
+package Vue.LabO;//package Vue.testsUI;
 //
 //import javax.swing.*;
 //import java.awt.*;

@@ -1,4 +1,4 @@
-package Vue.LABO;
+package Vue.LabO;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

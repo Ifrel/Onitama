@@ -1,4 +1,4 @@
-package Vue.LABO;
+package Vue.LabO;
 
 
 public class AppTextKeys { // Renommé pour indiquer que ce sont des clés

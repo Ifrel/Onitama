@@ -10,7 +10,7 @@ import Vue.Adaptateurs.AdaptateurRefaire;
 import Modele.Carte;
 import Vue.Utils.PanelBruitGris;
 import Vue.Utils.PanelRatioFixe;
-import Vue.LABO.Bouton;
+import Vue.LabO.Bouton;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
