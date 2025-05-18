@@ -7,6 +7,7 @@ import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Pion;
 import Vue.Animations.Animations;
+import Vue.EcranPlateauDeJeu.TYPE_ELEMENT_SUR_TERRAIN;
 import Vue.InfosDeConfigUI;
 
 import javax.swing.*;
@@ -14,6 +15,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.nio.file.Path;
 
+import static Global.Config.ID_JOUEUR_1;
+import static Global.Config.ID_JOUEUR_2;
 import static Global.Paths.PATH_CARTE;
 import static Global.Paths.PATH_DEBUT_PION;
 import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
@@ -213,18 +216,43 @@ public class MethodsStaticsUtils {
 
 
 
-    public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, CasePlateau casePlateau){
-        Path pathImage = Path.of("") ;
-        if (casePlateau.getTypeElement() != VIDE) {
-            String nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(casePlateau.getProprietaire());
-            String rolePion = casePlateau.getRole().toString().toLowerCase();
-            String suite = rolePion + "_" + nomCouleurPion + ".png";
-            pathImage = PATH_DEBUT_PION.resolve(suite);
-//            System.err.println(pathImage);
+    public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, TYPE_ELEMENT_SUR_TERRAIN type) {
+        if (type == TYPE_ELEMENT_SUR_TERRAIN.VIDE) {
+            return null; // ou retourne un chemin vers une image "vide" si besoin
         }
 
-        return pathImage;
+        String nomCouleurPion;
+        String role;
+        int numJoueur;
+
+        switch (type) {
+            case PION_ETUDIANT_J1:
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(1);
+                role = "etudiant";
+                numJoueur = ID_JOUEUR_1;
+                break;
+            case PION_ETUDIANT_J2:
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(2);
+                role = "etudiant";
+                numJoueur = ID_JOUEUR_2;
+                break;
+            case PION_MAITRE_J1:
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(1);
+                role = "maitre";
+                numJoueur = ID_JOUEUR_1;
+                break;
+            case PION_MAITRE_J2:
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(2);
+                role = "maitre";
+                numJoueur = ID_JOUEUR_2;
+                break;
+            default: throw new IllegalArgumentException("Type de pion inconnu : " + type);
+        }
+
+        String nomFichier = "pion_" + role + "_" + nomCouleurPion + ".png";
+        return PATH_DEBUT_PION.resolve(nomFichier);
     }
+
 
 
     public static Path getCheminImagePionClique(Path cheminImageActuelle){
