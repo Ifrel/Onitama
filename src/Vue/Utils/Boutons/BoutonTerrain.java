@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 
 import static Global.Paths.*;
@@ -20,11 +21,15 @@ public class BoutonTerrain extends JButton {
     private float phase = 0;
     private final Timer timer;
 
+    private Image imageDeFond; // Stocke l'image à afficher
+
     public BoutonTerrain(ImageIcon icone, float epaisseurBordure, float arrondi) {
-        super(icone);
+        super();
         this.epaisseurInitiale = epaisseurBordure;
         this.epaisseurAnimee = epaisseurBordure;
         this.arrondiBordure = arrondi;
+
+        this.imageDeFond = icone.getImage();
 
         setOpaque(false);
         setFocusPainted(false);
@@ -32,14 +37,11 @@ public class BoutonTerrain extends JButton {
         setContentAreaFilled(false);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-
         timer = new Timer(40, e -> {
             phase += 0.1f;
             if (phase > 2 * Math.PI) phase -= 2 * Math.PI;
             repaint();
         });
-
-        // addActionListener(e -> activerAnimationBordure(!animationActivee));
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -60,6 +62,12 @@ public class BoutonTerrain extends JButton {
         this(new ImageIcon(cheminImage.toString()), 2.0f, ARONDI);
     }
 
+
+    public BoutonTerrain(BufferedImage image) {
+        this((image != null) ? new ImageIcon(image) : new ImageIcon(""), 2.0f, ARONDI);
+    }
+
+
     public void activerAnimationBordure(boolean activer) {
         this.animationActivee = activer;
 
@@ -78,10 +86,14 @@ public class BoutonTerrain extends JButton {
     }
 
     public void changerImage(ImageIcon nouvelleImage) {
-        setIcon(nouvelleImage);   // Remplace l'icône actuelle par la nouvelle
-        repaint();                // Demande la mise à jour graphique pour afficher la nouvelle image
+        this.imageDeFond = nouvelleImage.getImage();
+        repaint();
     }
 
+    public void changerImage(BufferedImage nouvelleImage) {
+        this.imageDeFond = nouvelleImage;
+        repaint();
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -92,50 +104,41 @@ public class BoutonTerrain extends JButton {
         int h = getHeight();
         int arc = (int) arrondiBordure;
 
-        // 1. Peindre le fond transparent ou la couleur de fond du bouton
+        // 1. Fond
         if (isOpaque()) {
             g2.setColor(getBackground());
             g2.fillRoundRect(0, 0, w, h, arc, arc);
         }
 
-        // Calcul épaisseur totale bordure
-        float epaisseurBordureTotale = epaisseurAnimee;
-        if (animationActivee) {
-            epaisseurBordureTotale += 2.5f;
-        }
-        int marge = (int) (epaisseurBordureTotale + 2f); // + effet bouton qui diminue et grossit
+        float epaisseurBordureTotale = epaisseurAnimee + (animationActivee ? 2.5f : 0f);
+        int marge = (int) (epaisseurBordureTotale + 2f);
 
-        // 2. Dessiner l’image redimensionnée et centrée en tenant compte de la marge
-        Icon icon = getIcon();                          // Récupère l’icône actuelle du bouton
-        if (icon instanceof ImageIcon) {                // Vérifie que l’icône est bien une ImageIcon (contient une image)
-            ImageIcon imageIcon = (ImageIcon) icon;      // Convertit l’icône en ImageIcon pour accéder à l’image
-            Image image = imageIcon.getImage();          // Récupère l’objet Image depuis l’ImageIcon
+        // 2. Dessin de l'image
+        if (imageDeFond != null) {
+            int iw = imageDeFond.getWidth(this);
+            int ih = imageDeFond.getHeight(this);
 
-            int iw = image.getWidth(this);       // Obtient la largeur naturelle de l’image
-            int ih = image.getHeight(this);      // Obtient la hauteur naturelle de l’image
+            if (iw > 0 && ih > 0) {
+                int availableWidth = w - 2 * marge;
+                int availableHeight = h - 2 * marge - 10;
 
-            if (iw > 0 && ih > 0) {                       // Vérifie que les dimensions de l’image sont valides (positives)
-                int availableWidth = w - 2 * marge ;   // Calcul de la largeur disponible pour dessiner l’image : largeur bouton moins marges et espace (0 px)
-                int availableHeight = h - 2 * marge - 10;  // Calcul de la hauteur disponible pour dessiner l’image : hauteur bouton moins marges et espace (10 px)
+                float scale = Math.min((float) availableWidth / iw, (float) availableHeight / ih);
+                int nw = (int) (iw * scale);
+                int nh = (int) (ih * scale);
 
-                float scale = Math.min((float) availableWidth / iw, (float) availableHeight / ih);  // Calcule le facteur d’échelle pour que l’image rentre dans la zone disponible sans déformation
-                int nw = (int) (iw * scale);    // Largeur finale de l’image redimensionnée selon le facteur d’échelle
-                int nh = (int) (ih * scale);    // Hauteur finale de l’image redimensionnée selon le facteur d’échelle
+                int x = marge + (availableWidth - nw) / 2;
+                int y = marge + (availableHeight - nh) / 2 + 3;
 
-                int x = marge + (availableWidth - nw) / 2;     // Position X pour centrer horizontalement l’image dans la zone disponible (marge + moitié du reste)
-                int y = marge + (availableHeight - nh) / 2 +3;     // Position Y à +3 px pour centrer verticalement l’image dans la zone disponible (marge + moitié du reste)
-
-                // Dessine l’image redimensionnée à la position calculée
-                g2.drawImage(image, x, y, nw, nh, this);
+                g2.drawImage(imageDeFond, x, y, nw, nh, this);
             }
-    }
+        }
 
-        // 3. Dessiner la bordure arrondie
+        // 3. Bordure
         g2.setStroke(new BasicStroke(epaisseurBordureTotale));
         g2.setColor(animationActivee ? couleurBordureActive : couleurBordureInactive);
         g2.drawRoundRect(marge, marge, w - 2 * marge, h - 2 * marge, arc, arc);
 
-        // 4. Animation si activée
+        // 4. Animation
         if (animationActivee) {
             float cx = w / 2f;
             float cy = h / 2f;
@@ -157,7 +160,6 @@ public class BoutonTerrain extends JButton {
 
         g2.dispose();
     }
-
 }
 
 
