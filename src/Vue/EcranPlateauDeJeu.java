@@ -48,7 +48,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private BoutonCarte[] buttonsCartesJoueur1;
     private BoutonCarte[] buttonsCartesJoueur2;
     private BoutonCarte carteDeRotation;
-    private JButton boutonSon, annuler, refaire;
+    private BoutonTerrain annuler, refaire;
+    private JButton boutonSon;
 
     private JLabel nomJoueurCourantLabel;
     private JLabel tempsLabel;
@@ -190,10 +191,10 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         // terrain
         centreGbc.gridx = 1;
         centreGbc.gridy = 1;
-        centreGbc.weightx = 5;
-        centreGbc.weighty = 5;
+        centreGbc.weightx = 0.5;
+        centreGbc.weighty = 0.5;
         centreGbc.insets = new Insets(20, 20, 20, 20);
-        panelCentreEmpile.add(new PanelRatioFixe(terrain,1), centreGbc);
+        panelCentreEmpile.add(terrain, centreGbc);
 //        panelCentreEmpile.add(terrain, centreGbc);
         centreGbc.insets = new Insets(0, 0, 0, 0);
 
@@ -236,6 +237,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
                 CasePlateau casePlateau = jeu.getCasePlateau(row, col);
                 BoutonTerrain boutonCase = new BoutonTerrain(getCheminImagePion(infosDeConfigUI, casePlateau));
                 boutonCase.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv, this));
+                boutonCase.setPreferredSize(new Dimension(10,10));
                 buttonsTerrain[row][col] = boutonCase;
                 terrain.add(boutonCase);
             }
@@ -300,14 +302,17 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         JPanel boutonsAnnuleRefaire = new JPanel(new GridLayout(6, 1, 0, 10));
         boutonsAnnuleRefaire.setOpaque(false);
 
-        annuler = creerBoutonAvecImage(PATH_BTN_ANNULER).bouton;
-        refaire = creerBoutonAvecImage(PATH_BTN_REFAIRE).bouton;
+        annuler = new BoutonTerrain(PATH_BTN_ANNULER);
+        refaire = new BoutonTerrain(PATH_BTN_REFAIRE);
 
-        annuler.setBackground(new Color(207, 207, 207, 44));
-        refaire.setBackground(new Color(207, 207, 207, 44));
+        annuler.setPreferredSize(new Dimension(100,50));
+        refaire.setPreferredSize(new Dimension(100,50));
 
-        annuler.setOpaque(true);
-        refaire.setOpaque(true);
+//        annuler.setBackground(new Color(207, 207, 207, 44));
+//        refaire.setBackground(new Color(207, 207, 207, 44));
+
+//        annuler.setOpaque(true);
+//        refaire.setOpaque(true);
 
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
@@ -337,7 +342,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
 
     private void creerCartesSud() {
         cartesSud.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        cartesSud.setOpaque(false);
+//        cartesSud.setOpaque(false);
 
         cartesSud.add(Box.createGlue());
         cartesSud.add(Box.createGlue());
