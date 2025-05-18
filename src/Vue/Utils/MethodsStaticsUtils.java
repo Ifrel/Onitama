@@ -268,6 +268,115 @@ public class MethodsStaticsUtils {
 
 
 
+    public static JPanel creerPanelArrondiInteractif(Color fondNormal, Color fondHover, Color fondClic,
+                                                     int rayon, Color couleurBordure, int epaisseurBordure) {
+        JPanel panel = new JPanel() {
+            private Color fondActuel = fondNormal;
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                g2.setColor(fondActuel);
+                g2.fillRoundRect(0, 0, w, h, rayon, rayon);
+
+                if (couleurBordure != null && epaisseurBordure > 0) {
+                    g2.setColor(couleurBordure);
+                    g2.setStroke(new BasicStroke(epaisseurBordure));
+                    g2.drawRoundRect(epaisseurBordure / 2, epaisseurBordure / 2,
+                            w - epaisseurBordure, h - epaisseurBordure,
+                            rayon, rayon);
+                }
+
+                g2.dispose();
+            }
+
+            @Override
+            public boolean isOpaque() {
+                return false;
+            }
+
+            // Permet de modifier dynamiquement la couleur de fond actuelle
+            public void setFondActuel(Color c) {
+                this.fondActuel = c;
+                repaint();
+            }
+        };
+
+        // Événements souris pour effet hover et clic
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                ((JPanel) e.getSource()).setBackground(fondHover);
+                ((JPanel) e.getSource()).setForeground(fondHover);
+                ((JPanel) e.getSource()).repaint();
+                ((JPanel) e.getSource()).setOpaque(false);
+                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondHover);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondNormal);
+                panel.repaint();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondClic);
+                panel.repaint();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondHover);
+                panel.repaint();
+            }
+        });
+
+        return panel;
+    }
+
+
+    public static JPanel creerPanelArrondiDegrade(Color couleurHaut, Color couleurBas,
+                                                  int rayon, Color couleurBordure, int epaisseurBordure) {
+        return new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                GradientPaint gp = new GradientPaint(0, 0, couleurHaut, 0, h, couleurBas);
+                g2.setPaint(gp);
+                g2.fillRoundRect(0, 0, w, h, rayon, rayon);
+
+                if (couleurBordure != null && epaisseurBordure > 0) {
+                    g2.setColor(couleurBordure);
+                    g2.setStroke(new BasicStroke(epaisseurBordure));
+                    g2.drawRoundRect(epaisseurBordure / 2, epaisseurBordure / 2,
+                            w - epaisseurBordure, h - epaisseurBordure,
+                            rayon, rayon);
+                }
+
+                g2.dispose();
+            }
+
+            @Override
+            public boolean isOpaque() {
+                return false;
+            }
+        };
+    }
 
 
 
