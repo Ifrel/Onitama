@@ -13,8 +13,9 @@ import java.util.List;
 
 public class ControleurAnimation implements CollecteurEvenements {
     private boolean peutDesactiver;
-    private List<Coup> coupPrecedant;
+    private final List<Coup> coupPrecedant;
     EcranPlateauDeJeu ecranPlateauDeJeu;
+
 
     public ControleurAnimation(){
         peutDesactiver = false;
@@ -41,20 +42,17 @@ public class ControleurAnimation implements CollecteurEvenements {
             ecranPlateauDeJeu.getBoutonterrainAt(cible).activerAnimationBordure(true);
             System.err.println("bouton animation activé:" + cible);
         }
-
         peutDesactiver = true;
     }
-
 
     @Override
     public void desactiveCibleBoutonTerrain(List<Coup> coupPossible){
         if (peutDesactiver){
-            for (Coup coup : coupPossible) {
+            for (Coup coup : coupPrecedant) {
                 Point cible = coup.getArrivee();
                 ecranPlateauDeJeu.getBoutonterrainAt(cible).activerAnimationBordure(false);
                 System.err.println("bouton animation désactivé:" + cible);
             }
-
             peutDesactiver = false;
         }
     }
