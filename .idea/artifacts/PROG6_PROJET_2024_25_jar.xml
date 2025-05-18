@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Onitama:jar">
+    <output-path>$PROJECT_DIR$</output-path>
+    <root id="archive" name="Onitama.jar">
+      <element id="module-output" name="PROG6-PROJET-2024-25" />
+    </root>
+  </artifact>
+</component>
