@@ -328,48 +328,40 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
     private void creerCartesNord() {
-        cartesNord.setLayout(new BorderLayout());
-        JPanel cartesNordbis = new JPanel(new GridLayout(1, 4, 25, 0));
-//        cartesNord.setOpaque(false);
+        cartesNord.setLayout(new GridLayout(1, 4, 25, 0));
+        cartesNord.setOpaque(false);
 
-//        cartesNord.add(Box.createGlue());
-        cartesNordbis.add(Box.createGlue());
-        cartesNordbis.add(buttonsCartesJoueur1[0]);
-        cartesNordbis.add(buttonsCartesJoueur1[1]);
-        cartesNordbis.add(Box.createGlue());
-//        cartesNord.add(Box.createGlue());
-        cartesNord.add(cartesNordbis, BorderLayout.CENTER);
+        cartesNord.add(Box.createGlue());
+        cartesNord.add(buttonsCartesJoueur1[0]);
+        cartesNord.add(buttonsCartesJoueur1[1]);
+        cartesNord.add(Box.createGlue());
     }
 
     private void creerCartesSud() {
-        cartesSud.setLayout(new BoxLayout(cartesSud, BoxLayout.X_AXIS));
-//        cartesSud.setOpaque(false);
+        cartesSud.setLayout(new GridLayout(1, 4, 25, 0));
+        cartesSud.setOpaque(false);
 
         cartesSud.add(Box.createGlue());
-        cartesSud.add(Box.createGlue());
         cartesSud.add(buttonsCartesJoueur2[0]);
-        cartesSud.add(Box.createHorizontalStrut(25));
         cartesSud.add(buttonsCartesJoueur2[1]);
-        cartesSud.add(Box.createGlue());
         cartesSud.add(Box.createGlue());
     }
 
     private void creerCarteGauche() {
-        JPanel vertical = new JPanel();
-        vertical.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-//
-        vertical.setBackground(new Color(117, 165, 139));
-        vertical.add(carteDeRotation);
+        // Panel vertical contenant la carte, centré verticalement
+        JPanel cartesEstbis = new JPanel(new GridLayout(3, 1, 0, 70));
+        cartesEstbis.setOpaque(false);
+        cartesEstbis.add(Box.createVerticalGlue());
+        cartesEstbis.add(carteDeRotation);
+        cartesEstbis.add(Box.createVerticalGlue());
 
-
-
-
-        cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.Y_AXIS));
+        cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.X_AXIS));
         cartesEst.add(Box.createGlue());
-        cartesEst.add(vertical);
-//        cartesEst.add(Box.createGlue());
-//        cartesEst.setOpaque(false);
+        cartesEst.add(cartesEstbis);
+        cartesEst.setOpaque(false);
+
     }
+
 
     private JPanel creerBoutonsDroite() {
         JPanel droite = new JPanel();
