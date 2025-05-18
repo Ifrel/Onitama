@@ -13,6 +13,7 @@ import java.io.Serializable;
  * Représente un pion dans le modèle du jeu.
  * Un pion a une position, une couleur, un propriétaire, une image et un type spécifique. */
 public class Pion implements Serializable{
+    private static final long serialVersionUID = 1L;
     private final int proprietaire;
     private final ROLEPION role;
     private Point position;
