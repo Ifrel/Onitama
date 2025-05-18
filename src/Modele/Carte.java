@@ -18,6 +18,7 @@ import java.util.Objects;
  * sera généralement gérée ailleurs (par exemple, dans la classe Jeu ou un gestionnaire d'effets).
  */
 public class Carte implements Serializable{
+    private static final long serialVersionUID = 1L;
     private String nom;                 // Nom unique ou identifiant de la carte
     private TYPECARTE type;             // Type de la carte
     private int proprietaire;
