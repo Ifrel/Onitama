@@ -15,7 +15,11 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -212,7 +216,6 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         centreGbc.weighty = 0.5;
         centreGbc.insets = new Insets(20, 20, 20, 20);
         panelCentreEmpile.add(terrain, centreGbc);
-//        panelCentreEmpile.add(terrain, centreGbc);
         centreGbc.insets = new Insets(0, 0, 0, 0);
 
         // Boutons à droite
@@ -248,45 +251,32 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     // ============ Création UI ================
     // =========================================
 
-//    private void initBoutonsTerrain() {
-//        for (int row = 0; row < LIGNES; row++) {
-//            for (int col = 0; col < COLONNES; col++) {
-//                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
-//                BoutonTerrain boutonCase = new BoutonTerrain(getCheminImagePion(infosDeConfigUI, casePlateau));
-//                boutonCase.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv, this));
-//                boutonCase.setPreferredSize(new Dimension(10,10));
-//                buttonsTerrain[row][col] = boutonCase;
-//                terrain.add(boutonCase);
-//            }
-//        }
-//    }
-//
-//    /** Crée la grille du terrain de jeu */
-//    private void creerTerrain() {
-//        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
-//        buttonsTerrain = new BoutonTerrain[LIGNES][COLONNES];
-//
-//        terrain.setBorder(BorderFactory.createCompoundBorder(
-//                BorderFactory.createLineBorder(new Color(206, 206, 206), 5, true),
-//                BorderFactory.createEmptyBorder(15, 15, 15, 15)
-//        ));
-//        terrain.setBackground(new Color(226, 226, 226));
-//
-//        initBoutonsTerrain();
-//    }
 
     private void creerTerrain() {
-        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
+        terrain = creerPanelArrondiInteractif(
+                Color.WHITE, new Color(230, 230, 250), new Color(200, 200, 255),
+                25, Color.GRAY, 2
+        );
+
+//        terrain= creerPanelArrondiDegrade(
+//                new Color(255, 200, 200), new Color(255, 150, 150),
+//                25, Color.DARK_GRAY, 3
+//        );
+
+        terrain.setLayout(new GridLayout(LIGNES, COLONNES, 0, 0));
+//        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
         buttonsTerrain = new BoutonTerrain[LIGNES][COLONNES];
 
-        terrain.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(206, 206, 206), 5, true),
-                BorderFactory.createEmptyBorder(15, 15, 15, 15)
-        ));
-        terrain.setBackground(new Color(226, 226, 226));
+//        terrain.setBorder(BorderFactory.createCompoundBorder(
+//                BorderFactory.createLineBorder(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()), 5, true),
+//                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+//        ));
+//        terrain.setBackground(new Color(226, 226, 226));
 
         chargerImagesTerrain();
         initBoutonsTerrain();
+
+
     }
 
 
@@ -360,8 +350,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         annuler = new BoutonTerrain(PATH_BTN_ANNULER);
         refaire = new BoutonTerrain(PATH_BTN_REFAIRE);
 
-        annuler.setPreferredSize(new Dimension(100,50));
-        refaire.setPreferredSize(new Dimension(100,50));
+        annuler.setPreferredSize(new Dimension(135,60));
+        refaire.setPreferredSize(new Dimension(135,60));
 
 //        annuler.setBackground(new Color(207, 207, 207, 44));
 //        refaire.setBackground(new Color(207, 207, 207, 44));
@@ -416,7 +406,6 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         cartesEst.setOpaque(false);
 
     }
-
 
     private JPanel creerBoutonsDroite() {
         JPanel droite = new JPanel();
@@ -566,15 +555,6 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
 
-//    // Met à jour l'affichage du terrain en fonction de l'État du jeu
-//    private void updateTerrain() {
-//            terrain.removeAll();
-//            initBoutonsTerrain();
-//            terrain.revalidate();
-//            terrain.repaint();
-//    }
-
-
     /**
      * Met à jour les images des boutons de cartes en utilisant les images
      * déjà chargées et associées aux types de cartes.
@@ -707,6 +687,18 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
                 buttonsTerrain[row][col].changerImage(image);
             }
         }
+
+//        mettreAJourCouleurBordureTerrain();
+    }
+
+
+    public void mettreAJourCouleurBordureTerrain() {
+        Color couleurJoueur = infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId());
+        Border nouvelleBordure = BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(couleurJoueur, 2, true),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        );
+        terrain.setBorder(nouvelleBordure);
     }
 
 
