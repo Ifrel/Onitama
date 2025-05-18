@@ -1,16 +1,15 @@
 package Vue;
 
+import Controleur.ControleurAnimation;
 import Modele.CasePlateau;
 import Modele.Jeu;
 import Patterns.Observateur;
-import Vue.Adaptateurs.AdaptateurAnnuler;
-import Vue.Adaptateurs.AdaptateurBoutonTerrain;
-import Vue.Adaptateurs.AdaptateurCarte;
-import Vue.Adaptateurs.AdaptateurRefaire;
+import Vue.Adaptateurs.*;
 import Modele.Carte;
+import Vue.Utils.Boutons.BoutonTerrain;
 import Vue.Utils.PanelBruitGris;
 import Vue.Utils.PanelRatioFixe;
-import Vue.LabO.Bouton;
+import Vue.Utils.Boutons.BoutonCarte;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -34,9 +33,9 @@ import static Vue.Utils.MethodsStaticsUtils.*;
  */
 public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private static final Logger logger = Logger.getLogger(EcranPlateauDeJeu.class.getName());
-    InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
+    private final InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
 
-    public final Jeu jeu;
+    private final Jeu jeu;
     private final InterfaceGraphique interfaceGraphique;
     private final CollecteurEvenements collecteurEv;
 
@@ -45,10 +44,10 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private JPanel cartesEst;
     private JPanel cartesSud;
 
-    private BoutonAvecImage[][] buttonsTerrain;
-    private Bouton[] buttonsCartesJoueur1;
-    private Bouton[] buttonsCartesJoueur2;
-    private Bouton carteDeRotation;
+    private BoutonTerrain[][] buttonsTerrain;
+    private BoutonCarte[] buttonsCartesJoueur1;
+    private BoutonCarte[] buttonsCartesJoueur2;
+    private BoutonCarte carteDeRotation;
     private JButton boutonSon, annuler, refaire;
 
     private JLabel nomJoueurCourantLabel;
@@ -114,7 +113,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         cartesNord = new JPanel();
         cartesEst = new JPanel();
         cartesSud = new JPanel();
-        PanelRatioFixe ContenatTerrain = creerTerrain();
+        creerTerrain();
         creerCartesNord();
         creerCarteGauche();
         creerCartesSud();
@@ -194,7 +193,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         centreGbc.weightx = 5;
         centreGbc.weighty = 5;
         centreGbc.insets = new Insets(20, 20, 20, 20);
-        panelCentreEmpile.add(ContenatTerrain, centreGbc);
+        panelCentreEmpile.add(new PanelRatioFixe(terrain,1), centreGbc);
 //        panelCentreEmpile.add(terrain, centreGbc);
         centreGbc.insets = new Insets(0, 0, 0, 0);
 
@@ -235,18 +234,18 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         for (int row = 0; row < LIGNES; row++) {
             for (int col = 0; col < COLONNES; col++) {
                 CasePlateau casePlateau = jeu.getCasePlateau(row, col);
-                BoutonAvecImage boutonCase = creerBoutonAvecImage(getCheminImagePion(infosDeConfigUI, casePlateau));
-                boutonCase.bouton.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv));
+                BoutonTerrain boutonCase = new BoutonTerrain(getCheminImagePion(infosDeConfigUI, casePlateau));
+                boutonCase.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv, this));
                 buttonsTerrain[row][col] = boutonCase;
-                terrain.add(boutonCase.bouton);
+                terrain.add(boutonCase);
             }
         }
     }
 
     /** Crée la grille du terrain de jeu */
-    private PanelRatioFixe creerTerrain() {
+    private void creerTerrain() {
         terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
-        buttonsTerrain = new BoutonAvecImage[LIGNES][COLONNES];
+        buttonsTerrain = new BoutonTerrain[LIGNES][COLONNES];
 
         terrain.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(206, 206, 206), 5, true),
@@ -255,17 +254,15 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         terrain.setBackground(new Color(226, 226, 226));
 
         initBoutonsTerrain();
-
-        return new PanelRatioFixe(terrain, 16.0/10.0);
     }
 
 
     /** Crée les boutons représentant les cartes */
     private void creerButtonsCartes() {
-        buttonsCartesJoueur1 = new Bouton[NOMBRE_CARTES_MAIN];
-        buttonsCartesJoueur2 = new Bouton[NOMBRE_CARTES_MAIN];
+        buttonsCartesJoueur1 = new BoutonCarte[NOMBRE_CARTES_MAIN];
+        buttonsCartesJoueur2 = new BoutonCarte[NOMBRE_CARTES_MAIN];
 
-        carteDeRotation = new Bouton(getCheminImageCarte(jeu.getCarteSupplementaire()));
+        carteDeRotation = new BoutonCarte(getCheminImageCarte(jeu.getCarteSupplementaire()));
         carteDeRotation.addActionListener(new AdaptateurCarte(
                 0, carteDeRotation,
                 jeu.getCarteSupplementaire(),
@@ -276,8 +273,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         List<Carte> carteListJ1 = jeu.getCartesJoueur1();
         List<Carte> carteListJ2 = jeu.getCartesJoueur2();
         for (int idCarte = 0; idCarte < NOMBRE_CARTES_MAIN; idCarte++) {
-            Bouton boutonCarteJ1 = new Bouton(getCheminImageCarte(carteListJ1.get(idCarte)));
-            Bouton boutonCarteJ2 = new Bouton(getCheminImageCarte(carteListJ2.get(idCarte)));
+            BoutonCarte boutonCarteJ1 = new BoutonCarte(getCheminImageCarte(carteListJ1.get(idCarte)));
+            BoutonCarte boutonCarteJ2 = new BoutonCarte(getCheminImageCarte(carteListJ2.get(idCarte)));
             boutonCarteJ1.addActionListener(new AdaptateurCarte(
                     idCarte, boutonCarteJ1,
                     carteListJ1.get(idCarte),
@@ -534,8 +531,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         List<Carte> carteListJ1 = jeu.getCartesJoueur1();
         List<Carte> carteListJ2 = jeu.getCartesJoueur2();
         for (int idCarte = 0; idCarte < NOMBRE_CARTES_MAIN; idCarte++) {
-            Bouton boutonCarteJ1 = new Bouton(getCheminImageCarte(carteListJ1.get(idCarte)));
-            Bouton boutonCarteJ2 = new Bouton(getCheminImageCarte(carteListJ2.get(idCarte)));
+            BoutonCarte boutonCarteJ1 = new BoutonCarte(getCheminImageCarte(carteListJ1.get(idCarte)));
+            BoutonCarte boutonCarteJ2 = new BoutonCarte(getCheminImageCarte(carteListJ2.get(idCarte)));
 //            configurerBoutonCarte(boutonCarte, carte );
             boutonCarteJ1.addActionListener(new AdaptateurCarte(
                     idCarte, boutonCarteJ1,
@@ -555,7 +552,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
             buttonsCartesJoueur2[idCarte] = boutonCarteJ2;
         }
 
-        carteDeRotation = new Bouton(getCheminImageCarte(jeu.getCarteSupplementaire()));
+        carteDeRotation = new BoutonCarte(getCheminImageCarte(jeu.getCarteSupplementaire()));
         carteDeRotation.addActionListener(new AdaptateurCarte(
                 0, carteDeRotation,
                 jeu.getCarteSupplementaire(),
@@ -566,12 +563,12 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         creerCartesNord();
         creerCarteGauche();
         creerCartesSud();
-        cartesNord.revalidate();
-        cartesEst.revalidate();
-        cartesSud.revalidate();
-        cartesNord.repaint();
-        cartesEst.repaint();
-        cartesSud.repaint();
+//        cartesNord.revalidate();
+//        cartesEst.revalidate();
+//        cartesSud.revalidate();
+//        cartesNord.repaint();
+//        cartesEst.repaint();
+//        cartesSud.repaint();
     }
 
 
@@ -613,4 +610,11 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         logger.info("Nettoyage de EcranPlateauDeJeu effectué.");
     }
 
+    public Jeu getJeu() {
+        return jeu;
+    }
+
+    public BoutonTerrain getBoutonterrainAt(Point bouton){
+        return buttonsTerrain[bouton.x][bouton.y];
+    }
 }
