@@ -1,6 +1,5 @@
 package Vue;
 
-import Controleur.ControleurAnimation;
 import Modele.CasePlateau;
 import Modele.Jeu;
 import Patterns.Observateur;
@@ -8,18 +7,23 @@ import Vue.Adaptateurs.*;
 import Modele.Carte;
 import Vue.Utils.Boutons.BoutonTerrain;
 import Vue.Utils.PanelBruitGris;
-import Vue.Utils.PanelRatioFixe;
 import Vue.Utils.Boutons.BoutonCarte;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
@@ -68,7 +72,21 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     // Constantes
     private static final int ESPACE = 20;
 
-    JPanel terrain;
+    private JPanel terrain;
+
+    // Chargement des images dans une liste
+    HashMap<TYPECARTE, BufferedImage> imagesCartes = new HashMap<>();
+
+    // Contient les images liées à chaque type d'élément affichable sur le terrain.
+    public static enum TYPE_ELEMENT_SUR_TERRAIN {
+        VIDE,
+        PION_ETUDIANT_J1,
+        PION_ETUDIANT_J2,
+        PION_MAITRE_J1,
+        PION_MAITRE_J2
+    }
+    private final HashMap<TYPE_ELEMENT_SUR_TERRAIN, BufferedImage> imagesCaseTerrain = new HashMap<>();
+
 
 
     /**
@@ -98,9 +116,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     @Override
     public void miseAJour() {
         logger.info("Mise à jour de l'interface...");
-        updateTerrain();
-//        initBoutonsTerrain();
-        updateCartes();
+        mettreAJourImagesTerrain();
+        mettreAJourImagesCartes();
         updatePlayerAndRoundInfo();
         updateUndoRedoButtons();
         logger.info("Mise à jour de l'interface terminée.");
@@ -231,20 +248,33 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     // ============ Création UI ================
     // =========================================
 
-    private void initBoutonsTerrain() {
-        for (int row = 0; row < LIGNES; row++) {
-            for (int col = 0; col < COLONNES; col++) {
-                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
-                BoutonTerrain boutonCase = new BoutonTerrain(getCheminImagePion(infosDeConfigUI, casePlateau));
-                boutonCase.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv, this));
-                boutonCase.setPreferredSize(new Dimension(10,10));
-                buttonsTerrain[row][col] = boutonCase;
-                terrain.add(boutonCase);
-            }
-        }
-    }
+//    private void initBoutonsTerrain() {
+//        for (int row = 0; row < LIGNES; row++) {
+//            for (int col = 0; col < COLONNES; col++) {
+//                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
+//                BoutonTerrain boutonCase = new BoutonTerrain(getCheminImagePion(infosDeConfigUI, casePlateau));
+//                boutonCase.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv, this));
+//                boutonCase.setPreferredSize(new Dimension(10,10));
+//                buttonsTerrain[row][col] = boutonCase;
+//                terrain.add(boutonCase);
+//            }
+//        }
+//    }
+//
+//    /** Crée la grille du terrain de jeu */
+//    private void creerTerrain() {
+//        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
+//        buttonsTerrain = new BoutonTerrain[LIGNES][COLONNES];
+//
+//        terrain.setBorder(BorderFactory.createCompoundBorder(
+//                BorderFactory.createLineBorder(new Color(206, 206, 206), 5, true),
+//                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+//        ));
+//        terrain.setBackground(new Color(226, 226, 226));
+//
+//        initBoutonsTerrain();
+//    }
 
-    /** Crée la grille du terrain de jeu */
     private void creerTerrain() {
         terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
         buttonsTerrain = new BoutonTerrain[LIGNES][COLONNES];
@@ -255,47 +285,72 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         ));
         terrain.setBackground(new Color(226, 226, 226));
 
+        chargerImagesTerrain();
         initBoutonsTerrain();
     }
 
 
-    /** Crée les boutons représentant les cartes */
+
+    /**
+     * Initialise les boutons représentant les cartes en main des deux joueurs
+     * ainsi que la carte de rotation, en associant chaque bouton à son image
+     * et à un écouteur d’événement adapté.
+     */
     private void creerButtonsCartes() {
-        buttonsCartesJoueur1 = new BoutonCarte[NOMBRE_CARTES_MAIN];
-        buttonsCartesJoueur2 = new BoutonCarte[NOMBRE_CARTES_MAIN];
+        try {
+            // Initialisation des tableaux de boutons pour les cartes des deux joueurs
+            buttonsCartesJoueur1 = new BoutonCarte[NOMBRE_CARTES_MAIN];
+            buttonsCartesJoueur2 = new BoutonCarte[NOMBRE_CARTES_MAIN];
 
-        carteDeRotation = new BoutonCarte(getCheminImageCarte(jeu.getCarteSupplementaire()));
-        carteDeRotation.addActionListener(new AdaptateurCarte(
-                0, carteDeRotation,
-                jeu.getCarteSupplementaire(),
-                this,
-                collecteurEv)
-        );
+            // --- Carte de rotation (carte supplémentaire) ---
+            Carte carteSupplementaire = jeu.getCarteSupplementaire();
+            BufferedImage imageSupplementaire = ImageIO.read(getCheminImageCarte(carteSupplementaire).toFile());
 
-        List<Carte> carteListJ1 = jeu.getCartesJoueur1();
-        List<Carte> carteListJ2 = jeu.getCartesJoueur2();
-        for (int idCarte = 0; idCarte < NOMBRE_CARTES_MAIN; idCarte++) {
-            BoutonCarte boutonCarteJ1 = new BoutonCarte(getCheminImageCarte(carteListJ1.get(idCarte)));
-            BoutonCarte boutonCarteJ2 = new BoutonCarte(getCheminImageCarte(carteListJ2.get(idCarte)));
-            boutonCarteJ1.addActionListener(new AdaptateurCarte(
-                    idCarte, boutonCarteJ1,
-                    carteListJ1.get(idCarte),
+            carteDeRotation = new BoutonCarte(imageSupplementaire);
+            imagesCartes.put(carteSupplementaire.getType(), imageSupplementaire);
+
+            // Association d’un écouteur pour la carte de rotation
+            carteDeRotation.addActionListener(new AdaptateurCarte(
+                    0, carteDeRotation,
+                    carteSupplementaire,
                     this,
-                    collecteurEv)
-            );
+                    collecteurEv
+            ));
 
-            boutonCarteJ2.addActionListener(new AdaptateurCarte(
-                    idCarte, boutonCarteJ2,
-                    carteListJ2.get(idCarte),
-                    this,
-                    collecteurEv)
-            );
+            // --- Cartes des joueurs ---
+            List<Carte> cartesJoueur1 = jeu.getCartesJoueur1();
+            List<Carte> cartesJoueur2 = jeu.getCartesJoueur2();
 
-            buttonsCartesJoueur1[idCarte] = boutonCarteJ1;
-            buttonsCartesJoueur2[idCarte] = boutonCarteJ2;
+            for (int i = 0; i < NOMBRE_CARTES_MAIN; i++) {
+                // Chargement des images des cartes
+                Carte carteJ1 = cartesJoueur1.get(i);
+                Carte carteJ2 = cartesJoueur2.get(i);
+
+                BufferedImage imageJ1 = ImageIO.read(getCheminImageCarte(carteJ1).toFile());
+                BufferedImage imageJ2 = ImageIO.read(getCheminImageCarte(carteJ2).toFile());
+
+                // Création des boutons avec leur image respective
+                BoutonCarte boutonJ1 = new BoutonCarte(imageJ1);
+                BoutonCarte boutonJ2 = new BoutonCarte(imageJ2);
+
+                // Stockage des images associées à chaque type de carte
+                imagesCartes.put(carteJ1.getType(), imageJ1);
+                imagesCartes.put(carteJ2.getType(), imageJ2);
+
+                // Association des écouteurs d’événements
+                boutonJ1.addActionListener(new AdaptateurCarte(i, boutonJ1, carteJ1, this, collecteurEv));
+                boutonJ2.addActionListener(new AdaptateurCarte(i, boutonJ2, carteJ2, this, collecteurEv));
+
+                // Stockage des boutons dans les tableaux respectifs
+                buttonsCartesJoueur1[i] = boutonJ1;
+                buttonsCartesJoueur2[i] = boutonJ2;
+            }
+
+        } catch (IOException e) {
+            logger.severe("Erreur lors du chargement des images des cartes : " + e.getMessage());
         }
-
     }
+
 
     /** Crée les boutons "Annuler" et "Refaire" */
     private JPanel creerButtonsAnnulerRefaire() {
@@ -511,63 +566,44 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
 
-    // Met à jour l'affichage du terrain en fonction de l'État du jeu
-    private void updateTerrain() {
-            terrain.removeAll();
-            initBoutonsTerrain();
-            terrain.revalidate();
-            terrain.repaint();
-    }
+//    // Met à jour l'affichage du terrain en fonction de l'État du jeu
+//    private void updateTerrain() {
+//            terrain.removeAll();
+//            initBoutonsTerrain();
+//            terrain.revalidate();
+//            terrain.repaint();
+//    }
 
 
-    // Met à jour l'affichage des cartes du joueur courant
-    private void updateCartes() {
-        cartesNord.removeAll();
-        cartesEst.removeAll();
-        cartesSud.removeAll();
+    /**
+     * Met à jour les images des boutons de cartes en utilisant les images
+     * déjà chargées et associées aux types de cartes.
+     *
+     * Cette méthode suppose que toutes les cartes utilisées ont déjà leur
+     * image stockée dans la map imagesCartes.
+     */
+    private void mettreAJourImagesCartes() {
+        // Mise à jour de la carte de rotation
+        Carte carteSupp = jeu.getCarteSupplementaire();
+        BufferedImage imageSupp = imagesCartes.get(carteSupp.getType());
+        carteDeRotation.setImageFond(imageSupp);
 
-        List<Carte> carteListJ1 = jeu.getCartesJoueur1();
-        List<Carte> carteListJ2 = jeu.getCartesJoueur2();
-        for (int idCarte = 0; idCarte < NOMBRE_CARTES_MAIN; idCarte++) {
-            BoutonCarte boutonCarteJ1 = new BoutonCarte(getCheminImageCarte(carteListJ1.get(idCarte)));
-            BoutonCarte boutonCarteJ2 = new BoutonCarte(getCheminImageCarte(carteListJ2.get(idCarte)));
-//            configurerBoutonCarte(boutonCarte, carte );
-            boutonCarteJ1.addActionListener(new AdaptateurCarte(
-                    idCarte, boutonCarteJ1,
-                    carteListJ1.get(idCarte),
-                    this,
-                    collecteurEv)
-            );
+        // Mise à jour des cartes des deux joueurs
+        List<Carte> cartesJ1 = jeu.getCartesJoueur1();
+        List<Carte> cartesJ2 = jeu.getCartesJoueur2();
 
-            boutonCarteJ2.addActionListener(new AdaptateurCarte(
-                    idCarte, boutonCarteJ2,
-                    carteListJ2.get(idCarte),
-                    this,
-                    collecteurEv)
-            );
+        for (int i = 0; i < NOMBRE_CARTES_MAIN; i++) {
+            Carte carteJ1 = cartesJ1.get(i);
+            Carte carteJ2 = cartesJ2.get(i);
 
-            buttonsCartesJoueur1[idCarte] = boutonCarteJ1;
-            buttonsCartesJoueur2[idCarte] = boutonCarteJ2;
+            BufferedImage imageJ1 = imagesCartes.get(carteJ1.getType());
+            BufferedImage imageJ2 = imagesCartes.get(carteJ2.getType());
+
+            buttonsCartesJoueur1[i].setImageFond(imageJ1);
+            buttonsCartesJoueur2[i].setImageFond(imageJ2);
         }
-
-        carteDeRotation = new BoutonCarte(getCheminImageCarte(jeu.getCarteSupplementaire()));
-        carteDeRotation.addActionListener(new AdaptateurCarte(
-                0, carteDeRotation,
-                jeu.getCarteSupplementaire(),
-                this,
-                collecteurEv)
-        );
-
-        creerCartesNord();
-        creerCarteGauche();
-        creerCartesSud();
-//        cartesNord.revalidate();
-//        cartesEst.revalidate();
-//        cartesSud.revalidate();
-//        cartesNord.repaint();
-//        cartesEst.repaint();
-//        cartesSud.repaint();
     }
+
 
 
     // Met à jour l'affichage du joueur courant et du numéro de round
@@ -591,6 +627,88 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
             refaire.setEnabled(jeu.peutRefaireCoup());
         }
     }
+
+
+    /**
+     * Charge les images associées à chaque type d'élément de terrain
+     * (VIDE, PION_ETUDIANT_J1, PION_ETUDIANT_J2, PION_MAITRE_J1, PION_MAITRE_J2)
+     * et les stocke dans imagesCaseTerrain.
+     */
+    private void chargerImagesTerrain() {
+        for (TYPE_ELEMENT_SUR_TERRAIN type : TYPE_ELEMENT_SUR_TERRAIN.values()) {
+            try {
+                Path chemin = getCheminImagePion(infosDeConfigUI, type);
+                if (chemin != null && Files.exists(chemin)) {
+                    BufferedImage image = ImageIO.read(chemin.toFile());
+                    imagesCaseTerrain.put(type, image);
+                } else {
+                    logger.warning("Aucune image trouvée pour le type : " + type + " (chemin : " + chemin + ")");
+                }
+            } catch (IOException e) {
+                logger.severe("Erreur lors du chargement de l'image pour le type " + type + " : " + e.getMessage());
+            }
+        }
+    }
+
+
+    /**
+     * Initialise les boutons du terrain avec les images préchargées
+     * selon le contenu initial de chaque case du plateau.
+     */
+    private void initBoutonsTerrain() {
+        for (int row = 0; row < LIGNES; row++) {
+            for (int col = 0; col < COLONNES; col++) {
+                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
+                TYPE_ELEMENT_SUR_TERRAIN typeElement = determinerTypeElement(casePlateau);
+
+                BufferedImage image = imagesCaseTerrain.get(typeElement);
+                BoutonTerrain boutonCase = new BoutonTerrain(image);
+
+                boutonCase.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv, this));
+                boutonCase.setPreferredSize(new Dimension(10, 10));
+
+                buttonsTerrain[row][col] = boutonCase;
+                terrain.add(boutonCase);
+            }
+        }
+    }
+
+
+    /**
+     * Détermine le type d'élément présent sur une case du plateau.
+     */
+    private TYPE_ELEMENT_SUR_TERRAIN determinerTypeElement(CasePlateau casePlateau) {
+        switch (casePlateau.getTypeElement()) {
+            case VIDE:
+                break;
+            case PION_ETUDIANT:
+                if (casePlateau.getProprietaire() == ID_JOUEUR_1) return TYPE_ELEMENT_SUR_TERRAIN.PION_ETUDIANT_J1;
+                else return TYPE_ELEMENT_SUR_TERRAIN.PION_ETUDIANT_J2;
+
+            case PION_MAITRE:
+                if (casePlateau.getProprietaire() == ID_JOUEUR_1) return TYPE_ELEMENT_SUR_TERRAIN.PION_MAITRE_J1;
+                else return TYPE_ELEMENT_SUR_TERRAIN.PION_MAITRE_J2;
+        }
+        return TYPE_ELEMENT_SUR_TERRAIN.VIDE;
+    }
+
+
+    /**
+     * Met à jour dynamiquement toutes les cases du plateau
+     * en fonction de leur contenu actuel (sans recharger d’image).
+     */
+    private void mettreAJourImagesTerrain() {
+        for (int row = 0; row < LIGNES; row++) {
+            for (int col = 0; col < COLONNES; col++) {
+                CasePlateau casePlateau = jeu.getCasePlateau(row, col);
+                TYPE_ELEMENT_SUR_TERRAIN type = determinerTypeElement(casePlateau);
+                BufferedImage image = imagesCaseTerrain.get(type);
+
+                buttonsTerrain[row][col].changerImage(image);
+            }
+        }
+    }
+
 
 
     // =========================================
