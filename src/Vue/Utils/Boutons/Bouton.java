@@ -173,36 +173,63 @@ public class Bouton {
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR); // Améliore la qualité de l'image
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-            int arc = (int) arrondiBordure;
             int width = getWidth();
             int height = getHeight();
+            int arc = (int) arrondiBordure;
 
             boolean survol = getModel().isRollover();
             boolean clique = getModel().isPressed();
             boolean focus = isFocusOwner();
 
-            // Fond si survol ou focus
+            // Fond survol ou focus
             if (survol || focus) {
                 g2.setColor(couleurFondSurvol);
                 g2.fillRoundRect(0, 0, width, height, arc, arc);
             }
 
-            // Fond si cliqué (peut être un effet d'ombrage ou de couleur)
+            // Fond appuyé
             if (clique) {
-                g2.setColor(new Color(0, 0, 0, 50)); // Ombrage léger
+                g2.setColor(new Color(0, 0, 0, 50));
                 g2.fillRoundRect(0, 0, width, height, arc, arc);
             }
 
-            // Icône (laisse le paintComponent par défaut gérer le dessin de l'icône redimensionnée)
-            // S'assurer que le fond transparent est géré par isContentAreaFilled
-            super.paintComponent(g2);
+            // Calcul marge dynamique — ajusté pour éviter un rayon négatif ou 0
+            int tailleMin = Math.min(width, height);
+            float margeArrondie = arc * 0.15f; // marge liée à la forme arrondie
+            float margeFixe = 4f;
+            float margeMin = 2f;
+            float marge = Math.max(margeFixe, Math.max(epaisseurActuelle, margeArrondie));
+            marge = Math.min(marge, tailleMin / 6.5f); // empêche que la marge prenne tout
 
-            // Bordure dynamique
+            // Dessin de l'image centrée
+            Icon icon = getIcon();
+            if (icon instanceof ImageIcon) {                // Vérifie que l’icône est bien une ImageIcon (contient une image)
+                ImageIcon imageIcon = (ImageIcon) icon;      // Convertit l’icône en ImageIcon pour accéder à l’image
+                Image image = imageIcon.getImage();          // Récupère l’objet Image depuis l’ImageIcon
+
+                int iw = image.getWidth(this);
+                int ih = image.getHeight(this);
+
+                if (iw > 0 && ih > 0) {
+                    int availableWidth = (int) (width - 2 * marge);
+                    int availableHeight = (int) (height - 2 * marge);
+
+                    float scale = Math.min((float) availableWidth / iw, (float) availableHeight / ih);
+                    int nw = (int) (iw * scale);
+                    int nh = (int) (ih * scale);
+
+                    int x = (width - nw) / 2;
+                    int y = (height - nh) / 2;
+
+                    g2.drawImage(image, x, y, nw, nh, this);
+                }
+            }
+
+            // Bordure
             g2.setColor(couleurBordure);
             g2.setStroke(new BasicStroke(epaisseurActuelle));
-            // Ajuster les coordonnées de dessin pour que la bordure soit bien centrée
             float halfStroke = epaisseurActuelle / 2f;
             g2.drawRoundRect(
                     (int) halfStroke,
@@ -214,6 +241,7 @@ public class Bouton {
 
             g2.dispose();
         }
+
 
         @Override
         public boolean isContentAreaFilled() {
@@ -312,12 +340,13 @@ public class Bouton {
         // Créer l'icône à partir du chemin
         ImageIcon iconeOriginale = null;
         if (cheminImage != null && !cheminImage.isEmpty()) {
-            URL imageURL = Bouton.class.getResource(cheminImage);
-            if (imageURL == null) {
-                System.err.println("Image non trouvée pour la configuration " + config + ": " + cheminImage);
-            } else {
-                iconeOriginale = new ImageIcon(imageURL);
-            }
+//            URL imageURL = Bouton.class.getResource(cheminImage);
+//            if (imageURL == null) {
+//                System.err.println("Image non trouvée pour la configuration " + config + ": " + cheminImage);
+//            } else {
+//                iconeOriginale = new ImageIcon(imageURL);
+//            }
+            iconeOriginale = new ImageIcon(cheminImage);
         }
 
 
