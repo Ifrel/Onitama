@@ -3,10 +3,12 @@ package Vue.Utils.Boutons;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 import static Global.Paths.PATH_CARTE;
 import static Vue.ConfigUI.ARONDI;
@@ -46,6 +48,22 @@ public class BoutonCarte extends JButton {
                 null // No background image by default
         );
         setImageFond(cheminImage);
+    }
+
+    /**
+     * Constructeur styles par défaut.     */
+    public BoutonCarte(BufferedImage image) {
+        this(
+                "",
+                2.5f,
+                new Color(157, 154, 154),
+                new Color(182, 12, 159),
+                new Color(255, 255, 255, 0),
+                new Color(160, 161, 165, 124),
+                ARONDI,
+                null // No background image by default
+        );
+        setImageFond(image);
     }
 
 
@@ -427,7 +445,6 @@ public class BoutonCarte extends JButton {
     }
 
 
-
     /**
      * Définit l'image à utiliser comme fond du bouton directement à partir d'un BufferedImage.
      * @param image L'image de fond à utiliser (peut être null).
@@ -440,6 +457,16 @@ public class BoutonCarte extends JButton {
         revalidate(); // Inform parent that size might have changed
         repaint();
     }
+
+
+    /**
+     * Supprime l'image de fond et réaffiche le fond en couleur.
+     */
+    public void removeImageFond() {
+        this.imageFond = null;
+        repaint();
+    }
+
 
 
     public void demarrerAnimation() {
@@ -494,6 +521,7 @@ class Main {
         imageButton5.setPreferredSize(new Dimension(200,100));
         imageButton5.setToolTipText("TIGRE");
 
+
         frame.add(imageButton2);
         frame.add(imageButton5);
 
@@ -501,6 +529,51 @@ class Main {
         // Pack the frame and make it visible
         frame.pack(); // Adjusts the window size to fit the components
         frame.setLocationRelativeTo(null); // Center the window
+        frame.setVisible(true);
+    }
+}
+
+
+class TestBoutonCarte {
+
+    public static void main(String[] args) {
+        // Chargement des images dans une liste
+        ArrayList<BufferedImage> images = new ArrayList<>();
+        try {
+            images.add(ImageIO.read(PATH_CARTE.resolve("TIGRE.png").toFile()));
+            images.add(ImageIO.read(PATH_CARTE.resolve("COQ.png").toFile()));
+            images.add(ImageIO.read(PATH_CARTE.resolve("COBRA.png").toFile()));
+            images.add(ImageIO.read(PATH_CARTE.resolve("DRAGON.png").toFile()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erreur lors du chargement des images.");
+            System.exit(1);
+        }
+
+        // Création du bouton avec la première image
+        BoutonCarte bouton = new BoutonCarte();
+        bouton.setPreferredSize(new Dimension(200,100));
+        bouton.setImageFond(images.get(0));
+
+        // Fenêtre Swing simple
+        JFrame frame = new JFrame("Test BoutonCarte");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+
+        frame.add(bouton);
+
+        // Index pour parcourir les images
+        final int[] index = {0};
+
+        // ActionListener pour changer l'image à chaque clic
+        bouton.addActionListener((ActionEvent e) -> {
+            index[0] = (index[0] + 1) % images.size();  // passage à l'image suivante
+            bouton.setImageFond(images.get(index[0]));
+            bouton.repaint();
+        });
+
+        frame.setSize(500, 500);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }
