@@ -2,20 +2,16 @@ package Vue.Adaptateurs;
 
 import Modele.Carte;
 import Modele.Jeu;
-import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
 import Vue.Utils.Boutons.BoutonCarte;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 
-public class AdaptateurCarte implements ActionListener, Observateur {
-    private final CollecteurEvenements collecteurEvent;
+public class AdaptateurCarte implements ActionListener {
+    private final CollecteurEvenements collecteurEv;
     private final Carte carte;
     private final int  idCarte;
     private BoutonCarte boutonCarte = null;
@@ -30,58 +26,43 @@ public class AdaptateurCarte implements ActionListener, Observateur {
                             BoutonCarte boutonCarte,
                             Carte carte,
                             EcranPlateauDeJeu ecranPlateauDeJeu,
-                            CollecteurEvenements collecteurEvent){
-        this.collecteurEvent = collecteurEvent;
+                            CollecteurEvenements collecteurEv){
+        this.collecteurEv = collecteurEv;
         this.carte = carte;
         this.idCarte = idCarte;
         this.boutonCarte = boutonCarte;
         this.ecranPlateauDeJeu = ecranPlateauDeJeu;
         this.jeu = ecranPlateauDeJeu.getJeu();
         this.estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
-
-        //TODO voir Prof: pourquoi si activer, une exception est levée au niveau du pattern Obsevable/Observateur
-        // jeu.ajouteObservateur(this);
-        miseAJour();
+        activeAnimation();
     }
 
 
-
-    // État modifié
-    Color activeBg = Color.CYAN;
-    Color activeFg = Color.BLACK;
-    Border activeBorder = BorderFactory.createLineBorder(Color.BLUE, 4);
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         logger.info("CarteUI n° "+idCarte+ ": " + carte.getNom() + " pressé pour le Joueur "+carte.getProprietaire());
-        boutonCarte.demarrerAnimation();
-        animationCarte();
+        boutonCarte.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId());
 
-       collecteurEvent.setCarteSelectionne(idCarte);
+//        activeAnimation();
+        collecteurEv.setCarteSelectionne(idCarte);
+        desactiveAnimation();
     }
 
 
-    @Override
-    public void miseAJour() {
+
+    private void activeAnimation(){
         estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
-//        logger.info("CarteUI n° "+idCarte+ ": " + carte.getNom() + " Sélectionnée pour le Joueur "+carte.getProprietaire());
-        animationCarte();
-    }
-
-
-
-    private void animationCarte(){
-        boutonCarte.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId() );
         if (estSelectionne) {
             boutonCarte.demarrerAnimation();
-        } else {
-            boutonCarte.arreterAnimation();
         }
-        estSelectionne = !estSelectionne;
+        //    collecteurEv.getCollecteurAnimation().activeCibleBoutonTerrain(coupPossible, ecranPlateauDeJeu);
 
-        // Nécessaire pour redessiner la taille
-        boutonCarte.revalidate();
-        boutonCarte.repaint();
+    }
+
+    private void desactiveAnimation(){
+        boutonCarte.arreterAnimation();
+//        collecteurEv.getCollecteurAnimation().desactiveCibleBoutonTerrain(coupPossible);
     }
 }
