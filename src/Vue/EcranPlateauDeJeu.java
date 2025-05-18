@@ -328,20 +328,21 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
     private void creerCartesNord() {
-        cartesNord.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        cartesNord.setLayout(new BorderLayout());
+        JPanel cartesNordbis = new JPanel(new GridLayout(1, 4, 25, 0));
 //        cartesNord.setOpaque(false);
 
 //        cartesNord.add(Box.createGlue());
+        cartesNordbis.add(Box.createGlue());
+        cartesNordbis.add(buttonsCartesJoueur1[0]);
+        cartesNordbis.add(buttonsCartesJoueur1[1]);
+        cartesNordbis.add(Box.createGlue());
 //        cartesNord.add(Box.createGlue());
-        cartesNord.add(buttonsCartesJoueur1[0]);
-        cartesNord.add(Box.createHorizontalStrut(25));
-        cartesNord.add(buttonsCartesJoueur1[1]);
-//        cartesNord.add(Box.createGlue());
-//        cartesNord.add(Box.createGlue());
+        cartesNord.add(cartesNordbis, BorderLayout.CENTER);
     }
 
     private void creerCartesSud() {
-        cartesSud.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        cartesSud.setLayout(new BoxLayout(cartesSud, BoxLayout.X_AXIS));
 //        cartesSud.setOpaque(false);
 
         cartesSud.add(Box.createGlue());
