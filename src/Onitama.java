@@ -17,8 +17,8 @@ public class Onitama {
             // Choisir les niveaux :
             // → Console : INFO et plus grave
             // → Fichier : tout (ALL)
-            //LogManagerSetup.setupLogger(Level.INFO, Level.INFO);
-            LogManagerSetup.setupLogger(Level.OFF, Level.OFF);
+            LogManagerSetup.setupLogger(Level.INFO, Level.INFO);
+            //LogManagerSetup.setupLogger(Level.OFF, Level.OFF);
 
             logger.info("Lancement du modèle du jeu");
             Jeu jeu = new Jeu();
