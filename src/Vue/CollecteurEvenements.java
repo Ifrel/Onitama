@@ -2,9 +2,12 @@ package Vue;
 
 import Global.Config;
 import Modele.CasePlateau;
+import Modele.Coup;
 import Modele.Pion;
+import Vue.Utils.Boutons.BoutonTerrain;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * Interface représentant un collecteur d'événements provenant de l'interface utilisateur.
@@ -180,5 +183,14 @@ public interface CollecteurEvenements {
      * @param xDepart La coordonnée X du pion sélectionné.
      * @param yDepart La coordonnée Y du pion sélectionné.     */
     default void setCaseSelectionnee(int xDepart, int yDepart){};
+
+
+    default void clicBoutonTerrain(BoutonTerrain boutonTerrain, CasePlateau casePlateau){};
+
+    default void activeCibleBoutonTerrain(List<Coup> coupPossible, EcranPlateauDeJeu ecranPlateauDeJeu){};
+
+    default  CollecteurEvenements getCollecteurAnimation(){return null;}
+
+    default void desactiveCibleBoutonTerrain(List<Coup> coupPossible){};
 
 }
