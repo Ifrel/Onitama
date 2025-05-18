@@ -21,14 +21,16 @@ public class AdaptateurBoutonTerrain implements ActionListener {
     private final EcranPlateauDeJeu ecranPlateauDeJeu;
     private final List<Coup> coupPossible;
 
-    public  AdaptateurBoutonTerrain(BoutonTerrain boutonTerrain, CasePlateau casePlateau, CollecteurEvenements collecteurEv, EcranPlateauDeJeu ecranPlateauDeJeu){
+    public  AdaptateurBoutonTerrain(BoutonTerrain boutonTerrain,
+                                    CasePlateau casePlateau,
+                                    CollecteurEvenements collecteurEv,
+                                    EcranPlateauDeJeu ecranPlateauDeJeu){
         this.boutonTerrain = boutonTerrain;
         this.casePlateau = casePlateau;
         this.collecteurEv = collecteurEv;
         this.ecranPlateauDeJeu = ecranPlateauDeJeu;
         this.jeu = ecranPlateauDeJeu.getJeu();
         this.coupPossible = jeu.getCoupsPossibles(jeu.getCarteSelectionnee(), casePlateau.getCoordonnee());
-        mettreAJour();
     }
 
 
@@ -36,22 +38,16 @@ public class AdaptateurBoutonTerrain implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         System.err.println("bouton: case pressé: "+casePlateau.getCoordonnee());
-        collecteurEv.setCaseSelectionnee(casePlateau.getCoordonnee());
-
-        activeAnimation();
-
-    }
-
-
-
-    private void mettreAJour() {
         desactiveAnimation();
+        collecteurEv.setCaseSelectionnee(casePlateau.getCoordonnee());
+        activeAnimation();
     }
+
 
 
 
     private void activeAnimation(){
-        if (casePlateau.getTypeElement() != VIDE) {
+        if (casePlateau.getTypeElement() != VIDE && casePlateau.getProprietaire() == jeu.getJoueurCourant().getId()) {
             if (!coupPossible.isEmpty()) {
                 collecteurEv.getCollecteurAnimation().activeCibleBoutonTerrain(coupPossible, ecranPlateauDeJeu);
             }
@@ -59,10 +55,6 @@ public class AdaptateurBoutonTerrain implements ActionListener {
     }
 
     private void desactiveAnimation(){
-        if (casePlateau.getTypeElement() != VIDE) {
-            if (!coupPossible.isEmpty()) {
-                collecteurEv.getCollecteurAnimation().desactiveCibleBoutonTerrain(coupPossible);
-            }
-        }
+        collecteurEv.getCollecteurAnimation().desactiveCibleBoutonTerrain(coupPossible);
     }
 }
