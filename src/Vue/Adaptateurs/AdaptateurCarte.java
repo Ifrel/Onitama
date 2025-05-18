@@ -5,7 +5,7 @@ import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
-import Vue.LabO.Bouton;
+import Vue.Utils.Boutons.BoutonCarte;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -18,7 +18,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
     private final CollecteurEvenements collecteurEvent;
     private final Carte carte;
     private final int  idCarte;
-    private Bouton boutonCarte = null;
+    private BoutonCarte boutonCarte = null;
     private Boolean estSelectionne;
     private EcranPlateauDeJeu ecranPlateauDeJeu;
     private final Jeu jeu;
@@ -27,7 +27,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
 
     public AdaptateurCarte(
                             int idCarte,
-                            Bouton boutonCarte,
+                            BoutonCarte boutonCarte,
                             Carte carte,
                             EcranPlateauDeJeu ecranPlateauDeJeu,
                             CollecteurEvenements collecteurEvent){
@@ -36,7 +36,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
         this.idCarte = idCarte;
         this.boutonCarte = boutonCarte;
         this.ecranPlateauDeJeu = ecranPlateauDeJeu;
-        this.jeu = ecranPlateauDeJeu.jeu;
+        this.jeu = ecranPlateauDeJeu.getJeu();
         this.estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
 
         //TODO voir Prof: pourquoi si activer, une exception est levée au niveau du pattern Obsevable/Observateur
@@ -55,7 +55,7 @@ public class AdaptateurCarte implements ActionListener, Observateur {
     @Override
     public void actionPerformed(ActionEvent e) {
         logger.info("CarteUI n° "+idCarte+ ": " + carte.getNom() + " pressé pour le Joueur "+carte.getProprietaire());
-
+        boutonCarte.demarrerAnimation();
         animationCarte();
 
        collecteurEvent.setCarteSelectionne(idCarte);
