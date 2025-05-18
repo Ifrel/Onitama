@@ -6,27 +6,23 @@ import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
 import Vue.InfosDeConfigUI;
 import Vue.InterfaceUser;
+import Vue.Utils.Boutons.BoutonTerrain;
 
 import java.awt.*;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class Mediateur implements CollecteurEvenements {
     private final Jeu jeu;
     private InterfaceUser vue;
 
-    // modélise un coup complet joué
-    Carte carteSelectionne;
-    Pion pionSelectionne;
-    Coup coordDeDeplacement;
+    private CollecteurEvenements controleurAnimation;
 
-
-    private final InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
     private static final Logger logger = Logger.getLogger(Mediateur.class.getName());
-
 
     public Mediateur(Jeu j) {
         this.jeu = j;
-        resetDataCoup();
+        controleurAnimation = new ControleurAnimation();
     }
 
 
@@ -88,7 +84,11 @@ public class Mediateur implements CollecteurEvenements {
     }
 
     @Override
-    public void setCaseSelectionnee(Point coordonnePion){ jeu.selectionneCase(coordonnePion);};
+    public void setCaseSelectionnee(Point coordonnePion) {
+        jeu.selectionneCase(coordonnePion);
+    }
+
+    ;
 
 
     @Override
@@ -97,7 +97,9 @@ public class Mediateur implements CollecteurEvenements {
     }
 
     @Override
-    public void setCarteSelectionne(int idCarte) { jeu.setCarteSelectionnee(idCarte); }
+    public void setCarteSelectionne(int idCarte) {
+        jeu.setCarteSelectionnee(idCarte);
+    }
 
     @Override
     public void setNouvellePartie(String partieSelectionee) {
@@ -107,16 +109,12 @@ public class Mediateur implements CollecteurEvenements {
 
 
 
+
     /****************************************
      *  Méthodes de gestion du controleur
      *  ************************************/
-     private boolean estCoupComplet(){
-         return carteSelectionne != null && pionSelectionne != null && coordDeDeplacement != null;
-     }
-
-     private void resetDataCoup(){
-         carteSelectionne = null;
-         pionSelectionne = null;
-         coordDeDeplacement = null;
-     }
+    @Override
+    public CollecteurEvenements getCollecteurAnimation(){
+        return controleurAnimation;
+    }
 }
