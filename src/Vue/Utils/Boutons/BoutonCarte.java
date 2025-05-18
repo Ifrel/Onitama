@@ -1,12 +1,12 @@
-package Vue.LabO;
+package Vue.Utils.Boutons;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D; // Needed for clipping
-import java.awt.image.BufferedImage; // Needed for image
-import java.nio.file.Path; // Needed for Path
-import javax.imageio.ImageIO; // Needed for reading images
-import java.io.IOException; // Needed for handling file read errors
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import static Global.Paths.PATH_CARTE;
 import static Vue.ConfigUI.ARONDI;
@@ -17,7 +17,7 @@ import static Vue.ConfigUI.ARONDI;
  * En mode inactif, la bordure réagit au survol et au clic.
  * Peut avoir une couleur de fond et/ou une image de fond qui s'adapte.
  */
-public class Bouton extends JButton {
+public class BoutonCarte extends JButton {
 
     private boolean animationActive = false;
     private float epaisseurBordure = 3f;
@@ -34,7 +34,7 @@ public class Bouton extends JButton {
 
     /**
      * Constructeur styles par défaut.     */
-    public Bouton(Path cheminImage) {
+    public BoutonCarte(Path cheminImage) {
         this(
                 "",
                 2.5f,
@@ -51,7 +51,7 @@ public class Bouton extends JButton {
 
     /**
      * Constructeur styles par défaut.     */
-    public Bouton() {
+    public BoutonCarte() {
         this(
                 "",
                 3f,
@@ -67,7 +67,7 @@ public class Bouton extends JButton {
 
     /**
      * Constructeur styles par défaut.     */
-    public Bouton(String texte) {
+    public BoutonCarte(String texte) {
         this(
                 texte,
                 3f,
@@ -93,7 +93,7 @@ public class Bouton extends JButton {
      * @param couleurFondSurvol Couleur de fond lors du survol.
      * @param arrondiCoins Rayon des coins arrondis.
      */
-    public Bouton(
+    public BoutonCarte(
             String texte,
             float epaisseurBordure,
             Color couleurBordureNormale,
@@ -124,7 +124,7 @@ public class Bouton extends JButton {
      * @param arrondiCoins Rayon des coins arrondis.
      * @param imageFond L'image de fond à afficher (peut être null).
      */
-    public Bouton(
+    public BoutonCarte(
             String texte,
             float epaisseurBordure,
             Color couleurBordureNormale,
@@ -300,7 +300,7 @@ public class Bouton extends JButton {
         } else if (imageFond != null) {
             // If image exists but no text, return a default size or size based on image aspect ratio?
             // For filling layouts, a default minimum is sufficient.
-            return new Dimension(120, 120); // Default size for image-only button (example)
+            return new Dimension(120, 50); // Default size for image-only button (example)
         }
         // Default size for an empty button
         return new Dimension(100, 50); // Example sensible default minimum
@@ -464,43 +464,41 @@ class Main {
 
     private static void createAndShowGUI() {
         // Create the main window
-        JFrame frame = new JFrame("Bouton Fixed Layout Test");
+        JFrame frame = new JFrame("Animation Button Test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300); // Set a initial size
+        frame.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20)); // Simple layout
 
-        // Create a JPanel to hold the button
-        JPanel panel = new JPanel();
-
-        // Use BorderLayout for the panel
-        // BorderLayout.CENTER makes the component fill the available space
-        panel.setLayout(new BorderLayout());
-        // Add some padding around the button using an EmptyBorder if desired
-        // panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        // Create your custom button instance
-        // Example with text
-        Bouton myButton = new Bouton(PATH_CARTE.resolve("TIGRE.png"));
-
-        // Example with image (assuming PATH_CARTE is correctly defined and image exists)
-        // Path testImagePath = PATH_CARTE.resolve("TIGRE.png");
-        // Bouton myButton = new Bouton(testImagePath);
+        Path testImagePath = PATH_CARTE.resolve("TIGRE.png");
 
 
-        // Add the button to the CENTER of the panel's BorderLayout
-        panel.add(myButton, BorderLayout.CENTER);
 
-        // Add the panel to the frame
-        frame.add(panel);
+        BoutonCarte imageButton2 = new BoutonCarte(
+                "Image + Custom Border",
+                6f,                           // Thicker border
+                Color.YELLOW,                 // Yellow base border
+                Color.GREEN,                  // Green animation color
+                new Color(0,0,0,0),           // Background color (ignored if image exists)
+                new Color(0,0,0,50),          // Rollover overlay (slightly dark overlay)
+                25,                           // Custom arc
+                null                          // No image in constructor, will set later
+        );
+        imageButton2.setImageFond(testImagePath); // Set image using setter
+        imageButton2.setForeground(Color.CYAN); // Set text color
 
-        // Pack the frame to its preferred size (based on components' preferred sizes,
-        // but BorderLayout CENTER will stretch the button to fill the panel)
-        // frame.pack(); // You might use pack() if you want the frame to size to its contents initially
 
+
+        // 9. Button with image background and thinner border
+        BoutonCarte imageButton5 = new BoutonCarte(testImagePath);
+        imageButton5.setPreferredSize(new Dimension(200,100));
+        imageButton5.setToolTipText("TIGRE");
+
+        frame.add(imageButton2);
+        frame.add(imageButton5);
+
+
+        // Pack the frame and make it visible
+        frame.pack(); // Adjusts the window size to fit the components
         frame.setLocationRelativeTo(null); // Center the window
         frame.setVisible(true);
-
-        // When you resize the frame, the panel resizes, and BorderLayout.CENTER
-        // makes the button resize to fill the panel, keeping it centered
-        // and occupying the available space.
     }
 }
