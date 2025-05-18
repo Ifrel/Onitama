@@ -5,9 +5,13 @@ import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.*;
 import Modele.Carte;
+import Vue.Utils.BordureArrondieAvecOmbre;
+import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.Boutons.BoutonTerrain;
 import Vue.Utils.PanelBruitGris;
 import Vue.Utils.Boutons.BoutonCarte;
+import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
+import Vue.Utils.PanelRatioFixe;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -17,9 +21,6 @@ import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +33,7 @@ import java.util.logging.Logger;
 
 import static Global.Config.*;
 import static Global.Paths.*;
+import static Vue.ConfigUI.ARONDI;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
 
@@ -154,8 +156,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         barreIndication.setLayout(new BoxLayout(barreIndication, BoxLayout.X_AXIS));
         barreIndication.setOpaque(false);
         barreIndication.add( creerBoutonSon());
-//        barreIndication.add(creerPanelBoutonIA());
-//        barreIndication.add(Box.createHorizontalStrut(ESPACE));
+        barreIndication.add(creerBarredesBoutons());
+        barreIndication.add(Box.createHorizontalStrut(ESPACE));
         barreIndication.add(Box.createGlue());
         barreIndication.add(creerPanelRoundTemps());
         barreIndication.add(Box.createHorizontalStrut(ESPACE));
@@ -206,7 +208,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         centreGbc.gridx = 0;
         centreGbc.gridy = 1;
         centreGbc.weightx = 1.0;
-        centreGbc.weighty = 1.0;
+        centreGbc.weighty = 0.37;
         panelCentreEmpile.add(cartesEst, centreGbc);
 
         // terrain
@@ -237,6 +239,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         // Ajout du conteneur principal au panneau
         setLayout(new BorderLayout());
         add(contenu, BorderLayout.CENTER);
+//        add(new PanelRatioFixe(contenu, 1), BorderLayout.CENTER);
 
         // Démarrage du timer
         debutTempsPartie = Instant.now();
@@ -255,28 +258,14 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private void creerTerrain() {
         terrain = creerPanelArrondiInteractif(
                 Color.WHITE, new Color(230, 230, 250), new Color(200, 200, 255),
-                25, Color.GRAY, 2
+                ARONDI, Color.GRAY, 2
         );
 
-//        terrain= creerPanelArrondiDegrade(
-//                new Color(255, 200, 200), new Color(255, 150, 150),
-//                25, Color.DARK_GRAY, 3
-//        );
-
         terrain.setLayout(new GridLayout(LIGNES, COLONNES, 0, 0));
-//        terrain = new JPanel(new GridLayout(LIGNES, COLONNES, 0, 0));
         buttonsTerrain = new BoutonTerrain[LIGNES][COLONNES];
-
-//        terrain.setBorder(BorderFactory.createCompoundBorder(
-//                BorderFactory.createLineBorder(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()), 5, true),
-//                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-//        ));
-//        terrain.setBackground(new Color(226, 226, 226));
 
         chargerImagesTerrain();
         initBoutonsTerrain();
-
-
     }
 
 
@@ -393,8 +382,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
     private void creerCarteGauche() {
-        // Panel vertical contenant la carte, centré verticalement
-        JPanel cartesEstbis = new JPanel(new GridLayout(3, 1, 0, 70));
+        JPanel cartesEstbis = new JPanel(new GridLayout(3, 1, 0, 100));
         cartesEstbis.setOpaque(false);
         cartesEstbis.add(Box.createVerticalGlue());
         cartesEstbis.add(carteDeRotation);
@@ -490,6 +478,24 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
 
         return menu;
     }
+
+    private JPanel creerBarredesBoutons() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+
+        for (int i = 1; i <= 4; i++) {
+            BoutonAvecImage bouton = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Cercle);
+            bouton.setPreferredSize(new Dimension(50,50));
+            int index = i; // pour l'utiliser dans le lambda
+            bouton.addActionListener(e -> {
+                System.out.println("Bouton " + index + " cliqué !");
+                // Ajoute ici le comportement désiré pour ce bouton
+            });
+            panel.add(bouton);
+        }
+
+        return panel;
+    }
+
 
 
 
@@ -687,18 +693,19 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
                 buttonsTerrain[row][col].changerImage(image);
             }
         }
+        appliquerBordureDynamiqueSurTerrain();
+        terrain.repaint();
 
-//        mettreAJourCouleurBordureTerrain();
     }
 
 
-    public void mettreAJourCouleurBordureTerrain() {
-        Color couleurJoueur = infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId());
-        Border nouvelleBordure = BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(couleurJoueur, 2, true),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        );
-        terrain.setBorder(nouvelleBordure);
+    private void appliquerBordureDynamiqueSurTerrain() {
+        Color couleurBordure = infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId());
+
+        Border bordureArrondie = new BordureArrondieAvecOmbre(couleurBordure, 5, ARONDI);
+        Border margeInterne = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+
+        terrain.setBorder(BorderFactory.createCompoundBorder(bordureArrondie, margeInterne));
     }
 
 
