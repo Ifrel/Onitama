@@ -1,9 +1,10 @@
 package Modele;
-
+import java.io.Serializable;
 import java.awt.*;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
-public class Coup {
+public class Coup implements Serializable{
+    private static final long serialVersionUID = 1L;
     private Point depart;
     private Point arrivee;
     private Carte carteEchangee;
