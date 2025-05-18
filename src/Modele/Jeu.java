@@ -6,7 +6,11 @@ import Modele.IA.IAFaible;
 import Modele.IA.IAFort;
 import Modele.IA.IAMoyen;
 import Patterns.Observable;
-
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
