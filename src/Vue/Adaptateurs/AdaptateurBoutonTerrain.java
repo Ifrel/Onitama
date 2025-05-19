@@ -24,6 +24,8 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
     private final EcranPlateauDeJeu ecranPlateauDeJeu;
     private List<Coup> coupPossible;
 
+    private Coup coupPrecedantLeDernierCoupJouer;
+
     public AdaptateurBoutonTerrain(
             BoutonTerrain boutonTerrain,
             CasePlateau casePlateau,
@@ -54,6 +56,7 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
     public void miseAJour() {
         this.coupPossible = jeu.getCoupsPossibles(jeu.getCarteSelectionnee(), casePlateau.getCoordonnee());
         desactiveAnimationCible();
+        marquerLeCoupPrecedent();
     }
 
 
@@ -72,17 +75,34 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
     }
 
 
+
+
     private void marquerLeCoupPrecedent(){
-        Coup coupPrecedant = ecranPlateauDeJeu.getJeu().getDernierCoupJoue();
-        if (coupPrecedant != null) {
-            Point depart = coupPrecedant.getDepart();
-            Point arrive = coupPrecedant.getArrivee();
+        Coup dernierCoupJouer = ecranPlateauDeJeu.getJeu().getDernierCoupJoue();
+        if (dernierCoupJouer != null) {
+
+            if (coupPrecedantLeDernierCoupJouer != null) {
+                Point departPrecedent = coupPrecedantLeDernierCoupJouer.getDepart();
+                Point arrivePrecedent = coupPrecedantLeDernierCoupJouer.getArrivee();
+
+                ecranPlateauDeJeu.getBoutonterrainAt(departPrecedent).enleverCouleurBordure();
+                ecranPlateauDeJeu.getBoutonterrainAt(arrivePrecedent).enleverCouleurBordure();
+            }
+
+            Point depart = dernierCoupJouer.getDepart();
+            Point arrive = dernierCoupJouer.getArrivee();
 
             ecranPlateauDeJeu.getBoutonterrainAt(depart).chargerCouleurBordure(Color.ORANGE, Color.BLUE);
             ecranPlateauDeJeu.getBoutonterrainAt(arrive).chargerCouleurBordure(Color.CYAN, Color.red);
+
+            coupPrecedantLeDernierCoupJouer = dernierCoupJouer;
         }
 
-        ecranPlateauDeJeu.getBoutonterrainAt(ecranPlateauDeJeu.getJeu().getPionSelectionne().getPosition()).chargerCouleurFont(COULEUR_FOND_PION_DEPART_SELECTIONE);
+        System.err.println("___________________________________________________" +
+                "\nCoup precedant le dernier :" + coupPrecedantLeDernierCoupJouer +
+                "\nCoup precedent :" + dernierCoupJouer) ;
+
+//        ecranPlateauDeJeu.getBoutonterrainAt(ecranPlateauDeJeu.getJeu().getPionSelectionne().getPosition()).chargerCouleurFont(COULEUR_FOND_PION_DEPART_SELECTIONE);
 
 
     }

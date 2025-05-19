@@ -127,6 +127,8 @@ public class BoutonTerrain extends JButton {
 
     public void enleverCouleurBordure() {
         this.aCouleurBordure = false;
+        this.couleurBordureInactive = new Color(122, 120, 120, 255);
+        this.couleurBordureActive = new Color(214, 17, 199, 255);
         repaint();
     }
 
