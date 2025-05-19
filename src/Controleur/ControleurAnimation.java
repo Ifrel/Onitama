@@ -69,15 +69,7 @@ public class ControleurAnimation implements CollecteurEvenements {
     @Override
     public void activeAnimationDeRotation(CardFlipAnimator animator, int idJoueurCourant){
         if (idJoueurCourant == ID_JOUEUR_1) {
-//            CardFlipAnimator animator = new CardFlipAnimator();                 // 1. Créer un nouvel animateur pour ce bouton
-//            CardFlipLayerUI<JButton> layerUI = new CardFlipLayerUI<>(animator);  // 2. Créer un LayerUI qui utilisera cet animateur
-//            JLayer<JButton> layer = new JLayer<>(boutonCarte, layerUI);           // 3. Créer un JLayer, enveloppant le bouton original avec le LayerUI
                 animator.startAnimation();
-//
-//            // 5. Ajouter un écouteur d'animation à l'animateur
-//            // Chaque fois que l'animateur met à jour son angle, il notifie ce listener
-//            // qui demande alors au JLayer de se repeindre.
-//            animator.addAnimationListener(layer::repaint); // Lambda capture 'layer'
         }
     }
 

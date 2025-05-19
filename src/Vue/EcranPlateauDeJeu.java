@@ -94,9 +94,10 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
     private final HashMap<TYPE_ELEMENT_SUR_TERRAIN, BufferedImage> imagesCaseTerrain = new HashMap<>();
 
+    // Pour la Gestion des Animations : Renversement des cartes
+    private final ArrayList<CardFlipAnimator>  listeDescardFlipAnimators = new ArrayList<>();
+    private int ID_JOUEUR_PRECEDANT = ID_JOUEUR_2;
 
-
-    CardFlipAnimator cardFlipAnimator;
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -129,6 +130,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         mettreAJourImagesCartes();
         updatePlayerAndRoundInfo();
         updateUndoRedoButtons();
+        tournerLesCartesDuJoueur();
         logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }
 
@@ -272,7 +274,6 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
 
-
     /**
      * Initialise les boutons représentant les cartes en main des deux joueurs
      * ainsi que la carte de rotation, en associant chaque bouton à son image
@@ -309,7 +310,6 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
                 // Création des boutons avec leur image respective
                 BoutonCarte boutonJ1 = new BoutonCarte(imageJ1);
                 BoutonCarte boutonJ2 = new BoutonCarte(imageJ2);
-                cardFlipAnimator = cardFlipAnimator(boutonJ1);
 
                 // Stockage des images associées à chaque type de carte
                 imagesCartes.put(carteJ1.getType(), imageJ1);
@@ -365,8 +365,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         cartesNord.setOpaque(false);
 
         cartesNord.add(Box.createGlue());
-        cartesNord.add(buttonsCartesJoueur1[0]);
-        cartesNord.add(buttonsCartesJoueur1[1]);
+        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[0]));
+        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[1]));
         cartesNord.add(Box.createGlue());
     }
 
@@ -384,7 +384,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         JPanel cartesEstbis = new JPanel(new GridLayout(3, 1, 0, 100));
         cartesEstbis.setOpaque(false);
         cartesEstbis.add(Box.createVerticalGlue());
-        cartesEstbis.add(carteDeRotation);
+        cartesEstbis.add(cardFlipAnimator(carteDeRotation));
         cartesEstbis.add(Box.createVerticalGlue());
 
         cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.X_AXIS));
@@ -495,27 +495,31 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         return panel;
     }
 
-
-
-    private CardFlipAnimator cardFlipAnimator(BoutonCarte boutonCarte) {
+    private JLayer<JButton> cardFlipAnimator(BoutonCarte boutonCarte) {
         CardFlipAnimator animator = new CardFlipAnimator();                 // 1. Créer un nouvel animateur pour ce bouton
         CardFlipLayerUI<JButton> layerUI = new CardFlipLayerUI<>(animator);  // 2. Créer un LayerUI qui utilisera cet animateur
         JLayer<JButton> layer = new JLayer<>(boutonCarte, layerUI);           // 3. Créer un JLayer, enveloppant le bouton original avec le LayerUI
-        animator.startAnimation();
 
-        // 5. Ajouter un écouteur d'animation à l'animateur
+        // Ajouter un écouteur d'animation à l'animateur
         // Chaque fois que l'animateur met à jour son angle, il notifie ce listener
         // qui demande alors au JLayer de se repeindre.
         animator.addAnimationListener(layer::repaint); // Lambda capture 'layer'
 
-        boutonCarte.addActionListener(e->{
-            collecteurEv.getCollecteurAnimation().activeAnimationDeRotation(animator, jeu.getJoueurCourant().getId());
-        });
+        listeDescardFlipAnimators.add(animator);
 
-        return animator;
+        return layer;
     }
 
+    private void tournerLesCartesDuJoueur(){
+        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
+                jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT ) {
 
+            for (CardFlipAnimator animator: listeDescardFlipAnimators) {
+                animator.startAnimation();
+            }
+            ID_JOUEUR_PRECEDANT = jeu.getIdJoueurCourant();
+        }
+    }
 
 
 
