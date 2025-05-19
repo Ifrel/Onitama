@@ -6,13 +6,12 @@ import Modele.IA.IAFaible;
 import Modele.IA.IAFort;
 import Modele.IA.IAMoyen;
 import Patterns.Observable;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
+
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -59,8 +58,8 @@ public class Jeu extends Observable implements Runnable {
     private Carte carteEchange; //La carte qui sera en échange
 
     // -- GRILLE -- //
-    private final List<Pion> pionsJoueurUn = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
-    private final List<Pion> pionsJoueurDeux = new ArrayList<>(); //idem pour le deuxième joueur
+    private List<Pion> pionsJoueurUn = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
+    private List<Pion> pionsJoueurDeux = new ArrayList<>(); //idem pour le deuxième joueur
 
     CasePlateau casePlateau ;
 
@@ -327,11 +326,8 @@ public class Jeu extends Observable implements Runnable {
         carteEchange = cartesDuJeu.get(4);
         //On crée la classe des deux joueurs
 
-        joueur1.clearHand();
         joueur1.addCard(carte1Joueur1);
         joueur1.addCard(carte2Joueur1);
-
-        joueur2.clearHand();
         joueur2.addCard(carte1Joueur2);
         joueur2.addCard(carte2Joueur2);
     }
@@ -426,8 +422,8 @@ public class Jeu extends Observable implements Runnable {
         }
 
         Coup c = historique.refaire();
-     //        setPionSelectionne(c.getDepart());
-     //        jouerCoup(c);
+//        setPionSelectionne(c.getDepart());
+//        jouerCoup(c);
         //restaurerGrille(c.getArrivee(), c.getDepart(), c.getPionMange());
         
         //repliquer le mouvement original
@@ -445,7 +441,6 @@ public class Jeu extends Observable implements Runnable {
     }
 
     // ######### CHARGER / SAUVEGARDER ########
-
     public static final Path CHEMIN_SAUVEGARDE = Paths.get("res", "fichier_de_sauvegarde", "fich1.dat");
 
     public void sauvegarderJeu() throws IOException {
@@ -879,7 +874,6 @@ public class Jeu extends Observable implements Runnable {
         } else {
             joueur2 = IA_1;
         }
-        initJoueursCartes();
     }
 
     /**
@@ -905,7 +899,6 @@ public class Jeu extends Observable implements Runnable {
 
         }
         joueur2 = IA_2;
-        initJoueursCartes();
     }
 
     public void nouvellePartie() {
@@ -1163,7 +1156,21 @@ public class Jeu extends Observable implements Runnable {
         this.pionSelectionne = null;
         metAJour();
     }
-
+    /* 
+    private boolean verifierVictoire() {
+        try {
+            return (getPionsJoueur1().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_2)
+                    || (getPionsJoueur2().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_1)
+                    || maitreMort
+                    || (getRolePionAt(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y) == PION_ETUDIANT && getProprietairePionAt(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y) == ID_JOUEUR_2)
+                    || (getRolePionAt(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y) == PION_ETUDIANT && getProprietairePionAt(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y) == ID_JOUEUR_1);
+        } catch (CaseVideException ignored) {
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+    */
     public boolean verifierVictoire() {
         //si tous les pions adversaires sont morts
         if(getPionsJoueur1().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_2){
@@ -1501,7 +1508,6 @@ public class Jeu extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            int delai = 1500;
             boucle:
             while (true) {
                 Coup c;
@@ -1510,20 +1516,15 @@ public class Jeu extends Observable implements Runnable {
                         case DEBUT:
                             break;
                         case DEBUT_IA:
-                        case IA2_A_JOUE:
                             c = IA_1.calculerCoup();
-                            Thread.sleep(delai);
-                            setCarteSelectionnee(IA_1.getCarteChoisie());
-                            setPionSelectionne(IA_1.getPionChoisi().getPosition());
+                            Thread.sleep(1000);
                             jouerCoup(c);
                             etatJeu = IA1_A_JOUE;
                             break;
                         case J1_A_JOUE:
                             if (estActiveIA1()) {
                                 c = IA_1.calculerCoup();
-                                Thread.sleep(delai);
-                                setCarteSelectionnee(IA_1.getCarteChoisie());
-                                setPionSelectionne(IA_1.getPionChoisi().getPosition());
+                                Thread.sleep(1000);
                                 jouerCoup(c);
                                 etatJeu = IA1_A_JOUE;
                             }
@@ -1533,13 +1534,17 @@ public class Jeu extends Observable implements Runnable {
                         case IA1_A_JOUE:
                             if (estActiveIA2()) {
                                 c = IA_2.calculerCoup();
-                                Thread.sleep(delai);
-                                setCarteSelectionnee(IA_2.getCarteChoisie());
-                                setPionSelectionne(IA_2.getPionChoisi().getPosition());
+                                Thread.sleep(1000);
                                 jouerCoup(c);
                                 etatJeu = IA2_A_JOUE;
                                 return;
                             }
+                            break;
+                        case IA2_A_JOUE:
+                            c = IA_1.calculerCoup();
+                            Thread.sleep(1000);
+                            jouerCoup(c);
+                            etatJeu = IA1_A_JOUE;
                             break;
                         case FIN:
                             break boucle;
@@ -1551,4 +1556,37 @@ public class Jeu extends Observable implements Runnable {
             throw new RuntimeException(e);
         }
     }
+
+
+    public void setPionsJoueur1(List<Pion> emptyList) {
+        pionsJoueurUn = (List<Pion>)emptyList;
+        return;
+    }
+
+
+    public void setIdJoueurCourant(int i) {
+        idJoueurCourant = i;
+    }
+
+
+    public void setPionsJoueur2(ArrayList<Pion> arrayList) {
+        pionsJoueurDeux = arrayList;
+    }
+
+
+    public void setMaitreMort(boolean b) {
+        // TODO Auto-generated method stub
+        maitreMort = b;
+    }
+
+
+    public Pion[][] getGrille() {
+        return grille;
+    }
+
+
+    public Historique<Coup> getHistorique() {
+        return historique;
+    }
+
 }
