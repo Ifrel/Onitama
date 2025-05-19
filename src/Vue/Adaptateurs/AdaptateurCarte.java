@@ -45,7 +45,7 @@ public class AdaptateurCarte implements ActionListener {
         logger.info("CarteUI n° "+idCarte+ ": " + carte.getNom() + " pressé pour le Joueur "+carte.getProprietaire());
         boutonCarte.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId());
 
-//        activeAnimation();
+        activeAnimation();
         collecteurEv.setCarteSelectionne(idCarte);
         desactiveAnimation();
     }
@@ -57,12 +57,12 @@ public class AdaptateurCarte implements ActionListener {
         if (estSelectionne) {
             boutonCarte.demarrerAnimation();
         }
-        //    collecteurEv.getCollecteurAnimation().activeCibleBoutonTerrain(coupPossible, ecranPlateauDeJeu);
+//        collecteurEv.getCollecteurAnimation().activeAnimationDeRotation(boutonCarte, carte, jeu.getJoueurCourant().getId());
 
     }
 
     private void desactiveAnimation(){
         boutonCarte.arreterAnimation();
-//        collecteurEv.getCollecteurAnimation().desactiveCibleBoutonTerrain(coupPossible);
+//        collecteurEv.getCollecteurAnimation().desactiveAnimationDeRotation(boutonCarte, carte, jeu.getIdJoueurCourant());
     }
 }

@@ -1,9 +1,11 @@
 package Vue;
 
 import Global.Config;
+import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Coup;
-import Modele.Pion;
+import Vue.Animations.AnimationUtils.CardFlipAnimator;
+import Vue.Utils.Boutons.BoutonCarte;
 import Vue.Utils.Boutons.BoutonTerrain;
 
 import java.awt.*;
@@ -192,5 +194,9 @@ public interface CollecteurEvenements {
     default  CollecteurEvenements getCollecteurAnimation(){return null;}
 
     default void desactiveCibleBoutonTerrain(List<Coup> coupPossible){};
+
+    default void activeAnimationDeRotation(CardFlipAnimator animator, int idJoueurCourant){};
+
+    default void desactiveAnimationDeRotation(BoutonCarte boutonCarte, int idJoueurCourant){};
 
 }

@@ -179,15 +179,15 @@ public class BoutonCarte extends JButton {
         });
 
         // Clic pour activer/désactiver l’animation
-//        addActionListener(e -> {
-//            animationActive = !animationActive;
-//            if (animationActive) {
-//                demarrerAnimation();
-//            } else {
-//                arreterAnimation();
-//            }
-//            repaint();
-//        });
+        addActionListener(e -> {
+            animationActive = !animationActive;
+            if (animationActive) {
+                demarrerAnimation();
+            } else {
+                arreterAnimation();
+            }
+            repaint();
+        });
 
         // Minuteur pour animer la bordure
         minuteur = new Timer(30, e -> {
