@@ -1,3 +1,6 @@
+package tests;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -6,6 +9,8 @@ import Global.Config.ROLEPION;
 import Modele.Coup;
 import Modele.Jeu;
 import Modele.Pion;
+import Modele.Position;
+import Modele.Onitama;
 
 public class Test {
     @Test
@@ -99,7 +104,7 @@ public class Test {
 
 
 
-
-
     
-//}
+}
+
+
