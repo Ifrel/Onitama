@@ -1514,6 +1514,7 @@ public class Jeu extends Observable implements Runnable {
                             c = IA_1.calculerCoup();
                             Thread.sleep(delai);
                             setCarteSelectionnee(IA_1.getCarteChoisie());
+                            setPionSelectionne(IA_1.getPionChoisi().getPosition());
                             jouerCoup(c);
                             etatJeu = IA1_A_JOUE;
                             break;
@@ -1522,6 +1523,7 @@ public class Jeu extends Observable implements Runnable {
                                 c = IA_1.calculerCoup();
                                 Thread.sleep(delai);
                                 setCarteSelectionnee(IA_1.getCarteChoisie());
+                                setPionSelectionne(IA_1.getPionChoisi().getPosition());
                                 jouerCoup(c);
                                 etatJeu = IA1_A_JOUE;
                             }
@@ -1533,6 +1535,7 @@ public class Jeu extends Observable implements Runnable {
                                 c = IA_2.calculerCoup();
                                 Thread.sleep(delai);
                                 setCarteSelectionnee(IA_2.getCarteChoisie());
+                                setPionSelectionne(IA_2.getPionChoisi().getPosition());
                                 jouerCoup(c);
                                 etatJeu = IA2_A_JOUE;
                                 return;
