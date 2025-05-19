@@ -56,7 +56,7 @@ public class Heuristiques {
      */
     public static double heuristiqueDeBase(Jeu jeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 1.5 * nbPions(jeu) + -2 * distancePionsMaitre(jeu) + -2 * distanceMaitreTemple(jeu);
+        return 1.5 * nbPions(jeu) + -2 * distancePionsMaitre(jeu) + -2 * distanceMaitreAdverseTemple(jeu);
     }
 
     // TODO
@@ -71,13 +71,14 @@ public class Heuristiques {
      * - Le nombre de coups qu'on peut jouer et s'ils permettent de capturer un pion
      * - La distance de tous les pions du joueur courant par rapport au pion ma�tre adverse
      * - La distance du pion ma�tre du joueur courant par rapport à la case temple adverse
+     * - La distance du pion ma�tre par rapport à sa case temple (plus il est proche plus l'adversaire peut converger en un point)
      *
      * @param jeu référence du jeu
      * @return la valeur d'une configuration du jeu, plus la valeur est élevée, plus la configuration est intéressante
      */
     public static double heuristiqueAvancee(Jeu jeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 1.5 * nbPions(jeu) + valeurCartes(jeu) + 1.5 * successeursNombreCaptures(jeu) + -3 * distancePionsMaitre(jeu) + -3 * distanceMaitreTemple(jeu);
+        return 1.5 * nbPions(jeu) + valeurCartes(jeu) + 1.5 * successeursNombreCaptures(jeu) + -3 * distancePionsMaitre(jeu) + -3 * distanceMaitreAdverseTemple(jeu);
     }
 
     // TODO
@@ -244,7 +245,7 @@ public class Heuristiques {
      * @param jeu référence du jeu
      * @return distance entre le pion maître du joueur courant et la case temple adverse
      */
-    public static int distanceMaitreTemple(Jeu jeu) {
+    public static int distanceMaitreAdverseTemple(Jeu jeu) {
         Point positionMaitre = null;
         Point templeAdverse;
         List<Pion> pionsJoueurCourant = jeu.getPionsJoueurCourant();
@@ -264,5 +265,7 @@ public class Heuristiques {
         assert positionMaitre != null;
         return (int) (-1 * Math.sqrt(Math.pow(Math.abs(templeAdverse.x - positionMaitre.x), 2) + Math.pow(Math.abs(templeAdverse.y - positionMaitre.y), 2)));
     }
+
+//    public static int
 
 }
