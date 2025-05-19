@@ -292,12 +292,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
             imagesCartes.put(carteSupplementaire.getType(), imageSupplementaire);
 
             // Association d’un écouteur pour la carte de rotation
-            carteDeRotation.addActionListener(new AdaptateurCarte(
-                    0, carteDeRotation,
-                    carteSupplementaire,
-                    this,
-                    collecteurEv
-            ));
+            carteDeRotation.addActionListener(new AdaptateurCarte(0, 0, carteDeRotation,this, collecteurEv ));
 
             // --- Cartes des joueurs ---
             List<Carte> cartesJoueur1 = jeu.getCartesJoueur1();
@@ -321,8 +316,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
                 imagesCartes.put(carteJ2.getType(), imageJ2);
 
                 // Association des écouteurs d’événements
-                boutonJ1.addActionListener(new AdaptateurCarte(i, boutonJ1, carteJ1, this, collecteurEv));
-                boutonJ2.addActionListener(new AdaptateurCarte(i, boutonJ2, carteJ2, this, collecteurEv));
+                boutonJ1.addActionListener(new AdaptateurCarte(i, ID_JOUEUR_1, boutonJ1, this, collecteurEv));
+                boutonJ2.addActionListener(new AdaptateurCarte(i, ID_JOUEUR_2, boutonJ2, this, collecteurEv));
 
                 // Stockage des boutons dans les tableaux respectifs
                 buttonsCartesJoueur1[i] = boutonJ1;

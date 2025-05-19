@@ -46,16 +46,21 @@ public class BoutonTerrain extends JButton {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                epaisseurAnimee = epaisseurInitiale + 3f;
-                repaint();
+                if (isEnabled()) { // si le bouton est actif
+                    epaisseurAnimee = epaisseurInitiale + 3f;
+                    repaint();
+                }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                epaisseurAnimee = epaisseurInitiale;
-                repaint();
+                if (isEnabled()) {
+                    epaisseurAnimee = epaisseurInitiale;
+                    repaint();
+                }
             }
         });
+
     }
 
     public BoutonTerrain(Path cheminImage) {
@@ -69,6 +74,8 @@ public class BoutonTerrain extends JButton {
 
 
     public void activerAnimationBordure(boolean activer) {
+        if (!isEnabled()) return;
+
         this.animationActivee = activer;
 
         if (activer) {
@@ -157,6 +164,13 @@ public class BoutonTerrain extends JButton {
             g2.setColor(new Color(198, 71, 207, 100));
             g2.draw(new Ellipse2D.Float(cx - pulse2, cy - pulse2, 2 * pulse2, 2 * pulse2));
         }
+
+        // 5. Si le bouton est désactivé
+        if (!isEnabled()) {
+            g2.setColor(new Color(176, 174, 174, 63)); // léger voile blanc
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+        }
+
 
         g2.dispose();
     }
@@ -300,6 +314,7 @@ class TestBoutonTerrain {
             // Bouton initial avec image par défaut
             BoutonTerrain bouton1 = new BoutonTerrain(PATH_PION_NOIR_ETUDIANT);
             bouton1.setPreferredSize(new Dimension(120, 120));
+            bouton1.setEnabled(false);
             f.add(bouton1);
 
             // Bouton avec une autre image et taille plus grande

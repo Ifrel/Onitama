@@ -3,6 +3,7 @@ package Vue.Adaptateurs;
 import Modele.CasePlateau;
 import Modele.Coup;
 import Modele.Jeu;
+import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
 import Vue.Utils.Boutons.BoutonTerrain;
@@ -13,15 +14,16 @@ import java.util.List;
 
 import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
 
-public class AdaptateurBoutonTerrain implements ActionListener {
+public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
     private final Jeu jeu;
     private final BoutonTerrain boutonTerrain;
     private final CasePlateau casePlateau;
     private final CollecteurEvenements collecteurEv;
     private final EcranPlateauDeJeu ecranPlateauDeJeu;
-    private final List<Coup> coupPossible;
+    private List<Coup> coupPossible;
 
-    public  AdaptateurBoutonTerrain(BoutonTerrain boutonTerrain,
+    public  AdaptateurBoutonTerrain(
+                                    BoutonTerrain boutonTerrain,
                                     CasePlateau casePlateau,
                                     CollecteurEvenements collecteurEv,
                                     EcranPlateauDeJeu ecranPlateauDeJeu){
@@ -31,6 +33,9 @@ public class AdaptateurBoutonTerrain implements ActionListener {
         this.ecranPlateauDeJeu = ecranPlateauDeJeu;
         this.jeu = ecranPlateauDeJeu.getJeu();
         this.coupPossible = jeu.getCoupsPossibles(jeu.getCarteSelectionnee(), casePlateau.getCoordonnee());
+
+        jeu.ajouteObservateur(this);
+        miseAJour();
     }
 
 
@@ -38,15 +43,14 @@ public class AdaptateurBoutonTerrain implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         System.err.println("bouton: case pressé: "+casePlateau.getCoordonnee());
-        desactiveAnimation();
         collecteurEv.setCaseSelectionnee(casePlateau.getCoordonnee());
-        activeAnimation();
+        activeAnimationCible();
     }
 
 
 
 
-    private void activeAnimation(){
+    private void activeAnimationCible(){
         if (casePlateau.getTypeElement() != VIDE && casePlateau.getProprietaire() == jeu.getJoueurCourant().getId()) {
             if (!coupPossible.isEmpty()) {
                 collecteurEv.getCollecteurAnimation().activeCibleBoutonTerrain(coupPossible, ecranPlateauDeJeu);
@@ -54,7 +58,14 @@ public class AdaptateurBoutonTerrain implements ActionListener {
         }
     }
 
-    private void desactiveAnimation(){
+    private void desactiveAnimationCible(){
         collecteurEv.getCollecteurAnimation().desactiveCibleBoutonTerrain(coupPossible);
+    }
+
+
+    @Override
+    public void miseAJour() {
+        this.coupPossible = jeu.getCoupsPossibles(jeu.getCarteSelectionnee(), casePlateau.getCoordonnee());
+        desactiveAnimationCible();
     }
 }
