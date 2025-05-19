@@ -327,8 +327,11 @@ public class Jeu extends Observable implements Runnable {
         carteEchange = cartesDuJeu.get(4);
         //On crée la classe des deux joueurs
 
+        joueur1.clearHand();
         joueur1.addCard(carte1Joueur1);
         joueur1.addCard(carte2Joueur1);
+
+        joueur2.clearHand();
         joueur2.addCard(carte1Joueur2);
         joueur2.addCard(carte2Joueur2);
     }
