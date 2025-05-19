@@ -44,6 +44,8 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
     public void actionPerformed(ActionEvent e) {
         System.err.println("bouton: case pressé: "+casePlateau.getCoordonnee());
         collecteurEv.setCaseSelectionnee(casePlateau.getCoordonnee());
+
+        desactiveAnimationCible();
         activeAnimationCible();
     }
 
