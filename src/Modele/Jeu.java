@@ -6,7 +6,11 @@ import Modele.IA.IAFaible;
 import Modele.IA.IAFort;
 import Modele.IA.IAMoyen;
 import Patterns.Observable;
-
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -323,8 +327,11 @@ public class Jeu extends Observable implements Runnable {
         carteEchange = cartesDuJeu.get(4);
         //On crée la classe des deux joueurs
 
+        joueur1.clearHand();
         joueur1.addCard(carte1Joueur1);
         joueur1.addCard(carte2Joueur1);
+
+        joueur2.clearHand();
         joueur2.addCard(carte1Joueur2);
         joueur2.addCard(carte2Joueur2);
     }
@@ -419,12 +426,19 @@ public class Jeu extends Observable implements Runnable {
         }
 
         Coup c = historique.refaire();
-//        setPionSelectionne(c.getDepart());
-//        jouerCoup(c);
-        restaurerGrille(c.getArrivee(), c.getDepart(), c.getPionMange());
+     //        setPionSelectionne(c.getDepart());
+     //        jouerCoup(c);
+        //restaurerGrille(c.getArrivee(), c.getDepart(), c.getPionMange());
+        
+        //repliquer le mouvement original
+        deplacerPion(c.getDepart(), c.getArrivee());
+        echangerCartes(getJoueurCourant(), c.getCarteEchangee());
+        //restaurer selection /viasual
+        setPionSelectionne(c.getArrivee());
+
         changerJoueur();
-        restaurerMainJoueur(getCarteSupplementaire(), c.getCarteEchangee());
-        // faire des choses avec le coup
+        //restaurerMainJoueur(getCarteSupplementaire(), c.getCarteEchangee());
+        
 
         // met à jour l'interface
         metAJour();
@@ -432,8 +446,14 @@ public class Jeu extends Observable implements Runnable {
 
     // ######### CHARGER / SAUVEGARDER ########
 
-    public void sauvegarderJeu() throws FileNotFoundException, IOException {
-        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("res/fichier_de_sauvegarde/fich1.txt")))
+    public static final Path CHEMIN_SAUVEGARDE = Paths.get("res", "fichier_de_sauvegarde", "fich1.dat");
+
+    public void sauvegarderJeu() throws IOException {
+        sauvegarderJeu(CHEMIN_SAUVEGARDE);
+    }
+    public void sauvegarderJeu(Path fichier) throws IOException {
+        
+        try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(fichier)))
         {
             out.writeObject(idJoueurCourant);
             out.writeObject(grille);
@@ -445,11 +465,17 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
+
+    public void chargerJeu() throws IOException, ClassNotFoundException{
+        chargerJeu(CHEMIN_SAUVEGARDE);
+    }
+
+
     @SuppressWarnings("unchecked")
-    public void chargerJeu(String fichier) throws FileNotFoundException, IOException, ClassNotFoundException {
-        try(ObjectInputStream in = new ObjectInputStream(new FileInputStream(fichier)))
+    public void chargerJeu(Path fichier) throws IOException, ClassNotFoundException {
+        try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(fichier)))
         {
-            idJoueurCourant =(int) in.readObject();
+            idJoueurCourant = (Integer) in.readObject();
             grille = (Pion[][]) in.readObject();
             joueur1 = (Joueur) in.readObject();
             joueur2 = (Joueur) in.readObject();
@@ -1137,18 +1163,36 @@ public class Jeu extends Observable implements Runnable {
     }
 
     private boolean verifierVictoire() {
-        try {
-            return (getPionsJoueur1().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_2)
-                    || (getPionsJoueur2().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_1)
-                    || maitreMort
-                    || (getRolePionAt(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y) == PION_MAITRE && getProprietairePionAt(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y) == ID_JOUEUR_2)
-                    || (getRolePionAt(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y) == PION_MAITRE && getProprietairePionAt(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y) == ID_JOUEUR_1);
-        } catch (CaseVideException ignored) {
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        //si tous les pions adversaires sont morts
+        if(getPionsJoueur1().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_2){
+            return true;
         }
+
+        if(getPionsJoueur2().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_1){
+            return true;
+        }
+
+        //si le pion maitre de l'adversaire est mort
+        if(maitreMort){
+            return true;
+        }
+
+        //Le maitre occupe le temple ennemi
+        Pion p1 = getCase(TEMPLE_JOUEUR_1.x, TEMPLE_JOUEUR_1.y);
+        if(p1 != null && p1.getRole() == PION_MAITRE && p1.getIDProprietaire() == ID_JOUEUR_2){
+            //Le maitre du joueur 2 occupe le temple du joueur 1
+            return true;
+        }
+
+        Pion p2 = getCase(TEMPLE_JOUEUR_2.x, TEMPLE_JOUEUR_2.y);
+        if(p2 != null && p2.getRole() == PION_MAITRE && p2.getIDProprietaire() == ID_JOUEUR_1){
+            //Le maitre du joueur 1 occupe le temple du joueur 2
+            return true;
+        }
+
         return false;
     }
+
 
     public void selectionneCase(Point p) {
         switch (etatGrille) {
