@@ -2,6 +2,7 @@ package Vue.Adaptateurs;
 
 import Modele.Carte;
 import Modele.Jeu;
+import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
 import Vue.Utils.Boutons.BoutonCarte;
@@ -10,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 
-public class AdaptateurCarte implements ActionListener {
+public class AdaptateurCarte implements ActionListener, Observateur {
     private final CollecteurEvenements collecteurEv;
     private final Carte carte;
     private final int  idCarte;
@@ -34,7 +35,10 @@ public class AdaptateurCarte implements ActionListener {
         this.ecranPlateauDeJeu = ecranPlateauDeJeu;
         this.jeu = ecranPlateauDeJeu.getJeu();
         this.estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
-        activeAnimation();
+        jeu.ajouteObservateur(this);
+
+        miseAJour();
+        System.err.println("Adaptateur carte: constructeur");
     }
 
 
@@ -48,6 +52,12 @@ public class AdaptateurCarte implements ActionListener {
         activeAnimation();
         collecteurEv.setCarteSelectionne(idCarte);
         desactiveAnimation();
+        System.err.println("_____________________________________________________" +
+                "\n Nom carte: "+carte.getNom() +
+                "\nAdaptateur carte: actionPerformed\n" +
+                "carte.getProprietaire(): "+carte.getProprietaire() +
+                "\njeu.getJoueurCourant().getId() :"+ jeu.getJoueurCourant().getId() +
+                "\njeu.getIdJoueurCourant() :"+jeu.getIdJoueurCourant());
     }
 
 
@@ -64,5 +74,17 @@ public class AdaptateurCarte implements ActionListener {
     private void desactiveAnimation(){
         boutonCarte.arreterAnimation();
 //        collecteurEv.getCollecteurAnimation().desactiveAnimationDeRotation(boutonCarte, carte, jeu.getIdJoueurCourant());
+    }
+
+    @Override
+    public void miseAJour() {
+        boutonCarte.setEnabled(carte.getProprietaire() == jeu.getJoueurCourant().getId());
+        System.err.println("_______________________________________________" +
+                "\nAdaptateur carte ("+carte.getNom() +"): miseAJour");
+        estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
+        desactiveAnimation();
+        activeAnimation();
+
+
     }
 }
