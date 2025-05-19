@@ -205,7 +205,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         centreGbc.gridy = 0;
         centreGbc.weightx = 2.5;
         centreGbc.weighty = 0.37;
-        panelCentreEmpile.add(cardFlipAnimator, centreGbc);
+        panelCentreEmpile.add(cartesNord, centreGbc);
 
         // Carte gauche
         centreGbc.gridx = 0;
