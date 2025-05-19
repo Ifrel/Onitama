@@ -45,6 +45,10 @@ public class Mediateur implements CollecteurEvenements {
                     break;
                 case "sauvegarder":
                     jeu.sauvegarderJeu();
+                    break;
+                case "charger":
+                    jeu.chargerJeu();
+                    break;
                 case "Pause":
                     jeu.setPause();
                     break;

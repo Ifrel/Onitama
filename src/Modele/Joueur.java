@@ -14,6 +14,7 @@ import static Global.Config.TYPE_JOUEUR.JOUEUR_HUMAIN;
  * Un joueur possède un nom, une couleur, un identifiant, un score,
  * une main de cartes et potentiellement des pions sur le plateau. */
 public class Joueur implements Serializable{
+    private static final long serialVersionUID = 1L;
     private String nom;
     private final int id;
     private int score;

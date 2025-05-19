@@ -10,7 +10,7 @@ import java.util.Stack;
  * @param <T> Action à stocker dans l'historique
  */
 public class Historique<T> implements Serializable{
-
+    private static final long serialVersionUID = 1L;
     private Stack<T> passe;
     private Stack<T> futur;
 

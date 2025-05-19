@@ -41,6 +41,7 @@ public class InterfaceTextuelle implements Observateur {
         this.afficherToutesCartes = false;
         this.carteSelectionnee = false;
         this.rafraichirInterface = true;
+        jeu.ajouteObservateur(this);
 
         lancerBoucleJeu();
     }
