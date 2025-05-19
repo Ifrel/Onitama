@@ -879,6 +879,7 @@ public class Jeu extends Observable implements Runnable {
         } else {
             joueur2 = IA_1;
         }
+        initJoueursCartes();
     }
 
     /**
@@ -904,6 +905,7 @@ public class Jeu extends Observable implements Runnable {
 
         }
         joueur2 = IA_2;
+        initJoueursCartes();
     }
 
     public void nouvellePartie() {
@@ -1499,6 +1501,7 @@ public class Jeu extends Observable implements Runnable {
     @Override
     public void run() {
         try {
+            int delai = 1500;
             boucle:
             while (true) {
                 Coup c;
@@ -1507,15 +1510,18 @@ public class Jeu extends Observable implements Runnable {
                         case DEBUT:
                             break;
                         case DEBUT_IA:
+                        case IA2_A_JOUE:
                             c = IA_1.calculerCoup();
-                            Thread.sleep(1000);
+                            Thread.sleep(delai);
+                            setCarteSelectionnee(IA_1.getCarteChoisie());
                             jouerCoup(c);
                             etatJeu = IA1_A_JOUE;
                             break;
                         case J1_A_JOUE:
                             if (estActiveIA1()) {
                                 c = IA_1.calculerCoup();
-                                Thread.sleep(1000);
+                                Thread.sleep(delai);
+                                setCarteSelectionnee(IA_1.getCarteChoisie());
                                 jouerCoup(c);
                                 etatJeu = IA1_A_JOUE;
                             }
@@ -1525,17 +1531,12 @@ public class Jeu extends Observable implements Runnable {
                         case IA1_A_JOUE:
                             if (estActiveIA2()) {
                                 c = IA_2.calculerCoup();
-                                Thread.sleep(1000);
+                                Thread.sleep(delai);
+                                setCarteSelectionnee(IA_2.getCarteChoisie());
                                 jouerCoup(c);
                                 etatJeu = IA2_A_JOUE;
                                 return;
                             }
-                            break;
-                        case IA2_A_JOUE:
-                            c = IA_1.calculerCoup();
-                            Thread.sleep(1000);
-                            jouerCoup(c);
-                            etatJeu = IA1_A_JOUE;
                             break;
                         case FIN:
                             break boucle;
