@@ -90,7 +90,7 @@ public class HeuristiquesTest {
     }
 
     @Test
-    void verifierDistanceMaitreTemple() {
+    void verifierDistanceMaitreAdverseTemple() {
         Jeu jeu;
         jeu = new Jeu();
         /*
