@@ -44,6 +44,7 @@ public class ControleurAnimation implements CollecteurEvenements {
             ecranPlateauDeJeu.getBoutonterrainAt(cible).activerAnimation(true);
             System.err.println("bouton animation activé:" + cible);
         }
+
         ecranPlateauDeJeu.getBoutonterrainAt(coupPossible.get(0).getDepart()).chargerCouleurFont(COULEUR_FOND_PION_DEPART_SELECTIONE);
         peutDesactiver = true;
     }
@@ -56,10 +57,14 @@ public class ControleurAnimation implements CollecteurEvenements {
                 ecranPlateauDeJeu.getBoutonterrainAt(cible).activerAnimation(false);
                 System.err.println("bouton animation désactivé:" + cible);
             }
+
             ecranPlateauDeJeu.getBoutonterrainAt(coupPrecedant.get(0).getDepart()).enleverCouleurFont();
             peutDesactiver = false;
         }
     }
+
+
+
 
     @Override
     public void activeAnimationDeRotation(CardFlipAnimator animator, int idJoueurCourant){

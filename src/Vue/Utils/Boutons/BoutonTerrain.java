@@ -14,8 +14,8 @@ public class BoutonTerrain extends JButton {
 
     private final float epaisseurInitiale;
     private final float arrondiBordure;
-    private final Color couleurBordureInactive = new Color(122, 120, 120, 255);
-    private final Color couleurBordureActive = new Color(214, 17, 199, 255);
+    private Color couleurBordureInactive = new Color(122, 120, 120, 255);
+    private Color couleurBordureActive = new Color(214, 17, 199, 255);
     private float epaisseurAnimee;
     private boolean animationActivee = false;
     private float phase = 0;
@@ -24,6 +24,8 @@ public class BoutonTerrain extends JButton {
     private Image imageDeFond; // Stocke l'image à afficher
     private Color couleurdeFond;
     private boolean aCouleurDeFond = false;
+    private boolean aCouleurBordure = true;
+
 
     public BoutonTerrain(ImageIcon icone, float epaisseurBordure, float arrondi) {
         super();
@@ -112,9 +114,22 @@ public class BoutonTerrain extends JButton {
 
     public void enleverCouleurFont() {
         this.aCouleurDeFond = false;
-        this.couleurdeFond = new Color(1,1,1, 0);
+        this.couleurdeFond = new Color(0, 0, 0, 0);
         repaint();
     }
+
+    public void chargerCouleurBordure(Color active, Color inactive) {
+        this.aCouleurBordure = true;
+        this.couleurBordureActive = active;
+        this.couleurBordureInactive = inactive;
+        repaint();
+    }
+
+    public void enleverCouleurBordure() {
+        this.aCouleurBordure = false;
+        repaint();
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -181,21 +196,27 @@ public class BoutonTerrain extends JButton {
 
         // 5. Si le bouton est désactivé
         if (!isEnabled()) {
-            g2.setColor(new Color(176, 174, 174, 63)); // léger voile blanc
+            g2.setColor(new Color(176, 174, 174, 63));
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
         }
 
         // 6. Si une couleur de fond chargée
-        if (aCouleurDeFond) {
-            g2.setColor(couleurdeFond);// léger voile blanc
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+        if (aCouleurDeFond && couleurdeFond != null) {
+            g2.setColor(couleurdeFond);
+            g2.fillRoundRect(0, 0, w, h, arc, arc);
+        }
+
+
+        // 7. Si des couleurs de bordures chargées
+        if (aCouleurBordure) {
+            g2.setStroke(new BasicStroke(epaisseurBordureTotale));
+            g2.setColor(animationActivee ? couleurBordureActive : couleurBordureInactive);
+            g2.drawRoundRect(marge, marge, w - 2 * marge, h - 2 * marge, arc, arc);
         }
 
 
         g2.dispose();
     }
-
-
 }
 
 
