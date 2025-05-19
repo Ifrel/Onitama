@@ -56,7 +56,7 @@ public class Heuristiques {
      */
     public static double heuristiqueDeBase(Jeu jeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 1.5 * nbPions(jeu) + -2 * distancePionsMaitre(jeu) + -2 * distanceMaitreAdverseTemple(jeu);
+        return 1.5 * nbPions(jeu) + -2 * distancePionsCourantMaitreAdverse(jeu) + -2 * distanceMaitreAdverseTemple(jeu);
     }
 
     // TODO
@@ -78,7 +78,13 @@ public class Heuristiques {
      */
     public static double heuristiqueAvancee(Jeu jeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 1.5 * nbPions(jeu) + valeurCartes(jeu) + 1.5 * successeursNombreCaptures(jeu) + -3 * distancePionsMaitre(jeu) + -3 * distanceMaitreAdverseTemple(jeu);
+        return 1.5 * nbPions(jeu)
+                + valeurCartes(jeu)
+                + 2.5 * successeursNombreCaptures(jeu)
+                + -3 * distancePionsCourantMaitreAdverse(jeu)
+                + 3 * distancePionsAdverseMaitreCourant(jeu)
+                + -3 * distanceMaitreAdverseTemple(jeu)
+                + 1.5 * distanceMaitreCourantTemple(jeu);
     }
 
     // TODO
@@ -207,12 +213,12 @@ public class Heuristiques {
 
     /**
      * Renvoie la négation de la somme de toutes les distances euclidiennes entre le pion ma�tre adverse
-     * et les pions du joueur courant
+     * et les pions du joueur courant (plus il est proche mieux c'est)
      *
      * @param jeu référence du jeu
      * @return distance de tous les pions du joueur courant par rapport au pion ma�tre adverse
      */
-    public static int distancePionsMaitre(Jeu jeu) {
+    public static int distancePionsCourantMaitreAdverse(Jeu jeu) {
         int res = 0;
         Point maitreAdverse = null;
         List<Pion> pionsJoueurCourant = jeu.getPionsJoueurCourant();
@@ -237,6 +243,39 @@ public class Heuristiques {
         }
 
         return -1 * res;
+    }
+
+    /**
+     * Renvoie la somme de toutes les distances euclidiennes entre le pion ma�tre courant
+     * et les pions du joueur adverse (plus il est éloigné mieux c'est)
+     *
+     * @param jeu référence du jeu
+     * @return distance de tous les pions du joueur courant par rapport au pion ma�tre adverse
+     */
+    public static int distancePionsAdverseMaitreCourant(Jeu jeu) {
+        int res = 0;
+        Point maitreCourant = null;
+        List<Pion> pionsAdverse;
+
+        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+            pionsAdverse = jeu.getPionsJoueur2();
+        } else {
+            pionsAdverse = jeu.getPionsJoueur1();
+        }
+
+        for (Pion p : jeu.getPionsJoueurCourant()) {
+            if (p.getRole() == PION_MAITRE) {
+                maitreCourant = p.getPosition();
+            }
+        }
+
+        assert maitreCourant != null;
+        for (Pion p : pionsAdverse) {
+            Point positionPion = p.getPosition();
+            res += (int) (Math.sqrt(Math.pow(Math.abs(positionPion.x - maitreCourant.x), 2) + Math.pow(Math.abs(positionPion.y - maitreCourant.y), 2)));
+        }
+
+        return res;
     }
 
     /**
@@ -266,6 +305,29 @@ public class Heuristiques {
         return (int) (-1 * Math.sqrt(Math.pow(Math.abs(templeAdverse.x - positionMaitre.x), 2) + Math.pow(Math.abs(templeAdverse.y - positionMaitre.y), 2)));
     }
 
-//    public static int
+    /**
+     * Renvoie la distance euclidienne entre le temple du joueur courant et son pion ma�tre, on considère que plus ils sont éloignés, moins l'ennemi à de raisons de converger
+     *
+     * @param jeu référence du jeu
+     * @return proximité entre la case temple et le pion ma�tre du joueur courant
+     */
+    public static int distanceMaitreCourantTemple(Jeu jeu) {
+        Point positionMaitre = null;
+        Point temple;
+
+        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+            temple = TEMPLE_JOUEUR_1;
+        } else {
+            temple = TEMPLE_JOUEUR_2;
+        }
+
+        for (Pion p : jeu.getPionsJoueurCourant()) {
+            if (p.getRole() == PION_MAITRE) {
+                positionMaitre = p.getPosition();
+            }
+        }
+
+        return (int) (Math.sqrt(Math.pow(Math.abs(temple.x - positionMaitre.x), 2) + Math.pow(Math.abs(temple.y - positionMaitre.y), 2)));
+    }
 
 }
