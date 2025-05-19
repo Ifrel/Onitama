@@ -95,21 +95,213 @@ public class Config {
     public final static int NOMBRES_CARTES_PLATEAU = 5;
     public enum TYPECARTE
     {
+        /**
+         * <blockquote><pre>{@code
+         * TIGRE
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   | o |   |   |
+         *   |   |   |   |   |   |
+         *   |   |   | X |   |   |
+         *   |   |   | o |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         TIGRE,
+        /**
+         * <blockquote><pre>{@code
+         * DRAGON
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   | o |   |   |   | o |
+         *   |   |   | X |   |   |
+         *   |   | o |   | o |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         DRAGON,
+        /**
+         * <blockquote><pre>{@code
+         * GRENOUILLE
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   | o |   |   |   |
+         *   | o |   | X |   |   |
+         *   |   |   |   | o |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         GRENOUILLE,
+        /**
+         * <blockquote><pre>{@code
+         * LAPIN
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   |   |   | o |   |
+         *   |   |   | X |   | o |
+         *   |   | o |   |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         LAPIN,
+        /**
+         * <blockquote><pre>{@code
+         * CRABE
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   |   | o |   |   |
+         *   | o |   | X |   | o |
+         *   |   |   |   |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         CRABE,
+        /**
+         * <blockquote><pre>{@code
+         * ELEPHANT
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   | o |   | o |   |
+         *   |   | o | X | o |   |
+         *   |   |   |   |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         ELEPHANT,
+        /**
+         * <blockquote><pre>{@code
+         * OIE
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   | o |   |   |   |
+         *   |   | o | X | o |   |
+         *   |   |   |   | o |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         OIE,
+        /**
+         * <blockquote><pre>{@code
+         * COQ
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   |   |   | o |   |
+         *   |   | o | X | o |   |
+         *   |   | o |   |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         COQ,
+        /**
+         * <blockquote><pre>{@code
+         * SINGE
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   | o |   | o |   |
+         *   |   |   | X |   |   |
+         *   |   | o |   | o |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         SINGE,
+        /**
+         * <blockquote><pre>{@code
+         * MANTE
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   | o |   | o |   |
+         *   |   |   | X |   |   |
+         *   |   |   | o |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         MANTE,
+        /**
+         * <blockquote><pre>{@code
+         * CHEVAL
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   |   | o |   |   |
+         *   |   | o | X |   |   |
+         *   |   |   | o |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         CHEVAL,
+        /**
+         * <blockquote><pre>{@code
+         * BOEUF
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   |   | o |   |   |
+         *   |   |   | X | o |   |
+         *   |   |   | o |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         BOEUF,
+        /**
+         * <blockquote><pre>{@code
+         * GRUE
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   |   | o |   |   |
+         *   |   |   | X |   |   |
+         *   |   | o |   | o |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         GRUE,
+        /**
+         * <blockquote><pre>{@code
+         * SANGLIER
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   |   | o |   |   |
+         *   |   | o | X | o |   |
+         *   |   |   |   |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         SANGLIER,
+        /**
+         * <blockquote><pre>{@code
+         * ANGUILLE
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   | o |   |   |   |
+         *   |   |   | X | o |   |
+         *   |   | o |   |   |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         ANGUILLE,
+        /**
+         * <blockquote><pre>{@code
+         * COBRA
+         * Origine : X ; Déplacement : o
+         * (0,0)
+         *   |   |   |   |   |   |
+         *   |   |   |   | o |   |
+         *   |   | o | X |   |   |
+         *   |   |   |   | o |   |
+         *   |   |   |   |   |   |
+         *   }</pre></blockquote>
+         */
         COBRA,
     }
 

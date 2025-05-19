@@ -1,10 +1,11 @@
-package Modele;
+package Modele.IA;
 
 import static Global.Config.TYPECARTE.*;
 import static Global.Config.ROLEPION.*;
 
 
-import Modele.IA.EtatPlateau;
+import Modele.Carte;
+import Modele.Pion;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -13,23 +14,23 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EtatPlateauTest {
+public class EtatJeuTest {
     @Test
     void constructionDeBase() {
 
-        assertThrows(NullPointerException.class, () -> new EtatPlateau(null));
-        assertThrows(NullPointerException.class, () -> new EtatPlateau(1, null, null, null, null, null));
-        assertThrows(NullPointerException.class, () -> new EtatPlateau(1, new Carte(COBRA), null, null, null, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeu(null));
+        assertThrows(NullPointerException.class, () -> new EtatJeu(1, null, null, null, null, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeu(1, new Carte(COBRA), null, null, null, null));
         List<Carte> lc1 = new ArrayList<>() {{
             add(new Carte(OIE));
             add(new Carte(COQ));
         }};
-        assertThrows(NullPointerException.class, () -> new EtatPlateau(1, new Carte(BOEUF), lc1, null, null, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeu(1, new Carte(BOEUF), lc1, null, null, null));
         List<Carte> lc2 = new ArrayList<>() {{
             add(new Carte(CRABE));
             add(new Carte(SINGE));
         }};
-        assertThrows(NullPointerException.class, () -> new EtatPlateau(1, new Carte(GRUE), lc1, lc2, null, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeu(1, new Carte(GRUE), lc1, lc2, null, null));
         List<Modele.Pion> lp1 = new ArrayList<>() {{
             add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
             add(new Modele.Pion(1, new Point(0, 0), PION_ETUDIANT));
@@ -37,7 +38,7 @@ public class EtatPlateauTest {
             add(new Modele.Pion(1, new Point(0, 3), PION_ETUDIANT));
             add(new Modele.Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
-        assertThrows(NullPointerException.class, () -> new EtatPlateau(1, new Carte(SANGLIER), lc1, lc2, lp1, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeu(1, new Carte(SANGLIER), lc1, lc2, lp1, null));
         List<Modele.Pion> lp2 = new ArrayList<>() {{
             add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
             add(new Modele.Pion(2, new Point(4, 0), PION_ETUDIANT));
@@ -46,12 +47,12 @@ public class EtatPlateauTest {
             add(new Modele.Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
-        new EtatPlateau(1, new Carte(LAPIN), lc1, lc2, lp1, lp2);
+        new EtatJeu(1, new Carte(LAPIN), lc1, lc2, lp1, lp2);
     }
 
     @Test
     void valeursCartesJ1DebutPartie() {
-        EtatPlateau cp;
+        EtatJeu cp;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -81,7 +82,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 
@@ -92,7 +93,7 @@ public class EtatPlateauTest {
 
     @Test
     void valeursCartesJ2DebutPartie() {
-        EtatPlateau cp;
+        EtatJeu cp;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -122,7 +123,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 
@@ -133,7 +134,7 @@ public class EtatPlateauTest {
 
     @Test
     void valeursCarteEnPlusDebutPartie() {
-        EtatPlateau cp;
+        EtatJeu cp;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -163,7 +164,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 
@@ -175,7 +176,7 @@ public class EtatPlateauTest {
 
     @Test
     void valeursPionsJ1DebutPartie() {
-        EtatPlateau cp;
+        EtatJeu cp;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -205,7 +206,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 
@@ -233,7 +234,7 @@ public class EtatPlateauTest {
 
     @Test
     void valeursPionsJ2DebutPartie() {
-        EtatPlateau cp;
+        EtatJeu cp;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -263,7 +264,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 
@@ -289,7 +290,7 @@ public class EtatPlateauTest {
 
     @Test
     void valeursPionMaitreJ1DebutPartie() {
-        EtatPlateau cp;
+        EtatJeu cp;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -319,7 +320,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 
@@ -336,7 +337,7 @@ public class EtatPlateauTest {
 
     @Test
     void valeursPionMaitreJ2DebutPartie() {
-        EtatPlateau cp;
+        EtatJeu cp;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -366,7 +367,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 
@@ -383,7 +384,7 @@ public class EtatPlateauTest {
 
     @Test
     void valeursVecteurTotalDebutPartie() {
-        EtatPlateau cp;
+        EtatJeu cp;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -413,7 +414,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 
@@ -478,7 +479,7 @@ public class EtatPlateauTest {
 
     @Test
     void valeurVecteurTotalScenario1() {
-        EtatPlateau cp;
+        EtatJeu cp;
 
         byte [] etat;
 
@@ -509,7 +510,7 @@ public class EtatPlateauTest {
 
         }};
 
-        cp = new EtatPlateau(1, new Carte(COQ), lc1, lc2, lp1, lp2);
+        cp = new EtatJeu(1, new Carte(COQ), lc1, lc2, lp1, lp2);
 
         etat = cp.getEtat();
 

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Coup {
+    
     private Point depart;
     private Point arrivee;
     private Carte carteEchangee;
