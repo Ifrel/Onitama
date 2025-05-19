@@ -4,7 +4,7 @@ import Controleur.ControleurEcranDeDemarrage;
 import Global.Config;
 import Modele.Jeu;
 import Vue.Adaptateurs.AdaptateurBoutonEntrer;
-import Vue.Animations.BruitGrisAvecPointsPanel;
+import Vue.Utils.PanelBruitGris;
 import Vue.Utils.JPanelAvecCouleurDebraille;
 import Vue.Utils.PanelAvecImage;
 
@@ -19,7 +19,7 @@ import java.util.Map;
 import static Global.Config.*;
 import static Global.Config.CiblesDesCouleurs.*;
 import static Global.Paths.*;
-import static Vue.ConstantesConfigurationUI.*;
+import static Vue.ConfigUI.*;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
 
@@ -433,7 +433,7 @@ public class EcranDeDemarrage extends JTabbedPane {
      * @return Le JPanel de l'onglet Animation.
      */
     private JPanel creerOngletAnimation() {
-        BruitGrisAvecPointsPanel ongletAnimation = new BruitGrisAvecPointsPanel();
+        PanelBruitGris ongletAnimation = new PanelBruitGris();
         ongletAnimation.setLayout(new GridBagLayout());
         GridBagConstraints contraintes;
         int ligneCourante = 0;

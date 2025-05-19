@@ -8,11 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Objects;
 import java.util.logging.Logger;
 
-import static Vue.ConstantesConfigurationUI.INDICATION_SELECTION;
-import static Vue.ConstantesConfigurationUI.OPTION_IA_NON;
+import static Vue.ConfigUI.INDICATION_SELECTION;
+import static Vue.ConfigUI.OPTION_IA_NON;
 
 /**
  * Adaptateur pour le bouton "Entrer" de l'interface de configuration.

@@ -3,10 +3,11 @@ package Vue;
 import java.awt.*;
 
 
-public class ConstantesConfigurationUI {
+public class ConfigUI {
 
     // --- INTERFACES
     public final static int WIDTH_MENU = 500;
+    public final static int ARONDI = 20;
 
 
     // --- POLICES

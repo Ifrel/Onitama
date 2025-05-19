@@ -7,6 +7,7 @@ import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Pion;
 import Vue.Animations.Animations;
+import Vue.EcranPlateauDeJeu.TYPE_ELEMENT_SUR_TERRAIN;
 import Vue.InfosDeConfigUI;
 
 import javax.swing.*;
@@ -14,6 +15,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.nio.file.Path;
 
+import static Global.Config.ID_JOUEUR_1;
+import static Global.Config.ID_JOUEUR_2;
 import static Global.Paths.PATH_CARTE;
 import static Global.Paths.PATH_DEBUT_PION;
 import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
@@ -213,18 +216,43 @@ public class MethodsStaticsUtils {
 
 
 
-    public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, CasePlateau casePlateau){
-        Path pathImage = Path.of("") ;
-        if (casePlateau.getTypeElement() != VIDE) {
-            String nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(casePlateau.getProprietaire());
-            String rolePion = casePlateau.getRole().toString().toLowerCase();
-            String suite = rolePion + "_" + nomCouleurPion + ".png";
-            pathImage = PATH_DEBUT_PION.resolve(suite);
-//            System.err.println(pathImage);
+    public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, TYPE_ELEMENT_SUR_TERRAIN type) {
+        if (type == TYPE_ELEMENT_SUR_TERRAIN.VIDE) {
+            return null; // ou retourne un chemin vers une image "vide" si besoin
         }
 
-        return pathImage;
+        String nomCouleurPion;
+        String role;
+        int numJoueur;
+
+        switch (type) {
+            case PION_ETUDIANT_J1:
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(1);
+                role = "etudiant";
+                numJoueur = ID_JOUEUR_1;
+                break;
+            case PION_ETUDIANT_J2:
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(2);
+                role = "etudiant";
+                numJoueur = ID_JOUEUR_2;
+                break;
+            case PION_MAITRE_J1:
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(1);
+                role = "maitre";
+                numJoueur = ID_JOUEUR_1;
+                break;
+            case PION_MAITRE_J2:
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(2);
+                role = "maitre";
+                numJoueur = ID_JOUEUR_2;
+                break;
+            default: throw new IllegalArgumentException("Type de pion inconnu : " + type);
+        }
+
+        String nomFichier = "pion_" + role + "_" + nomCouleurPion + ".png";
+        return PATH_DEBUT_PION.resolve(nomFichier);
     }
+
 
 
     public static Path getCheminImagePionClique(Path cheminImageActuelle){
@@ -240,6 +268,115 @@ public class MethodsStaticsUtils {
 
 
 
+    public static JPanel creerPanelArrondiInteractif(Color fondNormal, Color fondHover, Color fondClic,
+                                                     int arondi, Color couleurBordure, int epaisseurBordure) {
+        JPanel panel = new JPanel() {
+            private Color fondActuel = fondNormal;
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                g2.setColor(fondActuel);
+                g2.fillRoundRect(0, 0, w, h, arondi, arondi);
+
+                if (couleurBordure != null && epaisseurBordure > 0) {
+                    g2.setColor(couleurBordure);
+                    g2.setStroke(new BasicStroke(epaisseurBordure));
+                    g2.drawRoundRect(epaisseurBordure / 2, epaisseurBordure / 2,
+                            w - epaisseurBordure, h - epaisseurBordure,
+                            arondi, arondi);
+                }
+
+                g2.dispose();
+            }
+
+            @Override
+            public boolean isOpaque() {
+                return false;
+            }
+
+            // Permet de modifier dynamiquement la couleur de fond actuelle
+            public void setFondActuel(Color c) {
+                this.fondActuel = c;
+                repaint();
+            }
+        };
+
+        // Événements souris pour effet hover et clic
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                ((JPanel) e.getSource()).setBackground(fondHover);
+                ((JPanel) e.getSource()).setForeground(fondHover);
+                ((JPanel) e.getSource()).repaint();
+                ((JPanel) e.getSource()).setOpaque(false);
+                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondHover);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondNormal);
+                panel.repaint();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondClic);
+                panel.repaint();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondHover);
+                panel.repaint();
+            }
+        });
+
+        return panel;
+    }
+
+
+    public static JPanel creerPanelArrondiDegrade(Color couleurHaut, Color couleurBas,
+                                                  int rayon, Color couleurBordure, int epaisseurBordure) {
+        return new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                GradientPaint gp = new GradientPaint(0, 0, couleurHaut, 0, h, couleurBas);
+                g2.setPaint(gp);
+                g2.fillRoundRect(0, 0, w, h, rayon, rayon);
+
+                if (couleurBordure != null && epaisseurBordure > 0) {
+                    g2.setColor(couleurBordure);
+                    g2.setStroke(new BasicStroke(epaisseurBordure));
+                    g2.drawRoundRect(epaisseurBordure / 2, epaisseurBordure / 2,
+                            w - epaisseurBordure, h - epaisseurBordure,
+                            rayon, rayon);
+                }
+
+                g2.dispose();
+            }
+
+            @Override
+            public boolean isOpaque() {
+                return false;
+            }
+        };
+    }
 
 
 
@@ -252,7 +389,7 @@ public class MethodsStaticsUtils {
      *
      * @param cheminImage le chemin vers l’image à utiliser en arrière-plan
      * @return un objet BoutonAvecImage contenant le JButton et le PanelAvecImage     */
-    public static BoutonAvecImage creerBoutonAvecImage(Path cheminImage) {
+    public static BoutonAvecI creerBoutonAvecImage(Path cheminImage) {
         JButton bouton = new JButton();
         bouton.setBorderPainted(true);
         bouton.setFocusPainted(false);
@@ -262,7 +399,7 @@ public class MethodsStaticsUtils {
         PanelAvecImage panel = new PanelAvecImage(cheminImage);
         bouton.add(panel);
 
-        BoutonAvecImage boutonAvecImage = new BoutonAvecImage(bouton, panel);
+        BoutonAvecI boutonAvecImage = new BoutonAvecI(bouton, panel);
         boutonAvecImage.setPathBouton(cheminImage);
 
         return boutonAvecImage;
@@ -273,7 +410,7 @@ public class MethodsStaticsUtils {
     /**
      * Classe utilitaire pour encapsuler un bouton avec son panneau image
      * et une animation associée.     */
-    public static class BoutonAvecImage {
+    public static class BoutonAvecI {
         /** Le bouton Swing principal */
         public JButton bouton;
 
@@ -290,7 +427,7 @@ public class MethodsStaticsUtils {
          * Constructeur du bouton avec panneau image.
          * @param bouton le bouton à associer
          * @param panel  le panneau image utilisé en arrière-plan         */
-        public BoutonAvecImage(JButton bouton, PanelAvecImage panel) {
+        public BoutonAvecI(JButton bouton, PanelAvecImage panel) {
             this.bouton = bouton;
             this.panel = panel;
             this.animation = null;

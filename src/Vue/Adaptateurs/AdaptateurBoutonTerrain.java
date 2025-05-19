@@ -1,41 +1,60 @@
 package Vue.Adaptateurs;
 
 import Modele.CasePlateau;
+import Modele.Coup;
+import Modele.Jeu;
 import Vue.CollecteurEvenements;
-import Vue.Utils.MethodsStaticsUtils.BoutonAvecImage;
+import Vue.EcranPlateauDeJeu;
+import Vue.Utils.Boutons.BoutonTerrain;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.List;
+
+import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
 
 public class AdaptateurBoutonTerrain implements ActionListener {
-    private final CollecteurEvenements collecteurEvent;
+    private final Jeu jeu;
+    private final BoutonTerrain boutonTerrain;
     private final CasePlateau casePlateau;
-    private final BoutonAvecImage boutonAvecImage;
+    private final CollecteurEvenements collecteurEv;
+    private final EcranPlateauDeJeu ecranPlateauDeJeu;
+    private final List<Coup> coupPossible;
 
-    public AdaptateurBoutonTerrain(BoutonAvecImage boutonAvecImage, CasePlateau casePlateau, CollecteurEvenements collecteurEvent){
-        this.collecteurEvent = collecteurEvent;
+    public  AdaptateurBoutonTerrain(BoutonTerrain boutonTerrain,
+                                    CasePlateau casePlateau,
+                                    CollecteurEvenements collecteurEv,
+                                    EcranPlateauDeJeu ecranPlateauDeJeu){
+        this.boutonTerrain = boutonTerrain;
         this.casePlateau = casePlateau;
-        this.boutonAvecImage = boutonAvecImage;
+        this.collecteurEv = collecteurEv;
+        this.ecranPlateauDeJeu = ecranPlateauDeJeu;
+        this.jeu = ecranPlateauDeJeu.getJeu();
+        this.coupPossible = jeu.getCoupsPossibles(jeu.getCarteSelectionnee(), casePlateau.getCoordonnee());
     }
+
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if (casePlateau.getTypeElement() != VIDE){
-//            boutonAvecImage.panel.setImage(getCheminImagePionClique(boutonAvecImage.pathBouton));
-//        }
-
-        boutonAvecImage.bouton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-        });
         System.err.println("bouton: case pressé: "+casePlateau.getCoordonnee());
-        collecteurEvent.setCaseSelectionnee(casePlateau.getCoordonnee());
+        desactiveAnimation();
+        collecteurEv.setCaseSelectionnee(casePlateau.getCoordonnee());
+        activeAnimation();
+    }
+
+
+
+
+    private void activeAnimation(){
+        if (casePlateau.getTypeElement() != VIDE && casePlateau.getProprietaire() == jeu.getJoueurCourant().getId()) {
+            if (!coupPossible.isEmpty()) {
+                collecteurEv.getCollecteurAnimation().activeCibleBoutonTerrain(coupPossible, ecranPlateauDeJeu);
+            }
+        }
+    }
+
+    private void desactiveAnimation(){
+        collecteurEv.getCollecteurAnimation().desactiveCibleBoutonTerrain(coupPossible);
     }
 }
