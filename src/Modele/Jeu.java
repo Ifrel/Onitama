@@ -58,8 +58,8 @@ public class Jeu extends Observable implements Runnable {
     private Carte carteEchange; //La carte qui sera en échange
 
     // -- GRILLE -- //
-    private List<Pion> pionsJoueurUn = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
-    private List<Pion> pionsJoueurDeux = new ArrayList<>(); //idem pour le deuxième joueur
+    private final List<Pion> pionsJoueurUn = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
+    private final List<Pion> pionsJoueurDeux = new ArrayList<>(); //idem pour le deuxième joueur
 
     CasePlateau casePlateau ;
 
@@ -1557,36 +1557,5 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-
-    public void setPionsJoueur1(List<Pion> emptyList) {
-        pionsJoueurUn = (List<Pion>)emptyList;
-        return;
-    }
-
-
-    public void setIdJoueurCourant(int i) {
-        idJoueurCourant = i;
-    }
-
-
-    public void setPionsJoueur2(ArrayList<Pion> arrayList) {
-        pionsJoueurDeux = arrayList;
-    }
-
-
-    public void setMaitreMort(boolean b) {
-        // TODO Auto-generated method stub
-        maitreMort = b;
-    }
-
-
-    public Pion[][] getGrille() {
-        return grille;
-    }
-
-
-    public Historique<Coup> getHistorique() {
-        return historique;
-    }
 
 }
