@@ -1,20 +1,16 @@
 package Controleur;
 
-import Modele.Carte;
 import Modele.Coup;
-import Vue.Animations.AnimationUtils.AnimationUtils;
 import Vue.Animations.AnimationUtils.CardFlipAnimator;
-import Vue.Animations.AnimationUtils.CardFlipLayerUI;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
-import Vue.Utils.Boutons.BoutonCarte;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static Global.Config.ID_JOUEUR_1;
+import static Vue.ConfigUI.COULEUR_FOND_PION_DEPART_SELECTIONE;
 
 
 public class ControleurAnimation implements CollecteurEvenements {
@@ -45,9 +41,10 @@ public class ControleurAnimation implements CollecteurEvenements {
 
         for (Coup coup : coupPossible) {
             Point cible = coup.getArrivee();
-            ecranPlateauDeJeu.getBoutonterrainAt(cible).activerAnimationBordure(true);
+            ecranPlateauDeJeu.getBoutonterrainAt(cible).activerAnimation(true);
             System.err.println("bouton animation activé:" + cible);
         }
+        ecranPlateauDeJeu.getBoutonterrainAt(coupPossible.get(0).getDepart()).chargerCouleurFont(COULEUR_FOND_PION_DEPART_SELECTIONE);
         peutDesactiver = true;
     }
 
@@ -56,9 +53,10 @@ public class ControleurAnimation implements CollecteurEvenements {
         if (peutDesactiver){
             for (Coup coup : coupPrecedant) {
                 Point cible = coup.getArrivee();
-                ecranPlateauDeJeu.getBoutonterrainAt(cible).activerAnimationBordure(false);
+                ecranPlateauDeJeu.getBoutonterrainAt(cible).activerAnimation(false);
                 System.err.println("bouton animation désactivé:" + cible);
             }
+            ecranPlateauDeJeu.getBoutonterrainAt(coupPrecedant.get(0).getDepart()).enleverCouleurFont();
             peutDesactiver = false;
         }
     }

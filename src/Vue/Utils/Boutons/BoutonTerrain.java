@@ -22,6 +22,8 @@ public class BoutonTerrain extends JButton {
     private final Timer timer;
 
     private Image imageDeFond; // Stocke l'image à afficher
+    private Color couleurdeFond;
+    private boolean aCouleurDeFond = false;
 
     public BoutonTerrain(ImageIcon icone, float epaisseurBordure, float arrondi) {
         super();
@@ -73,7 +75,7 @@ public class BoutonTerrain extends JButton {
     }
 
 
-    public void activerAnimationBordure(boolean activer) {
+    public void activerAnimation(boolean activer) {
         if (!isEnabled()) return;
 
         this.animationActivee = activer;
@@ -99,6 +101,18 @@ public class BoutonTerrain extends JButton {
 
     public void changerImage(BufferedImage nouvelleImage) {
         this.imageDeFond = nouvelleImage;
+        repaint();
+    }
+
+    public void chargerCouleurFont(Color color) {
+        this.aCouleurDeFond = true;
+        this.couleurdeFond = color;
+        repaint();
+    }
+
+    public void enleverCouleurFont() {
+        this.aCouleurDeFond = false;
+        this.couleurdeFond = new Color(1,1,1, 0);
         repaint();
     }
 
@@ -171,9 +185,17 @@ public class BoutonTerrain extends JButton {
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
         }
 
+        // 6. Si une couleur de fond chargée
+        if (aCouleurDeFond) {
+            g2.setColor(couleurdeFond);// léger voile blanc
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+        }
+
 
         g2.dispose();
     }
+
+
 }
 
 
@@ -340,7 +362,7 @@ class TestBoutonTerrain {
             f.add(bouton4);
 
             new Timer(5000, e -> {
-                bouton4.activerAnimationBordure(true);
+                bouton4.activerAnimation(true);
                 System.out.println("Animation activée !");
             }).start();
 
