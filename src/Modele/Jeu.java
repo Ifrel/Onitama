@@ -509,7 +509,7 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-    private Pion getCase(int i, int j) {
+    public Pion getCase(int i, int j) {
         try {
             verifieSiDansGrille(i, j);
             return grille[i][j];
@@ -518,7 +518,7 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-    private void setCase(int i, int j, Pion p) {
+    public void setCase(int i, int j, Pion p) {
         try {
             verifieSiDansGrille(i, j);
             grille[i][j] = p;
@@ -985,7 +985,7 @@ public class Jeu extends Observable implements Runnable {
         return Utils.getCoupsPossibles(this, carteSelectionee, positionPion);
     }
 
-    private int changerJoueur() {
+    public int changerJoueur() {
         int previous = idJoueurCourant;
         idJoueurCourant = (idJoueurCourant % 2) + 1;
         return previous;
@@ -993,7 +993,7 @@ public class Jeu extends Observable implements Runnable {
 
     // code santiago
     // --------------------
-    private boolean deplacerPion(Point depart, Point arrivee) {
+    public boolean deplacerPion(Point depart, Point arrivee) {
         try {
             boolean aManger = false;
             // Récupère l'éventuel pion présent sur la case d'arrivée
@@ -1054,7 +1054,7 @@ public class Jeu extends Observable implements Runnable {
         majPionsJoueur2();
     }
 
-    private void echangerCartes(Joueur joueur, Carte carteSelectionne) {
+    public void echangerCartes(Joueur joueur, Carte carteSelectionne) {
        
         joueur.removeCard(carteSelectionne);
         Carte nouvelleCarteJoueurCourant = getCarteSupplementaire();
@@ -1164,7 +1164,7 @@ public class Jeu extends Observable implements Runnable {
         metAJour();
     }
 
-    private boolean verifierVictoire() {
+    public boolean verifierVictoire() {
         //si tous les pions adversaires sont morts
         if(getPionsJoueur1().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_2){
             return true;
