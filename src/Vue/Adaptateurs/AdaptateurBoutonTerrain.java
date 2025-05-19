@@ -61,7 +61,9 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
     }
 
     private void desactiveAnimationCible(){
-        collecteurEv.getCollecteurAnimation().desactiveCibleBoutonTerrain(coupPossible);
+        if (casePlateau.getTypeElement() != VIDE) {
+            collecteurEv.getCollecteurAnimation().desactiveCibleBoutonTerrain(coupPossible);
+        }
     }
 
 
