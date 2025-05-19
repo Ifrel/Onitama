@@ -124,12 +124,12 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
 
     @Override
     public void miseAJour() {
-        logger.info("Mise à jour de l'interface...");
+        logger.info("Mise à jour : EcranPlateauDeJeu...");
         mettreAJourImagesTerrain();
         mettreAJourImagesCartes();
         updatePlayerAndRoundInfo();
         updateUndoRedoButtons();
-        logger.info("Mise à jour de l'interface terminée.");
+        logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }
 
 
@@ -335,7 +335,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
 
-    /** Crée les boutons "Annuler" et "Refaire" */
+    /** Crée les boutons "Annuler" et "Refaire"*/
     private JPanel creerButtonsAnnulerRefaire() {
         JPanel boutonsAnnuleRefaire = new JPanel(new GridLayout(6, 1, 0, 10));
         boutonsAnnuleRefaire.setOpaque(false);
@@ -346,11 +346,11 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         annuler.setPreferredSize(new Dimension(135,60));
         refaire.setPreferredSize(new Dimension(135,60));
 
-//        annuler.setBackground(new Color(207, 207, 207, 44));
-//        refaire.setBackground(new Color(207, 207, 207, 44));
+        annuler.setBackground(new Color(207, 207, 207, 44));
+        refaire.setBackground(new Color(207, 207, 207, 44));
 
-//        annuler.setOpaque(true);
-//        refaire.setOpaque(true);
+        annuler.setOpaque(true);
+        refaire.setOpaque(true);
 
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
@@ -500,6 +500,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         return panel;
     }
 
+
+
     private CardFlipAnimator cardFlipAnimator(BoutonCarte boutonCarte) {
         CardFlipAnimator animator = new CardFlipAnimator();                 // 1. Créer un nouvel animateur pour ce bouton
         CardFlipLayerUI<JButton> layerUI = new CardFlipLayerUI<>(animator);  // 2. Créer un LayerUI qui utilisera cet animateur
@@ -630,10 +632,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
 
     // Met à jour l'état des boutons Annuler/Refaire
     private void updateUndoRedoButtons() {
-        if (jeu != null && annuler != null && refaire != null) {
             annuler.setEnabled(jeu.peutAnnulerCoup());
             refaire.setEnabled(jeu.peutRefaireCoup());
-        }
     }
 
 
