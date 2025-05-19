@@ -5,13 +5,14 @@ import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.*;
 import Modele.Carte;
-import Vue.Utils.BordureArrondieAvecOmbre;
+import Vue.Animations.AnimationUtils.CardFlipAnimator;
+import Vue.Animations.AnimationUtils.CardFlipLayerUI;
+import Vue.LabO.BordureArrondieAvecOmbre;
 import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.Boutons.BoutonTerrain;
 import Vue.Utils.PanelBruitGris;
 import Vue.Utils.Boutons.BoutonCarte;
 import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
-import Vue.Utils.PanelRatioFixe;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -94,6 +95,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private final HashMap<TYPE_ELEMENT_SUR_TERRAIN, BufferedImage> imagesCaseTerrain = new HashMap<>();
 
 
+
+    CardFlipAnimator cardFlipAnimator;
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -202,7 +205,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         centreGbc.gridy = 0;
         centreGbc.weightx = 2.5;
         centreGbc.weighty = 0.37;
-        panelCentreEmpile.add(cartesNord, centreGbc);
+        panelCentreEmpile.add(cardFlipAnimator, centreGbc);
 
         // Carte gauche
         centreGbc.gridx = 0;
@@ -311,6 +314,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
                 // Création des boutons avec leur image respective
                 BoutonCarte boutonJ1 = new BoutonCarte(imageJ1);
                 BoutonCarte boutonJ2 = new BoutonCarte(imageJ2);
+                cardFlipAnimator = cardFlipAnimator(boutonJ1);
 
                 // Stockage des images associées à chaque type de carte
                 imagesCartes.put(carteJ1.getType(), imageJ1);
@@ -494,6 +498,24 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         }
 
         return panel;
+    }
+
+    private CardFlipAnimator cardFlipAnimator(BoutonCarte boutonCarte) {
+        CardFlipAnimator animator = new CardFlipAnimator();                 // 1. Créer un nouvel animateur pour ce bouton
+        CardFlipLayerUI<JButton> layerUI = new CardFlipLayerUI<>(animator);  // 2. Créer un LayerUI qui utilisera cet animateur
+        JLayer<JButton> layer = new JLayer<>(boutonCarte, layerUI);           // 3. Créer un JLayer, enveloppant le bouton original avec le LayerUI
+        animator.startAnimation();
+
+        // 5. Ajouter un écouteur d'animation à l'animateur
+        // Chaque fois que l'animateur met à jour son angle, il notifie ce listener
+        // qui demande alors au JLayer de se repeindre.
+        animator.addAnimationListener(layer::repaint); // Lambda capture 'layer'
+
+        boutonCarte.addActionListener(e->{
+            collecteurEv.getCollecteurAnimation().activeAnimationDeRotation(animator, jeu.getJoueurCourant().getId());
+        });
+
+        return animator;
     }
 
 

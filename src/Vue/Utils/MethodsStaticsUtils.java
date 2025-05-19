@@ -269,7 +269,7 @@ public class MethodsStaticsUtils {
 
 
     public static JPanel creerPanelArrondiInteractif(Color fondNormal, Color fondHover, Color fondClic,
-                                                     int rayon, Color couleurBordure, int epaisseurBordure) {
+                                                     int arondi, Color couleurBordure, int epaisseurBordure) {
         JPanel panel = new JPanel() {
             private Color fondActuel = fondNormal;
 
@@ -284,14 +284,14 @@ public class MethodsStaticsUtils {
                 int h = getHeight();
 
                 g2.setColor(fondActuel);
-                g2.fillRoundRect(0, 0, w, h, rayon, rayon);
+                g2.fillRoundRect(0, 0, w, h, arondi, arondi);
 
                 if (couleurBordure != null && epaisseurBordure > 0) {
                     g2.setColor(couleurBordure);
                     g2.setStroke(new BasicStroke(epaisseurBordure));
                     g2.drawRoundRect(epaisseurBordure / 2, epaisseurBordure / 2,
                             w - epaisseurBordure, h - epaisseurBordure,
-                            rayon, rayon);
+                            arondi, arondi);
                 }
 
                 g2.dispose();
@@ -389,7 +389,7 @@ public class MethodsStaticsUtils {
      *
      * @param cheminImage le chemin vers l’image à utiliser en arrière-plan
      * @return un objet BoutonAvecImage contenant le JButton et le PanelAvecImage     */
-    public static BoutonAvecImage creerBoutonAvecImage(Path cheminImage) {
+    public static BoutonAvecI creerBoutonAvecImage(Path cheminImage) {
         JButton bouton = new JButton();
         bouton.setBorderPainted(true);
         bouton.setFocusPainted(false);
@@ -399,7 +399,7 @@ public class MethodsStaticsUtils {
         PanelAvecImage panel = new PanelAvecImage(cheminImage);
         bouton.add(panel);
 
-        BoutonAvecImage boutonAvecImage = new BoutonAvecImage(bouton, panel);
+        BoutonAvecI boutonAvecImage = new BoutonAvecI(bouton, panel);
         boutonAvecImage.setPathBouton(cheminImage);
 
         return boutonAvecImage;
@@ -410,7 +410,7 @@ public class MethodsStaticsUtils {
     /**
      * Classe utilitaire pour encapsuler un bouton avec son panneau image
      * et une animation associée.     */
-    public static class BoutonAvecImage {
+    public static class BoutonAvecI {
         /** Le bouton Swing principal */
         public JButton bouton;
 
@@ -427,7 +427,7 @@ public class MethodsStaticsUtils {
          * Constructeur du bouton avec panneau image.
          * @param bouton le bouton à associer
          * @param panel  le panneau image utilisé en arrière-plan         */
-        public BoutonAvecImage(JButton bouton, PanelAvecImage panel) {
+        public BoutonAvecI(JButton bouton, PanelAvecImage panel) {
             this.bouton = bouton;
             this.panel = panel;
             this.animation = null;
