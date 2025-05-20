@@ -6,6 +6,7 @@ import static Global.Config.ROLEPION.*;
 
 import Modele.Carte;
 import Modele.Pion;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -14,45 +15,46 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EtatJeuTest {
+public class EtatJeuCompactTest {
+
     @Test
     void constructionDeBase() {
 
-        assertThrows(NullPointerException.class, () -> new EtatJeu(null));
-        assertThrows(NullPointerException.class, () -> new EtatJeu(1, null, null, null, null, null));
-        assertThrows(NullPointerException.class, () -> new EtatJeu(1, new Carte(COBRA), null, null, null, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeuCompact(null));
+        assertThrows(NullPointerException.class, () -> new EtatJeuCompact(1, null, null, null, null, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeuCompact(1, new Carte(COBRA), null, null, null, null));
         List<Carte> lc1 = new ArrayList<>() {{
             add(new Carte(OIE));
             add(new Carte(COQ));
         }};
-        assertThrows(NullPointerException.class, () -> new EtatJeu(1, new Carte(BOEUF), lc1, null, null, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeuCompact(1, new Carte(BOEUF), lc1, null, null, null));
         List<Carte> lc2 = new ArrayList<>() {{
             add(new Carte(CRABE));
             add(new Carte(SINGE));
         }};
-        assertThrows(NullPointerException.class, () -> new EtatJeu(1, new Carte(GRUE), lc1, lc2, null, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeuCompact(1, new Carte(GRUE), lc1, lc2, null, null));
         List<Modele.Pion> lp1 = new ArrayList<>() {{
-            add(new Modele.Pion(1, new Point(0, 2), PION_MAITRE));
-            add(new Modele.Pion(1, new Point(0, 0), PION_ETUDIANT));
-            add(new Modele.Pion(1, new Point(0, 1), PION_ETUDIANT));
-            add(new Modele.Pion(1, new Point(0, 3), PION_ETUDIANT));
-            add(new Modele.Pion(1, new Point(0, 4), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
+            add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
         }};
-        assertThrows(NullPointerException.class, () -> new EtatJeu(1, new Carte(SANGLIER), lc1, lc2, lp1, null));
+        assertThrows(NullPointerException.class, () -> new EtatJeuCompact(1, new Carte(SANGLIER), lc1, lc2, lp1, null));
         List<Modele.Pion> lp2 = new ArrayList<>() {{
-            add(new Modele.Pion(2, new Point(4, 2), PION_MAITRE));
-            add(new Modele.Pion(2, new Point(4, 0), PION_ETUDIANT));
-            add(new Modele.Pion(2, new Point(4, 1), PION_ETUDIANT));
-            add(new Modele.Pion(2, new Point(4, 3), PION_ETUDIANT));
-            add(new Modele.Pion(2, new Point(4, 4), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 2), PION_MAITRE));
+            add(new Pion(2, new Point(4, 0), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 3), PION_ETUDIANT));
+            add(new Pion(2, new Point(4, 4), PION_ETUDIANT));
 
         }};
-        new EtatJeu(1, new Carte(LAPIN), lc1, lc2, lp1, lp2);
+        new EtatJeuCompact(1, new Carte(LAPIN), lc1, lc2, lp1, lp2);
     }
 
     @Test
     void valeursCartesJ1DebutPartie() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -82,9 +84,9 @@ public class EtatJeuTest {
 
         }};
 
-        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // OIE = 6; COQ = 7
         // 0110 0111 = 103
@@ -93,7 +95,7 @@ public class EtatJeuTest {
 
     @Test
     void valeursCartesJ2DebutPartie() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -123,9 +125,9 @@ public class EtatJeuTest {
 
         }};
 
-        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // CRABE = 4; SINGE = 8
         // 0100 1000 = 72
@@ -134,7 +136,7 @@ public class EtatJeuTest {
 
     @Test
     void valeursCarteEnPlusDebutPartie() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -164,9 +166,9 @@ public class EtatJeuTest {
 
         }};
 
-        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // MANTE = 9; 1-4 / 25 bits (Positions Pions Joueur 1)
         // 1001 1101 = 157 = -99
@@ -176,7 +178,7 @@ public class EtatJeuTest {
 
     @Test
     void valeursPionsJ1DebutPartie() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -206,9 +208,9 @@ public class EtatJeuTest {
 
         }};
 
-        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // MANTE = 9; 1-4 / 25 bits (Positions Pions Joueur 1)
         // 1001 1101 = 157 = -99
@@ -234,7 +236,7 @@ public class EtatJeuTest {
 
     @Test
     void valeursPionsJ2DebutPartie() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -264,9 +266,9 @@ public class EtatJeuTest {
 
         }};
 
-        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // -------------- 21-25 / 25 bits (Positions Pions Joueur 1)
         // -------------- 1-3 / 25 bits (Positions Pions Joueur 2)
@@ -290,7 +292,7 @@ public class EtatJeuTest {
 
     @Test
     void valeursPionMaitreJ1DebutPartie() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -320,9 +322,9 @@ public class EtatJeuTest {
 
         }};
 
-        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // -------------- 20-25 / 25 bits (Positions Pions Joueur 2)
         // -------------- 1-2 / 5 bits (Positions Ligne Pion Maitre Joueur 1)
@@ -337,7 +339,7 @@ public class EtatJeuTest {
 
     @Test
     void valeursPionMaitreJ2DebutPartie() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -367,9 +369,9 @@ public class EtatJeuTest {
 
         }};
 
-        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // -------------- 1-5 / 5 bits (Positions Ligne Pion Maitre Joueur 2)
         // -------------- 1-3 / 5 bits (Positions Colonne Pion Maitre Joueur 2)
@@ -384,7 +386,7 @@ public class EtatJeuTest {
 
     @Test
     void valeursVecteurTotalDebutPartie() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
         byte [] etat;
 
         List<Carte> lc1 = new ArrayList<>() {{
@@ -414,9 +416,9 @@ public class EtatJeuTest {
 
         }};
 
-        cp = new EtatJeu(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(MANTE), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // OIE = 6; COQ = 7
         // 0110 0111 = 103
@@ -479,7 +481,7 @@ public class EtatJeuTest {
 
     @Test
     void valeurVecteurTotalScenario1() {
-        EtatJeu cp;
+        EtatJeuCompact ej;
 
         byte [] etat;
 
@@ -494,25 +496,27 @@ public class EtatJeuTest {
         }};
 
         List<Pion> lp1 = new ArrayList<>() {{
-            add(new Pion(1, new Point(0, 2), PION_MAITRE));
+            add(new Pion(1, new Point(2, 4), PION_MAITRE));
+
             add(new Pion(1, new Point(0, 0), PION_ETUDIANT));
-            add(new Pion(1, new Point(0, 1), PION_ETUDIANT));
-            add(new Pion(1, new Point(0, 3), PION_ETUDIANT));
             add(new Pion(1, new Point(0, 4), PION_ETUDIANT));
+            add(new Pion(1, new Point(1, 2), PION_ETUDIANT));
+            add(new Pion(1, new Point(2, 2), PION_ETUDIANT));
         }};
 
         List<Pion> lp2 = new ArrayList<>() {{
-            add(new Pion(2, new Point(4, 2), PION_MAITRE));
-            add(new Pion(2, new Point(4, 0), PION_MAITRE));
-            add(new Pion(2, new Point(4, 1), PION_MAITRE));
-            add(new Pion(2, new Point(4, 3), PION_MAITRE));
-            add(new Pion(2, new Point(4, 4), PION_MAITRE));
+            add(new Pion(2, new Point(1, 0), PION_MAITRE));
+
+            add(new Pion(2, new Point(0, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(1, 1), PION_ETUDIANT));
+            add(new Pion(2, new Point(2, 2), PION_ETUDIANT));
+            add(new Pion(2, new Point(3, 2), PION_ETUDIANT));
 
         }};
 
-        cp = new EtatJeu(1, new Carte(COQ), lc1, lc2, lp1, lp2);
+        ej = new EtatJeuCompact(1, new Carte(COQ), lc1, lc2, lp1, lp2);
 
-        etat = cp.getEtat();
+        etat = ej.getEtat();
 
         // SANGLIER = 13; GRENOUILLE = 2
         // 1101 0010 = 210 = -46
@@ -564,8 +568,8 @@ public class EtatJeuTest {
 
         // -------------- 1-5 / 5 bits (Positions Ligne Pion Maitre Joueur 2)
         // -------------- 1-3 / 5 bits (Positions Colonne Pion Maitre Joueur 2)
-        // 01001 100 = 76
-        assertEquals(76, etat[10]);
+        // 01000 100 = 68
+        assertEquals(68, etat[10]);
 
         // -------------- 4-5 / 5 bits (Positions Colonne Pion Maitre Joueur 2)
         // -------------- 1-6 / 6 bits inutilisés
