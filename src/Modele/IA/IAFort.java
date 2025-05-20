@@ -34,14 +34,20 @@ public class IAFort extends IA {
      */
     @Override
     public Coup calculerCoup() {
-        Coup coup = arbreMinMax.choisirNoeud(getId(), new Noeud(new EtatJeu(
-                jeu.getIdJoueurCourant(),
-                jeu.getCarteSupplementaire(),
-                jeu.getCartesJoueur1(),
-                jeu.getCartesJoueur2(),
-                jeu.getPionsJoueur1(),
-                jeu.getPionsJoueur2()
-        ), null), 6, FORT);
+        Coup coup = arbreMinMax.choisirCoup(
+                getId(),
+                new Noeud(
+                        new EtatJeu(
+                                jeu.getIdJoueurCourant(),
+                                jeu.getCarteSupplementaire(),
+                                jeu.getCartesJoueur1(),
+                                jeu.getCartesJoueur2(),
+                                jeu.getPionsJoueur1(),
+                                jeu.getPionsJoueur2()
+                        ),
+                        null),
+                6,
+                FORT);
 
         pionChoisi = arbreMinMax.getPionChoisi();
         carteChoisie = arbreMinMax.getCarteChoisie();

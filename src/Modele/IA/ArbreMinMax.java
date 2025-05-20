@@ -1,7 +1,6 @@
 package Modele.IA;
 
 import Modele.Coup;
-import Modele.Jeu;
 import Modele.Pion;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class ArbreMinMax {
     }
 
 
-    public Coup choisirNoeud(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
+    public Coup choisirCoup(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
 
         //List<EtatJeu> successeurs = n.getId().getSuccesseurs();
 //        for (EtatJeu succ : successeurs) {
@@ -46,7 +45,7 @@ public class ArbreMinMax {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
-            return n.setValeur(heuristiqueAvancee(idJoueur, n.getId()));
+            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getId()));
         }
         double valeur = Double.NEGATIVE_INFINITY;
 
@@ -64,7 +63,7 @@ public class ArbreMinMax {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
-            return n.setValeur(heuristiqueAvancee(idJoueur, n.getId()));
+            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getId()));
         }
         double valeur = Double.POSITIVE_INFINITY;
 
