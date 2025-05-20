@@ -5,6 +5,7 @@ import Modele.Jeu;
 import Modele.Pion;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import static Global.Config.NIVEAU_IA;
 import static Modele.IA.Heuristiques.heuristiqueAvancee;
@@ -13,8 +14,11 @@ public class ArbreMinMax {
     private int profondeur;
     private int carteChoisie;
     private Pion pionChoisi;
+    private int nbFeuilles, nbEtats;
+    private static final Logger logger = Logger.getLogger(ArbreMinMax.class.getName());
 
     public ArbreMinMax() {
+        this.nbFeuilles = this.nbEtats = 0;
     }
 
 
@@ -26,6 +30,7 @@ public class ArbreMinMax {
 //        }
         double val = joueur1(idJoueur, n, profondeur, niveau);
         n.setValeur(val);
+        logger.info("Nombre de noeuds total parcouru : " + nbEtats + ", dont feuilles : " + nbFeuilles);
         for (Noeud nSucc : n.getSuccesseurs()) {
             if (nSucc.getValeur() == val) {
                 Coup coup = nSucc.getId().getCoup();
@@ -38,7 +43,9 @@ public class ArbreMinMax {
     }
 
     private double joueur1(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
+        nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
+            nbFeuilles++;
             return n.setValeur(heuristiqueAvancee(idJoueur, n.getId()));
         }
         double valeur = Double.NEGATIVE_INFINITY;
@@ -54,7 +61,9 @@ public class ArbreMinMax {
     }
 
     private double joueur2(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
+        nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
+            nbFeuilles++;
             return n.setValeur(heuristiqueAvancee(idJoueur, n.getId()));
         }
         double valeur = Double.POSITIVE_INFINITY;
