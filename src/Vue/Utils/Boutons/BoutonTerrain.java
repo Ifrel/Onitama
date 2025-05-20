@@ -14,14 +14,18 @@ public class BoutonTerrain extends JButton {
 
     private final float epaisseurInitiale;
     private final float arrondiBordure;
-    private final Color couleurBordureInactive = new Color(122, 120, 120, 255);
-    private final Color couleurBordureActive = new Color(214, 17, 199, 255);
+    private Color couleurBordureInactive = new Color(122, 120, 120, 255);
+    private Color couleurBordureActive = new Color(214, 17, 199, 255);
     private float epaisseurAnimee;
     private boolean animationActivee = false;
     private float phase = 0;
     private final Timer timer;
 
     private Image imageDeFond; // Stocke l'image à afficher
+    private Color couleurdeFond;
+    private boolean aCouleurDeFond = false;
+    private boolean aCouleurBordure = true;
+
 
     public BoutonTerrain(ImageIcon icone, float epaisseurBordure, float arrondi) {
         super();
@@ -46,16 +50,21 @@ public class BoutonTerrain extends JButton {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                epaisseurAnimee = epaisseurInitiale + 3f;
-                repaint();
+                if (isEnabled()) { // si le bouton est actif
+                    epaisseurAnimee = epaisseurInitiale + 3f;
+                    repaint();
+                }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                epaisseurAnimee = epaisseurInitiale;
-                repaint();
+                if (isEnabled()) {
+                    epaisseurAnimee = epaisseurInitiale;
+                    repaint();
+                }
             }
         });
+
     }
 
     public BoutonTerrain(Path cheminImage) {
@@ -68,7 +77,9 @@ public class BoutonTerrain extends JButton {
     }
 
 
-    public void activerAnimationBordure(boolean activer) {
+    public void activerAnimation(boolean activer) {
+        if (!isEnabled()) return;
+
         this.animationActivee = activer;
 
         if (activer) {
@@ -94,6 +105,33 @@ public class BoutonTerrain extends JButton {
         this.imageDeFond = nouvelleImage;
         repaint();
     }
+
+    public void chargerCouleurFont(Color color) {
+        this.aCouleurDeFond = true;
+        this.couleurdeFond = color;
+        repaint();
+    }
+
+    public void enleverCouleurFont() {
+        this.aCouleurDeFond = false;
+        this.couleurdeFond = new Color(0, 0, 0, 0);
+        repaint();
+    }
+
+    public void chargerCouleurBordure(Color active, Color inactive) {
+        this.aCouleurBordure = true;
+        this.couleurBordureActive = active;
+        this.couleurBordureInactive = inactive;
+        repaint();
+    }
+
+    public void enleverCouleurBordure() {
+        this.aCouleurBordure = false;
+        this.couleurBordureInactive = new Color(122, 120, 120, 255);
+        this.couleurBordureActive = new Color(214, 17, 199, 255);
+        repaint();
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -157,6 +195,27 @@ public class BoutonTerrain extends JButton {
             g2.setColor(new Color(198, 71, 207, 100));
             g2.draw(new Ellipse2D.Float(cx - pulse2, cy - pulse2, 2 * pulse2, 2 * pulse2));
         }
+
+        // 5. Si le bouton est désactivé
+        if (!isEnabled()) {
+            g2.setColor(new Color(176, 174, 174, 63));
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+        }
+
+        // 6. Si une couleur de fond chargée
+        if (aCouleurDeFond && couleurdeFond != null) {
+            g2.setColor(couleurdeFond);
+            g2.fillRoundRect(0, 0, w, h, arc, arc);
+        }
+
+
+        // 7. Si des couleurs de bordures chargées
+        if (aCouleurBordure) {
+            g2.setStroke(new BasicStroke(epaisseurBordureTotale));
+            g2.setColor(animationActivee ? couleurBordureActive : couleurBordureInactive);
+            g2.drawRoundRect(marge, marge, w - 2 * marge, h - 2 * marge, arc, arc);
+        }
+
 
         g2.dispose();
     }
@@ -300,6 +359,7 @@ class TestBoutonTerrain {
             // Bouton initial avec image par défaut
             BoutonTerrain bouton1 = new BoutonTerrain(PATH_PION_NOIR_ETUDIANT);
             bouton1.setPreferredSize(new Dimension(120, 120));
+            bouton1.setEnabled(false);
             f.add(bouton1);
 
             // Bouton avec une autre image et taille plus grande
@@ -325,7 +385,7 @@ class TestBoutonTerrain {
             f.add(bouton4);
 
             new Timer(5000, e -> {
-                bouton4.activerAnimationBordure(true);
+                bouton4.activerAnimation(true);
                 System.out.println("Animation activée !");
             }).start();
 

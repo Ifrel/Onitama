@@ -68,7 +68,7 @@ public class InfosDeConfigUI {
         this.nomsCouleurs.put(NOIRE, "noir");
         this.nomCouleurPionJoueur1 = nomsCouleurs.get(couleurPionJoueur1);
         this.nomCouleurPionJoueur2 = nomsCouleurs.get(couleurPionJoueur2);
-        afficherEtatConfigUI();
+//        afficherEtatConfigUI();
         // Le constructeur est privé pour implémenter le pattern Singleton.
     }
 
