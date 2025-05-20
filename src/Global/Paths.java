@@ -19,8 +19,15 @@ public class Paths {
     public static final Path PATH_BTN_ENTRER              = Path.of("res/vue/images/buttons/button_entrer.png");
     public static final Path PATH_BTN_ANNULER             = Path.of("res/vue/images/buttons/button_annuler.png");
     public static final Path PATH_BTN_REFAIRE             = Path.of("res/vue/images/buttons/button_refaire.png");
+    public static final Path PATH_BTN_MENU                = Path.of("res/vue/images/buttons/menu.png");
+    public static final Path PATH_BTN_MUET                = Path.of("res/vue/images/buttons/muet.png");
+    public static final Path PATH_BTN_MONTER_LE_SON       = Path.of("res/vue/images/buttons/monter-le-son.png");
+
+
+
     public static final Path PATH_ARRIERE_PLAN_ED_O1      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage.png");
     public static final Path PATH_ARRIERE_PLAN_ED_O2      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage2.png");
+
 
 
     /********************************************

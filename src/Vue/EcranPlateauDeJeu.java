@@ -94,9 +94,10 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
     private final HashMap<TYPE_ELEMENT_SUR_TERRAIN, BufferedImage> imagesCaseTerrain = new HashMap<>();
 
+    // Pour la Gestion des Animations : Renversement des cartes
+    private final ArrayList<CardFlipAnimator>  listeDescardFlipAnimators = new ArrayList<>();
+    private int ID_JOUEUR_PRECEDANT = ID_JOUEUR_2;
 
-
-    CardFlipAnimator cardFlipAnimator;
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -129,6 +130,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         mettreAJourImagesCartes();
         updatePlayerAndRoundInfo();
         updateUndoRedoButtons();
+        tournerLesCartesDuJoueur();
         logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }
 
@@ -156,7 +158,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
 
         // Ligne 0 : Haut (son | timer | menu)
         JPanel barreIndication = new JPanel();
-        barreIndication.setLayout(new BoxLayout(barreIndication, BoxLayout.X_AXIS));
+        barreIndication.setLayout(new FlowLayout(FlowLayout.TRAILING, 10, 10));
         barreIndication.setOpaque(false);
         barreIndication.add( creerBoutonSon());
         barreIndication.add(creerBarredesBoutons());
@@ -272,7 +274,6 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
 
-
     /**
      * Initialise les boutons représentant les cartes en main des deux joueurs
      * ainsi que la carte de rotation, en associant chaque bouton à son image
@@ -309,7 +310,6 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
                 // Création des boutons avec leur image respective
                 BoutonCarte boutonJ1 = new BoutonCarte(imageJ1);
                 BoutonCarte boutonJ2 = new BoutonCarte(imageJ2);
-                cardFlipAnimator = cardFlipAnimator(boutonJ1);
 
                 // Stockage des images associées à chaque type de carte
                 imagesCartes.put(carteJ1.getType(), imageJ1);
@@ -365,8 +365,8 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         cartesNord.setOpaque(false);
 
         cartesNord.add(Box.createGlue());
-        cartesNord.add(buttonsCartesJoueur1[0]);
-        cartesNord.add(buttonsCartesJoueur1[1]);
+        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[0]));
+        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[1]));
         cartesNord.add(Box.createGlue());
     }
 
@@ -384,7 +384,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         JPanel cartesEstbis = new JPanel(new GridLayout(3, 1, 0, 100));
         cartesEstbis.setOpaque(false);
         cartesEstbis.add(Box.createVerticalGlue());
-        cartesEstbis.add(carteDeRotation);
+        cartesEstbis.add(cardFlipAnimator(carteDeRotation));
         cartesEstbis.add(Box.createVerticalGlue());
 
         cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.X_AXIS));
@@ -406,12 +406,13 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
     private JButton creerBoutonSon() {
-        boutonSon = new JButton("son");
-        boutonSon.setForeground(Color.WHITE);
-        boutonSon.setFont(new Font("Arial", Font.PLAIN, 30));
-        boutonSon.setBackground(new Color(237, 237, 237, 16));
-        boutonSon.setContentAreaFilled(false);
-        boutonSon.setFocusPainted(false);
+        boutonSon = Bouton.creerBouton(PATH_BTN_MUET.toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
+//        boutonSon.setForeground(Color.WHITE);
+//        boutonSon.setFont(new Font("Arial", Font.PLAIN, 30));
+//        boutonSon.setBackground(new Color(237, 237, 237, 16));
+//        boutonSon.setContentAreaFilled(false);
+//        boutonSon.setFocusPainted(false);
+        boutonSon.setPreferredSize(new Dimension(50,50));
         boutonSon.setText(musiqueActive ? "on" : "off");
         boutonSon.addActionListener(e -> toggleMusique(boutonSon));
 
@@ -442,18 +443,23 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
     private JPanel creerPanelRoundTemps() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(206, 206, 206), 1, true),
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)
-        ));
-        panel.setBackground(new Color(245, 245, 245, 23));
+        JPanel panel = creerPanelArrondiInteractif(
+                Color.WHITE, new Color(230, 230, 250), new Color(200, 200, 255),
+                ARONDI, Color.GRAY, 2
+        );
+        panel.setOpaque(false);
+//        JPanel panel = new JPanel();
+//        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+//        panel.setBorder(BorderFactory.createCompoundBorder(
+//                BorderFactory.createLineBorder(new Color(206, 206, 206), 1, true),
+//                BorderFactory.createEmptyBorder(10, 20, 10, 20)
+//        ));
+//        panel.setBackground(new Color(245, 245, 245, 23));
 
         numRound = jeu.getNumeroRound();
         roundLabel = new JLabel("Round: "+numRound);
         roundLabel.setFont(new Font("Arial", Font.PLAIN, 25));
-        roundLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 100));
+        roundLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 50));
 
         tempsLabel = new JLabel("00:00");
         tempsLabel.setOpaque(false);
@@ -466,13 +472,13 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     }
 
     private JButton creerBoutonMenu() {
-        JButton menu = new JButton("≡");
-        menu.setOpaque(false);
-        menu.setContentAreaFilled(false);
-        menu.setFocusPainted(false);
-        menu.setForeground(Color.WHITE);
-        menu.setFont(new Font("Arial", Font.PLAIN, 30));
-        menu.setPreferredSize(new Dimension(60, 40));
+        BoutonAvecImage menu = Bouton.creerBouton(PATH_BTN_MENU.toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
+//        menu.setOpaque(false);
+//        menu.setContentAreaFilled(false);
+//        menu.setFocusPainted(false);
+//        menu.setForeground(Color.WHITE);
+//        menu.setFont(new Font("Arial", Font.PLAIN, 30));
+        menu.setPreferredSize(new Dimension(50,50));
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
 
         return menu;
@@ -480,9 +486,10 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
 
     private JPanel creerBarredesBoutons() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        panel.setOpaque(false);
 
         for (int i = 1; i <= 4; i++) {
-            BoutonAvecImage bouton = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Cercle);
+            BoutonAvecImage bouton = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Carre_transparent);
             bouton.setPreferredSize(new Dimension(50,50));
             int index = i; // pour l'utiliser dans le lambda
             bouton.addActionListener(e -> {
@@ -495,27 +502,31 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
         return panel;
     }
 
-
-
-    private CardFlipAnimator cardFlipAnimator(BoutonCarte boutonCarte) {
+    private JLayer<JButton> cardFlipAnimator(BoutonCarte boutonCarte) {
         CardFlipAnimator animator = new CardFlipAnimator();                 // 1. Créer un nouvel animateur pour ce bouton
         CardFlipLayerUI<JButton> layerUI = new CardFlipLayerUI<>(animator);  // 2. Créer un LayerUI qui utilisera cet animateur
         JLayer<JButton> layer = new JLayer<>(boutonCarte, layerUI);           // 3. Créer un JLayer, enveloppant le bouton original avec le LayerUI
-        animator.startAnimation();
 
-        // 5. Ajouter un écouteur d'animation à l'animateur
+        // Ajouter un écouteur d'animation à l'animateur
         // Chaque fois que l'animateur met à jour son angle, il notifie ce listener
         // qui demande alors au JLayer de se repeindre.
         animator.addAnimationListener(layer::repaint); // Lambda capture 'layer'
 
-        boutonCarte.addActionListener(e->{
-            collecteurEv.getCollecteurAnimation().activeAnimationDeRotation(animator, jeu.getJoueurCourant().getId());
-        });
+        listeDescardFlipAnimators.add(animator);
 
-        return animator;
+        return layer;
     }
 
+    private void tournerLesCartesDuJoueur(){
+        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
+                jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT ) {
 
+            for (CardFlipAnimator animator: listeDescardFlipAnimators) {
+                animator.startAnimation();
+            }
+            ID_JOUEUR_PRECEDANT = jeu.getIdJoueurCourant();
+        }
+    }
 
 
 
@@ -529,13 +540,15 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
             if (clip != null && clip.isRunning()) {
                 clip.stop();
             }
-            bouton.setText("off");
+//            bouton.setText("off");
+            bouton.setIcon(new ImageIcon(PATH_BTN_MUET.toString()));
         } else {
             // Jouer la musique si elle n'est pas déjà en cours
             if (clip == null || !clip.isRunning()) {
                 jouerMusique(PATH_SON_1.toString());
             }
-            bouton.setText("on");
+//            bouton.setText("on");
+            bouton.setIcon(new ImageIcon(PATH_BTN_MONTER_LE_SON.toString()));
         }
         musiqueActive = !musiqueActive;
     }
