@@ -25,8 +25,9 @@ public class Noeud {
         return this.valeur;
     }
 
-    public  void setValeur(double valeur) {
+    public double setValeur(double valeur) {
         this.valeur = valeur;
+        return this.valeur;
     }
 
     public EtatJeu getId() {

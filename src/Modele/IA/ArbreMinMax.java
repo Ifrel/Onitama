@@ -10,23 +10,22 @@ import static Global.Config.NIVEAU_IA;
 import static Modele.IA.Heuristiques.heuristiqueAvancee;
 
 public class ArbreMinMax {
-    private final Jeu jeu;
     private int profondeur;
     private int carteChoisie;
     private Pion pionChoisi;
 
-    public ArbreMinMax(Jeu jeu) {
-        this.jeu = jeu;
+    public ArbreMinMax() {
     }
 
 
-    public Coup choisirNoeud(Noeud n, int profondeur, NIVEAU_IA niveau) {
+    public Coup choisirNoeud(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
 
-        List<EtatJeu> successeurs = n.getId().getSuccesseurs();
+        //List<EtatJeu> successeurs = n.getId().getSuccesseurs();
 //        for (EtatJeu succ : successeurs) {
 //            n.addSucc(new Noeud(succ, null));
 //        }
-        double val = joueur1(n, profondeur, niveau);
+        double val = joueur1(idJoueur, n, profondeur, niveau);
+        n.setValeur(val);
         for (Noeud nSucc : n.getSuccesseurs()) {
             if (nSucc.getValeur() == val) {
                 Coup coup = nSucc.getId().getCoup();
@@ -38,9 +37,9 @@ public class ArbreMinMax {
         return null;
     }
 
-    private double joueur1(Noeud n, int profondeur, NIVEAU_IA niveau) {
+    private double joueur1(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
         if (n.estFeuille() || profondeur == 0) {
-            return heuristiqueAvancee(n.getId());
+            return n.setValeur(heuristiqueAvancee(idJoueur, n.getId()));
         }
         double valeur = Double.NEGATIVE_INFINITY;
 
@@ -48,16 +47,15 @@ public class ArbreMinMax {
         for (EtatJeu ej : successeurs) {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
-            valeur = Math.max(valeur, joueur2(newNoeud, profondeur - 1, niveau));
+            valeur = Math.max(valeur, joueur2((idJoueur % 2) + 1, newNoeud, profondeur - 1, niveau));
         }
 
-        n.setValeur(valeur);
-        return valeur;
+        return n.setValeur(valeur);
     }
 
-    private double joueur2(Noeud n, int profondeur, NIVEAU_IA niveau) {
+    private double joueur2(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
         if (n.estFeuille() || profondeur == 0) {
-            return heuristiqueAvancee(n.getId());
+            return n.setValeur(heuristiqueAvancee(idJoueur, n.getId()));
         }
         double valeur = Double.POSITIVE_INFINITY;
 
@@ -65,11 +63,10 @@ public class ArbreMinMax {
         for (EtatJeu ej : successeurs) {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
-            valeur = Math.min(valeur, joueur1(newNoeud, profondeur - 1, niveau));
+            valeur = Math.min(valeur, joueur1((idJoueur % 2) + 1, newNoeud, profondeur - 1, niveau));
         }
 
-        n.setValeur(valeur);
-        return valeur;
+        return n.setValeur(valeur);
     }
 
     public int getProfondeur() {

@@ -19,6 +19,8 @@ public class EtatJeu {
     private Pion pionChoisi;
     private int carteChoisie;
     private final int idJoueurCourant;
+    private int gagnant;
+    private boolean estEtatFinal;
     private final TYPECARTE carteEnPlus;
     private final List<TYPECARTE> cartesJoueur1;
     private final List<TYPECARTE> cartesJoueur2;
@@ -50,6 +52,7 @@ public class EtatJeu {
 
 //        this.jeu = jeu;
 
+        this.gagnant = 0;
         this.idJoueurCourant = joueurCourantID;
         this.carteEnPlus = carteEnPlus.getType();
 
@@ -68,6 +71,43 @@ public class EtatJeu {
 
         this.pionsJoueur2 = new ArrayList<>();
         this.pionsJoueur2.addAll(pionsJoueur2);
+
+        if (pionsJoueur1.isEmpty()) {
+            estEtatFinal = true;
+            gagnant = ID_JOUEUR_2;
+            return;
+        }
+
+        if (pionsJoueur2.isEmpty()) {
+            estEtatFinal = true;
+            gagnant = ID_JOUEUR_1;
+            return;
+        }
+        boolean maitre1, maitre2;
+        maitre1 = maitre2 = true;
+        for (Pion p : pionsJoueur1) {
+            if (p.getRole() == PION_MAITRE) {
+                if (p.getPosition().equals(TEMPLE_JOUEUR_2)) {
+                   estEtatFinal = true;
+                   gagnant = ID_JOUEUR_1;
+                   return;
+                }
+                maitre1 = false;
+            }
+        }
+        for (Pion p : pionsJoueur2) {
+            if (p.getRole() == PION_MAITRE) {
+                if (p.getPosition().equals(TEMPLE_JOUEUR_1)) {
+                    estEtatFinal = true;
+                    gagnant = ID_JOUEUR_2;
+                    return;
+                }
+                maitre2 = false;
+            }
+        }
+
+        estEtatFinal = maitre1 || maitre2;
+
     }
 
     public int getIdJoueurCourant() {
@@ -134,6 +174,9 @@ public class EtatJeu {
         for (Carte c : cartesJoueurCourant) {
             for (Pion p : pionsJoueurCourant) {
                 List<Coup> coupsPossibles = Utils.getCoupsPossibles(this, c.getType(), p.getPosition());
+                if (coupsPossibles.isEmpty()) {
+                    this.estEtatFinal = true;
+                }
                 for (Coup cp : coupsPossibles) {
                     Point arrivee = cp.getArrivee();
 //                        if (!jeu.estCaseVide(arrivee.x, arrivee.y) && jeu.getProprietairePionAt(arrivee.x, arrivee.y) != jeu.getIdJoueurCourant()) {
@@ -211,28 +254,10 @@ public class EtatJeu {
     }
 
     public boolean estEtatFinal() {
-        if (pionsJoueur1.size() == 0 || pionsJoueur2.size() == 0) {
-            return true;
-        }
-        boolean maitre1, maitre2;
-        maitre1 = maitre2 = true;
-        for (Pion p : pionsJoueur1) {
-            if (p.getRole() == PION_MAITRE) {
-                if (p.getPosition().equals(TEMPLE_JOUEUR_2)) {
-                    return true;
-                }
-                maitre1 = false;
-            }
-        }
-        for (Pion p : pionsJoueur2) {
-            if (p.getRole() == PION_MAITRE) {
-                if (p.getPosition().equals(TEMPLE_JOUEUR_1)) {
-                    return true;
-                }
-                maitre2 = false;
-            }
-        }
+        return this.estEtatFinal;
+    }
 
-        return maitre1;
+    public int getGagnant() {
+        return this.gagnant;
     }
 }

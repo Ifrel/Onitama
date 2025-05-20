@@ -24,7 +24,7 @@ public class IAMoyen extends IA {
         this.pionChoisi = null;
         this.carteChoisie = 0;
         setVitesse(MOYENNE);
-        arbreMinMax = new ArbreMinMax(jeu);
+        arbreMinMax = new ArbreMinMax();
     }
 
     /**
@@ -34,7 +34,7 @@ public class IAMoyen extends IA {
      */
     @Override
     public Coup calculerCoup() {
-        Coup coup = arbreMinMax.choisirNoeud(new Noeud(new EtatJeu(
+        Coup coup = arbreMinMax.choisirNoeud(getId(), new Noeud(new EtatJeu(
                 jeu.getIdJoueurCourant(),
                 jeu.getCarteSupplementaire(),
                 jeu.getCartesJoueur1(),

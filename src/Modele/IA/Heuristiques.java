@@ -73,15 +73,16 @@ public class Heuristiques {
      * @param etatJeu référence du jeu
      * @return la valeur d'une configuration du jeu, plus la valeur est élevée, plus la configuration est intéressante
      */
-    public static double heuristiqueAvancee(EtatJeu etatJeu) {
+    public static double heuristiqueAvancee(int idJoueur, EtatJeu etatJeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 1.5 * nbPions(etatJeu)
+        return 4 * nbPions(etatJeu)
                 + valeurCartes(etatJeu)
                 + 2.5 * successeursNombreCaptures(etatJeu)
                 + -3 * distancePionsCourantMaitreAdverse(etatJeu)
                 + 5 * distancePionsAdverseMaitreCourant(etatJeu)
                 + -3 * distanceMaitreAdverseTemple(etatJeu)
-                + 1.5 * distanceMaitreCourantTemple(etatJeu);
+                + 1.5 * distanceMaitreCourantTemple(etatJeu)
+                + victoireDefaite(idJoueur, etatJeu);
     }
 
     // TODO
@@ -336,4 +337,15 @@ public class Heuristiques {
         return (int) (Math.sqrt(Math.pow(Math.abs(temple.x - positionMaitre.x), 2) + Math.pow(Math.abs(temple.y - positionMaitre.y), 2)));
     }
 
+    public static int victoireDefaite(int idJoueur, EtatJeu etatJeu) {
+        if (!etatJeu.estEtatFinal()) {
+            return 0;
+        }
+
+        if (etatJeu.getGagnant() == idJoueur) {
+            return 1_000_000;
+        } else {
+            return -1_000_000;
+        }
+    }
 }
