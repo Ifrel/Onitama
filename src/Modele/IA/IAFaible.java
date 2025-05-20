@@ -1,13 +1,10 @@
 package Modele.IA;
 
-import Modele.Carte;
 import Modele.Coup;
 import Modele.Jeu;
 import Modele.Pion;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import static Global.Config.NIVEAU_IA;
 import static Global.Config.NIVEAU_IA.FAIBLE;
@@ -37,14 +34,20 @@ public class IAFaible extends IA {
      */
     @Override
     public Coup calculerCoup() {
-        Coup coup = arbreMinMax.choisirNoeud(getId(), new Noeud(new EtatJeu(
-                jeu.getIdJoueurCourant(),
-                jeu.getCarteSupplementaire(),
-                jeu.getCartesJoueur1(),
-                jeu.getCartesJoueur2(),
-                jeu.getPionsJoueur1(),
-                jeu.getPionsJoueur2()
-        ), null), 2, FAIBLE);
+        Coup coup = arbreMinMax.choisirCoup(
+                getId(),
+                new Noeud(
+                        new EtatJeu(
+                                jeu.getIdJoueurCourant(),
+                                jeu.getCarteSupplementaire(),
+                                jeu.getCartesJoueur1(),
+                                jeu.getCartesJoueur2(),
+                                jeu.getPionsJoueur1(),
+                                jeu.getPionsJoueur2()
+                        ),
+                        null),
+                2,
+                FAIBLE);
 
         pionChoisi = arbreMinMax.getPionChoisi();
         carteChoisie = arbreMinMax.getCarteChoisie();

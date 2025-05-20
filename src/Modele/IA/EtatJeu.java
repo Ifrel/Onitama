@@ -83,8 +83,8 @@ public class EtatJeu {
             gagnant = ID_JOUEUR_1;
             return;
         }
-        boolean maitre1, maitre2;
-        maitre1 = maitre2 = true;
+        boolean maitre1Capture, maitre2Capture;
+        maitre1Capture = maitre2Capture = true;
         for (Pion p : pionsJoueur1) {
             if (p.getRole() == PION_MAITRE) {
                 if (p.getPosition().equals(TEMPLE_JOUEUR_2)) {
@@ -92,7 +92,7 @@ public class EtatJeu {
                    gagnant = ID_JOUEUR_1;
                    return;
                 }
-                maitre1 = false;
+                maitre1Capture = false;
             }
         }
         for (Pion p : pionsJoueur2) {
@@ -102,12 +102,18 @@ public class EtatJeu {
                     gagnant = ID_JOUEUR_2;
                     return;
                 }
-                maitre2 = false;
+                maitre2Capture = false;
             }
         }
 
-        estEtatFinal = maitre1 || maitre2;
-
+        if (maitre1Capture) {
+            gagnant = ID_JOUEUR_2;
+            estEtatFinal = true;
+        }
+        if (maitre2Capture) {
+            gagnant = ID_JOUEUR_1;
+            estEtatFinal = true;
+        }
     }
 
     public int getIdJoueurCourant() {
