@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 
 import static Global.Paths.*;
-import static Vue.ConfigUI.ARONDI;
+import static Vue.ConfigUI.ARRONDI;
 
 public class BoutonTerrain extends JButton {
 
@@ -68,12 +68,12 @@ public class BoutonTerrain extends JButton {
     }
 
     public BoutonTerrain(Path cheminImage) {
-        this(new ImageIcon(cheminImage.toString()), 2.0f, ARONDI);
+        this(new ImageIcon(cheminImage.toString()), 2.0f, ARRONDI);
     }
 
 
     public BoutonTerrain(BufferedImage image) {
-        this((image != null) ? new ImageIcon(image) : new ImageIcon(""), 2.0f, ARONDI);
+        this((image != null) ? new ImageIcon(image) : new ImageIcon(""), 2.0f, ARRONDI);
     }
 
 

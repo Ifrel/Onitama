@@ -7,7 +7,7 @@ public class ConfigUI {
 
     // --- INTERFACES
     public final static int WIDTH_MENU = 500;
-    public final static int ARONDI = 20;
+    public final static int ARRONDI = 20;
     public final static Color COULEUR_FOND_PION_DEPART_SELECTIONE = new Color(6, 157, 185, 72);
 
 

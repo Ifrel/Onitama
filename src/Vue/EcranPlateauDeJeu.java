@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 
 import static Global.Config.*;
 import static Global.Paths.*;
-import static Vue.ConfigUI.ARONDI;
+import static Vue.ConfigUI.ARRONDI;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
 
@@ -263,7 +263,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private void creerTerrain() {
         terrain = creerPanelArrondiInteractif(
                 Color.WHITE, new Color(230, 230, 250), new Color(200, 200, 255),
-                ARONDI, Color.GRAY, 2
+                ARRONDI, Color.GRAY, 2
         );
 
         terrain.setLayout(new GridLayout(LIGNES, COLONNES, 0, 0));
@@ -445,7 +445,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private JPanel creerPanelRoundTemps() {
         JPanel panel = creerPanelArrondiInteractif(
                 Color.WHITE, new Color(230, 230, 250), new Color(200, 200, 255),
-                ARONDI, Color.GRAY, 2
+                ARRONDI, Color.GRAY, 2
         );
         panel.setOpaque(false);
 //        JPanel panel = new JPanel();
@@ -732,7 +732,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
     private void appliquerBordureDynamiqueSurTerrain() {
         Color couleurBordure = infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId());
 
-        Border bordureArrondie = new BordureArrondieAvecOmbre(couleurBordure, 5, ARONDI);
+        Border bordureArrondie = new BordureArrondieAvecOmbre(couleurBordure, 5, ARRONDI);
         Border margeInterne = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 
         terrain.setBorder(BorderFactory.createCompoundBorder(bordureArrondie, margeInterne));

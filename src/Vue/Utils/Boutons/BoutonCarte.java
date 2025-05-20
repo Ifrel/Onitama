@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static Global.Paths.PATH_CARTE;
-import static Vue.ConfigUI.ARONDI;
+import static Vue.ConfigUI.ARRONDI;
 
 
 /**
@@ -44,7 +44,7 @@ public class BoutonCarte extends JButton {
                 new Color(182, 12, 159),
                 new Color(255, 255, 255, 0),
                 new Color(160, 161, 165, 124),
-                ARONDI,
+                ARRONDI,
                 null // No background image by default
         );
         setImageFond(cheminImage);
@@ -60,7 +60,7 @@ public class BoutonCarte extends JButton {
                 new Color(182, 12, 159),
                 new Color(255, 255, 255, 0),
                 new Color(160, 161, 165, 124),
-                ARONDI,
+                ARRONDI,
                 null // No background image by default
         );
         setImageFond(image);
@@ -77,7 +77,7 @@ public class BoutonCarte extends JButton {
                 new Color(205, 27, 181),
                 new Color(255, 255, 255, 0),
                 new Color(200, 220, 255, 100),
-                ARONDI,
+                ARRONDI,
                 null // No background image by default
         );
     }
@@ -93,7 +93,7 @@ public class BoutonCarte extends JButton {
                 new Color(205, 27, 181),
                 new Color(255, 255, 255, 0),
                 new Color(200, 220, 255, 100),
-                ARONDI,
+                ARRONDI,
                 null // No background image by default
         );
     }

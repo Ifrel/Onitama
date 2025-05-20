@@ -6,7 +6,7 @@ import java.awt.event.*;
 import java.net.URL; // Ajout de l'import pour URL
 
 import static Global.Paths.PATH_PION_NOIR_ETUDIANT;
-import static Vue.ConfigUI.ARONDI;
+import static Vue.ConfigUI.ARRONDI;
 
 public class Bouton {
 
@@ -304,28 +304,28 @@ public class Bouton {
             case Carre:
                 epaisseurInitiale = 2f;
                 epaisseurSurvol = 5f;
-                arrondi = ARONDI; // Léger arrondi
+                arrondi = ARRONDI; // Léger arrondi
                 couleurBordure = new Color(150, 100, 50); // Marron
                 couleurFondSurvol = new Color(150, 100, 50, 50); // Marron semi-transparent
                 break;
             case Carre_transparent:
                 epaisseurInitiale = 2f;
                 epaisseurSurvol = 5f;
-                arrondi = ARONDI;
+                arrondi = ARRONDI;
                 couleurBordure = new Color(200, 200, 200); // Gris clair
                 couleurFondSurvol = new Color(200, 200, 200, 50); // Gris clair semi-transparent
                 break;
             case Rectangle:
                 epaisseurInitiale = 2f;
                 epaisseurSurvol = 5f;
-                arrondi = ARONDI; // Léger arrondi
+                arrondi = ARRONDI; // Léger arrondi
                 couleurBordure = new Color(50, 150, 100); // Vert
                 couleurFondSurvol = new Color(50, 150, 100, 50); // Vert semi-transparent
                 break;
             case Rectangle_transparent:
                 epaisseurInitiale = 2f;
                 epaisseurSurvol = 5f;
-                arrondi = ARONDI;
+                arrondi = ARRONDI;
                 couleurBordure = new Color(200, 200, 200); // Gris clair
                 couleurFondSurvol = new Color(200, 200, 200, 50); // Gris clair semi-transparent
                 break;
@@ -333,7 +333,7 @@ public class Bouton {
                 // Configuration par défaut générique si l'énumération n'est pas reconnue
                 epaisseurInitiale = 1f;
                 epaisseurSurvol = 3f;
-                arrondi = ARONDI;
+                arrondi = ARRONDI;
                 couleurBordure = Color.GRAY;
                 couleurFondSurvol = new Color(150, 150, 150, 50);
         }

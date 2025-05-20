@@ -4,6 +4,8 @@ import Controleur.ControleurEcranDeDemarrage;
 import Global.Config;
 import Modele.Jeu;
 import Vue.Adaptateurs.AdaptateurBoutonEntrer;
+import Vue.Utils.Boutons.Bouton;
+import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
 import Vue.Utils.PanelBruitGris;
 import Vue.Utils.JPanelAvecCouleurDebraille;
 import Vue.Utils.PanelAvecImage;
@@ -35,11 +37,11 @@ public class EcranDeDemarrage extends JTabbedPane {
 
     // Onglet General
     private boolean modeAutoIA;
-    JButton boutonModeAuto;
-    JComboBox<String> listeDeroulanteReprendre, listeDeroulanteIA;
-    JTextField champJoueur1, champJoueur2;
-    String partieSelectionnee, niveauIAselectione;
-    AdaptateurBoutonEntrer adaptateurBoutonEntrer;
+    private JButton boutonModeAuto;
+    private JComboBox<String> listeDeroulanteReprendre, listeDeroulanteIA;
+    private JTextField champJoueur1, champJoueur2;
+    private String partieSelectionnee, niveauIAselectione;
+    private final AdaptateurBoutonEntrer adaptateurBoutonEntrer;
 
     InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
 
@@ -197,8 +199,8 @@ public class EcranDeDemarrage extends JTabbedPane {
         ajouterLigne(ongletGeneral, LBL_JOUEUR_2, champJoueur2, ligneCourante++, FONT_LABEL);
 
         // -- bouton enter
-        JButton entrer = creerBoutonAvecImage(PATH_BTN_ENTRER).bouton;
-        entrer.setPreferredSize(new Dimension(98, 98));
+        BoutonAvecImage entrer = Bouton.creerBouton(PATH_BTN_ENTRER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent);
+        entrer.setPreferredSize(new Dimension(200, 98));
         contraintes = new GridBagConstraints();
         contraintes.gridx = 6;
         contraintes.gridy = ligneCourante ;

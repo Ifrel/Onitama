@@ -13,7 +13,6 @@ public class Paths {
     /********************************************
      *              IMAGES BOUTONS              *
      *******************************************/
-    public final static Path PATH_IMAGE_ARRIERE_PLAN_MENU = Path.of("res/vue/images/arrierePlans/menu.png");
     public static final Path PATH_BTN_MODE_AUTO_OFF       = Path.of("res/vue/images/buttons/button_off.png");
     public static final Path PATH_BTN_MODE_AUTO_ON        = Path.of("res/vue/images/buttons/button_on.png");
     public static final Path PATH_BTN_ENTRER              = Path.of("res/vue/images/buttons/button_entrer.png");
@@ -23,10 +22,14 @@ public class Paths {
     public static final Path PATH_BTN_MUET                = Path.of("res/vue/images/buttons/muet.png");
     public static final Path PATH_BTN_MONTER_LE_SON       = Path.of("res/vue/images/buttons/monter-le-son.png");
 
-
-
+    /********************************************
+     *              IMAGES BOUTONS              *
+     *******************************************/
+    public static Path PATH_ARRIERE  = Path.of("res","vue", "images", "arrierePlans");
+    public final static Path PATH_IMAGE_ARRIERE_PLAN_MENU = Path.of("res/vue/images/arrierePlans/menu.png");
     public static final Path PATH_ARRIERE_PLAN_ED_O1      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage.png");
     public static final Path PATH_ARRIERE_PLAN_ED_O2      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage2.png");
+    public static final Path PATH_ARRIERE_IMG1      = Path.of("res/vue/images/arrierePlans/image1.png");
 
 
 
