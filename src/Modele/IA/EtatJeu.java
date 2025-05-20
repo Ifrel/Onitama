@@ -1,43 +1,31 @@
 package Modele.IA;
 
-
 import Modele.Carte;
+import Modele.Coup;
 import Modele.Pion;
+import Modele.Utils;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import static Global.Config.TAILLE_VECTEUR_BITS;
-import static Global.Config.ROLEPION;
+import static Global.Config.*;
+import static Global.Config.ROLEPION.*;
 
-/**
- * Représentation compacte de l'état du plateau de jeu à un moment donné de la partie
- */
-public class EtatJeu implements Comparable<EtatJeu> {
-    private byte [] config; // 12 octets = 96 bits; BIG ENDIAN
-    //  4    4     4    4     4           25 (5 x 5)                 25 (5 x 5)            5     5      5     5      6
-    // 1111 1111  1111 1111  1111  1111111111111111111111111  1111111111111111111111111  11111 11111  11111 11111  XXXXXX
-    // ^^^^ ^^^^  ^^^^ ^^^^  ^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^ ^^^^^  ^^^^^ ^^^^^  ^^^^^^
-    //  |    |     |    |     |               |                          |                |     |      |     |       |
-    //  |    |     |    |     |               |                          |                |     |      |     |      6 bits inutilisés
-    //  |    |     |    |     |               |                          |                |     |      |    Position Colonne Maitre Joueur 2
-    //  |    |     |    |     |               |                          |                |     |     Position Ligne Maitre Joueur 2
-    //  |    |     |    |     |               |                          |                |    Position Colonne Maitre Joueur 1
-    //  |    |     |    |     |               |                          |               Position Ligne Maitre Joueur 1
-    //  |    |     |    |     |               |                         Positions Pions Etudiants Joueur 2
-    //  |    |     |    |     |              Positions Pions Etudiants Joueur 1
-    //  |    |     |    |    Carte Supplémentaire
-    //  |    |     |   Carte de la Main 2 du Joueur 2
-    //  |    |    Carte de la Main 1 du Joueur 2
-    //  |   Carte de la Main 2 du Joueur 1
-    // Carte de la Main 1 du Joueur 1
-    // ---------------------------------
-    // -> Cartes sur 4 bits car 16 valeurs possibles ( Math.ceiling(log2(16)) )
-    // -> Positions pions, impossible d'utilise 2 vecteurs de 5 bits, on obtiendrait des intersections en trop,
-    // donc plus de pions que prévu, donc 25 bits pour toutes les positions possibles, 1 si pion à cette position, 0 sinon
-    // -> Position Maitres : possible d'utiliser 2 vecteurs de 5 bits car 1 seul maitre par joueur donc aucune ambiguité
-
+public class EtatJeu {
+    //private Jeu jeu;
+    private Coup coup;
+    private Pion pionChoisi;
+    private int carteChoisie;
+    private final int idJoueurCourant;
+    private int gagnant;
+    private boolean estEtatFinal;
+    private final TYPECARTE carteEnPlus;
+    private final List<TYPECARTE> cartesJoueur1;
+    private final List<TYPECARTE> cartesJoueur2;
+    private final List<Pion> pionsJoueur1;
+    private final List<Pion> pionsJoueur2;
 
     public EtatJeu(int joueurCourantID, Carte carteEnPlus, List<Carte> cartesJoueur1, List<Carte> cartesJoueur2, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
         Objects.requireNonNull(carteEnPlus, "La Carte Supplémentaire ne peut pas valoir null");
@@ -62,211 +50,214 @@ public class EtatJeu implements Comparable<EtatJeu> {
             throw new RuntimeException("Le Joueur 2 devrait avoir au maximum 5 pions mais en a " + pionsJoueur2.size());
         }
 
-        //config = new byte[12]; // 96 bits, 90 utilisés
+//        this.jeu = jeu;
 
-        BitSet bitset = new BitSet(TAILLE_VECTEUR_BITS);
+        this.gagnant = 0;
+        this.idJoueurCourant = joueurCourantID;
+        this.carteEnPlus = carteEnPlus.getType();
 
-
-        ecrireVecteur(0, carteToBits(cartesJoueur1.get(0)), bitset);
-        ecrireVecteur(4, carteToBits(cartesJoueur1.get(1)), bitset);
-
-        ecrireVecteur(8, carteToBits(cartesJoueur2.get(0)), bitset);
-        ecrireVecteur(12, carteToBits(cartesJoueur2.get(1)), bitset);
-
-        ecrireVecteur(16, carteToBits(carteEnPlus), bitset);
-
-        ecrireVecteur(20, pionsEtudiantsToBits(pionsJoueur1), bitset);
-        ecrireVecteur(45, pionsEtudiantsToBits(pionsJoueur2), bitset);
-
-        ecrireVecteur(70, pionMaitreToBits(pionsJoueur1), bitset);
-        ecrireVecteur(80, pionMaitreToBits(pionsJoueur2), bitset);
-
-        config = bitsetToCompactByteArray(bitset);
-
-    }
-
-    public EtatJeu(byte [] etatJeu) {
-        Objects.requireNonNull(etatJeu, "L'état du jeu ne peut pas valoir null");
-        this.config = etatJeu.clone();
-    }
-
-
-    /**
-     * Renvoie la représentation compacte du plateau de jeu
-     * @return un vecteur de 96 bits représentant l'état du jeu
-     */
-    public byte[] getEtat() {
-        return this.config.clone();
-    }
-
-    /**
-     * Convertit une carte en sa représentation en octet
-     * @param c carte à convertir
-     * @return l'octet contenant la représentation de la carte
-     */
-    private boolean [] carteToBits(Carte c) {
-        int b = -1;
-        switch (c.getType()) {
-            case TIGRE:
-                b = 0;
-                break;
-            case DRAGON:
-                b = 1;
-                break;
-            case GRENOUILLE:
-                b = 2;
-                break;
-            case LAPIN:
-                b = 3;
-                break;
-            case CRABE:
-                b = 4;
-                break;
-            case ELEPHANT:
-                b = 5;
-                break;
-            case OIE:
-                b = 6;
-                break;
-            case COQ:
-                b = 7;
-                break;
-            case SINGE:
-                b = 8;
-                break;
-            case MANTE:
-                b = 9;
-                break;
-            case CHEVAL:
-                b = 10;
-                break;
-            case BOEUF:
-                b = 11;
-                break;
-            case GRUE:
-                b = 12;
-                break;
-            case SANGLIER:
-                b = 13;
-                break;
-            case ANGUILLE:
-                b = 14;
-                break;
-            case COBRA:
-                b = 15;
-                break;
+        this.cartesJoueur1 = new ArrayList<>();
+        for (Carte c : cartesJoueur1) {
+            this.cartesJoueur1.add(c.getType());
         }
-        String binaire = Integer.toBinaryString(b);
-        if (binaire.length() < 4) {
-            binaire = "0" + binaire;
+
+        this.cartesJoueur2 = new ArrayList<>();
+        for (Carte c : cartesJoueur2) {
+            this.cartesJoueur2.add(c.getType());
         }
-        int bl = binaire.length();
-        boolean [] res = new boolean[bl];
 
-        for (int i = 0; i < bl; i++) {
-            if (binaire.charAt(i) == '1') {
-                res[i] = true;
-            }
+        this.pionsJoueur1 = new ArrayList<>();
+        this.pionsJoueur1.addAll(pionsJoueur1);
+
+        this.pionsJoueur2 = new ArrayList<>();
+        this.pionsJoueur2.addAll(pionsJoueur2);
+
+        if (pionsJoueur1.isEmpty()) {
+            estEtatFinal = true;
+            gagnant = ID_JOUEUR_2;
+            return;
         }
-        return res;
-    }
 
-    /**
-     * Renvoie un vecteur de booléens qui indique la valeur d'une séquence de bits (relatif à un point de départ)
-     * Seulement pour les pions étudiants
-     * @param lp Liste de pions
-     * @return Un vecteur de booléen indiquant des valeurs de bit
-     */
-    private boolean [] pionsEtudiantsToBits(List<Pion> lp) {
-        boolean [] res = new boolean[25];
-        for (Pion p: lp) {
-            if (p.getStatut() == ROLEPION.PION_ETUDIANT) {
-                Point pos = p.getPosition();
-                int x, y;
-                x = pos.x;
-                y = pos.y;
-
-                res[x * 5 + y] = true;
-            }
+        if (pionsJoueur2.isEmpty()) {
+            estEtatFinal = true;
+            gagnant = ID_JOUEUR_1;
+            return;
         }
-        return res;
-    }
-
-    /**
-     * Renvoie un vecteur de booléens qui indique la valeur d'une séquence de bits (relatif à un point de départ)
-     * Seulement pour les pions maîtres
-     * @param lp Liste de pions
-     * @return Un vecteur de booléen indiquant des valeurs de bit
-     */
-    private boolean [] pionMaitreToBits(List<Pion> lp) {
-        boolean [] res = new boolean[10];
-        for (Pion p: lp) {
-            if (p.getStatut() == ROLEPION.PION_MAITRE) {
-                Point pos = p.getPosition();
-                int x, y;
-                x = pos.x;
-                y = pos.y;
-
-                res[x] = true;
-                res[5 + y] = true;
-            }
-        }
-        return res;
-    }
-
-    /**
-     * Défini les valeurs des bits dans 'bs' conformément à 'pos', en partant de 'début', jusqu'à atteindre la taille de 'pos'
-     * @param debut Point de départ dans le vecteur de bits
-     * @param pos Vecteur de booléen de taille variable indiquant les valeurs des bits (relatif à 'debut')
-     * @param bs Bitset (séquence de bits) où on écrit
-     */
-    private void ecrireVecteur(int debut, boolean [] pos, BitSet bs) {
-        int pl = pos.length;
-        for (int i = 0; i < pl; i++) {
-            if (pos[i]) {
-                bs.set(debut + i);
-            } else {
-                bs.clear(debut + i);
-            }
-        }
-    }
-
-    /**
-     * Convertit un Bitset (séquence de bits) en un vecteur de bits plus compact
-     * @param bs Bitset à convertir
-     * @return Vecteur de bits compact
-     */
-    private byte [] bitsetToCompactByteArray(BitSet bs) {
-        // int bl = bs.size();
-        int bl = TAILLE_VECTEUR_BITS;
-        byte [] res = new byte[bl / 8];
-        byte buffer = 0;
-        for (int i = 0; i < bl; i += 8 ) {
-            buffer = 0;
-            for (int j = 0; j < 8; j++) {
-                int b;
-                if (bs.get(i + j)) {
-                    b = 1;
-                } else {
-                    b = 0;
+        boolean maitre1, maitre2;
+        maitre1 = maitre2 = true;
+        for (Pion p : pionsJoueur1) {
+            if (p.getRole() == PION_MAITRE) {
+                if (p.getPosition().equals(TEMPLE_JOUEUR_2)) {
+                   estEtatFinal = true;
+                   gagnant = ID_JOUEUR_1;
+                   return;
                 }
-                System.err.print(b);
-                buffer = (byte) (buffer | (byte)(b << (7 - j)));
-                // System.err.println("i : " + i + " buffer : " + buffer);
+                maitre1 = false;
             }
-            res[i / 8] = buffer;
         }
-        System.err.println();
+        for (Pion p : pionsJoueur2) {
+            if (p.getRole() == PION_MAITRE) {
+                if (p.getPosition().equals(TEMPLE_JOUEUR_1)) {
+                    estEtatFinal = true;
+                    gagnant = ID_JOUEUR_2;
+                    return;
+                }
+                maitre2 = false;
+            }
+        }
+
+        estEtatFinal = maitre1 || maitre2;
+
+    }
+
+    public int getIdJoueurCourant() {
+        return this.idJoueurCourant;
+    }
+
+    public TYPECARTE getTypeCarteSupplementaire() {
+        return carteEnPlus;
+    }
+
+    public List<Pion> getPionsJoueur1() {
+        return this.pionsJoueur1;
+    }
+
+    public List<Pion> getPionsJoueur2() {
+        return this.pionsJoueur2;
+    }
+
+    public List<Pion> getPionsJoueurCourant() {
+        if (getIdJoueurCourant() == ID_JOUEUR_1) {
+            return getPionsJoueur1();
+        } else {
+            return getPionsJoueur2();
+        }
+    }
+
+    public List<Carte> getCartesJoueur1() {
+        List<Carte> res = new ArrayList<>();
+        for (TYPECARTE tc : cartesJoueur1) {
+            res.add(new Carte(tc));
+        }
         return res;
     }
 
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(config);
+    public List<Carte> getCartesJoueur2() {
+        List<Carte> res = new ArrayList<>();
+        for (TYPECARTE tc : cartesJoueur2) {
+            res.add(new Carte(tc));
+        }
+        return res;
     }
 
-    @Override
-    public int compareTo(EtatJeu cp) {
-        return hashCode() - cp.hashCode();
+    public List<Carte> getCartesJoueurCourant() {
+        if (getIdJoueurCourant() == ID_JOUEUR_1) {
+            return getCartesJoueur1();
+        } else {
+            return getCartesJoueur2();
+        }
+    }
+
+    public Coup getCoup() {
+        return coup;
+    }
+
+    public void setCoup(Coup c) {
+        this.coup = c;
+    }
+
+    public List<EtatJeu> getSuccesseurs() {
+        List<EtatJeu> lej = new ArrayList<>();
+        List<Carte> cartesJoueurCourant = this.getCartesJoueurCourant();
+        List<Pion> pionsJoueurCourant = this.getPionsJoueurCourant();
+        int ca = 0;
+        for (Carte c : cartesJoueurCourant) {
+            for (Pion p : pionsJoueurCourant) {
+                List<Coup> coupsPossibles = Utils.getCoupsPossibles(this, c.getType(), p.getPosition());
+                if (coupsPossibles.isEmpty()) {
+                    this.estEtatFinal = true;
+                }
+                for (Coup cp : coupsPossibles) {
+                    Point arrivee = cp.getArrivee();
+//                        if (!jeu.estCaseVide(arrivee.x, arrivee.y) && jeu.getProprietairePionAt(arrivee.x, arrivee.y) != jeu.getIdJoueurCourant()) {
+//                            res += 1;
+//                        }
+                    List<Pion> pionsAdverse;
+                    if (getIdJoueurCourant() == ID_JOUEUR_1) {
+                        pionsAdverse = new ArrayList<>(this.pionsJoueur2);
+                    } else {
+                        pionsAdverse = new ArrayList<>(this.pionsJoueur1);
+                    }
+                    List<Pion> _pionsAdverse = new ArrayList<>(pionsAdverse);
+                    for (Pion pa : _pionsAdverse) {
+                        if (pa.getPosition().equals(arrivee)) {
+                            pionsAdverse.remove(pa);
+                        }
+                    }
+                    List<Pion> pionsCourant = new ArrayList<>(getPionsJoueurCourant());
+                    for (Pion pjc : getPionsJoueurCourant()) {
+                        if (pjc.getPosition().equals(cp.getDepart())) {
+                            ROLEPION rp = pjc.getRole();
+                            pionsCourant.remove(pjc);
+                            pionsCourant.add(new Pion(getIdJoueurCourant(), arrivee, rp));
+
+                        }
+                    }
+                    List<Carte> cJ1 = new ArrayList<>();
+                    for (TYPECARTE tc : this.cartesJoueur1) {
+                        cJ1.add(new Carte(tc));
+                    }
+                    List<Carte> cJ2 = new ArrayList<>();
+                    for (TYPECARTE tc : this.cartesJoueur2) {
+                        cJ2.add(new Carte(tc));
+                    }
+                    List<Carte> newCards = new ArrayList<>(cartesJoueurCourant);
+                    Carte carteSup;
+                    carteSup = c;
+                    newCards.remove(c);
+                    newCards.add(new Carte(this.carteEnPlus));
+                    EtatJeu ej = new EtatJeu(
+                            (this.idJoueurCourant % 2) + 1,
+                            carteSup,
+                            this.idJoueurCourant == ID_JOUEUR_1 ? newCards : cJ1,
+                            this.idJoueurCourant == ID_JOUEUR_2 ? newCards : cJ2,
+                            this.idJoueurCourant == ID_JOUEUR_1 ? pionsCourant : pionsAdverse,
+                            this.idJoueurCourant == ID_JOUEUR_2 ? pionsCourant : pionsAdverse
+                            );
+                    ej.setCoup(cp);
+                    ej.setCarteChoisie(ca);
+                    ej.setPionChoisi(p);
+                    lej.add(ej);
+                }
+            }
+            ca++;
+        }
+
+        return lej;
+
+    }
+
+    public void setCarteChoisie(int carteChoisie) {
+        this.carteChoisie = carteChoisie;
+    }
+
+    public int getCarteChoisie() {
+        return carteChoisie;
+    }
+
+    public void setPionChoisi(Pion pionChoisi) {
+        this.pionChoisi = pionChoisi;
+    }
+
+    public Pion getPionChoisi() {
+        return pionChoisi;
+    }
+
+    public boolean estEtatFinal() {
+        return this.estEtatFinal;
+    }
+
+    public int getGagnant() {
+        return this.gagnant;
     }
 }

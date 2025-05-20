@@ -11,7 +11,6 @@ import static Global.Paths.PATH_PION_NOIR_ETUDIANT;
 
 class TestBouton {
 
-    @Test
     public void main() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Bouton avec Image Personnalisé Amélioré");

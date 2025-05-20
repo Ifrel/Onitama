@@ -1,6 +1,10 @@
 package Modele;
+import Global.Config;
+
 import java.io.Serializable;
 import java.awt.*;
+import static Global.Config.TYPECARTE;
+import static Global.Config.TYPECARTE.*;
 //import java.util.ArrayList;
 
 public class Coup implements Serializable{
@@ -8,12 +12,19 @@ public class Coup implements Serializable{
     private Point depart;
     private Point arrivee;
     private Carte carteEchangee;
+    private TYPECARTE carteEnPlus;
     private boolean aMangerPion;
 
     public Coup(Point depart, Point arrivee, Carte carteEchangee) {
         this.depart = depart;
         this.arrivee = arrivee;
         this.carteEchangee = carteEchangee;
+    }
+
+    public Coup(Point depart, Point arrivee, TYPECARTE carteEchangee) {
+        this.depart = depart;
+        this.arrivee = arrivee;
+        this.carteEnPlus = carteEchangee;
     }
 
     /**

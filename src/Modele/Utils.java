@@ -3,6 +3,7 @@ package Modele;
 import Exceptions.CaseVideException;
 import Exceptions.ConfigurationIllegaleException;
 import Global.Config;
+import Modele.IA.EtatJeu;
 
 import java.awt.*;
 import java.util.*;
@@ -157,6 +158,64 @@ public class Utils {
             // origine / position pion -> case arrivée possible
             // coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y), jeu.getIdJoueurCourant(),carteSelectionee,jeu.getCarteSupplementaire()));
             coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y), jeu.getCarteSupplementaire()));
+        }
+
+
+        return coups;
+    }
+
+    /**
+     * Renvoie la liste de tous les coups possibles étant donné une carte et un pion
+     * @param etatJeu référence au jeu courant
+     * @param carteSelectionee carte séléctionnée qui indique les déplacements théoriques relativement à la position du pion
+     * @param positionPion position du pion séléctionné
+     * @return liste des coups possibles
+     * @throws IllegalStateException
+     */
+    public static List<Coup> getCoupsPossibles(EtatJeu etatJeu, TYPECARTE carteSelectionee, Point positionPion) throws IllegalStateException {
+        Objects.requireNonNull(etatJeu, "Nécessite une référence non null au jeu");
+        Objects.requireNonNull(carteSelectionee, "Nécessite une référence non null à la carte séléctionnée");
+        Objects.requireNonNull(positionPion, "Nécessite une référence non null au point qui contient la position du point");
+
+        List<Coup> coups = new ArrayList<>();
+
+        List<Point> deplacements = MOUVEMENTCARTE.get(carteSelectionee);
+
+        int idJoueurCourant = etatJeu.getIdJoueurCourant();
+        Point direction;
+        if (idJoueurCourant == ID_JOUEUR_1) {
+            direction = new Point(-1, -1);
+        } else {
+            direction = new Point(1, 1);
+        }
+
+        List<Point> positionsPionsCourant = new ArrayList<>();
+        List<Pion> pionsCourant = etatJeu.getPionsJoueurCourant();
+
+        for (Pion p : pionsCourant) {
+            positionsPionsCourant.add(p.getPosition());
+        }
+
+        int x, y;
+        main:
+        for (Point deplacement : deplacements) {
+            x = positionPion.x + deplacement.x * direction.x;
+            y = positionPion.y + deplacement.y * direction.y;
+
+            if (x < 0 || x >= 5 || y < 0 || y >= 5) {
+                continue;
+            }
+
+            // ne pas manger son propre pion
+            for (Point p : positionsPionsCourant) {
+                if (new Point(x, y).equals(p)) {
+                    continue main;
+                }
+            }
+
+            // origine / position pion -> case arrivée possible
+            // coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y), jeu.getIdJoueurCourant(),carteSelectionee,jeu.getCarteSupplementaire()));
+            coups.add(new Coup(new Point(positionPion.x, positionPion.y), new Point(x, y), etatJeu.getTypeCarteSupplementaire()));
         }
 
 

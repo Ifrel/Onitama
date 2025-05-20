@@ -1,4 +1,5 @@
 import Controleur.Mediateur;
+import Global.Config;
 import Global.LogManagerSetup;
 import static Global.Config.MODE_GRAPHIQUE;
 import Modele.Jeu;
@@ -24,6 +25,8 @@ public class Onitama {
             Jeu jeu = new Jeu();
             Thread t1 = new Thread(jeu);
             jeu.toggleIA1();
+            jeu.setNiveauIA1(Config.NIVEAU_IA.MOYEN);
+            //jeu.setNiveauIA1(Config.NIVEAU_IA.FORT);
             t1.start();
 
             logger.info("Initialisation du collecteur d'évènements");
