@@ -22,11 +22,7 @@ public class ArbreMinMax {
 
 
     public Coup choisirCoup(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
-
-        //List<EtatJeu> successeurs = n.getId().getSuccesseurs();
-//        for (EtatJeu succ : successeurs) {
-//            n.addSucc(new Noeud(succ, null));
-//        }
+        this.nbFeuilles = this.nbEtats = 0;
         double val = joueur1(idJoueur, n, profondeur, niveau);
         n.setValeur(val);
         logger.info("Nombre de noeuds total parcouru : " + nbEtats + ", dont feuilles : " + nbFeuilles);
