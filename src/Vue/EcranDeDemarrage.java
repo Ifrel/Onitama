@@ -7,13 +7,13 @@ import Vue.Adaptateurs.AdaptateurBoutonEntrer;
 import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
 import Vue.Utils.PanelBruitGris;
-import Vue.Utils.JPanelAvecCouleurDebraille;
 import Vue.Utils.PanelAvecImage;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
     // Onglet General
     private boolean modeAutoIA;
-    private JButton boutonModeAuto;
+    private BoutonAvecImage boutonModeAuto;
     private JComboBox<String> listeDeroulanteReprendre, listeDeroulanteIA;
     private JTextField champJoueur1, champJoueur2;
     private String partieSelectionnee, niveauIAselectione;
@@ -96,7 +96,7 @@ public class EcranDeDemarrage extends JTabbedPane {
      * @return Le JPanel de l'onglet Général.
      */
     private JPanel creerOngletGeneral() {
-        PanelAvecImage ongletGeneral = new PanelAvecImage(PATH_ARRIERE_PLAN_ED_O2);
+        PanelAvecImage ongletGeneral = new PanelAvecImage(PATH_ARRIERE_PLAN_03);
         ongletGeneral.setLayout(new GridBagLayout());
 
         // --- Titre ---
@@ -105,25 +105,21 @@ public class EcranDeDemarrage extends JTabbedPane {
         contraintes.weighty = 0.2;
         contraintes.gridx = COLONNE_ETIQUETTE;
         contraintes.gridy = 3;
-        contraintes.gridwidth = 2;
+        contraintes.gridwidth = 3;
         contraintes.insets = MARGES_TITRE;
-        JLabel titre = new JLabel(LBL_TITRE_CONFIG);
-        titre.setFont(FONT_TITRE);
+        JLabel titre = creerLabelAvecImahe(PATH_LBL_INDICATEURS.resolve(LBL_TITRE_CONFIG + ".png"), 250, 90);
         ongletGeneral.add(titre, contraintes);
 
         int ligneCourante = 6;
 
 
         // --- Ligne 1 : Mode Auto ---
-        boutonModeAuto = creerBoutonAvecImage(PATH_BTN_MODE_AUTO_OFF.toString()); // État par défaut
-        boutonModeAuto.setPreferredSize(new Dimension(62,35));
-        boutonModeAuto.setFont(FONT_COMPOSANT);
+        boutonModeAuto = Bouton.creerBouton(PATH_BTN_MODE_AUTO_OFF.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent); // État par défaut
+        boutonModeAuto.setPreferredSize(new Dimension(125,60));
         boutonModeAuto.addActionListener(e -> {
             modeAutoIA = ! modeAutoIA;
-            ImageIcon iconOFF = new ImageIcon(PATH_BTN_MODE_AUTO_OFF.toString());
-            ImageIcon iconON = new ImageIcon(PATH_BTN_MODE_AUTO_ON.toString());
-            if (modeAutoIA) boutonModeAuto.setIcon(iconON);
-            else  boutonModeAuto.setIcon(iconOFF);
+            if (modeAutoIA) boutonModeAuto.changerImage(PATH_BTN_MODE_AUTO_ON.toString());
+            else  boutonModeAuto.changerImage(PATH_BTN_MODE_AUTO_OFF.toString());
             adaptateurBoutonEntrer.setModeAutoIA(modeAutoIA);
 
             // On gele les autres options de config dans l'onglet général
@@ -199,7 +195,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         ajouterLigne(ongletGeneral, LBL_JOUEUR_2, champJoueur2, ligneCourante++, FONT_LABEL);
 
         // -- bouton enter
-        BoutonAvecImage entrer = Bouton.creerBouton(PATH_BTN_ENTRER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent);
+        BoutonAvecImage entrer = Bouton.creerBouton(PATH_BTN_ENTRER.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         entrer.setPreferredSize(new Dimension(200, 98));
         contraintes = new GridBagConstraints();
         contraintes.gridx = 6;
@@ -224,7 +220,7 @@ public class EcranDeDemarrage extends JTabbedPane {
      * @return Le JPanel de l'onglet IA.
      */
     private JPanel creerOngletIA() {
-        JPanelAvecCouleurDebraille ongletIA = new JPanelAvecCouleurDebraille(COLOR_ONGLET_IA_1, COLOR_ONGLET_IA_2);
+        PanelAvecImage ongletIA = new PanelAvecImage(PATH_ARRIERE_PLAN_03);
         ongletIA.setLayout(new GridBagLayout());
         GridBagConstraints contraintes;
         int ligneCourante = 0;
@@ -621,8 +617,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         contraintesLabel.weighty = 0.1;
         contraintesLabel.ipadx = 40;
 
-        JLabel etiquette = new JLabel(texteEtiquette);
-        etiquette.setFont(policeEtiquette);
+        JLabel etiquette = creerLabelAvecImahe(PATH_LBL_INDICATEURS.resolve(texteEtiquette + ".png"), 200, 60);
         panneau.add(etiquette, contraintesLabel);
 
         // --- Contraintes du Composant ---
@@ -647,6 +642,7 @@ public class EcranDeDemarrage extends JTabbedPane {
      */
     private JComboBox<String> creerListeDeroulanteAvecIndication(String[] options) {
         JComboBox<String> listeDeroulante = new JComboBox<>(options);
+//        listeDeroulante.setOpaque(false);
         listeDeroulante.setFont(FONT_COMPOSANT);
         listeDeroulante.setPreferredSize(new Dimension(LARGEUR_LISTE_DEROULANTE, HAUTEUR_LISTE_DEROULANTE));
         listeDeroulante.setRenderer(new DefaultListCellRenderer() {
@@ -674,6 +670,16 @@ public class EcranDeDemarrage extends JTabbedPane {
         });
 
         return listeDeroulante;
+    }
+
+    private JLabel creerLabelAvecImahe(Path cheminImage, int width, int height){
+        JLabel titre = new JLabel();
+        ImageIcon icon = new ImageIcon(cheminImage.toString());
+        Image image = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(image);
+        titre.setIcon(scaledIcon);
+
+        return titre;
     }
 
 }

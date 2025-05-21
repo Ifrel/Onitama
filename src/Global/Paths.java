@@ -26,10 +26,10 @@ public class Paths {
      *              IMAGES BOUTONS              *
      *******************************************/
     public static Path PATH_ARRIERE  = Path.of("res","vue", "images", "arrierePlans");
-    public final static Path PATH_IMAGE_ARRIERE_PLAN_MENU = Path.of("res/vue/images/arrierePlans/menu.png");
-    public static final Path PATH_ARRIERE_PLAN_ED_O1      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage.png");
-    public static final Path PATH_ARRIERE_PLAN_ED_O2      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage2.png");
-    public static final Path PATH_ARRIERE_IMG1      = Path.of("res/vue/images/arrierePlans/image1.png");
+    public final static Path PATH_IMAGE_ARRIERE_PLAN_MENU   = Path.of("res/vue/images/arrierePlans/arrierePlan1.png");
+    public static final Path PATH_ARRIERE_PLAN_O2           = Path.of("res/vue/images/arrierePlans/arrierePlan2.png");
+    public static final Path PATH_ARRIERE_PLAN_03           = Path.of("res/vue/images/arrierePlans/arrierePlan10.png");
+    public static final Path PATH_ARRIERE_IMG1              = Path.of("res/vue/images/arrierePlans/arrierePlan4.png");
 
 
 
@@ -72,5 +72,12 @@ public class Paths {
      *              DEBUT PATHS                      *
      *******************************************/
     public static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions");
+
+
+
+    /********************************************
+     *              INDICATEURS                *
+     *******************************************/
+    public final static Path PATH_LBL_INDICATEURS              = Path.of("res","vue", "images", "indicateurs");
 
 }

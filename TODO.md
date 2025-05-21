@@ -59,4 +59,7 @@
 
 
 - # BESOIN USUR
-  - 
+  - selection par pion ou carte
+  - position possible pour les deux cartes
+  - ne tourne que les cartes qui s'échange
+  - Si posssible, indiquer ces position sur les cartes

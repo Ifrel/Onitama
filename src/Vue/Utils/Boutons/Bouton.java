@@ -3,7 +3,6 @@ package Vue.Utils.Boutons;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL; // Ajout de l'import pour URL
 
 import static Global.Paths.PATH_PION_NOIR_ETUDIANT;
 import static Vue.ConfigUI.ARRONDI;
@@ -31,7 +30,8 @@ public class Bouton {
         Carre,
         Carre_transparent,
         Rectangle,
-        Rectangle_transparent
+        Rectangle_transparent,
+        SansBordure_transparent
     }
 
     // Classe interne pour ajouter la méthode changerImage au JButton retourné
@@ -134,13 +134,7 @@ public class Bouton {
             if (cheminNouvelleImage == null || cheminNouvelleImage.isEmpty()) {
                 this.iconeOriginale = null;
             } else {
-                URL imageURL = getClass().getResource(cheminNouvelleImage);
-                if (imageURL == null) {
-                    System.err.println("Image non trouvée: " + cheminNouvelleImage);
-                    this.iconeOriginale = null;
-                } else {
-                    this.iconeOriginale = new ImageIcon(imageURL);
-                }
+                this.iconeOriginale = new ImageIcon(cheminNouvelleImage);
             }
             // Déclencher une mise à jour de l'icône pour redimensionner la nouvelle image
             // si le bouton est déjà dimensionné.
@@ -328,6 +322,13 @@ public class Bouton {
                 arrondi = ARRONDI;
                 couleurBordure = new Color(200, 200, 200); // Gris clair
                 couleurFondSurvol = new Color(200, 200, 200, 50); // Gris clair semi-transparent
+                break;
+            case SansBordure_transparent:
+                epaisseurInitiale = 2f;
+                epaisseurSurvol = 6f;
+                arrondi = ARRONDI;
+                couleurBordure = new Color(200, 200, 200, 0); // Gris clair
+                couleurFondSurvol = new Color(200, 200, 200, 0); // Gris clair semi-transparent
                 break;
             default:
                 // Configuration par défaut générique si l'énumération n'est pas reconnue

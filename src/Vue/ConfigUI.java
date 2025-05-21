@@ -28,12 +28,12 @@ public class ConfigUI {
     public static final String TITRE_ONGLET_ANIMATION   = "Animation";
     public static final String TITRE_ONGLET_SON         = "Son";
 
-    public static final String LBL_TITRE_CONFIG     = "Configuration";
-    public static final String LBL_MODE_AUTO        = "Mode auto (IA vs IA)";
-    public static final String LBL_REPRENDRE        = "Reprendre une partie";
-    public static final String LBL_JOUER_IA         = "Jouer contre l'IA";
-    public static final String LBL_JOUEUR_1         = "Joueur 1";
-    public static final String LBL_JOUEUR_2         = "Joueur 2";
+    public static final String LBL_TITRE_CONFIG     = "configuration";
+    public static final String LBL_MODE_AUTO        = "mode_auto";
+    public static final String LBL_REPRENDRE        = "reprendre_une_partie";
+    public static final String LBL_JOUER_IA         = "jouer_contre_ia";
+    public static final String LBL_JOUEUR_1         = "joueur1";
+    public static final String LBL_JOUEUR_2         = "joueur2";
 
     public static final String INDICATION_SELECTION = "Sélectionner ici...";
     public static final String OPTION_IA_NON = "Non";
