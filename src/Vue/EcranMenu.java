@@ -2,7 +2,6 @@ package Vue;
 
 import Modele.Jeu;
 import Patterns.Observateur;
-import Vue.Utils.JPanelAvecCouleurDebraille;
 import Vue.Utils.PanelAvecImage;
 
 import javax.swing.*;
@@ -10,8 +9,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.Duration;
 
-import static Global.Config.COULEUR_BLOC_MENU;
-import static Global.Paths.PATH_ARRIERE_IMG1;
+import static Global.Paths.PATH_ARRIERE_PLAN_4;
 import static Vue.Utils.MethodsStaticsUtils.creerBouton;
 
 /**
@@ -40,7 +38,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
      */
     public EcranMenu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
 //        super(COULEUR_BLOC_MENU, new Color(185, 185, 185, 255));
-        super(PATH_ARRIERE_IMG1);
+        super(PATH_ARRIERE_PLAN_4);
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;

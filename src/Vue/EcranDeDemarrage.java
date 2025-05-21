@@ -164,6 +164,10 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // --- Ligne 4 : Nom Joueur 1 ---
         champJoueur1 = new JTextField(LARGEUR_CHAMP_TEXTE);
+        champJoueur1.setBackground(new Color(255, 255, 255, 255)); // fond complètement transparent
+//        champJoueur1.setBorder(null);
+//        champJoueur1.setOpaque(false);// retire la bordure si tu veux un champ épuré
+        champJoueur1.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
         champJoueur1.setFont(FONT_COMPOSANT);
         champJoueur1.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {update();} // Si le style du texte change
@@ -181,6 +185,9 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // --- Ligne 5 : Nom Joueur 2 ---
         champJoueur2 = new JTextField(LARGEUR_CHAMP_TEXTE);
+        champJoueur2.setBackground(new Color(255, 255, 255, 255)); // fond complètement transparent
+//        champJoueur2.setBorder(null);                     // retire la bordure si tu veux un champ épuré
+        champJoueur2.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
         champJoueur2.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) { update(); }
             public void removeUpdate(DocumentEvent e) { update(); }
@@ -642,9 +649,14 @@ public class EcranDeDemarrage extends JTabbedPane {
      */
     private JComboBox<String> creerListeDeroulanteAvecIndication(String[] options) {
         JComboBox<String> listeDeroulante = new JComboBox<>(options);
-//        listeDeroulante.setOpaque(false);
         listeDeroulante.setFont(FONT_COMPOSANT);
         listeDeroulante.setPreferredSize(new Dimension(LARGEUR_LISTE_DEROULANTE, HAUTEUR_LISTE_DEROULANTE));
+
+        /// Rendre la JComboBox transparente
+        listeDeroulante.setBackground(new Color(255, 255, 255, 255));
+        listeDeroulante.setForeground(new Color(7, 7, 7, 255)); // couleur du texte si fond foncé
+        listeDeroulante.setBorder(null);
+
         listeDeroulante.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {

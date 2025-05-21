@@ -52,7 +52,7 @@ public class ConfigUI {
 
     // Dimensions standard des composants.
     public static final int LARGEUR_LISTE_DEROULANTE = 220;
-    public static final int HAUTEUR_LISTE_DEROULANTE = 30;
+    public static final int HAUTEUR_LISTE_DEROULANTE = 50;
     public static final int LARGEUR_CHAMP_TEXTE = 11; // Nombre de colonnes pour JTextField (taille indicative)
 
     // Dimension combinée pour les champs et listes déroulantes, basée sur les constantes précédentes.

@@ -785,6 +785,7 @@ import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
 import Vue.Utils.Boutons.BoutonCarte;
 import Vue.Utils.Boutons.BoutonTerrain;
+import Vue.Utils.PanelAvecImage;
 import Vue.Utils.PanelBruitGris;
 import Vue.Utils.PanelRatioFixe;
 
@@ -817,7 +818,7 @@ import static Vue.Utils.MethodsStaticsUtils.*;
  * Classe représentant l'interface graphique principale du plateau de jeu.
  * Elle observe le modèle (Jeu) et met à jour l'affichage en fonction des événements.
  */
-public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
+public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private static final Logger logger = Logger.getLogger(EcranPlateauDeJeu.class.getName());
     private final InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
 
@@ -879,6 +880,7 @@ public class EcranPlateauDeJeu extends PanelBruitGris implements Observateur {
      * @param interfaceGraphique Scène principale
      */
     public EcranPlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
+        super(PATH_ARRIERE_PLAN_8);
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;

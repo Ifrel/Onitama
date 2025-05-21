@@ -25,11 +25,12 @@ public class Paths {
     /********************************************
      *              IMAGES BOUTONS              *
      *******************************************/
-    public static Path PATH_ARRIERE  = Path.of("res","vue", "images", "arrierePlans");
-    public final static Path PATH_IMAGE_ARRIERE_PLAN_MENU   = Path.of("res/vue/images/arrierePlans/arrierePlan1.png");
+    public static final Path PATH_ARRIERE                   = Path.of("res","vue", "images", "arrierePlans");
+    public static final Path PATH_ARRIERE_PLAN_01           = Path.of("res/vue/images/arrierePlans/arrierePlan1.png");
     public static final Path PATH_ARRIERE_PLAN_O2           = Path.of("res/vue/images/arrierePlans/arrierePlan2.png");
     public static final Path PATH_ARRIERE_PLAN_03           = Path.of("res/vue/images/arrierePlans/arrierePlan10.png");
-    public static final Path PATH_ARRIERE_IMG1              = Path.of("res/vue/images/arrierePlans/arrierePlan4.png");
+    public static final Path PATH_ARRIERE_PLAN_4 = Path.of("res/vue/images/arrierePlans/arrierePlan4.png");
+    public static final Path PATH_ARRIERE_PLAN_8 = Path.of("res/vue/images/arrierePlans/arrierePlan8.png");
 
 
 
