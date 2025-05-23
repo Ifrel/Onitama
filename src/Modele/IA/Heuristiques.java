@@ -1,9 +1,6 @@
 package Modele.IA;
 
-import Modele.Carte;
-import Modele.Coup;
-import Modele.Jeu;
-import Modele.Pion;
+import Modele.*;
 
 import java.awt.*;
 import java.util.Hashtable;
@@ -51,16 +48,16 @@ public class Heuristiques {
      * - La distance de tous les pions du joueur courant par rapport au pion ma�tre adverse
      * - La distance du pion ma�tre du joueur courant par rapport à la case temple adverse
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      * @return la valeur d'une configuration du jeu, plus la valeur est élevée, plus la configuration est intéressante
      */
-    public static double heuristiqueDeBase(Jeu jeu) {
+    public static double heuristiqueDeBase(EtatJeu etatJeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 1.5 * nbPions(jeu) + -2 * distancePionsMaitre(jeu) + -2 * distanceMaitreTemple(jeu);
+        return 1.5 * nbPions(etatJeu) + -2 * distancePionsCourantMaitreAdverse(etatJeu) + -2 * distanceMaitreAdverseTemple(etatJeu);
     }
 
     // TODO
-    public static int heuristiqueDeBase(int idJoueurCourant, EtatJeu etatjeu) {
+    public static int heuristiqueDeBase(int idJoueurCourant, EtatJeuCompact etatjeu) {
         return 0;
     }
 
@@ -71,17 +68,25 @@ public class Heuristiques {
      * - Le nombre de coups qu'on peut jouer et s'ils permettent de capturer un pion
      * - La distance de tous les pions du joueur courant par rapport au pion ma�tre adverse
      * - La distance du pion ma�tre du joueur courant par rapport à la case temple adverse
+     * - La distance du pion ma�tre par rapport à sa case temple (plus il est proche plus l'adversaire peut converger en un point)
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      * @return la valeur d'une configuration du jeu, plus la valeur est élevée, plus la configuration est intéressante
      */
-    public static double heuristiqueAvancee(Jeu jeu) {
+    public static double heuristiqueAvancee(int idJoueur, EtatJeu etatJeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 1.5 * nbPions(jeu) + valeurCartes(jeu) + 1.5 * successeursNombreCaptures(jeu) + -3 * distancePionsMaitre(jeu) + -3 * distanceMaitreTemple(jeu);
+        return 100 * nbPions(etatJeu)
+                + valeurCartes(etatJeu)
+                + 2.5 * successeursNombreCaptures(etatJeu)
+                + -3 * distancePionsCourantMaitreAdverse(etatJeu)
+                + 5 * distancePionsAdverseMaitreCourant(etatJeu)
+                + -3 * distanceMaitreAdverseTemple(etatJeu)
+                + 1.5 * distanceMaitreCourantTemple(etatJeu)
+                + victoireDefaite(idJoueur, etatJeu);
     }
 
     // TODO
-    public static int heuristiqueAvancee(int idJoueurCourant, EtatJeu etatJeu) {
+    public static int heuristiqueAvancee(int idJoueurCourant, EtatJeuCompact etatJeuCompact) {
         return 0;
     }
 
@@ -91,14 +96,14 @@ public class Heuristiques {
      * Si le joueur courant est désavantagé cette heuristique renvoie un nombre négatif (< 0).
      * Si égalité, renvoie 0.
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      */
-    public static int nbPions(Jeu jeu) {
+    public static int nbPions(EtatJeu etatJeu) {
         try {
-            if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
-                return nbPionsJ1(jeu) - nbPionsJ2(jeu);
+            if (etatJeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+                return nbPionsJ1(etatJeu) - nbPionsJ2(etatJeu);
             } else {
-                return nbPionsJ2(jeu) - nbPionsJ1(jeu);
+                return nbPionsJ2(etatJeu) - nbPionsJ1(etatJeu);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -108,21 +113,21 @@ public class Heuristiques {
     /**
      * Renvoie le nombre de pions possédés par la joueur 1
      *
-     * @param jeu
+     * @param etatJeu
      * @return le nombre de pions appartenant au joueur 1
      */
-    public static int nbPionsJ1(Jeu jeu) {
-        return jeu.getPionsJoueur1().size();
+    public static int nbPionsJ1(EtatJeu etatJeu) {
+        return etatJeu.getPionsJoueur1().size();
     }
 
     /**
      * Renvoie le nombre de pions possédés par la joueur 1
      *
-     * @param jeu
+     * @param etatJeu
      * @return le nombre de pions appartenant au joueur 1
      */
-    public static int nbPionsJ2(Jeu jeu) {
-        return jeu.getPionsJoueur2().size();
+    public static int nbPionsJ2(EtatJeu etatJeu) {
+        return etatJeu.getPionsJoueur2().size();
     }
 
     /**
@@ -130,14 +135,14 @@ public class Heuristiques {
      * Si le joueur courant est désavantagé cette heuristique renvoie un nombre négatif (< 0).
      * Si égalité, renvoie 0.
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      */
-    public static int valeurCartes(Jeu jeu) {
+    public static int valeurCartes(EtatJeu etatJeu) {
         try {
-            if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
-                return valeurCartesJ1(jeu) - valeurCartesJ2(jeu);
+            if (etatJeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+                return valeurCartesJ1(etatJeu) - valeurCartesJ2(etatJeu);
             } else {
-                return valeurCartesJ2(jeu) - valeurCartesJ1(jeu);
+                return valeurCartesJ2(etatJeu) - valeurCartesJ1(etatJeu);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -147,12 +152,12 @@ public class Heuristiques {
     /**
      * Renvoie la somme des valeurs de cartes du joueur 1
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      * @return la valeur totale des cartes du joueur 1
      */
-    public static int valeurCartesJ1(Jeu jeu) {
+    public static int valeurCartesJ1(EtatJeu etatJeu) {
         try {
-            List<Carte> lc1 = jeu.getCartesJoueur1();
+            List<Carte> lc1 = etatJeu.getCartesJoueur1();
             return VALEURS_CARTES.get(lc1.get(0).getType()) + VALEURS_CARTES.get(lc1.get(1).getType());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -162,12 +167,12 @@ public class Heuristiques {
     /**
      * Renvoie la somme des valeurs de cartes du joueur 2
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      * @return la valeur totale des cartes du joueur 2
      */
-    public static int valeurCartesJ2(Jeu jeu) {
+    public static int valeurCartesJ2(EtatJeu etatJeu) {
         try {
-            List<Carte> lc2 = jeu.getCartesJoueur2();
+            List<Carte> lc2 = etatJeu.getCartesJoueur2();
             return VALEURS_CARTES.get(lc2.get(0).getType()) + VALEURS_CARTES.get(lc2.get(1).getType());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -178,22 +183,30 @@ public class Heuristiques {
      * Renvoie le nombre d'états successeurs possibles pour une config donnée
      * + le nombre de pions pouvant �tre capturé dans chaque successeur
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      * @return nombre d'états successeurs + le nombre de pions qu'on peut capturer dans chaque config
      */
-    public static int successeursNombreCaptures(Jeu jeu) {
+    public static int successeursNombreCaptures(EtatJeu etatJeu) {
         try {
             int res = 0;
-            List<Carte> cartesJoueurCourant = jeu.getCartesJoueurCourant();
-            List<Pion> pionsJoueurCourant = jeu.getPionsJoueurCourant();
+            List<Carte> cartesJoueurCourant = etatJeu.getCartesJoueurCourant();
+            List<Pion> pionsJoueurCourant = etatJeu.getPionsJoueurCourant();
+            List<Pion> pionsAdverse;
+            if (etatJeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+                pionsAdverse = etatJeu.getPionsJoueur1();
+            } else {
+                pionsAdverse = etatJeu.getPionsJoueur2();
+            }
             for (Carte c : cartesJoueurCourant) {
                 for (Pion p : pionsJoueurCourant) {
-                    List<Coup> coupsPossibles = jeu.getCoupsPossibles(c, p.getPosition());
+                    List<Coup> coupsPossibles = Utils.getCoupsPossibles(etatJeu, etatJeu.getTypeCarteSupplementaire(), p.getPosition());
                     for (Coup cp : coupsPossibles) {
                         res += 1;
                         Point arrivee = cp.getArrivee();
-                        if (!jeu.estCaseVide(arrivee.x, arrivee.y) && jeu.getProprietairePionAt(arrivee.x, arrivee.y) != jeu.getIdJoueurCourant()) {
-                            res += 1;
+                        for (Pion pa : pionsAdverse) {
+                            if (pa.getPosition().equals(arrivee)) {
+                                res += 1_000;
+                            }
                         }
                     }
                 }
@@ -206,21 +219,21 @@ public class Heuristiques {
 
     /**
      * Renvoie la négation de la somme de toutes les distances euclidiennes entre le pion ma�tre adverse
-     * et les pions du joueur courant
+     * et les pions du joueur courant (plus il est proche mieux c'est)
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      * @return distance de tous les pions du joueur courant par rapport au pion ma�tre adverse
      */
-    public static int distancePionsMaitre(Jeu jeu) {
+    public static int distancePionsCourantMaitreAdverse(EtatJeu etatJeu) {
         int res = 0;
         Point maitreAdverse = null;
-        List<Pion> pionsJoueurCourant = jeu.getPionsJoueurCourant();
+        List<Pion> pionsJoueurCourant = etatJeu.getPionsJoueurCourant();
         List<Pion> pionsAdverse;
 
-        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
-            pionsAdverse = jeu.getPionsJoueur2();
+        if (etatJeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+            pionsAdverse = etatJeu.getPionsJoueur2();
         } else {
-            pionsAdverse = jeu.getPionsJoueur1();
+            pionsAdverse = etatJeu.getPionsJoueur1();
         }
 
         for (Pion p : pionsAdverse) {
@@ -229,7 +242,9 @@ public class Heuristiques {
             }
         }
 
-        assert maitreAdverse != null;
+        if (maitreAdverse == null) {
+            return 0;
+        }
         for (Pion p : pionsJoueurCourant) {
             Point positionPion = p.getPosition();
             res += (int) (Math.sqrt(Math.pow(Math.abs(positionPion.x - maitreAdverse.x), 2) + Math.pow(Math.abs(positionPion.y - maitreAdverse.y), 2)));
@@ -239,15 +254,50 @@ public class Heuristiques {
     }
 
     /**
+     * Renvoie la somme de toutes les distances euclidiennes entre le pion ma�tre courant
+     * et les pions du joueur adverse (plus il est éloigné mieux c'est)
+     *
+     * @param etatJeu référence du jeu
+     * @return distance de tous les pions du joueur courant par rapport au pion ma�tre adverse
+     */
+    public static int distancePionsAdverseMaitreCourant(EtatJeu etatJeu) {
+        int res = 0;
+        Point maitreCourant = null;
+        List<Pion> pionsAdverse;
+
+        if (etatJeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+            pionsAdverse = etatJeu.getPionsJoueur2();
+        } else {
+            pionsAdverse = etatJeu.getPionsJoueur1();
+        }
+
+        for (Pion p : etatJeu.getPionsJoueurCourant()) {
+            if (p.getRole() == PION_MAITRE) {
+                maitreCourant = p.getPosition();
+            }
+        }
+
+        if (maitreCourant == null) {
+            return 0;
+        }
+        for (Pion p : pionsAdverse) {
+            Point positionPion = p.getPosition();
+            res += (int) (Math.sqrt(Math.pow(Math.abs(positionPion.x - maitreCourant.x), 2) + Math.pow(Math.abs(positionPion.y - maitreCourant.y), 2)));
+        }
+
+        return res;
+    }
+
+    /**
      * Renvoie la négation de la distance euclidienne entre le pion maître du joueur courant et la case temple adverse
      *
-     * @param jeu référence du jeu
+     * @param etatJeu référence du jeu
      * @return distance entre le pion maître du joueur courant et la case temple adverse
      */
-    public static int distanceMaitreTemple(Jeu jeu) {
+    public static int distanceMaitreAdverseTemple(EtatJeu etatJeu) {
         Point positionMaitre = null;
         Point templeAdverse;
-        List<Pion> pionsJoueurCourant = jeu.getPionsJoueurCourant();
+        List<Pion> pionsJoueurCourant = etatJeu.getPionsJoueurCourant();
 
         for (Pion p : pionsJoueurCourant) {
             if (p.getRole() == PION_MAITRE) {
@@ -255,14 +305,55 @@ public class Heuristiques {
             }
         }
 
-        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+        if (etatJeu.getIdJoueurCourant() == ID_JOUEUR_1) {
             templeAdverse = TEMPLE_JOUEUR_2;
         } else {
             templeAdverse = TEMPLE_JOUEUR_1;
         }
 
-        assert positionMaitre != null;
+        if (positionMaitre == null) {
+            return 0;
+        }
         return (int) (-1 * Math.sqrt(Math.pow(Math.abs(templeAdverse.x - positionMaitre.x), 2) + Math.pow(Math.abs(templeAdverse.y - positionMaitre.y), 2)));
     }
 
+    /**
+     * Renvoie la distance euclidienne entre le temple du joueur courant et son pion ma�tre, on considère que plus ils sont éloignés, moins l'ennemi à de raisons de converger
+     *
+     * @param etatJeu référence du jeu
+     * @return proximité entre la case temple et le pion ma�tre du joueur courant
+     */
+    public static int distanceMaitreCourantTemple(EtatJeu etatJeu) {
+        Point positionMaitre = null;
+        Point temple;
+
+        if (etatJeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+            temple = TEMPLE_JOUEUR_1;
+        } else {
+            temple = TEMPLE_JOUEUR_2;
+        }
+
+        for (Pion p : etatJeu.getPionsJoueurCourant()) {
+            if (p.getRole() == PION_MAITRE) {
+                positionMaitre = p.getPosition();
+            }
+        }
+
+        if (positionMaitre == null) {
+            return 0;
+        }
+        return (int) (Math.sqrt(Math.pow(Math.abs(temple.x - positionMaitre.x), 2) + Math.pow(Math.abs(temple.y - positionMaitre.y), 2)));
+    }
+
+    public static int victoireDefaite(int idJoueur, EtatJeu etatJeu) {
+        if (!etatJeu.estEtatFinal()) {
+            return 0;
+        }
+
+        if (etatJeu.getGagnant() == idJoueur) {
+            return 1_000_000;
+        } else {
+            return -1_000_000;
+        }
+    }
 }

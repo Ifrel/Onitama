@@ -5,14 +5,26 @@ import Modele.Coup;
 import Modele.Jeu;
 import Modele.Pion;
 
+import java.util.Objects;
+
 import static Global.Config.NIVEAU_IA.MOYEN;
+import static Global.Config.VITESSE_IA.MOYENNE;
 
 public class IAMoyen extends IA {
     private final Jeu jeu;
+    private Pion pionChoisi;
+    private int carteChoisie;
+    private boolean isThinking;
+    private ArbreMinMax arbreMinMax;
 
     public IAMoyen(Jeu jeu, int id, String nom) {
         super(id, nom);
-        this.jeu = jeu;
+        this.jeu = Objects.requireNonNull(jeu, "Le jeu fourni à l'IA ne peut pas être null");
+        this.isThinking = false;
+        this.pionChoisi = null;
+        this.carteChoisie = 0;
+        setVitesse(MOYENNE);
+        arbreMinMax = new ArbreMinMax();
     }
 
     /**
@@ -22,7 +34,25 @@ public class IAMoyen extends IA {
      */
     @Override
     public Coup calculerCoup() {
-        return null;
+        Coup coup = arbreMinMax.choisirCoup(
+                getId(),
+                new Noeud(
+                        new EtatJeu(
+                                jeu.getIdJoueurCourant(),
+                                jeu.getCarteSupplementaire(),
+                                jeu.getCartesJoueur1(),
+                                jeu.getCartesJoueur2(),
+                                jeu.getPionsJoueur1(),
+                                jeu.getPionsJoueur2()
+                        ),
+                        null),
+                4,
+                MOYEN);
+
+        pionChoisi = arbreMinMax.getPionChoisi();
+        carteChoisie = arbreMinMax.getCarteChoisie();
+
+        return coup;
     }
 
     /**
@@ -32,7 +62,7 @@ public class IAMoyen extends IA {
      */
     @Override
     public Pion getPionChoisi() {
-        return null;
+        return pionChoisi;
     }
 
     /**
@@ -42,7 +72,7 @@ public class IAMoyen extends IA {
      */
     @Override
     public int getCarteChoisie() {
-        return 0;
+        return carteChoisie;
     }
 
     /**
@@ -52,7 +82,7 @@ public class IAMoyen extends IA {
      */
     @Override
     public boolean isThinking() {
-        return false;
+        return isThinking;
     }
 
     /**
@@ -60,7 +90,7 @@ public class IAMoyen extends IA {
      */
     @Override
     public void stop() {
-
+        isThinking = false;
     }
 
 

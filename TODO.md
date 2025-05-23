@@ -56,3 +56,7 @@
     - setConfigIAReflexion(int temps), 
     - getNomJoueur(1)
     - getListeSauvegardes()
+
+
+- # BESOIN USUR
+  - 

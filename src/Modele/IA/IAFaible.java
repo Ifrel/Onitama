@@ -1,13 +1,10 @@
 package Modele.IA;
 
-import Modele.Carte;
 import Modele.Coup;
 import Modele.Jeu;
 import Modele.Pion;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import static Global.Config.NIVEAU_IA;
 import static Global.Config.NIVEAU_IA.FAIBLE;
@@ -18,6 +15,7 @@ public class IAFaible extends IA {
     private Pion pionChoisi;
     private int carteChoisie;
     private boolean isThinking;
+    private ArbreMinMax arbreMinMax;
 
     public IAFaible(Jeu jeu, int id, String nom) {
         super(id, nom);
@@ -26,6 +24,7 @@ public class IAFaible extends IA {
         this.pionChoisi = null;
         this.carteChoisie = 0;
         setVitesse(MOYENNE);
+        arbreMinMax = new ArbreMinMax();
     }
 
     /**
@@ -35,46 +34,25 @@ public class IAFaible extends IA {
      */
     @Override
     public Coup calculerCoup() {
-        Coup c = null;
-        Random r = new Random();
-        List<Carte> cartesIA = jeu.getCartesJoueurCourant();
-        List<Pion> pionsIA = jeu.getPionsJoueurCourant();
+        Coup coup = arbreMinMax.choisirCoup(
+                getId(),
+                new Noeud(
+                        new EtatJeu(
+                                jeu.getIdJoueurCourant(),
+                                jeu.getCarteSupplementaire(),
+                                jeu.getCartesJoueur1(),
+                                jeu.getCartesJoueur2(),
+                                jeu.getPionsJoueur1(),
+                                jeu.getPionsJoueur2()
+                        ),
+                        null),
+                2,
+                FAIBLE);
 
-        /*
-         * Preuve de correction totale :
-         * - Terminaison : Boucle externe : La taille de la liste des cartes à utiliser diminue à chaque itération
-         *                 Boucle interne : La taille de la liste des pions à utiliser diminue à chaque itération
-         * - Correction Partielle : Boucle externe : La liste des cartes contient les cartes uniques qui n'ont pas encore été traitées
-         *                                           On obtient à chaque itération une carte aléatoire non traitée
-         *                          Boucle interne : La liste des pions ne contient que des pions qui n'ont pas encore été traités pour la carte courante
-         *                                           On obtient un pion aléatoire à chaque itération
-         * Note : le générateur de nombres aléatoire est uniforme
-         */
-        Carte carteEnCours;
-        Pion pionEnCours;
-        this.isThinking = true;
-        while (!cartesIA.isEmpty() && this.isThinking) {
-            int ca = r.nextInt(cartesIA.size());
-            carteEnCours = cartesIA.remove(ca); // carte sélectionnée de manière aléatoire uniforme
-            while (!pionsIA.isEmpty() && this.isThinking) {
-                int pi = r.nextInt(pionsIA.size());
-                pionEnCours = pionsIA.remove(pi); // pion sélectionné de manière aléatoire uniforme
-                List<Coup> coupsPossibles = jeu.getCoupsPossibles(carteEnCours, pionEnCours.getPosition()); // liste de tous les coups possibles étant donné une carte et un pion
-                if (coupsPossibles.isEmpty()) { // pas de coup possible pour la carte et le pion courants
-                    continue; // donc on passe au pion suivant
-                }
-                c = coupsPossibles.get(r.nextInt(coupsPossibles.size())); // coup sélectionné de manière aléatoire uniforme
-                jeu.setPionSelectionne(pionEnCours.getPosition()); // TODO à retirer quand le moteur prendra en charge la méthode IA.getPionChoisi()
-                this.pionChoisi = pionEnCours;
-                jeu.setCarteSelectionnee(ca); // TODO à retirer quand le moteur prendra en charge la méthode IA.getCarteChoisie()
-                this.carteChoisie = ca;
-                return c; // après avoir trouvé un coup, on sort directement, sinon on continue à chercher
-            }
-            if (!cartesIA.isEmpty()) { // il n'est pas nécessaire de construire une liste de pions qui ne sera pas utilisée
-                pionsIA = jeu.getPionsJoueurCourant(); // on change de carte donc on récupère à nouveau les pions
-            }
-        }
-        return c;
+        pionChoisi = arbreMinMax.getPionChoisi();
+        carteChoisie = arbreMinMax.getCarteChoisie();
+
+        return coup;
     }
 
     /**

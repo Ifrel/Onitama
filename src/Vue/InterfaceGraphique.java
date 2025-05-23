@@ -77,7 +77,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         initialiserMenu();
         ajouterComportementRedimensionnement();
 
-        frame.setContentPane(ecranPlateauDeJeu);
+        frame.setContentPane(ecranDeDemarrage);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -164,7 +164,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
             new Thread(() -> {
                 int x = frame.getWidth();
                 while (x > frame.getWidth() - WIDTH_MENU) {
-                    x -= 10;
+                    x -= 50;
                     ecranMenu.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
                     try { Thread.sleep(2); } catch (InterruptedException ignored) {}
                 }
@@ -180,7 +180,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         new Thread(() -> {
             int x = ecranMenu.getX();
             while (x < frame.getWidth()) {
-                x += 10;
+                x += 50;
                 ecranMenu.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
                 try { Thread.sleep(2); } catch (InterruptedException ignored) {}
             }
