@@ -326,8 +326,11 @@ public class Jeu extends Observable implements Runnable {
         carteEchange = cartesDuJeu.get(4);
         //On crée la classe des deux joueurs
 
+        joueur1.clearHand();
         joueur1.addCard(carte1Joueur1);
         joueur1.addCard(carte2Joueur1);
+
+        joueur2.clearHand();
         joueur2.addCard(carte1Joueur2);
         joueur2.addCard(carte2Joueur2);
     }
@@ -874,6 +877,7 @@ public class Jeu extends Observable implements Runnable {
         } else {
             joueur2 = IA_1;
         }
+        initJoueursCartes();
     }
 
     /**
@@ -899,6 +903,7 @@ public class Jeu extends Observable implements Runnable {
 
         }
         joueur2 = IA_2;
+        initJoueursCartes();
     }
 
     public void nouvellePartie() {
@@ -1508,6 +1513,7 @@ public class Jeu extends Observable implements Runnable {
     @Override
     public void run() {
         try {
+            int delai = 1500;
             boucle:
             while (true) {
                 Coup c;
@@ -1516,15 +1522,20 @@ public class Jeu extends Observable implements Runnable {
                         case DEBUT:
                             break;
                         case DEBUT_IA:
+                        case IA2_A_JOUE:
                             c = IA_1.calculerCoup();
-                            Thread.sleep(1000);
+                            Thread.sleep(delai);
+                            setCarteSelectionnee(IA_1.getCarteChoisie());
+                            setPionSelectionne(IA_1.getPionChoisi().getPosition());
                             jouerCoup(c);
                             etatJeu = IA1_A_JOUE;
                             break;
                         case J1_A_JOUE:
                             if (estActiveIA1()) {
                                 c = IA_1.calculerCoup();
-                                Thread.sleep(1000);
+                                Thread.sleep(delai);
+                                setCarteSelectionnee(IA_1.getCarteChoisie());
+                                setPionSelectionne(IA_1.getPionChoisi().getPosition());
                                 jouerCoup(c);
                                 etatJeu = IA1_A_JOUE;
                             }
@@ -1534,17 +1545,13 @@ public class Jeu extends Observable implements Runnable {
                         case IA1_A_JOUE:
                             if (estActiveIA2()) {
                                 c = IA_2.calculerCoup();
-                                Thread.sleep(1000);
+                                Thread.sleep(delai);
+                                setCarteSelectionnee(IA_2.getCarteChoisie());
+                                setPionSelectionne(IA_2.getPionChoisi().getPosition());
                                 jouerCoup(c);
                                 etatJeu = IA2_A_JOUE;
                                 return;
                             }
-                            break;
-                        case IA2_A_JOUE:
-                            c = IA_1.calculerCoup();
-                            Thread.sleep(1000);
-                            jouerCoup(c);
-                            etatJeu = IA1_A_JOUE;
                             break;
                         case FIN:
                             break boucle;
