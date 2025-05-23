@@ -481,10 +481,6 @@ public class Jeu extends Observable implements Runnable {
         return colonnes;
     }
 
-    public int casesTotales() {
-        return lignes() * colonnes();
-    }
-
     public void verifieSiDansGrille(int i, int j) {
         if (i < 0 || i >= lignes() || j < 0 || j >= colonnes()) {
             throw new IndexOutOfBoundsException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + lignes() + "x" + colonnes());
@@ -512,50 +508,6 @@ public class Jeu extends Observable implements Runnable {
     public boolean estCaseVide(int i, int j) {
         try {
             return getCase(i, j) == null;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean estPionEtudiantJoueur1(int i, int j) throws CaseVideException {
-        try {
-            Pion p = getCase(i, j);
-            return p.getIDProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_ETUDIANT;
-        } catch (NullPointerException e) {
-            throw new CaseVideException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean estPionEtudiantJoueur2(int i, int j) throws CaseVideException {
-        try {
-            Pion p = getCase(i, j);
-            return p.getIDProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_ETUDIANT;
-        } catch (NullPointerException e) {
-            throw new CaseVideException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean estPionMaitreJoueur1(int i, int j) throws CaseVideException {
-        try {
-            Pion p = getCase(i, j);
-            return p.getIDProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_MAITRE;
-        } catch (NullPointerException e) {
-            throw new CaseVideException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean estPionMaitreJoueur2(int i, int j) throws CaseVideException {
-        try {
-            Pion p = getCase(i, j);
-            return p.getIDProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_MAITRE;
-        } catch (NullPointerException e) {
-            throw new CaseVideException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -874,14 +826,6 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-    public Joueur getJoueur(int id) {
-        return (id == ID_JOUEUR_1) ? joueur1 : joueur2;
-    }
-
-    public boolean estDeplacementConforme(int i, int j) {
-        return false;
-    }
-
     public boolean estPartieFinie() {
         return partieFinie;
     }
@@ -938,7 +882,6 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-
     private void majPionsJoueur2() {
         pionsJoueur2.clear();
         for (int i = 0; i < lignes; i++) {
@@ -950,7 +893,6 @@ public class Jeu extends Observable implements Runnable {
             }
         }
     }
-
 
     private void majPions() {
         majPionsJoueur1();
@@ -968,7 +910,6 @@ public class Jeu extends Observable implements Runnable {
 
 
     }
-
 
     public Carte getCarteSelectionnee()
     {
@@ -1313,18 +1254,15 @@ public class Jeu extends Observable implements Runnable {
             for (int i = 0; i < lignes(); i++) {
                 for (int j = 0; j < colonnes(); j++) {
                     if (estCaseVide(i, j)) {
-                        S.append("  ");
-                    } else if (estPionEtudiantJoueur1(i, j)) {
-                        S.append("E1");
-                    } else if (estPionEtudiantJoueur2(i, j)) {
-                        S.append("E2");
-                    } else if (estPionMaitreJoueur1(i, j)) {
-                        S.append("M1");
-                    } else if (estPionMaitreJoueur2(i, j)) {
-                        S.append("M2");
-                    } else {
-                        S.append("??");
+                        S.append(" ");
+                        continue;
                     }
+                    if (getRolePionAt(i, j) == PION_MAITRE) {
+                        S.append("M");
+                    } else {
+                        S.append("E");
+                    }
+                    S.append(getProprietairePionAt(i, j));
                 }
                 S.append("\n");
             }
