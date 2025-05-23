@@ -45,9 +45,10 @@ public class IAFort extends IA {
                                 jeu.getPionsJoueur1(),
                                 jeu.getPionsJoueur2()
                         ),
-                        null),
-                6,
-                FORT);
+                        null
+                ),
+                6
+        );
 
         pionChoisi = arbreMinMax.getPionChoisi();
         carteChoisie = arbreMinMax.getCarteChoisie();

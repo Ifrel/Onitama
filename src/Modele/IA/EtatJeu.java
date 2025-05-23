@@ -18,7 +18,7 @@ public class EtatJeu {
     private Coup coup;
     private Pion pionChoisi;
     private int carteChoisie;
-    private final int idJoueurCourant;
+    private int idJoueurCourant;
     private int gagnant;
     private boolean estEtatFinal;
     private final TYPECARTE carteEnPlus;
@@ -74,13 +74,13 @@ public class EtatJeu {
 
         if (pionsJoueur1.isEmpty()) {
             estEtatFinal = true;
-            gagnant = ID_JOUEUR_2;
+            idJoueurCourant = gagnant = ID_JOUEUR_2;
             return;
         }
 
         if (pionsJoueur2.isEmpty()) {
             estEtatFinal = true;
-            gagnant = ID_JOUEUR_1;
+            idJoueurCourant = gagnant = ID_JOUEUR_1;
             return;
         }
         boolean maitre1Capture, maitre2Capture;
@@ -89,7 +89,7 @@ public class EtatJeu {
             if (p.getRole() == PION_MAITRE) {
                 if (p.getPosition().equals(TEMPLE_JOUEUR_2)) {
                    estEtatFinal = true;
-                   gagnant = ID_JOUEUR_1;
+                   idJoueurCourant = gagnant = ID_JOUEUR_1;
                    return;
                 }
                 maitre1Capture = false;
@@ -99,7 +99,7 @@ public class EtatJeu {
             if (p.getRole() == PION_MAITRE) {
                 if (p.getPosition().equals(TEMPLE_JOUEUR_1)) {
                     estEtatFinal = true;
-                    gagnant = ID_JOUEUR_2;
+                    idJoueurCourant = gagnant = ID_JOUEUR_2;
                     return;
                 }
                 maitre2Capture = false;
@@ -107,12 +107,13 @@ public class EtatJeu {
         }
 
         if (maitre1Capture) {
-            gagnant = ID_JOUEUR_2;
             estEtatFinal = true;
+            idJoueurCourant = gagnant = ID_JOUEUR_2;
+            return;
         }
         if (maitre2Capture) {
-            gagnant = ID_JOUEUR_1;
             estEtatFinal = true;
+            idJoueurCourant = gagnant = ID_JOUEUR_1;
         }
     }
 

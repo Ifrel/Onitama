@@ -25,6 +25,7 @@ public class Onitama {
             Jeu jeu = new Jeu();
             Thread t1 = new Thread(jeu);
             jeu.toggleIA1();
+            //jeu.setNiveauIA1(Config.NIVEAU_IA.FAIBLE);
             jeu.setNiveauIA1(Config.NIVEAU_IA.MOYEN);
             //jeu.setNiveauIA1(Config.NIVEAU_IA.FORT);
             t1.start();
