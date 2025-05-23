@@ -38,7 +38,7 @@ public class ArbreMinMax {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
-            return n.setValeur(heuristiqueAvancee(idJoueur, n.getId()));
+            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getId()));
         }
         double valeur = Double.NEGATIVE_INFINITY;
 
@@ -61,7 +61,7 @@ public class ArbreMinMax {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
-            return n.setValeur(heuristiqueAvancee(idJoueur, n.getId()));
+            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getId()));
         }
         double valeur = Double.POSITIVE_INFINITY;
 
