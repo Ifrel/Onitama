@@ -1,7 +1,6 @@
 package Modele;
 
 import Exceptions.CaseVideException;
-import Exceptions.ConfigurationIllegaleException;
 import Global.Config;
 import Modele.IA.EtatJeu;
 
@@ -22,14 +21,14 @@ public class Utils {
      * Vérifie que chaque carte de la liste est unique
      *
      * @param listeCartes liste de cartes
-     * @throws ConfigurationIllegaleException
+     * @throws IllegalStateException
      */
-    public static void cartesToutesDifferentes(List<Config.TYPECARTE> listeCartes) throws ConfigurationIllegaleException {
+    public static void cartesToutesDifferentes(List<Config.TYPECARTE> listeCartes) throws IllegalStateException {
         HashSet<Config.TYPECARTE> hs = new HashSet<>();
 
         for (Config.TYPECARTE tc : listeCartes) {
             if (hs.contains(tc)) {
-                throw new ConfigurationIllegaleException("ERREUR La carte " + tc + " apparait plus d'une fois, chaque carte doit etre unique");
+                throw new IllegalStateException("ERREUR La carte " + tc + " apparait plus d'une fois, chaque carte doit etre unique");
             }
             hs.add(tc);
         }
@@ -41,16 +40,16 @@ public class Utils {
      * @param carteEnPlus   carte supplémentaire du jeu
      * @param cartesJoueur1 cartes du joueur 1
      * @param cartesJoueur2 cartes du joueur 2
-     * @throws ConfigurationIllegaleException
+     * @throws IllegalStateException
      */
-    public static void verifierSelectionCartesConforme(TYPECARTE carteEnPlus, List<TYPECARTE> cartesJoueur1, List<TYPECARTE> cartesJoueur2) throws ConfigurationIllegaleException {
+    public static void verifierSelectionCartesConforme(TYPECARTE carteEnPlus, List<TYPECARTE> cartesJoueur1, List<TYPECARTE> cartesJoueur2) throws IllegalStateException {
         try {
             List<TYPECARTE> cartesSelectionnees = new ArrayList<>(cartesJoueur1);
             cartesSelectionnees.addAll(cartesJoueur2);
             cartesSelectionnees.add(carteEnPlus);
             cartesToutesDifferentes(cartesSelectionnees);
-        } catch (ConfigurationIllegaleException e) {
-            throw new ConfigurationIllegaleException(e);
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -62,14 +61,14 @@ public class Utils {
      *
      * @param pionsJoueur1 liste des pions du joueur 1
      * @param pionsJoueur2 liste des pions du joueur 2
-     * @throws ConfigurationIllegaleException
+     * @throws IllegalStateException
      */
-    public static void verifierSelectionPionsConforme(List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) throws ConfigurationIllegaleException {
+    public static void verifierSelectionPionsConforme(List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) throws IllegalStateException {
         if (pionsJoueur1.size() > 5) {
-            throw new ConfigurationIllegaleException("Le joueur 1 ne peux pas avoir plus de 5 pions, pourtant " + pionsJoueur1.size() + " ont été fournis");
+            throw new IllegalStateException("Le joueur 1 ne peux pas avoir plus de 5 pions, pourtant " + pionsJoueur1.size() + " ont été fournis");
         }
         if (pionsJoueur2.size() > 5) {
-            throw new ConfigurationIllegaleException("Le joueur 2 ne peux pas avoir plus de 5 pions, pourtant " + pionsJoueur2.size() + " ont été fournis");
+            throw new IllegalStateException("Le joueur 2 ne peux pas avoir plus de 5 pions, pourtant " + pionsJoueur2.size() + " ont été fournis");
         }
 
         HashSet<Point> coordonneesOccupees = new HashSet<>();
@@ -85,7 +84,7 @@ public class Utils {
             for (Pion p : lp) {
                 Point pos = p.getPosition();
                 if (coordonneesOccupees.contains(pos)) {
-                    throw new ConfigurationIllegaleException("Il y a déjà un pion à la position (" + pos.x + "," + pos.y + ")");
+                    throw new IllegalStateException("Il y a déjà un pion à la position (" + pos.x + "," + pos.y + ")");
                 }
                 coordonneesOccupees.add(pos);
                 if (p.getRole() == PION_ETUDIANT) {
@@ -95,16 +94,16 @@ public class Utils {
                 }
                 int prop = p.getIDProprietaire();
                 if (prop != i + 1) {
-                    throw new ConfigurationIllegaleException("Le pion " + p + " est possédé par " + prop + " alors qu'il devrait etre possédé par " + (i + 1));
+                    throw new IllegalStateException("Le pion " + p + " est possédé par " + prop + " alors qu'il devrait etre possédé par " + (i + 1));
                 }
             }
 
             if (nbEleves > 4) {
-                throw new ConfigurationIllegaleException("Le joueur " + (i + 1) + " a plus de 4 pions élèves (" + nbEleves + "), impossible");
+                throw new IllegalStateException("Le joueur " + (i + 1) + " a plus de 4 pions élèves (" + nbEleves + "), impossible");
             }
 
             if (nbMaitre > 1) {
-                throw new ConfigurationIllegaleException("Le joueur " + (i + 1) + " a plus d'un pions maitre (" + nbMaitre + "), impossible");
+                throw new IllegalStateException("Le joueur " + (i + 1) + " a plus d'un pions maitre (" + nbMaitre + "), impossible");
             }
         }
     }
@@ -115,9 +114,9 @@ public class Utils {
      * @param carteSelectionee carte séléctionnée qui indique les déplacements théoriques relativement à la position du pion
      * @param positionPion position du pion séléctionné
      * @return liste des coups possibles
-     * @throws IllegalStateException
+     * @throws java.lang.IllegalStateException
      */
-    public static List<Coup> getCoupsPossibles(Jeu jeu, Carte carteSelectionee, Point positionPion) throws IllegalStateException {
+    public static List<Coup> getCoupsPossibles(Jeu jeu, Carte carteSelectionee, Point positionPion) throws java.lang.IllegalStateException {
         Objects.requireNonNull(jeu, "Nécessite une référence non null au jeu");
         Objects.requireNonNull(carteSelectionee, "Nécessite une référence non null à la carte séléctionnée");
         Objects.requireNonNull(positionPion, "Nécessite une référence non null au point qui contient la position du point");
@@ -170,9 +169,9 @@ public class Utils {
      * @param carteSelectionee carte séléctionnée qui indique les déplacements théoriques relativement à la position du pion
      * @param positionPion position du pion séléctionné
      * @return liste des coups possibles
-     * @throws IllegalStateException
+     * @throws java.lang.IllegalStateException
      */
-    public static List<Coup> getCoupsPossibles(EtatJeu etatJeu, TYPECARTE carteSelectionee, Point positionPion) throws IllegalStateException {
+    public static List<Coup> getCoupsPossibles(EtatJeu etatJeu, TYPECARTE carteSelectionee, Point positionPion) throws java.lang.IllegalStateException {
         Objects.requireNonNull(etatJeu, "Nécessite une référence non null au jeu");
         Objects.requireNonNull(carteSelectionee, "Nécessite une référence non null à la carte séléctionnée");
         Objects.requireNonNull(positionPion, "Nécessite une référence non null au point qui contient la position du point");
