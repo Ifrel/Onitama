@@ -1163,7 +1163,7 @@ public class Jeu extends Observable implements Runnable {
         metAJour();
     }
 
-    private boolean verifierVictoire() {
+    public boolean verifierVictoire() {
         //si tous les pions adversaires sont morts
         if(getPionsJoueur1().isEmpty() && getIdJoueurCourant() == ID_JOUEUR_2){
             return true;
@@ -1206,16 +1206,10 @@ public class Jeu extends Observable implements Runnable {
                 }
                 break;
             case PION_SELECTIONNE:
-                if (getPionSelectionne() != null && getPionSelectionne().getPosition().equals(p)) {
-                    resetPionSelectionne();
-                    logger.info("Pion à la position (" + p.x + "," + p.y + ") désélectionné");
-                    etatGrille = DEFAUT;
+                if (!estCaseVide(p.x, p.y)) {
+                    setPionSelectionne(p);
                     return;
                 }
-                // peut etre utilisée par l'IA directement d'où son existence (?)
-//                if(! jouerCoup(new Coup(getPionSelectionne().getPosition(), p, idJoueurCourant, getCarteSelectionnee(),carteEchange))) {
-//                    return;
-//                }
                 if(! jouerCoup(new Coup(getPionSelectionne().getPosition(), p, getCarteSupplementaire()))) {
                     return;
                 }
