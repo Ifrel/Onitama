@@ -1,4 +1,4 @@
-package Vue.Animations.AnimationUtils;
+package Vue.LabO;
 
 import javax.swing.*;
 import java.awt.*;

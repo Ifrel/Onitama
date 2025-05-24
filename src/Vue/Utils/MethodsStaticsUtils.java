@@ -1,11 +1,6 @@
 package Vue.Utils;
 
-import Global.Config.*;
-import Global.Config.ROLEPION.*;
-import Global.Config.ROLEPION;
 import Modele.Carte;
-import Modele.CasePlateau;
-import Modele.Pion;
 import Vue.Animations.Animations;
 import Vue.EcranPlateauDeJeu.TYPE_ELEMENT_SUR_TERRAIN;
 import Vue.InfosDeConfigUI;
@@ -13,30 +8,18 @@ import Vue.Utils.Boutons.Bouton;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 
 import static Global.Config.ID_JOUEUR_1;
 import static Global.Config.ID_JOUEUR_2;
 import static Global.Paths.*;
-import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
 
 /**
  * Classe utilitaire regroupant des méthodes statiques pour la création
  * d'éléments d'interface utilisateur personnalisés. */
 public class MethodsStaticsUtils {
-
-
-    /**
-     * Crée un bouton standard avec un texte donné.
-     *
-     * @param titre le texte à afficher sur le bouton
-     * @return un JButton configuré     */
-    public static JButton creerBouton(String titre) {
-        JButton bouton = new JButton(titre);
-        return bouton;
-    }
-
 
 
     /**
@@ -53,169 +36,24 @@ public class MethodsStaticsUtils {
     }
 
 
-    public static JButton creerBoutonAvecImage(String cheminImage) {
-        // Chargement de l'image d'origine
-        ImageIcon iconeOriginale = new ImageIcon(cheminImage);
 
-        // Création du bouton sans texte
-        JButton bouton = new JButton();
-        bouton.setContentAreaFilled(false);   // Fond désactivé par défaut
-        bouton.setBorderPainted(false);       // Bordure désactivée par défaut
-        bouton.setFocusPainted(false);
-        bouton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        // Redimensionne l’image selon la taille du bouton
-        Runnable miseAJourIcone = () -> {
-            int largeur = bouton.getWidth();
-            int hauteur = bouton.getHeight();
-            if (largeur > 0 && hauteur > 0) {
-                Image imageRedimensionnee = iconeOriginale.getImage().getScaledInstance(
-                        largeur, hauteur, Image.SCALE_SMOOTH
-                );
-                bouton.setIcon(new ImageIcon(imageRedimensionnee));
-            }
-        };
-
-        // Met à jour l’icône au premier affichage
-        bouton.addHierarchyListener(e -> {
-            if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && bouton.isShowing()) {
-                SwingUtilities.invokeLater(miseAJourIcone);
-            }
-        });
-
-        // Met à jour l’icône lors du redimensionnement
-        bouton.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                miseAJourIcone.run();
-            }
-        });
-
-        // Comportement naturel de survol et clic (bordure/fond visibles temporairement)
-        bouton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                bouton.setContentAreaFilled(true);
-                bouton.setBorderPainted(true);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                bouton.setContentAreaFilled(false);
-                bouton.setBorderPainted(false);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                bouton.setContentAreaFilled(true);
-                bouton.setBorderPainted(true);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (bouton.contains(e.getPoint())) {
-                    bouton.setContentAreaFilled(true);  // Si la souris est toujours dessus
-                    bouton.setBorderPainted(true);
-                } else {
-                    bouton.setContentAreaFilled(false);
-                    bouton.setBorderPainted(false);
-                }
-            }
-        });
-
-        return bouton;
-    }
-
-
-    public static JButton creerBoutonAvecImage(
-            String cheminImage,
-            float epaisseurBordure,
-            float arrondiBordure,
-            Color couleurBordure
-    ) {
-        ImageIcon iconeOriginale = new ImageIcon(cheminImage);
-
-        JButton bouton = new JButton() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                int arc = (int) arrondiBordure;
-                int width = getWidth();
-                int height = getHeight();
-
-                // Fond sur survol ou focus clavier
-                if (getModel().isRollover() || isFocusOwner()) {
-                    g2.setColor(new Color(200, 200, 200, 80)); // survol ou focus
-                    g2.fillRoundRect(0, 0, width, height, arc, arc);
-                }
-
-                // Effet visuel du clic (ombrage plus fort)
-                if (getModel().isPressed()) {
-                    g2.setColor(new Color(150, 150, 150, 120));
-                    g2.fillRoundRect(0, 0, width, height, arc, arc);
-                }
-
-                // Appelle le dessin standard (pour afficher l’icône)
-                super.paintComponent(g2);
-
-                // Bordure personnalisée
-                g2.setColor(couleurBordure);
-                g2.setStroke(new BasicStroke(epaisseurBordure));
-                g2.drawRoundRect(
-                        (int) (epaisseurBordure / 2),
-                        (int) (epaisseurBordure / 2),
-                        width - (int) epaisseurBordure,
-                        height - (int) epaisseurBordure,
-                        arc, arc
-                );
-
-                g2.dispose();
-            }
-
-            @Override
-            public boolean isContentAreaFilled() {
-                return false;
-            }
-        };
-
-        bouton.setFocusPainted(true);
-        bouton.setBorderPainted(false);
-        bouton.setOpaque(false);
-        bouton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        bouton.setFocusable(true); // pour activer le focus clavier
-
-        // Redimensionner l’icône automatiquement
-        Runnable miseAJourIcone = () -> {
-            int largeur = bouton.getWidth();
-            int hauteur = bouton.getHeight();
-            if (largeur > 0 && hauteur > 0) {
-                Image imageRedim = iconeOriginale.getImage().getScaledInstance(
-                        largeur, hauteur, Image.SCALE_SMOOTH
-                );
-                bouton.setIcon(new ImageIcon(imageRedim));
-            }
-        };
-
-        bouton.addHierarchyListener(e -> {
-            if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && bouton.isShowing()) {
-                SwingUtilities.invokeLater(miseAJourIcone);
-            }
-        });
-
-        bouton.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                miseAJourIcone.run();
-            }
-        });
-
-        return bouton;
-    }
-
-
-
+    /**
+     * Retourne le chemin du fichier image correspondant au pion donné, en fonction de son type (étudiant ou maître)
+     * et du joueur auquel il appartient, selon les couleurs configurées dans l'interface utilisateur.
+     *
+     * @param infosDeConfigUI  Objet contenant les informations de configuration de l’interface utilisateur,
+     *                         notamment les couleurs des pions des joueurs.
+     * @param type             Type de l'élément présent sur le terrain (étudiant/maître, joueur 1/2, etc.).
+     * @return Le chemin relatif vers l'image correspondant au pion, ou {@code null} si le type est VIDE.
+     * @throws IllegalArgumentException si le type de pion n'est pas reconnu.
+     *
+     * Nom de fichier généré : "pion_[role]_[couleur].png"
+     * Exemple : "pion_etudiant_bleu.png" ou "pion_maitre_rouge.png"
+     *
+     * Remarques :
+     * - Le chemin est construit en résolvant le nom du fichier par rapport à PATH_DEBUT_PION.
+     * - Le rôle peut être "etudiant" ou "maitre", et la couleur est récupérée dynamiquement selon le joueur.
+     */
     public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, TYPE_ELEMENT_SUR_TERRAIN type) {
         if (type == TYPE_ELEMENT_SUR_TERRAIN.VIDE) {
             return null; // ou retourne un chemin vers une image "vide" si besoin
@@ -255,19 +93,41 @@ public class MethodsStaticsUtils {
 
 
 
-    public static Path getCheminImagePionClique(Path cheminImageActuelle){
-        return Path.of(cheminImageActuelle.toString().split(".png")[0] + "_clique.png");
-    }
 
+    /**
+     * Retourne le chemin du fichier image correspondant à la carte donnée.
+     *
+     * @param carte La carte dont on souhaite obtenir l'image.
+     * @return Le chemin relatif vers l'image de la carte (format PNG), construit à partir du nom de la carte.
+     *
+     * Exemple : pour une carte nommée "tigre", le chemin retourné sera "PATH_CARTE/tigre.png".
+     */
 
     public static Path getCheminImageCarte(Carte carte){
         Path path = PATH_CARTE.resolve(carte.getNom() +".png");
-//        System.err.println(path);
         return path;
     }
 
 
 
+    /**
+     * Crée un JPanel personnalisé avec des coins arrondis, une bordure facultative, et un comportement interactif
+     * qui change la couleur de fond lors du survol, du clic ou du relâchement de la souris.
+     *
+     * @param fondNormal        Couleur de fond par défaut du panneau.
+     * @param fondHover         Couleur de fond lors du survol de la souris.
+     * @param fondClic          Couleur de fond lors du clic de la souris.
+     * @param arondi            Rayon des coins arrondis.
+     * @param couleurBordure    Couleur de la bordure (null pour aucune bordure).
+     * @param epaisseurBordure  Épaisseur de la bordure en pixels (0 pour aucune bordure).
+     * @return Un JPanel interactif avec un rendu arrondi et personnalisable.
+     *
+     * Remarques :
+     * - Le panneau n'est pas opaque afin de permettre la transparence.
+     * - Les changements de couleur ne prennent effet que si on utilise correctement la méthode setFondActuel().
+     * - Pour un comportement interactif fonctionnel, il est conseillé de remplacer les appels à putClientProperty(...)
+     *   par des appels à la méthode setFondActuel(Color).
+     */
     public static JPanel creerPanelArrondiInteractif(Color fondNormal, Color fondHover, Color fondClic,
                                                      int arondi, Color couleurBordure, int epaisseurBordure) {
         JPanel panel = new JPanel() {
@@ -343,44 +203,6 @@ public class MethodsStaticsUtils {
     }
 
 
-    public static JPanel creerPanelArrondiDegrade(Color couleurHaut, Color couleurBas,
-                                                  int rayon, Color couleurBordure, int epaisseurBordure) {
-        return new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                int w = getWidth();
-                int h = getHeight();
-
-                GradientPaint gp = new GradientPaint(0, 0, couleurHaut, 0, h, couleurBas);
-                g2.setPaint(gp);
-                g2.fillRoundRect(0, 0, w, h, rayon, rayon);
-
-                if (couleurBordure != null && epaisseurBordure > 0) {
-                    g2.setColor(couleurBordure);
-                    g2.setStroke(new BasicStroke(epaisseurBordure));
-                    g2.drawRoundRect(epaisseurBordure / 2, epaisseurBordure / 2,
-                            w - epaisseurBordure, h - epaisseurBordure,
-                            rayon, rayon);
-                }
-
-                g2.dispose();
-            }
-
-            @Override
-            public boolean isOpaque() {
-                return false;
-            }
-        };
-    }
-
-
-
-
 
 
     /**
@@ -404,6 +226,7 @@ public class MethodsStaticsUtils {
 
         return boutonAvecImage;
     }
+
 
 
 
@@ -445,7 +268,6 @@ public class MethodsStaticsUtils {
             this.pathBouton = pathBouton;
         }
     }
-
 
 
     /**

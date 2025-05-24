@@ -47,6 +47,24 @@ public class InterfaceTextuelle implements Observateur {
     }
 
 
+    // Constructor for testing purposes (avoids auto-starting lancerBoucleJeu)
+    public InterfaceTextuelle(Jeu jeu, CollecteurEvenements collecteurEv, boolean forTest) {
+        this.jeu = jeu;
+        this.collecteurEv = collecteurEv;
+        this.scanner = new Scanner(System.in); // Still need a scanner for potential later use
+        this.jeuTermine = jeu.estPartieFinie();
+        this.afficherToutesCartes = false;
+        this.carteSelectionnee = false;
+        this.rafraichirInterface = true;
+        jeu.ajouteObservateur(this);
+
+        // ONLY start the loop if NOT for test
+        if (!forTest) {
+            lancerBoucleJeu();
+        }
+    }
+
+
     @Override
     public void miseAJour(){
         rafraichirAffichage();

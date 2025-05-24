@@ -11,10 +11,6 @@ public class ConfigUI {
     public final static Color COULEUR_FOND_PION_DEPART_SELECTIONE = new Color(6, 157, 185, 72);
 
 
-    // --- POLICES
-    // Constantes pour les noms de polices utilisées.
-
-
 
     /******************************************
      * ECRAN DE DÉMARRAGE             *
@@ -22,11 +18,8 @@ public class ConfigUI {
 
     // Titres et textes de l'interface utilisateur pour l'écran de démarrage et la configuration.
     // NOTE : Pour une application multilingue, ces chaînes devraient être gérées via ResourceBundles.
-    public static final String TITRE_ONGLET_GENERAL     = "Général";
-    public static final String TITRE_ONGLET_IA          = "IA";
+    public static final String TITRE_ONGLET_GENERAL     = "General";
     public static final String TITRE_ONGLET_COULEUR     = "Couleur";
-    public static final String TITRE_ONGLET_ANIMATION   = "Animation";
-    public static final String TITRE_ONGLET_SON         = "Son";
 
     public static final String LBL_TITRE_CONFIG     = "configuration";
     public static final String LBL_MODE_AUTO        = "IA vs IA ";

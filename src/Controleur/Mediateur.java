@@ -6,6 +6,7 @@ import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
 import Vue.InfosDeConfigUI;
 import Vue.InterfaceUser;
+import Vue.Utils.AfficheReglesPDF;
 import Vue.Utils.Boutons.BoutonTerrain;
 
 import java.awt.*;
@@ -53,10 +54,15 @@ public class Mediateur implements CollecteurEvenements {
                 case "sauvegarder":
                     jeu.sauvegarderJeu();
                     break;
+                case "regles":
+                    // Recherche de la fenêtre ayant le focus
+                    Window fenetreActive = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+                    AfficheReglesPDF.ouvrirReglesPDFExterne(fenetreActive);
+                    break;
                 case "charger":
                     jeu.chargerJeu();
                     break;
-                case "Pause":
+                case "pause":
                     jeu.setPause();
                     break;
                 case "IA":

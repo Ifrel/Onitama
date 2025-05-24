@@ -22,6 +22,8 @@ public class AfficheReglesPDF {
         // Non destinée à être instanciée.
     }
 
+
+
     /**
      * Ouvre le fichier PDF des règles du jeu en utilisant le lecteur PDF par défaut du système d'exploitation.
      * En cas d'échec de l'ouverture, un ensemble de règles de base d'Onitama est affiché dans une boîte de dialogue.
@@ -66,6 +68,8 @@ public class AfficheReglesPDF {
             ex.printStackTrace(); // Enregistrer l'exception pour le débogage.
         }
     }
+
+
 
     /**
      * Affiche un ensemble de règles de base d'Onitama dans une boîte de dialogue défilante.
@@ -143,23 +147,5 @@ public class AfficheReglesPDF {
         dialog.setLocationRelativeTo(composantParent);
         dialog.setResizable(true);
         dialog.setVisible(true);
-    }
-
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame cadreTest = new JFrame("Test AfficheReglesPDF");
-            cadreTest.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            cadreTest.setSize(300, 150);
-            cadreTest.setLocationRelativeTo(null);
-
-            JButton boutonOuvrirPdf = new JButton("Ouvrir les Règles (Externe)");
-            boutonOuvrirPdf.addActionListener(e -> AfficheReglesPDF.ouvrirReglesPDFExterne(cadreTest));
-
-            JPanel panneau = new JPanel();
-            panneau.add(boutonOuvrirPdf);
-            cadreTest.add(panneau);
-            cadreTest.setVisible(true);
-        });
     }
 }

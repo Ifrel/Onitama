@@ -141,19 +141,4 @@ public class PngText {
         return label;
     }
 
-    /**
-     * Exemple d’utilisation autonome.
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Texte PNG + Fallback");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 250);
-
-            JPanel content = createPngPanel("sauvegarder", 100);
-            frame.getContentPane().add(content);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
 }

@@ -43,7 +43,7 @@
 //import static Vue.Utils.MethodsStaticsUtils.*;
 //
 //
-///**
+/// **
 // * Classe représentant l'interface graphique principale du plateau de jeu.
 // * Elle observe le modèle (Jeu) et met à jour l'affichage en fonction des événements.
 // */
@@ -786,7 +786,6 @@ import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
 import Vue.Utils.Boutons.BoutonCarte;
 import Vue.Utils.Boutons.BoutonTerrain;
 import Vue.Utils.PanelAvecImage;
-import Vue.Utils.PanelBruitGris;
 import Vue.Utils.PanelRatioFixe;
 
 import javax.imageio.ImageIO;
@@ -820,59 +819,39 @@ import static Vue.Utils.MethodsStaticsUtils.*;
  */
 public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private static final Logger logger = Logger.getLogger(EcranPlateauDeJeu.class.getName());
+    // Constantes
+    private static final int ESPACE = 20;
     private final InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
-
     private final Jeu jeu;
     private final InterfaceGraphique interfaceGraphique;
     private final CollecteurEvenements collecteurEv;
-
+    private final HashMap<TYPE_ELEMENT_SUR_TERRAIN, BufferedImage> imagesCaseTerrain = new HashMap<>();
+    // Pour la Gestion des Animations : Renversement des cartes
+    private final ArrayList<CardFlipAnimator> listeDescardFlipAnimators = new ArrayList<>();
+    // Chargement des images dans une liste
+    HashMap<TYPECARTE, BufferedImage> imagesCartes = new HashMap<>();
     // Gestion de panels
     private JPanel cartesNord;
     private JPanel cartesEst;
     private JPanel cartesSud;
-
     private BoutonTerrain[][] buttonsTerrain;
     private BoutonCarte[] buttonsCartesJoueur1;
     private BoutonCarte[] buttonsCartesJoueur2;
     private BoutonCarte carteDeRotation;
     private BoutonTerrain annuler, refaire;
     private JButton boutonSon;
-
     private JLabel nomJoueurCourantLabel;
     private JLabel tempsLabel;
     private JLabel roundLabel;
     private int numRound;
-
     // Gestion du son
     private Clip clip;
     private boolean musiqueActive = false;
-
     // Gestion du temps
     private Instant debutTempsPartie;
     private Timer timerPartie;
-
-    // Constantes
-    private static final int ESPACE = 20;
-
     private JPanel terrain;
-
-    // Chargement des images dans une liste
-    HashMap<TYPECARTE, BufferedImage> imagesCartes = new HashMap<>();
-
-    // Contient les images liées à chaque type d'élément affichable sur le terrain.
-    public static enum TYPE_ELEMENT_SUR_TERRAIN {
-        VIDE,
-        PION_ETUDIANT_J1,
-        PION_ETUDIANT_J2,
-        PION_MAITRE_J1,
-        PION_MAITRE_J2
-    }
-    private final HashMap<TYPE_ELEMENT_SUR_TERRAIN, BufferedImage> imagesCaseTerrain = new HashMap<>();
-
-    // Pour la Gestion des Animations : Renversement des cartes
-    private final ArrayList<CardFlipAnimator>  listeDescardFlipAnimators = new ArrayList<>();
     private int ID_JOUEUR_PRECEDANT = ID_JOUEUR_2;
-
     /**
      * Constructeur principal du EcranPlateauDeJeu
      * @param jeu modèle de données observé
@@ -968,7 +947,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.insets = new Insets(0, 0, ESPACE*3, 0);
+        gbc.insets = new Insets(0, 0, ESPACE * 3, 0);
 
         JPanel panelCentreEmpile = new JPanel(new GridBagLayout());
         panelCentreEmpile.setOpaque(false);
@@ -1024,10 +1003,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         timerPartie.start();
     }
 
-    // =========================================
-    // ============ Création UI ================
-    // =========================================
-
     private void creerTerrain() {
         terrain = creerPanelArrondiInteractif(
                 Color.WHITE, new Color(230, 230, 250), new Color(200, 200, 255),
@@ -1039,6 +1014,10 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         chargerImagesTerrain();
         initBoutonsTerrain();
     }
+
+    // =========================================
+    // ============ Création UI ================
+    // =========================================
 
     /**
      * Initialise les boutons représentant les cartes en main des deux joueurs
@@ -1058,7 +1037,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             imagesCartes.put(carteSupplementaire.getType(), imageSupplementaire);
 
             // Association d’un écouteur pour la carte de rotation
-            carteDeRotation.addActionListener(new AdaptateurCarte(0, 0, carteDeRotation,this, collecteurEv ));
+            carteDeRotation.addActionListener(new AdaptateurCarte(0, 0, carteDeRotation, this, collecteurEv));
 
             // --- Cartes des joueurs ---
             List<Carte> cartesJoueur1 = jeu.getCartesJoueur1();
@@ -1102,8 +1081,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         annuler = new BoutonTerrain(PATH_BTN_ANNULER);
         refaire = new BoutonTerrain(PATH_BTN_REFAIRE);
 
-        annuler.setPreferredSize(new Dimension(135,60));
-        refaire.setPreferredSize(new Dimension(135,60));
+        annuler.setPreferredSize(new Dimension(135, 60));
+        refaire.setPreferredSize(new Dimension(135, 60));
 
         annuler.setBackground(new Color(207, 207, 207, 44));
         refaire.setBackground(new Color(207, 207, 207, 44));
@@ -1121,7 +1100,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         boutonsAnnuleRefaire.add(Box.createGlue());
         boutonsAnnuleRefaire.add(Box.createGlue());
 
-        return  boutonsAnnuleRefaire;
+        return boutonsAnnuleRefaire;
     }
 
     private void creerCartesNord() {
@@ -1170,14 +1149,14 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private JButton creerBoutonSon() {
         boutonSon = Bouton.creerBouton(PATH_BTN_MUET.toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
-        boutonSon.setPreferredSize(new Dimension(50,50));
+        boutonSon.setPreferredSize(new Dimension(50, 50));
         boutonSon.setText(musiqueActive ? "on" : "off");
         boutonSon.addActionListener(e -> toggleMusique(boutonSon));
 
         return boutonSon;
     }
 
-    private JPanel creerPanelNomJoueurCourant()  {
+    private JPanel creerPanelNomJoueurCourant() {
         JPanel textNomPanel = new JPanel();
         textNomPanel.setLayout(new BoxLayout(textNomPanel, BoxLayout.Y_AXIS));
         textNomPanel.setOpaque(false);
@@ -1207,7 +1186,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         panel.setOpaque(false);
 
         numRound = jeu.getNumeroRound();
-        roundLabel = new JLabel("Round: "+numRound);
+        roundLabel = new JLabel("Round: " + numRound);
         roundLabel.setFont(new Font("Arial", Font.PLAIN, 25));
         roundLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 50));
 
@@ -1223,7 +1202,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private JButton creerBoutonMenu() {
         BoutonAvecImage menu = Bouton.creerBouton(PATH_BTN_MENU.toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
-        menu.setPreferredSize(new Dimension(50,50));
+        menu.setPreferredSize(new Dimension(50, 50));
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
 
         return menu;
@@ -1235,7 +1214,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         for (int i = 1; i <= 4; i++) {
             BoutonAvecImage bouton = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Carre_transparent);
-            bouton.setPreferredSize(new Dimension(50,50));
+            bouton.setPreferredSize(new Dimension(50, 50));
             int index = i;
             bouton.addActionListener(e -> {
                 System.out.println("Bouton " + index + " cliqué !");
@@ -1258,20 +1237,16 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         return layer;
     }
 
-    private void tournerLesCartesDuJoueur(){
+    private void tournerLesCartesDuJoueur() {
         if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
-                jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT ) {
+                jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT) {
 
-            for (CardFlipAnimator animator: listeDescardFlipAnimators) {
+            for (CardFlipAnimator animator : listeDescardFlipAnimators) {
                 animator.startAnimation();
             }
             ID_JOUEUR_PRECEDANT = jeu.getIdJoueurCourant();
         }
     }
-
-    // =========================================
-    // ========= Gestion Son & Musique =========
-    // =========================================
 
     private void toggleMusique(JButton bouton) {
         if (musiqueActive) {
@@ -1287,6 +1262,10 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         }
         musiqueActive = !musiqueActive;
     }
+
+    // =========================================
+    // ========= Gestion Son & Musique =========
+    // =========================================
 
     private void jouerMusique(String chemin) {
         try {
@@ -1310,10 +1289,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         }
     }
 
-    // =========================================
-    // ============== Mise à jour ==============
-    // =========================================
-
     private void miseAjourTemps() {
         if (debutTempsPartie != null && tempsLabel != null) {
             Duration duration = Duration.between(debutTempsPartie, Instant.now());
@@ -1322,6 +1297,10 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             tempsLabel.setText(String.format("%02d:%02d", minutes, secondes));
         }
     }
+
+    // =========================================
+    // ============== Mise à jour ==============
+    // =========================================
 
     /**
      * Met à jour les images des boutons de cartes en utilisant les images
@@ -1454,10 +1433,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         terrain.setBorder(BorderFactory.createCompoundBorder(bordureArrondie, margeInterne));
     }
 
-    // =========================================
-    // ============== Méthodes Utiles ==========
-    // =========================================
-
     // Méthode pour arrêter le timer et le son (à appeler lors de la fermeture de la fenêtre)
     public void cleanup() {
         if (timerPartie != null && timerPartie.isRunning()) {
@@ -1469,11 +1444,24 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         logger.info("Nettoyage de EcranPlateauDeJeu effectué.");
     }
 
+    // =========================================
+    // ============== Méthodes Utiles ==========
+    // =========================================
+
     public Jeu getJeu() {
         return jeu;
     }
 
-    public BoutonTerrain getBoutonterrainAt(Point bouton){
+    public BoutonTerrain getBoutonterrainAt(Point bouton) {
         return buttonsTerrain[bouton.x][bouton.y];
+    }
+
+    // Contient les images liées à chaque type d'élément affichable sur le terrain.
+    public enum TYPE_ELEMENT_SUR_TERRAIN {
+        VIDE,
+        PION_ETUDIANT_J1,
+        PION_ETUDIANT_J2,
+        PION_MAITRE_J1,
+        PION_MAITRE_J2
     }
 }

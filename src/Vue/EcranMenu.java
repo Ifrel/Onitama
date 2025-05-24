@@ -35,8 +35,8 @@ import static Global.Paths.PATH_BOUTON;
 public class EcranMenu extends PanelAvecImage implements Observateur {
 
     private static final Logger LOGGER = Logger.getLogger(EcranMenu.class.getName());
-
     private final Jeu jeu;
+
     // Constantes pour les dimensions et espacements
     private static final Dimension DIM_BOUTON_ACTION = new Dimension(250, 65);
     private final InterfaceGraphique interfaceGraphique;
@@ -78,6 +78,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         initialiserLayout();
         miseAJour();
     }
+
 
 
     /**
@@ -336,6 +337,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     }
 
 
+
     /**
      * Crée le panneau contenant le bouton "Exit".
      *
@@ -350,6 +352,8 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
                 MARGE_PANEL_EXIT
         );
     }
+
+
 
     /**
      * Crée le panneau central contenant les boutons d'action principaux (Nouvelle partie, Règles, etc.).
@@ -392,6 +396,8 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         return panelActions;
     }
 
+
+
     /**
      * Crée le panneau du bas de page, contenant le bouton de sauvegarde à gauche
      * et le bouton de sortie à droite.
@@ -408,6 +414,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         return bottomPanel;
     }
 
+
     /**
      * Structure pour définir la configuration d'un bouton d'action.
      */
@@ -419,5 +426,10 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
             this.nomImage = nomImage;
             this.adaptateurBuilder = adaptateurBuilder;
         }
+    }
+
+
+    public String getImagePath() {
+        return PATH_ARRIERE_PLAN_4.toString();
     }
 }
