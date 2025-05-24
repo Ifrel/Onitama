@@ -1,11 +1,13 @@
 package Vue;
 
 import Vue.Utils.PanelRatioFixe;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 import java.awt.*;
 
+@DisplayName("TestPanelRatioFixe Tests")
 public class TestPanelRatioFixe {
 
     @Test

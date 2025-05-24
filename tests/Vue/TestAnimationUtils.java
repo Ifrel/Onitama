@@ -1,6 +1,7 @@
 package Vue;
 
 import Vue.Animations.AnimationUtils.AnimationUtils;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -17,6 +18,8 @@ import java.net.URL;
  * AnimationUtils.applyCardFlipAnimation sur différents JButtons existants.
  * Exécutez la méthode main de cette classe pour voir les exemples en action.
  */
+
+@DisplayName("TestAnimationUtils Tests")
 class TestAnimationUtils {
 
     @Test

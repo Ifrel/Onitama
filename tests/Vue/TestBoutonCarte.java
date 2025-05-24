@@ -1,6 +1,7 @@
 package Vue;
 
 import Vue.Utils.Boutons.BoutonCarte;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 
 import static Global.Paths.PATH_CARTE;
 
+
+@DisplayName("TestBoutonCarte Tests")
 public class TestBoutonCarte {
         @Test
         public void test1() {

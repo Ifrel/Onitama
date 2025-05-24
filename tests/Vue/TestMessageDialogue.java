@@ -1,11 +1,13 @@
 package Vue;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 
 import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
 
+@DisplayName("TestMessageDialogue Tests")
 public class TestMessageDialogue {
     @Test
     public void principal() {

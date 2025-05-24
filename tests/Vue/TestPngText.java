@@ -1,9 +1,11 @@
 package Vue;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import javax.swing.*;
 import static Vue.Utils.PngText.createPngPanel;
 
+@DisplayName(" PngText Tests")
 public class TestPngText {
 
     @Test

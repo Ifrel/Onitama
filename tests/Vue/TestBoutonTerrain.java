@@ -1,6 +1,7 @@
 package Vue;
 
 import Vue.Utils.Boutons.BoutonTerrain;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -10,6 +11,8 @@ import static Global.Paths.*;
 import static Global.Paths.PATH_PION_BLEU_ETUDIANT;
 import static Global.Paths.PATH_PION_NOIR_MAITRE;
 
+
+@DisplayName("TestBoutonTerrain Tests")
 class TestBoutonTerrain {
     @Test
     public void Test1() {
