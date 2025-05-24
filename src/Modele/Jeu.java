@@ -616,15 +616,12 @@ public class Jeu extends Observable implements Runnable {
                 joueur1 = JOUEUR_1;
                 joueur2 = IA_1;
             }
-            joueurCourant = IA_1;
-            // idJoueurCourant = ID_IA_1;
-            idJoueurCourant = ID_JOUEUR_1;
         } else {
             joueur1 = JOUEUR_1;
             joueur2 = JOUEUR_2;
-            joueurCourant = joueur1;
-            idJoueurCourant = ID_JOUEUR_1;
         }
+        joueurCourant = joueur1;
+        idJoueurCourant = ID_JOUEUR_1;
         initJoueursCartes();
     }
 
@@ -647,22 +644,17 @@ public class Jeu extends Observable implements Runnable {
         if (estActiveIA2()) {
             joueur1 = IA_1;
             joueur2 = IA_2;
-            joueurCourant = IA_1;
-            // idJoueurCourant = ID_IA_1;
-            idJoueurCourant = ID_JOUEUR_1;
         } else {
             if (estActiveIA1()) {
                 joueur1 = JOUEUR_1;
                 joueur2 = IA_1;
-                joueurCourant = joueur1;
-                idJoueurCourant = ID_JOUEUR_1;
             } else {
                 joueur1 = JOUEUR_1;
                 joueur2 = JOUEUR_2;
-                joueurCourant = joueur1;
-                idJoueurCourant = ID_JOUEUR_1;
             }
         }
+        joueurCourant = joueur1;
+        idJoueurCourant = ID_JOUEUR_1;
         initJoueursCartes();
     }
 
