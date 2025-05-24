@@ -33,15 +33,6 @@ class JeuTest {
     }
 
     @Test
-    void dimensions() {
-        Jeu jeu;
-        jeu = new Jeu();
-
-        assertEquals(5, jeu.lignes());
-        assertEquals(5, jeu.colonnes());
-    }
-
-    @Test
     void cartesJoueur1Debut() {
         Jeu jeu;
         jeu = new Jeu();
@@ -116,8 +107,8 @@ class JeuTest {
              * | E2 | E2 | M2 | E2 | E2 |
              */
 
-            for (int i = 0; i < jeu.lignes(); i += 4) {
-                for (int j = 0; j < jeu.colonnes(); j++) {
+            for (int i = 0; i < LIGNES; i += 4) {
+                for (int j = 0; j < COLONNES; j++) {
                     assertFalse(jeu.estCaseVide(i, j));
                     if (j == 2) {
                         assertEquals(PION_MAITRE, jeu.getRolePionAt(i, j));

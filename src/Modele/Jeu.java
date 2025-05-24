@@ -36,7 +36,6 @@ public class Jeu extends Observable implements Runnable {
     private Joueur joueur1, joueur2;
     private Joueur JOUEUR_1, JOUEUR_2; // probablement pas incroyable, mais on garde une référence des deux joueurs au cas où, comme pour les IA
     private Joueur joueurCourant;
-    private int lignes, colonnes;
     private int idJoueurCourant; // identifiant du joueur courant
     private int numCarteSelectionee;
     private long tempsJeu; // temps écoulé depuis le début de la partie
@@ -62,9 +61,6 @@ public class Jeu extends Observable implements Runnable {
     // -- GRILLE -- //
     private final List<Pion> pionsJoueur1 = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
     private final List<Pion> pionsJoueur2 = new ArrayList<>(); //idem pour le deuxième joueur
-
-    CasePlateau casePlateau ;
-
 
     private static final Logger logger = Logger.getLogger(Jeu.class.getName());
 
@@ -164,7 +160,6 @@ public class Jeu extends Observable implements Runnable {
      */
     private void _Jeu() {
         try {
-            lignes = colonnes = 5;
             grille = new Pion[LIGNES][COLONNES];
             historique = new Historique<>();
             idJoueurCourant = ID_JOUEUR_1;
@@ -293,14 +288,14 @@ public class Jeu extends Observable implements Runnable {
 
         // Ajouter pion étudiant
         // Pour le joueur 1 et 2, on ajoute les positions initiales des pions étudiants et maitres, selon le joueur bien sur
-        ajouterPion(new ArrayList<Point>()
+        ajouterPion(new ArrayList<>()
         {{
             add(new Point(0,0));
             add(new Point(0,1));
             add(new Point(0,3));
             add(new Point(0,4));
         }}, ID_JOUEUR_1, PION_ETUDIANT);
-        ajouterPion(new ArrayList<Point>()
+        ajouterPion(new ArrayList<>()
         {{
             add(new Point(4,0));
             add(new Point(4,1));
@@ -309,8 +304,8 @@ public class Jeu extends Observable implements Runnable {
         }}, ID_JOUEUR_2, PION_ETUDIANT);
 
         // Ajouter pion maitre
-        ajouterPion(new ArrayList<Point>(){{add(new Point(0, 2));}}, ID_JOUEUR_1, PION_MAITRE);
-        ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, ID_JOUEUR_2, PION_MAITRE);
+        ajouterPion(new ArrayList<>(){{add(new Point(0, 2));}}, ID_JOUEUR_1, PION_MAITRE);
+        ajouterPion(new ArrayList<>(){{add(new Point(4, 2));}}, ID_JOUEUR_2, PION_MAITRE);
     }
 
     private void initJoueursCartes() {
@@ -473,17 +468,9 @@ public class Jeu extends Observable implements Runnable {
 
     // ######## STATUT / DONNEES ########
 
-    public int lignes() {
-        return lignes;
-    }
-
-    public int colonnes() {
-        return colonnes;
-    }
-
     public void verifieSiDansGrille(int i, int j) {
-        if (i < 0 || i >= lignes() || j < 0 || j >= colonnes()) {
-            throw new IndexOutOfBoundsException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + lignes() + "x" + colonnes());
+        if (i < 0 || i >= LIGNES || j < 0 || j >= COLONNES) {
+            throw new IndexOutOfBoundsException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + LIGNES + "x" + COLONNES);
         }
     }
 
@@ -522,11 +509,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public List<Pion> getPionsJoueurCourant() {
-        if (getIdJoueurCourant() == ID_JOUEUR_1) {
-            return new ArrayList<>(pionsJoueur1);
-        } else {
-            return new ArrayList<>(pionsJoueur2);
-        }
+        return joueurCourant.getPions();
     }
 
     public List<Carte> getCartesJoueur1() {
@@ -538,11 +521,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public List<Carte> getCartesJoueurCourant() {
-        if (getIdJoueurCourant() == ID_JOUEUR_1) {
-            return joueur1.getCartesEnMain();
-        } else {
-            return joueur2.getCartesEnMain();
-        }
+        return joueurCourant.getCartesEnMain();
     }
 
     public Carte getCarteSupplementaire() {
@@ -767,7 +746,6 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public void nouvellePartie() {
-        return;
     }
 
     public long getTempsDeJeu() {
@@ -836,6 +814,11 @@ public class Jeu extends Observable implements Runnable {
 
     private int changerJoueur() {
         int previous = idJoueurCourant;
+        if (previous == ID_JOUEUR_1) {
+            joueurCourant = joueur2;
+        } else {
+            joueurCourant = joueur1;
+        }
         idJoueurCourant = (idJoueurCourant % 2) + 1;
         return previous;
     }
@@ -872,8 +855,8 @@ public class Jeu extends Observable implements Runnable {
 
     private void majPionsJoueur1() {
         pionsJoueur1.clear();
-        for (int i = 0; i < lignes; i++) {
-            for (int j = 0; j < colonnes; j++) {
+        for (int i = 0; i < LIGNES; i++) {
+            for (int j = 0; j < COLONNES; j++) {
                 Pion p = grille[i][j];
                 if (! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_1) {
                     pionsJoueur1.add(p);
@@ -884,8 +867,8 @@ public class Jeu extends Observable implements Runnable {
 
     private void majPionsJoueur2() {
         pionsJoueur2.clear();
-        for (int i = 0; i < lignes; i++) {
-            for (int j = 0; j < colonnes; j++) {
+        for (int i = 0; i < LIGNES; i++) {
+            for (int j = 0; j < COLONNES; j++) {
                 Pion p = grille[i][j];
                 if (! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_2) {
                     pionsJoueur2.add(p);
@@ -1251,8 +1234,8 @@ public class Jeu extends Observable implements Runnable {
     public String toString() {
         try {
             StringBuilder S = new StringBuilder();
-            for (int i = 0; i < lignes(); i++) {
-                for (int j = 0; j < colonnes(); j++) {
+            for (int i = 0; i < LIGNES; i++) {
+                for (int j = 0; j < COLONNES; j++) {
                     if (estCaseVide(i, j)) {
                         S.append(" ");
                         continue;
