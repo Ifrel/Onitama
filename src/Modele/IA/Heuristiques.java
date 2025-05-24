@@ -75,9 +75,9 @@ public class Heuristiques {
      */
     public static double heuristiqueAvancee(int idJoueur, EtatJeu etatJeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 100 * nbPions(etatJeu)
+        return 100_000 * nbPions(etatJeu)
                 + valeurCartes(etatJeu)
-                + 2.5 * successeursNombreCaptures(etatJeu)
+                + 2 * successeursNombreCaptures(etatJeu)
                 + -3 * distancePionsCourantMaitreAdverse(etatJeu)
                 + 5 * distancePionsAdverseMaitreCourant(etatJeu)
                 + -3 * distanceMaitreAdverseTemple(etatJeu)
@@ -190,22 +190,24 @@ public class Heuristiques {
         try {
             int res = 0;
             List<Carte> cartesJoueurCourant = etatJeu.getCartesJoueurCourant();
-            List<Pion> pionsJoueurCourant = etatJeu.getPionsJoueurCourant();
+            List<Pion> pionsJoueurCourant;
             List<Pion> pionsAdverse;
             if (etatJeu.getIdJoueurCourant() == ID_JOUEUR_1) {
-                pionsAdverse = etatJeu.getPionsJoueur1();
-            } else {
                 pionsAdverse = etatJeu.getPionsJoueur2();
+                pionsJoueurCourant = etatJeu.getPionsJoueur1();
+            } else {
+                pionsAdverse = etatJeu.getPionsJoueur1();
+                pionsJoueurCourant = etatJeu.getPionsJoueur2();
             }
             for (Carte c : cartesJoueurCourant) {
                 for (Pion p : pionsJoueurCourant) {
-                    List<Coup> coupsPossibles = Utils.getCoupsPossibles(etatJeu, etatJeu.getTypeCarteSupplementaire(), p.getPosition());
+                    List<Coup> coupsPossibles = Utils.getCoupsPossibles(etatJeu, c.getType(), p.getPosition());
                     for (Coup cp : coupsPossibles) {
                         res += 1;
                         Point arrivee = cp.getArrivee();
                         for (Pion pa : pionsAdverse) {
                             if (pa.getPosition().equals(arrivee)) {
-                                res += 1_000;
+                                res += 100_000;
                             }
                         }
                     }

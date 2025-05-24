@@ -10,7 +10,6 @@ import static Global.Config.NIVEAU_IA;
 import static Modele.IA.Heuristiques.heuristiqueAvancee;
 
 public class ArbreMinMax {
-    private int profondeur;
     private int carteChoisie;
     private Pion pionChoisi;
     private int nbFeuilles, nbEtats;
@@ -20,11 +19,9 @@ public class ArbreMinMax {
         this.nbFeuilles = this.nbEtats = 0;
     }
 
-
-    public Coup choisirCoup(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
+    public Coup choisirCoup(int idJoueur, Noeud n, int profondeur) {
         this.nbFeuilles = this.nbEtats = 0;
-        double val = joueur1(idJoueur, n, profondeur, niveau);
-        n.setValeur(val);
+        double val = n.setValeur(joueur1(idJoueur, n, profondeur, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
         logger.info("Nombre de noeuds total parcouru : " + nbEtats + ", dont feuilles : " + nbFeuilles);
         for (Noeud nSucc : n.getSuccesseurs()) {
             if (nSucc.getValeur() == val) {
@@ -37,7 +34,7 @@ public class ArbreMinMax {
         return null;
     }
 
-    private double joueur1(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
+    private double joueur1(int idJoueur, Noeud n, int profondeur, double alpha, double beta) {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
@@ -49,13 +46,18 @@ public class ArbreMinMax {
         for (EtatJeu ej : successeurs) {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
-            valeur = Math.max(valeur, joueur2((idJoueur % 2) + 1, newNoeud, profondeur - 1, niveau));
+            valeur = Math.max(valeur, joueur2((idJoueur % 2) + 1, newNoeud, profondeur - 1, alpha, beta));
+            if (valeur > beta) {
+                return n.setValeur(beta);
+            }
+            alpha = Math.max(alpha, valeur);
+            n.setValeur(valeur);
         }
 
         return n.setValeur(valeur);
     }
 
-    private double joueur2(int idJoueur, Noeud n, int profondeur, NIVEAU_IA niveau) {
+    private double joueur2(int idJoueur, Noeud n, int profondeur, double alpha, double beta) {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
@@ -67,18 +69,15 @@ public class ArbreMinMax {
         for (EtatJeu ej : successeurs) {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
-            valeur = Math.min(valeur, joueur1((idJoueur % 2) + 1, newNoeud, profondeur - 1, niveau));
+            valeur = Math.min(valeur, joueur1((idJoueur % 2) + 1, newNoeud, profondeur - 1, alpha, beta));
+            if (valeur < alpha) {
+                return n.setValeur(alpha);
+            }
+            beta = Math.min(beta, valeur);
+            n.setValeur(valeur);
         }
 
         return n.setValeur(valeur);
-    }
-
-    public int getProfondeur() {
-        return profondeur;
-    }
-
-    public void setProfondeur(int profondeur) {
-        this.profondeur = profondeur;
     }
 
     public int getCarteChoisie() {

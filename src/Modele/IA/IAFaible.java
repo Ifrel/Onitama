@@ -45,9 +45,10 @@ public class IAFaible extends IA {
                                 jeu.getPionsJoueur1(),
                                 jeu.getPionsJoueur2()
                         ),
-                        null),
-                2,
-                FAIBLE);
+                        null
+                ),
+                2
+        );
 
         pionChoisi = arbreMinMax.getPionChoisi();
         carteChoisie = arbreMinMax.getCarteChoisie();

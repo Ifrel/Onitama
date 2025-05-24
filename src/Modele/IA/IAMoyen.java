@@ -45,9 +45,10 @@ public class IAMoyen extends IA {
                                 jeu.getPionsJoueur1(),
                                 jeu.getPionsJoueur2()
                         ),
-                        null),
-                4,
-                MOYEN);
+                        null
+                ),
+                4
+        );
 
         pionChoisi = arbreMinMax.getPionChoisi();
         carteChoisie = arbreMinMax.getCarteChoisie();
