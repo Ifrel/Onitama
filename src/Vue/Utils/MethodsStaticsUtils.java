@@ -9,6 +9,7 @@ import Modele.Pion;
 import Vue.Animations.Animations;
 import Vue.EcranPlateauDeJeu.TYPE_ELEMENT_SUR_TERRAIN;
 import Vue.InfosDeConfigUI;
+import Vue.Utils.Boutons.Bouton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +18,7 @@ import java.nio.file.Path;
 
 import static Global.Config.ID_JOUEUR_1;
 import static Global.Config.ID_JOUEUR_2;
-import static Global.Paths.PATH_CARTE;
-import static Global.Paths.PATH_DEBUT_PION;
+import static Global.Paths.*;
 import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
 
 /**
@@ -444,5 +444,58 @@ public class MethodsStaticsUtils {
         public void setPathBouton(Path pathBouton){
             this.pathBouton = pathBouton;
         }
+    }
+
+
+
+    /**
+     * Affiche un dialogue modal centré sur la fenêtre actuellement active,
+     * sans avoir besoin de passer explicitement un parent.
+     */
+    public static void afficherFonctionEnCours() {
+        // Recherche de la fenêtre ayant le focus
+        Window fenetreActive = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Spinner d'attente
+        JProgressBar spinner = new JProgressBar();
+        spinner.setIndeterminate(true);
+        spinner.setBorderPainted(false);
+
+        // Message
+        JLabel message = new JLabel(
+                "<html><center>Cette fonctionnalité est en cours de développement.<br>Merci de votre patience !</center></html>",
+                SwingConstants.CENTER
+        );
+        message.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        panel.add(spinner, BorderLayout.NORTH);
+        panel.add(message, BorderLayout.CENTER);
+
+        // Bouton de fermeture
+        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(PATH_BOUTON.resolve("exit.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+        fermer.setPreferredSize(new Dimension(60,60));
+        fermer.addActionListener(e -> SwingUtilities.getWindowAncestor(panel).dispose());
+        JPanel panelBtn = new JPanel();
+        panelBtn.add(fermer);
+        panel.add(panelBtn, BorderLayout.SOUTH);
+
+        // Création du JDialog modal, parent = fenêtre active ou null
+        JDialog dialog = new JDialog(fenetreActive, "Fonctionnalité en cours", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setContentPane(panel);
+        dialog.setSize(400, 300);
+        dialog.setResizable(false);
+
+        // Centre sur la fenêtre active, ou au centre de l'écran si aucune fenêtre n'est active
+        if (fenetreActive != null) {
+            dialog.setLocationRelativeTo(fenetreActive);
+        } else {
+            dialog.setLocationRelativeTo(null);
+        }
+
+        dialog.setVisible(true);
     }
 }
