@@ -6,7 +6,6 @@ import Vue.CollecteurEvenements;
 import Vue.InfosDeConfigUI;
 
 import java.awt.*;
-import java.util.logging.Logger;
 
 import static Global.Config.NIVEAU_IA.*;
 
@@ -14,12 +13,10 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
     private final Jeu jeu;
 
     private final InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
-    private static final Logger logger = Logger.getLogger(ControleurEcranDeDemarrage.class.getName());
 
     public ControleurEcranDeDemarrage(Jeu jeu){
         this.jeu = jeu;
     }
-
 
     @Override
     public void clavier(String t) {
@@ -64,23 +61,7 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
         }
     }
 
-    @Override
-    public void setIAReflexion(int tempsMs) {
-        jeu.setIAReflexion(tempsMs);
-    }
-
-    @Override
-    public void setIAHeuristique(boolean active) {
-        jeu.setIAHeuristique(active);
-    }
-
-    @Override
-    public void setIAAlgorithme(String nomAlgorithme) {
-        jeu.setIAAlgorithme(nomAlgorithme);
-
-    }
-
-    @Override
+     @Override
     public void setCouleur(Config.CiblesDesCouleurs cible, Color couleur) {
         switch (cible){
             case CASE_TERRAIN:
@@ -102,40 +83,4 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
         }
 
     }
-
-    @Override
-    public void setAnimationVitesse(int vitesse) {
-        infosDeConfigUI.setVitesseAnimation(vitesse);
-    }
-
-    @Override
-    public void setAnimationPieces(boolean active) {
-        infosDeConfigUI.setAnimerDeplacementPiece(active);
-    }
-
-    @Override
-    public void setAnimationSurbrillance(boolean active) {
-        infosDeConfigUI.setAnimerSurbrillace(active);
-    }
-
-    @Override
-    public void setSonVolumeGeneral(int volume) {
-        infosDeConfigUI.setConfigSonVolumeGeneral(volume);
-    }
-
-    @Override
-    public void setSonVolumeEffets(int volume) {
-        infosDeConfigUI.setConfigSonVolumeEffets(volume);
-    }
-
-    @Override
-    public void setSonVolumeMusique(int volume) {
-        infosDeConfigUI.setConfigSonVolumeMusique(volume);
-    }
-
-    @Override
-    public void setSonMuet(boolean muet) {
-        infosDeConfigUI.setCouperToutSon(muet);
-    }
-
 }
