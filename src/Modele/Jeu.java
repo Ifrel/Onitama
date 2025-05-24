@@ -1,6 +1,7 @@
 package Modele;
 
 import Exceptions.CaseVideException;
+import Global.Config;
 import Modele.IA.IA;
 import Modele.IA.IAFaible;
 import Modele.IA.IAFort;
@@ -8,6 +9,7 @@ import Modele.IA.IAMoyen;
 import Patterns.Observable;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -426,11 +428,11 @@ public class Jeu extends Observable implements Runnable {
     public static final Path CHEMIN_SAUVEGARDE = Paths.get("res", "fichier_de_sauvegarde", "fich1.dat");
 
     public void sauvegarderJeu() throws IOException {
-        sauvegarderJeu(CHEMIN_SAUVEGARDE);
+        System.err.println("UTILISER LA METHODE sauvegarderJeu(String nomFichier)");
     }
-    public void sauvegarderJeu(Path fichier) throws IOException {
+    public void sauvegarderJeu(String fichier) throws IOException {
 
-        try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(fichier)))
+        try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(SAVE_DIR.resolve(fichier))))
         {
             out.writeObject(idJoueurCourant);
             out.writeObject(grille);
@@ -444,13 +446,13 @@ public class Jeu extends Observable implements Runnable {
 
 
     public void chargerJeu() throws IOException, ClassNotFoundException{
-        chargerJeu(CHEMIN_SAUVEGARDE);
+        System.err.println("UTILISER LA METHODE chargerJeu(String nomFichier)");
     }
 
 
     @SuppressWarnings("unchecked")
-    public void chargerJeu(Path fichier) throws IOException, ClassNotFoundException {
-        try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(fichier)))
+    public void chargerJeu(String fichier) throws IOException, ClassNotFoundException {
+        try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(SAVE_DIR.resolve(fichier))))
         {
             idJoueurCourant = (Integer) in.readObject();
             grille = (Pion[][]) in.readObject();
@@ -463,7 +465,20 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public List<String> listerSauvegardes() {
-        return null;
+        ArrayList<String> liste = new ArrayList<>();
+        File saveDir = new File(SAVE_DIR.toString());
+        if (! saveDir.exists()) {
+            return liste;
+        }
+        File[] files = saveDir.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                String name = file.getName();
+                liste.add(name);
+            }
+        }
+        return liste;
     }
 
     // ######## STATUT / DONNEES ########
@@ -1289,7 +1304,7 @@ public class Jeu extends Observable implements Runnable {
         try {
             int delai = 1500;
             boucle:
-            while (true) {
+            while (! estPartieFinie()) {
                 Coup c;
                 synchronized (this) {
                     switch (etatJeu) {
@@ -1324,7 +1339,6 @@ public class Jeu extends Observable implements Runnable {
                                 setPionSelectionne(IA_2.getPionChoisi().getPosition());
                                 jouerCoup(c);
                                 etatJeu = IA2_A_JOUE;
-                                return;
                             }
                             break;
                         case FIN:
