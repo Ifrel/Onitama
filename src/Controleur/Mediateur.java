@@ -12,6 +12,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
+
 public class Mediateur implements CollecteurEvenements {
     private final Jeu jeu;
     private InterfaceUser vue;
@@ -40,7 +42,12 @@ public class Mediateur implements CollecteurEvenements {
                 case "refaire":
                     jeu.refaireCoup();
                     break;
-                case "nouvellepartie":
+                case "reprendre":
+                case "didacticiel":
+                case "mesParties":
+                    afficherFonctionEnCours();
+                    break;
+                case "nouvellePartie":
                     jeu.nouvellePartie();
                     break;
                 case "sauvegarder":

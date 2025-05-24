@@ -43,8 +43,6 @@ public class ConfigUI {
     public static final String[] OPTIONS_IA = new String[]{OPTION_IA_NON, "Faible", "Moyen", "Fort"}; // <-- SUPPRIMER
 
 
-    // Définition des polices (Fonts) utilisées avec des tailles ajustées.
-
 
     // Définition des marges (Insets) pour l'espacement des composants.
     public static final Insets MARGES_DEFAUT = new Insets(5, 10, 5, 10); // Espacement par défaut (haut, gauche, bas, droite)
@@ -58,18 +56,6 @@ public class ConfigUI {
     // Dimension combinée pour les champs et listes déroulantes, basée sur les constantes précédentes.
     public static final Dimension DIMENSION_CHAMP_LISTE_DEROULANTE = new Dimension(LARGEUR_LISTE_DEROULANTE, HAUTEUR_LISTE_DEROULANTE);
 
-    // Constantes pour GridBagConstraints, indiquant les colonnes standard pour libellés et composants.
-
-
-
-    // --- Onglet IA ---
-    // Constantes spécifiques à l'onglet de configuration de l'IA.
-    public static final String LBL_TITRE_IA             = "Paramètres de l'IA";
-    public static final String LBL_TEMPS_REFLEXION      = "Temps de réflexion IA (ms)";
-    public static final String LBL_HEURISTIQUE_AVANCEE  = "Activer heuristique avancée";
-    public static final String LBL_ALGORITHME_IA        = "Algorithme IA";
-    public static final String[] OPTIONS_ALGORITHME_IA  = {"Minimax Simple", "Alpha-Beta", "Monte Carlo"}; // Exemple. À gérer dynamiquement ?
-
 
     // --- Onglet Couleur ---
     // Constantes spécifiques à l'onglet de personnalisation des couleurs.
@@ -80,26 +66,6 @@ public class ConfigUI {
     public static final String LBL_CASE_ELEVE_JOUEUR_1   = "Case Eleve Joueur 1";
     public static final String LBL_CASE_ELEVE_JOUEUR_2   = "Case Eleve Joueur 2";
 
-
-    public static final String BTN_CHOISIR_COULEUR      = "Choisir...";
     public static final Dimension DIM_PREVIEW_COULEUR   = new Dimension(30, 30);
-
-
-    // --- Onglet Animation ---
-    // Constantes spécifiques à l'onglet de configuration d'animation.
-    public static final String LBL_TITRE_ANIMATION          = "Paramètres d'Animation";
-    public static final String LBL_VITESSE_ANIMATION        = "Vitesse d'animation";
-    public static final String LBL_ANIMATION_PIECES         = "Animer le déplacement des pièces";
-    public static final String LBL_ANIMATION_SURBRILLANCE   = "Animer la surbrillance";
-
-
-    // --- Onglet Son ---
-    // Constantes spécifiques à l'onglet de configuration audio.
-    public static final String LBL_TITRE_SON        = "Paramètres Audio";
-    public static final String LBL_VOLUME_GENERAL   = "Volume Général";
-    public static final String LBL_VOLUME_EFFETS    = "Volume Effets Sonores";
-    public static final String LBL_VOLUME_MUSIQUE   = "Volume Musique";
-    public static final String LBL_SON_MUET         = "Muet (couper tout son)";
-
 
 }
