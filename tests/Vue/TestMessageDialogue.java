@@ -6,7 +6,7 @@ import javax.swing.*;
 
 import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
 
-public class testMessageDialogue {
+public class TestMessageDialogue {
     @Test
     public void principal() {
         SwingUtilities.invokeLater(() -> {
