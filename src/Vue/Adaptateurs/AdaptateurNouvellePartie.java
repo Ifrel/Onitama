@@ -16,6 +16,6 @@ public class AdaptateurNouvellePartie implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        collecteurEvent.clavier("newPartie");
+        collecteurEvent.clavier("nouvellePartie");
     }
 }

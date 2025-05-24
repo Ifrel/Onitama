@@ -33,7 +33,6 @@ import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 
 public class AdaptateurAnimations implements ActionListener {
-	private static final Logger logger = Logger.getLogger(AdaptateurAnimations.class.getName());
 	CollecteurEvenements control;
 
 	public AdaptateurAnimations(CollecteurEvenements c) {
@@ -42,7 +41,6 @@ public class AdaptateurAnimations implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		logger.info("Jeu en PAUSE");
 		control.clavier("pause");
 	}
 }

@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 
 public class AdaptateurMesParties implements ActionListener {
-    private static final Logger logger = Logger.getLogger(AdaptateurMesParties.class.getName());
     private final CollecteurEvenements collecteurEvenements;
 
     public AdaptateurMesParties(CollecteurEvenements collecteurEvenements) {
@@ -17,7 +16,6 @@ public class AdaptateurMesParties implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        logger.info("Bouton \"Mes Parties\" pressé");
         collecteurEvenements.clavier("mesParties");
     }
 }

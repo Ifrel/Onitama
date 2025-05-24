@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 public class AdaptateurExit implements ActionListener {
     private final CollecteurEvenements collecteurEvenements;
-    private static final Logger logger = Logger.getLogger(AdaptateurExit.class.getName());
 
     public AdaptateurExit(CollecteurEvenements collecteurEvenements){
         this.collecteurEvenements = collecteurEvenements;
@@ -17,7 +16,6 @@ public class AdaptateurExit implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        logger.info("Bouton \"Exit\" pressé");
         collecteurEvenements.clavier("exit");
     }
 }

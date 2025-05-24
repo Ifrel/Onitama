@@ -12,6 +12,7 @@ public class AdaptateurReprendre implements ActionListener {
     public AdaptateurReprendre(CollecteurEvenements collecteurEvent){
         this.collecteurEvent = collecteurEvent;
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         collecteurEvent.clavier("reprendre");

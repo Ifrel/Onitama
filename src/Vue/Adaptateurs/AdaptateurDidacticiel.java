@@ -6,9 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 
+import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
+
 public class AdaptateurDidacticiel implements ActionListener {
     private final CollecteurEvenements collecteurEvenements;
-    private static final Logger logger = Logger.getLogger(AdaptateurDidacticiel.class.getName());
 
     public AdaptateurDidacticiel(CollecteurEvenements collecteurEvenements){
         this.collecteurEvenements = collecteurEvenements;
@@ -17,7 +18,6 @@ public class AdaptateurDidacticiel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        logger.info("Bouton \"Didactitiel\" pressé");
-        collecteurEvenements.clavier("didactitiel");
+        collecteurEvenements.clavier("didacticiel");
     }
 }
