@@ -11,7 +11,8 @@ import static Global.Paths.PATH_PION_NOIR_ETUDIANT;
 
 class TestBouton {
 
-    public void main() {
+    @Test
+    public void principal() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Bouton avec Image Personnalisé Amélioré");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
