@@ -49,36 +49,28 @@ public class Paths {
     /********************************************
      *              IMAGES BOUTONS              *
      *******************************************/
-    public final static Path PATH_BOUTON_SAUVEGARDER     = Path.of("res/vue/images/buttons/button_sauvegarder.png");
-    public final static Path PATH_BOUTON_DECLINER        = Path.of("res/vue/images/buttons/button_decliner.png");
-    public final static Path PATH_BOUTON_ANNULER         = Path.of("res/vue/images/buttons/button_annuler.png");
     public final static Path PATH_BOUTON_ANNULER_ROUGE   = Path.of("res/vue/images/buttons/button_annuler_rouge.png");
-    public final static Path PATH_BOUTON_VALIDER         = Path.of("res/vue/images/buttons/button_valider.png");
-    public final static Path PATH_BOUTON_EXIT            = Path.of("res/vue/images/buttons/button_exit.png");
     public final static Path PATH_BOUTON            = Path.of("res", "vue", "images", "buttons");
-    public final static Path PATH_BOUTON_ON              = Path.of("res/vue/images/buttons/button_on.png");
-
 
 
     /********************************************
      *              MUSIQUES                      *
      *******************************************/
-    public static Path PATH_SON_1             = Path.of("/vue/musique/son_1.wav");
+    public final static Path PATH_SON_1             = Path.of("/vue/musique/son_1.wav");
 
 
     /********************************************
      *              DEBUT PATHS                      *
      *******************************************/
-    public static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions");
-
+    public final static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions");
 
 
     /********************************************
      *              INDICATEURS                *
      *******************************************/
-    public final static Path PATH_LBL_INDICATEURS              = Path.of("res","vue", "images", "indicateurs");
-
     public final static Path PATH_LBL_TXT              = Path.of("res","vue", "images", "font_zuma", "png");
+
+    public final static Path REGLES = Path.of("res", "vue", "regles");
 
 
 }
