@@ -30,16 +30,19 @@ import Vue.CollecteurEvenements;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Logger;
 
 public class AdaptateurAnimations implements ActionListener {
+	private static final Logger logger = Logger.getLogger(AdaptateurAnimations.class.getName());
 	CollecteurEvenements control;
 
-	AdaptateurAnimations(CollecteurEvenements c) {
+	public AdaptateurAnimations(CollecteurEvenements c) {
 		control = c;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		control.clavier("Pause");
+		logger.info("Jeu en PAUSE");
+		control.clavier("pause");
 	}
 }

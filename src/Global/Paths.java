@@ -54,11 +54,8 @@ public class Paths {
     public final static Path PATH_BOUTON_ANNULER         = Path.of("res/vue/images/buttons/button_annuler.png");
     public final static Path PATH_BOUTON_ANNULER_ROUGE   = Path.of("res/vue/images/buttons/button_annuler_rouge.png");
     public final static Path PATH_BOUTON_VALIDER         = Path.of("res/vue/images/buttons/button_valider.png");
-    public final static Path PATH_BOUTON_REFAIRE         = Path.of("res/vue/images/buttons/button_refaire.png");
-    public final static Path PATH_BOUTON_ENTRER          = Path.of("res/vue/images/buttons/button_entrer.png");
-    public final static Path PATH_BOUTON_RETOUR          = Path.of("res/vue/images/buttons/button_retour.png");
     public final static Path PATH_BOUTON_EXIT            = Path.of("res/vue/images/buttons/button_exit.png");
-    public final static Path PATH_BOUTON_OFF             = Path.of("res/vue/images/buttons/button_off.png");
+    public final static Path PATH_BOUTON            = Path.of("res", "vue", "images", "buttons");
     public final static Path PATH_BOUTON_ON              = Path.of("res/vue/images/buttons/button_on.png");
 
 
@@ -80,5 +77,8 @@ public class Paths {
      *              INDICATEURS                *
      *******************************************/
     public final static Path PATH_LBL_INDICATEURS              = Path.of("res","vue", "images", "indicateurs");
+
+    public final static Path PATH_LBL_TXT              = Path.of("res","vue", "images", "font_zuma", "png");
+
 
 }

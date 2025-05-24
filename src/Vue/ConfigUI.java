@@ -29,11 +29,11 @@ public class ConfigUI {
     public static final String TITRE_ONGLET_SON         = "Son";
 
     public static final String LBL_TITRE_CONFIG     = "configuration";
-    public static final String LBL_MODE_AUTO        = "mode_auto";
-    public static final String LBL_REPRENDRE        = "reprendre_une_partie";
-    public static final String LBL_JOUER_IA         = "jouer_contre_ia";
-    public static final String LBL_JOUEUR_1         = "joueur1";
-    public static final String LBL_JOUEUR_2         = "joueur2";
+    public static final String LBL_MODE_AUTO        = "IA vs IA ";
+    public static final String LBL_REPRENDRE        = "reprendre";
+    public static final String LBL_JOUER_IA         = "contre ia";
+    public static final String LBL_JOUEUR_1         = "joueur 1";
+    public static final String LBL_JOUEUR_2         = "joueur 2";
 
     public static final String INDICATION_SELECTION = "Sélectionner ici...";
     public static final String OPTION_IA_NON = "Non";
@@ -73,14 +73,13 @@ public class ConfigUI {
 
     // --- Onglet Couleur ---
     // Constantes spécifiques à l'onglet de personnalisation des couleurs.
-    public static final String LBL_TITRE_COULEUR         = "Personnalisation des Couleurs";
-    public static final String LBL_PLATEAU_DE_JEU        = "Plateau de Jeu";
-    public static final String LBL_CASE_TERRAIN          = "Case Terrain"; // Note : faute de frappe "Terain" au lieu de "Terrain" ?
-    public static final String LBL_CASE_MAITRE_JOUEUR_1  = "Case Maitre Joueur 1"; // Note : faute de frappe "Maitre" au lieu de "Maître" ?
-    public static final String LBL_CASE_MAITRE_JOUEUR_2  = "Case Maitre Joueur 2"; // Note : faute de frappe "Maitre" au lieu de "Maître" ?
-    public static final String LBL_CASE_ELEVE_JOUEUR_1   = "Case Elève Joueur 1"; // Note : faute de frappe "Elève" au lieu de "Élève" ?
-    public static final String LBL_CASE_ELEVE_JOUEUR_2   = "Case Elève Joueur 2"; // Note : faute de frappe "Elève" au lieu de "Élève" ?
-    public static final String LBL_BLOC_MENU             = "Bloc menu";
+    public static final String LBL_TITRE_COULEUR         = "Personnalisation\ndes Couleurs";
+    public static final String LBL_CASE_TERRAIN          = "Case Terrain";
+    public static final String LBL_CASE_MAITRE_JOUEUR_1  = "Case Maitre Joueur 1";
+    public static final String LBL_CASE_MAITRE_JOUEUR_2  = "Case Maitre Joueur 2";
+    public static final String LBL_CASE_ELEVE_JOUEUR_1   = "Case Eleve Joueur 1";
+    public static final String LBL_CASE_ELEVE_JOUEUR_2   = "Case Eleve Joueur 2";
+
 
     public static final String BTN_CHOISIR_COULEUR      = "Choisir...";
     public static final Dimension DIM_PREVIEW_COULEUR   = new Dimension(30, 30);

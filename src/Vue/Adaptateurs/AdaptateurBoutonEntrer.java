@@ -127,7 +127,7 @@ public class AdaptateurBoutonEntrer implements ActionListener {
             activerModeJoueurVsJoueur();
         }
 
-        InfosDeConfigUI.getInstance().afficherEtatConfigUI();
+        System.err.println(InfosDeConfigUI.getInstance());
         interfaceGraphique.lancerPlatauDeJeu();
     }
 

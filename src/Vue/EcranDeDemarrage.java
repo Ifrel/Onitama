@@ -8,6 +8,7 @@ import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
 import Vue.Utils.PanelBruitGris;
 import Vue.Utils.PanelAvecImage;
+import Vue.Utils.PngText;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -77,17 +78,8 @@ public class EcranDeDemarrage extends JTabbedPane {
         addTab(null, creerOngletGeneral());
         setTabComponentAt(0, creerJPanel(TITRE_ONGLET_GENERAL));
 
-        addTab(null, creerOngletIA());
-        setTabComponentAt(1, creerJPanel(TITRE_ONGLET_IA));
-
         addTab(null, creerOngletCouleur());
-        setTabComponentAt(2, creerJPanel(TITRE_ONGLET_COULEUR));
-
-        addTab(null, creerOngletAnimation());
-        setTabComponentAt(3, creerJPanel(TITRE_ONGLET_ANIMATION));
-
-        addTab(null, creerOngletSon());
-        setTabComponentAt(4, creerJPanel(TITRE_ONGLET_SON));
+        setTabComponentAt(1, creerJPanel(TITRE_ONGLET_COULEUR));
     }
 
 
@@ -107,7 +99,9 @@ public class EcranDeDemarrage extends JTabbedPane {
         contraintes.gridy = 3;
         contraintes.gridwidth = 3;
         contraintes.insets = MARGES_TITRE;
-        JLabel titre = creerLabelAvecImahe(PATH_LBL_INDICATEURS.resolve(LBL_TITRE_CONFIG + ".png"), 250, 90);
+//        JLabel titre = creerLabelAvecImahe(PATH_LBL_INDICATEURS.resolve(LBL_TITRE_CONFIG + ".png"), 250, 90);
+        JPanel titre = PngText.createPngPanel(LBL_TITRE_CONFIG, 50);
+        titre.setOpaque(false);
         ongletGeneral.add(titre, contraintes);
 
         int ligneCourante = 6;
@@ -222,87 +216,14 @@ public class EcranDeDemarrage extends JTabbedPane {
     }
 
 
-    /**
-     * Crée l'onglet de configuration de l'IA.
-     * @return Le JPanel de l'onglet IA.
-     */
-    private JPanel creerOngletIA() {
-        PanelAvecImage ongletIA = new PanelAvecImage(PATH_ARRIERE_PLAN_03);
-        ongletIA.setLayout(new GridBagLayout());
-        GridBagConstraints contraintes;
-        int ligneCourante = 0;
-
-        // --- Titre ---
-        contraintes = new GridBagConstraints();
-        contraintes.gridx = COLONNE_ETIQUETTE;
-        contraintes.gridy = ligneCourante++;
-        contraintes.weighty = 0.5;
-        contraintes.fill = GridBagConstraints.VERTICAL;
-        contraintes.gridwidth = 4;
-        contraintes.anchor = GridBagConstraints.CENTER;
-        contraintes.insets = MARGES_TITRE;
-
-        JLabel titre = new JLabel(LBL_TITRE_IA);
-        titre.setFont(FONT_TITRE);
-        ongletIA.add(titre, contraintes);
-
-        // Temps de réflexion IA
-        JSlider sliderTempsReflexion = new JSlider(100, 5000, 1000); // min, max, valeur initiale (en ms)
-        sliderTempsReflexion.setMajorTickSpacing(1000);
-        sliderTempsReflexion.setMinorTickSpacing(100);
-        sliderTempsReflexion.setPaintTicks(true);
-        sliderTempsReflexion.setPaintLabels(true); // Afficher les valeurs numériques majeures
-        sliderTempsReflexion.setPreferredSize(new Dimension(300,50));
-        sliderTempsReflexion.addChangeListener(e -> {
-            if (!sliderTempsReflexion.getValueIsAdjusting()) { // Agir seulement quand on relâche le curseur
-                collecteurEvenements.setIAReflexion(sliderTempsReflexion.getValue());
-            }
-        });
-        //Préremplir avec la valeur actuelle du modèle/config si disponible
-        sliderTempsReflexion.setValue(jeu.getConfigIAReflexion());
-        ajouterLigne(ongletIA, LBL_TEMPS_REFLEXION, sliderTempsReflexion, ligneCourante++, FONT_LABEL);
-
-        // --- Heuristique Avancée ---
-        JCheckBox checkHeuristique = new JCheckBox();
-        checkHeuristique.setFont(FONT_COMPOSANT);
-        checkHeuristique.addActionListener(e -> {
-            collecteurEvenements.setIAHeuristique(checkHeuristique.isSelected());
-        });
-        // Préremplir avec la valeur actuelle du modèle/config si disponible
-         checkHeuristique.setSelected(jeu.getConfigIAHeuristique());
-        ajouterLigne(ongletIA, LBL_HEURISTIQUE_AVANCEE, checkHeuristique, ligneCourante++, FONT_LABEL);
-
-
-        // --- Choix Algorithme IA ---
-        JComboBox<String> comboAlgoIA = new JComboBox<>(OPTIONS_ALGORITHME_IA);
-        comboAlgoIA.setFont(FONT_COMPOSANT);
-        comboAlgoIA.addActionListener(e -> {
-            String selection = (String) comboAlgoIA.getSelectedItem();
-            collecteurEvenements.setIAAlgorithme(selection);
-        });
-        // Préremplir avec la valeur actuelle du modèle/config si disponible
-        comboAlgoIA.setSelectedItem(jeu.getConfigIAAlgorithme());
-        ajouterLigne(ongletIA, LBL_ALGORITHME_IA, comboAlgoIA, ligneCourante++, FONT_LABEL);
-
-
-        // --- Espace Vertical Flexible ---
-        contraintes = new GridBagConstraints();
-        contraintes.gridx = 0;
-        contraintes.gridy = ligneCourante;
-        contraintes.weighty = 1.0;
-        contraintes.fill = GridBagConstraints.VERTICAL;
-        ongletIA.add(Box.createVerticalGlue(), contraintes);
-
-        return ongletIA;
-    }
-
 
     /**
      * Crée l'onglet de personnalisation des couleurs.
      * @return Le JPanel de l'onglet Couleur.
      */
     private JPanel creerOngletCouleur() {
-        JPanel ongletCouleur = new JPanel(new GridBagLayout());
+        PanelAvecImage ongletCouleur = new PanelAvecImage(PATH_ARRIERE_PLAN_03);
+        ongletCouleur.setLayout(new GridBagLayout());
         GridBagConstraints contraintes;
         int ligneCourante = 0;
 
@@ -314,18 +235,17 @@ public class EcranDeDemarrage extends JTabbedPane {
         contraintes.gridwidth = 5;
         contraintes.anchor = GridBagConstraints.CENTER;
         contraintes.insets = MARGES_TITRE;
-        JLabel titre = new JLabel(LBL_TITRE_COULEUR);
+        JPanel titre = PngText.createPngPanel(LBL_TITRE_COULEUR, 45);
+        titre.setOpaque(false);
         titre.setFont(FONT_TITRE);
         ongletCouleur.add(titre, contraintes);
 
         // Ajouter les sélecteurs de couleur
-        ajouterLigneCouleur(ongletCouleur, LBL_PLATEAU_DE_JEU, COULEUR_PLATEAU_DE_JEU, ligneCourante++, PLATEAU_DE_JEU);
         ajouterLigneCouleur(ongletCouleur, LBL_CASE_TERRAIN, COULEUR_CASE_TERRAIN, ligneCourante++, CASE_TERRAIN);
         ajouterLigneCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_1,COULEUR_CASE_MAITRE_JOUEUR_1, ligneCourante++, CASE_MAITRE_JOUEUR_1);
         ajouterLigneCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_2, COULEUR_CASE_MAITRE_JOUEUR_2, ligneCourante++, CASE_MAITRE_JOUEUR_2);
         ajouterLigneCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_1, COULEUR_CASE_ELEVE_JOUEUR_1, ligneCourante++, CASE_ELEVE_JOUEUR_1);
         ajouterLigneCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_2, COULEUR_CASE_ELEVE_JOUEUR_2, ligneCourante++, CASE_ELEVE_JOUEUR_2);
-        ajouterLigneCouleur(ongletCouleur, LBL_BLOC_MENU, COULEUR_BLOC_MENU, ligneCourante++, BLOC_MENU);
 
 
         // --- Espace Vertical Flexible ---
@@ -353,7 +273,9 @@ public class EcranDeDemarrage extends JTabbedPane {
         couleursInitiales.put(cible, couleurInitiale); // Enregistre la couleur de départ
 
         // Étiquette descriptive
-        JLabel etiquette = new JLabel(texteEtiquette);
+//        JLabel etiquette = new JLabel(texteEtiquette);
+        JPanel etiquette = PngText.createPngPanel(texteEtiquette,  20);
+        etiquette.setOpaque(false);
         etiquette.setFont(FONT_LABEL);
         GridBagConstraints contraintesLabel = new GridBagConstraints();
         contraintesLabel.gridx = 0;
@@ -433,176 +355,6 @@ public class EcranDeDemarrage extends JTabbedPane {
     }
 
 
-    /**
-     * Crée l'onglet de configuration des animations.
-     * @return Le JPanel de l'onglet Animation.
-     */
-    private JPanel creerOngletAnimation() {
-        PanelBruitGris ongletAnimation = new PanelBruitGris();
-        ongletAnimation.setLayout(new GridBagLayout());
-        GridBagConstraints contraintes;
-        int ligneCourante = 0;
-
-        // --- Titre ---
-        contraintes = new GridBagConstraints();
-        contraintes.gridx = COLONNE_ETIQUETTE;
-        contraintes.gridy = ligneCourante++;
-        contraintes.weighty = 0.5;
-        contraintes.fill = GridBagConstraints.VERTICAL;
-        contraintes.gridwidth = 4;
-        contraintes.anchor = GridBagConstraints.CENTER;
-        contraintes.insets = MARGES_TITRE;
-
-        JLabel titre = new JLabel(LBL_TITRE_ANIMATION);
-        titre.setFont(FONT_TITRE);
-        ongletAnimation.add(titre, contraintes);
-
-        // --- Vitesse d'animation ---
-        JSlider sliderVitesse = new JSlider(0, 100, 50); // Exemple : 0=Instantanné, 100=Très lent, 50=Normal
-        sliderVitesse.setMajorTickSpacing(25);
-        sliderVitesse.setMinorTickSpacing(5);
-        sliderVitesse.setPaintTicks(true);
-        sliderVitesse.setPaintLabels(true);
-        sliderVitesse.addChangeListener(e -> {
-            if (!sliderVitesse.getValueIsAdjusting()) {
-                collecteurEvenements.setAnimationVitesse(sliderVitesse.getValue());
-            }
-        });
-        // potentiellement une valeur par défaut
-        sliderVitesse.setValue(jeu.getConfigAnimationVitesse());
-        ajouterLigne(ongletAnimation, LBL_VITESSE_ANIMATION, sliderVitesse, ligneCourante++, FONT_LABEL);
-
-        // --- Activer/Désactiver Animation Pièces ---
-        JCheckBox checkAnimPieces = new JCheckBox();
-        checkAnimPieces.setFont(FONT_COMPOSANT);
-        checkAnimPieces.addActionListener(e -> {
-            collecteurEvenements.setAnimationPieces(checkAnimPieces.isSelected());
-        });
-        // potentiellement une valeur par défaut
-        checkAnimPieces.setSelected(infosDeConfigUI.isAnimerDeplacementPiece());
-        ajouterLigne(ongletAnimation, LBL_ANIMATION_PIECES, checkAnimPieces, ligneCourante++, FONT_LABEL);
-
-        // --- Activer/Désactiver Animation Surbrillance ---
-        JCheckBox checkAnimSurbrillance = new JCheckBox();
-        checkAnimSurbrillance.setFont(FONT_COMPOSANT);
-        checkAnimSurbrillance.addActionListener(e -> {
-            collecteurEvenements.setAnimationSurbrillance(checkAnimSurbrillance.isSelected());
-        });
-        // potentiellement une valeur par défaut
-        checkAnimSurbrillance.setSelected(infosDeConfigUI.isAnimerSurbrillace());
-        ajouterLigne(ongletAnimation, LBL_ANIMATION_SURBRILLANCE, checkAnimSurbrillance, ligneCourante++, FONT_LABEL);
-
-        // --- Espace Vertical Flexible ---
-        contraintes = new GridBagConstraints();
-        contraintes.gridx = 0;
-        contraintes.gridy = ligneCourante;
-        contraintes.weighty = 1.0;
-        contraintes.fill = GridBagConstraints.VERTICAL;
-        ongletAnimation.add(Box.createVerticalGlue(), contraintes);
-
-        return ongletAnimation;
-    }
-
-
-    /**
-     * Crée l'onglet de configuration audio.
-     * @return Le JPanel de l'onglet Son.
-     */
-    private JPanel creerOngletSon() {
-        JPanel ongletSon = new JPanel(new GridBagLayout());
-        GridBagConstraints contraintes;
-        int ligneCourante = 0;
-
-        // --- Titre ---
-        contraintes = new GridBagConstraints();
-        contraintes.gridx = COLONNE_ETIQUETTE;
-        contraintes.gridy = ligneCourante++;
-        contraintes.weighty = 0.5;
-        contraintes.fill = GridBagConstraints.VERTICAL;
-        contraintes.gridwidth = 4;
-        contraintes.anchor = GridBagConstraints.CENTER;
-        contraintes.insets = MARGES_TITRE;
-
-        JLabel titre = new JLabel(LBL_TITRE_SON);
-        titre.setFont(FONT_TITRE);
-        ongletSon.add(titre, contraintes);
-
-        // --- Volume Général ---
-        JSlider sliderVolumeGeneral = new JSlider(0, 100, 75); // 0=Muet, 100=Max
-        sliderVolumeGeneral.setMajorTickSpacing(25);
-        sliderVolumeGeneral.setPaintTicks(true);
-        sliderVolumeGeneral.setPaintLabels(true);
-        sliderVolumeGeneral.addChangeListener(e -> {
-            if (!sliderVolumeGeneral.getValueIsAdjusting()) {
-                collecteurEvenements.setSonVolumeGeneral(sliderVolumeGeneral.getValue());
-                // Peut-être ajuster les autres sliders ou l'état Muet
-            }
-        });
-        // potentiellement une valeur par défaut
-          sliderVolumeGeneral.setValue(infosDeConfigUI.getConfigSonVolumeGeneral());
-        ajouterLigne(ongletSon, LBL_VOLUME_GENERAL, sliderVolumeGeneral, ligneCourante++, FONT_LABEL);
-
-        // --- Volume Effets Sonores ---
-        JSlider sliderVolumeEffets = new JSlider(0, 100, 80);
-        sliderVolumeEffets.setMajorTickSpacing(25);
-        sliderVolumeEffets.setPaintTicks(true);
-        sliderVolumeEffets.setPaintLabels(true);
-        sliderVolumeEffets.addChangeListener(e -> {
-            if (!sliderVolumeEffets.getValueIsAdjusting()) {
-                collecteurEvenements.setSonVolumeEffets(sliderVolumeEffets.getValue());
-            }
-        });
-        // potentiellement une valeur par défaut
-        sliderVolumeEffets.setValue(infosDeConfigUI.getConfigSonVolumeEffets());
-        ajouterLigne(ongletSon, LBL_VOLUME_EFFETS, sliderVolumeEffets, ligneCourante++, FONT_LABEL);
-
-
-        // --- Volume Musique ---
-        JSlider sliderVolumeMusique = new JSlider(0, 100, 60);
-        sliderVolumeMusique.setMajorTickSpacing(25);
-        sliderVolumeMusique.setPaintTicks(true);
-        sliderVolumeMusique.setPaintLabels(true);
-        sliderVolumeMusique.addChangeListener(e -> {
-            if (!sliderVolumeMusique.getValueIsAdjusting()) {
-                collecteurEvenements.setSonVolumeMusique(sliderVolumeMusique.getValue());
-            }
-        });
-        // potentiellement une valeur par défaut
-        sliderVolumeMusique.setValue(infosDeConfigUI.getConfigSonVolumeMusique());
-        ajouterLigne(ongletSon, LBL_VOLUME_MUSIQUE, sliderVolumeMusique, ligneCourante++, FONT_LABEL);
-
-
-        // --- Muet ---
-        JCheckBox checkMuet = new JCheckBox();
-        checkMuet.setFont(FONT_COMPOSANT);
-        checkMuet.addActionListener(e -> {
-            boolean estMuet = checkMuet.isSelected();
-            collecteurEvenements.setSonMuet(estMuet);
-            // Désactiver les sliders si muet est coché
-            sliderVolumeGeneral.setEnabled(!estMuet);
-            sliderVolumeEffets.setEnabled(!estMuet);
-            sliderVolumeMusique.setEnabled(!estMuet);
-        });
-        // potentiellement une valeur par défaut
-          boolean isMuted = infosDeConfigUI.getConfigSonMuet();
-          checkMuet.setSelected(isMuted);
-          sliderVolumeGeneral.setEnabled(!isMuted);
-          sliderVolumeEffets.setEnabled(!isMuted);
-          sliderVolumeMusique.setEnabled(!isMuted);
-        ajouterLigne(ongletSon, LBL_SON_MUET, checkMuet, ligneCourante++, FONT_LABEL);
-
-
-        // --- Espace Vertical Flexible ---
-        contraintes = new GridBagConstraints();
-        contraintes.gridx = 0;
-        contraintes.gridy = ligneCourante;
-        contraintes.weighty = 1.0;
-        contraintes.fill = GridBagConstraints.VERTICAL;
-        ongletSon.add(Box.createVerticalGlue(), contraintes);
-
-        return ongletSon;
-    }
-
 
     /**
      * Méthode utilitaire pour ajouter une ligne (étiquette + composant) au GridBagLayout.
@@ -624,7 +376,9 @@ public class EcranDeDemarrage extends JTabbedPane {
         contraintesLabel.weighty = 0.1;
         contraintesLabel.ipadx = 40;
 
-        JLabel etiquette = creerLabelAvecImahe(PATH_LBL_INDICATEURS.resolve(texteEtiquette + ".png"), 200, 60);
+//        JLabel etiquette = creerLabelAvecImahe(PATH_LBL_INDICATEURS.resolve(texteEtiquette + ".png"), 200, 60);
+        JPanel etiquette = PngText.createPngPanel(texteEtiquette,  30);
+        etiquette.setOpaque(false);
         panneau.add(etiquette, contraintesLabel);
 
         // --- Contraintes du Composant ---
