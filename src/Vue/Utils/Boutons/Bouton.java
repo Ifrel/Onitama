@@ -42,6 +42,8 @@ public class Bouton {
         private float arrondiBordure;
         private Color couleurBordure;
         private Color couleurFondSurvol;
+        private boolean aCouleurDeFond = false;
+        private Color couleurdeFond = new Color(0, 0, 0, 0);
 
         // État dynamique de l’épaisseur de bordure
         private float epaisseurActuelle;
@@ -163,6 +165,19 @@ public class Bouton {
         }
 
 
+        public void chargerCouleurFont(Color color) {
+            this.aCouleurDeFond = true;
+            this.couleurdeFond = color;
+            repaint();
+        }
+
+        public void enleverCouleurFont() {
+            this.aCouleurDeFond = false;
+            this.couleurdeFond = new Color(0, 0, 0, 0);
+            repaint();
+        }
+
+
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -232,6 +247,12 @@ public class Bouton {
                     (int) (height - epaisseurActuelle),
                     arc, arc
             );
+
+            // Si une couleur de fond chargée
+            if (aCouleurDeFond && couleurdeFond != null) {
+                g2.setColor(couleurdeFond);
+                g2.fillRoundRect(0, 0, width, height, arc, arc);
+            }
 
             g2.dispose();
         }
