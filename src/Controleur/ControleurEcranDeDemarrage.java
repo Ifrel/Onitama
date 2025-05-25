@@ -63,10 +63,8 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
 
      @Override
     public void setCouleur(Config.CiblesDesCouleurs cible, Color couleur) {
+        System.err.println("couleur: " + couleur + " cible: " + cible);
         switch (cible){
-            case CASE_TERRAIN:
-                infosDeConfigUI.setCouleurCaseTerrain(couleur);
-                break;
             case CASE_ELEVE_JOUEUR_1:
                 infosDeConfigUI.setCouleurCaseEleveJoueur1(couleur);
                 break;
