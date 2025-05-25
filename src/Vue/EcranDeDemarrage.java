@@ -26,9 +26,10 @@ import static Vue.Utils.MethodsStaticsUtils.*;
 
 
 /**
- * EcranDeDemarrage : Écran de configuration du jeu utilisant JTabbedPane.
- * Permet de définir le mode de jeu, les noms des joueurs, le niveau de l'IA, etc.
- * Interagit avec le {@link ControleurEcranDeDemarrage} pour signaler les actions de l'utilisateur. */
+ EcranDeDemarrage : Écran de configuration du jeu utilisant JTabbedPane.
+ Permet de définir le mode de jeu, les noms des joueurs, le niveau de l'IA, etc.
+ Interagit avec le {@link ControleurEcranDeDemarrage} pour signaler les actions de l'utilisateur.
+ */
 public class EcranDeDemarrage extends JTabbedPane {
     private final Jeu jeu;
     private final ControleurEcranDeDemarrage controleurDemarrage;
@@ -100,7 +101,7 @@ public class EcranDeDemarrage extends JTabbedPane {
      * @param titre Le texte du titre à afficher dans le PNG.
      * @return Un JPanel contenant le titre sous forme d'image PNG.     */
     private JPanel creerPanelTitreOnglet(String titre) {
-        JPanel panelTitre = PngText.createPngPanel(titre, 20);
+        JPanel panelTitre = PngText.createPngPanel(titre, 25);
         panelTitre.setOpaque(false); // Rendre le panneau transparent
         return panelTitre;
     }
@@ -261,7 +262,6 @@ public class EcranDeDemarrage extends JTabbedPane {
         ongletCouleur.add(titreOnglet, gbc);
 
         // Ajouter les sélecteurs de couleur pour chaque cible
-        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_TERRAIN, COULEUR_CASE_TERRAIN, ligneCourante++, CASE_TERRAIN);
         ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_1, COULEUR_CASE_MAITRE_JOUEUR_1, ligneCourante++, CASE_MAITRE_JOUEUR_1);
         ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_2, COULEUR_CASE_MAITRE_JOUEUR_2, ligneCourante++, CASE_MAITRE_JOUEUR_2);
         ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_1, COULEUR_CASE_ELEVE_JOUEUR_1, ligneCourante++, CASE_ELEVE_JOUEUR_1);
@@ -317,9 +317,9 @@ public class EcranDeDemarrage extends JTabbedPane {
         panneau.add(Box.createGlue(), gbcSpace);
 
         // Bouton de prévisualisation et sélection de couleur
-        JButton boutonSelectionCouleur = new JButton();
+        BoutonAvecImage boutonSelectionCouleur = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Carre_transparent);
         boutonSelectionCouleur.setPreferredSize(DIM_PREVIEW_COULEUR);
-        boutonSelectionCouleur.setBackground(couleurInitiale);
+        boutonSelectionCouleur.chargerCouleurFont(couleurInitiale);
         boutonSelectionCouleur.setFocusPainted(true);
         boutonSelectionCouleur.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
@@ -330,7 +330,7 @@ public class EcranDeDemarrage extends JTabbedPane {
                     boutonSelectionCouleur.getBackground()
             );
             if (couleurChoisie != null) {
-                boutonSelectionCouleur.setBackground(couleurChoisie);
+                boutonSelectionCouleur.chargerCouleurFont(couleurChoisie);
                 controleurDemarrage.setCouleur(cible, couleurChoisie);
             }
         });
@@ -351,7 +351,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         boutonReinitialiser.setToolTipText("Réinitialiser à la couleur par défaut");
         boutonReinitialiser.addActionListener(e -> {
             Color couleurDefaut = couleursInitiales.get(cible);
-            boutonSelectionCouleur.setBackground(couleurDefaut);
+            boutonSelectionCouleur.chargerCouleurFont(couleurDefaut);
             controleurDemarrage.setCouleur(cible, couleurDefaut);
         });
 
