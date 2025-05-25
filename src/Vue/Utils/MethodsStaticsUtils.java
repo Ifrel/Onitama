@@ -10,30 +10,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
-import static Global.Config.ID_JOUEUR_1;
-import static Global.Config.ID_JOUEUR_2;
+import static Global.Config.*;
 import static Global.Paths.*;
+import static Vue.ConfigUI.ARRONDI;
 
 /**
  * Classe utilitaire regroupant des méthodes statiques pour la création
  * d'éléments d'interface utilisateur personnalisés. */
 public class MethodsStaticsUtils {
-
-
-    /**
-     * Crée un JLabel stylisé pouvant être utilisé comme un onglet ou une étiquette.
-     *
-     * @param text le texte à afficher
-     * @return un JLabel avec police et taille prédéfinies     */
-    public static JLabel creerJPanel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.PLAIN, 25)); // Police personnalisée
-        label.setPreferredSize(new Dimension(160, 40));  // Taille fixe de l’onglet
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        return label;
-    }
 
 
 
@@ -59,35 +49,35 @@ public class MethodsStaticsUtils {
             return null; // ou retourne un chemin vers une image "vide" si besoin
         }
 
-        String nomCouleurPion;
-        String role;
-        int numJoueur;
+        String nomCouleurPion = "";
+        String role = "";
 
         switch (type) {
+            case TRONE:
+                ArrayList<String> valeurs = new ArrayList<>(Arrays.asList("1", "2", "3", "4"));
+                Collections.shuffle(valeurs); // Mélange aléatoire
+                role = "cible_trone" + valeurs.get(0);
+                break;
             case PION_ETUDIANT_J1:
-                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(1);
-                role = "etudiant";
-                numJoueur = ID_JOUEUR_1;
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(ID_JOUEUR_1);
+                role = "pion_etudiant_";
                 break;
             case PION_ETUDIANT_J2:
-                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(2);
-                role = "etudiant";
-                numJoueur = ID_JOUEUR_2;
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(ID_JOUEUR_2);
+                role = "pion_etudiant_";
                 break;
             case PION_MAITRE_J1:
-                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(1);
-                role = "maitre";
-                numJoueur = ID_JOUEUR_1;
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(ID_JOUEUR_1);
+                role = "pion_maitre_";
                 break;
             case PION_MAITRE_J2:
-                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(2);
-                role = "maitre";
-                numJoueur = ID_JOUEUR_2;
+                nomCouleurPion = infosDeConfigUI.getNomCouleurPionJoueur(ID_JOUEUR_2);
+                role = "pion_maitre_";
                 break;
             default: throw new IllegalArgumentException("Type de pion inconnu : " + type);
         }
 
-        String nomFichier = "pion_" + role + "_" + nomCouleurPion + ".png";
+        String nomFichier = role + nomCouleurPion + ".png";
         return PATH_DEBUT_PION.resolve(nomFichier);
     }
 
@@ -109,97 +99,104 @@ public class MethodsStaticsUtils {
     }
 
 
-
     /**
-     * Crée un JPanel personnalisé avec des coins arrondis, une bordure facultative, et un comportement interactif
-     * qui change la couleur de fond lors du survol, du clic ou du relâchement de la souris.
+     * Crée un panneau Swing personnalisé avec des bords arrondis, un fond semi-transparent,
+     * et une bordure dorée.
+     * Le panneau est non opaque pour permettre la transparence et utilise des
+     * techniques de rendu pour dessiner les formes arrondies.
      *
-     * @param fondNormal        Couleur de fond par défaut du panneau.
-     * @param fondHover         Couleur de fond lors du survol de la souris.
-     * @param fondClic          Couleur de fond lors du clic de la souris.
-     * @param arondi            Rayon des coins arrondis.
-     * @param couleurBordure    Couleur de la bordure (null pour aucune bordure).
-     * @param epaisseurBordure  Épaisseur de la bordure en pixels (0 pour aucune bordure).
-     * @return Un JPanel interactif avec un rendu arrondi et personnalisable.
-     *
-     * Remarques :
-     * - Le panneau n'est pas opaque afin de permettre la transparence.
-     * - Les changements de couleur ne prennent effet que si on utilise correctement la méthode setFondActuel().
-     * - Pour un comportement interactif fonctionnel, il est conseillé de remplacer les appels à putClientProperty(...)
-     *   par des appels à la méthode setFondActuel(Color).
+     * @return un objet JPanel avec une apparence arrondie et une transparence stylisée
      */
-    public static JPanel creerPanelArrondiInteractif(Color fondNormal, Color fondHover, Color fondClic,
-                                                     int arondi, Color couleurBordure, int epaisseurBordure) {
-        JPanel panel = new JPanel() {
-            private Color fondActuel = fondNormal;
+    public static JPanel creerPanelArrondi() {
+        return new JPanel() {
+            private Color borderColor = new Color(212, 175, 55); // Couleur de bordure par défaut
+            private float borderThickness = 3f;                  // Épaisseur de bordure par défaut
+            private int arcSize = ARRONDI;                       // Taille des coins arrondis
+
+            {
+                setOpaque(false);
+
+                // Ajout d'un écouteur de souris pour effet hover
+                addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        borderColor = borderColor.brighter();
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        borderColor = new Color(212, 175, 55);
+                        repaint();
+                    }
+                });
+            }
+
+            public void setBorderColor(Color color) {
+                this.borderColor = color;
+                repaint();
+            }
+
+            public void setBorderThickness(float thickness) {
+                this.borderThickness = thickness;
+                repaint();
+            }
+
+            public void setArcSize(int size) {
+                this.arcSize = size;
+                repaint();
+            }
 
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
 
+                // Configuration du rendu
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-                int w = getWidth();
-                int h = getHeight();
+                // Création du rectangle arrondi
+                Shape roundedRect = new RoundRectangle2D.Double(
+                        borderThickness/2,        // x
+                        borderThickness/2,        // y
+                        getWidth()-borderThickness,   // largeur
+                        getHeight()-borderThickness,  // hauteur
+                        arcSize,                      // arcWidth
+                        arcSize                       // arcHeight
+                );
 
-                g2.setColor(fondActuel);
-                g2.fillRoundRect(0, 0, w, h, arondi, arondi);
-
-                if (couleurBordure != null && epaisseurBordure > 0) {
-                    g2.setColor(couleurBordure);
-                    g2.setStroke(new BasicStroke(epaisseurBordure));
-                    g2.drawRoundRect(epaisseurBordure / 2, epaisseurBordure / 2,
-                            w - epaisseurBordure, h - epaisseurBordure,
-                            arondi, arondi);
+                // Dessin du fond avec la couleur définie
+                if (getBackground() != null) {
+                    g2.setColor(getBackground());
+                    g2.fill(roundedRect);
                 }
+
+                // Dessin de la bordure avec effet de lueur
+                g2.setStroke(new BasicStroke(borderThickness));
+
+                // Effet de lueur (glow effect)
+                float alpha = 0.1f;
+                for (int i = 0; i < 4; i++) {
+                    g2.setColor(new Color(
+                            borderColor.getRed(),
+                            borderColor.getGreen(),
+                            borderColor.getBlue(),
+                            (int)(255 * alpha)
+                    ));
+                    g2.setStroke(new BasicStroke(borderThickness + i * 2));
+                    g2.draw(roundedRect);
+                }
+
+                // Bordure principale
+                g2.setColor(borderColor);
+                g2.setStroke(new BasicStroke(borderThickness));
+                g2.draw(roundedRect);
 
                 g2.dispose();
             }
-
-            @Override
-            public boolean isOpaque() {
-                return false;
-            }
-
-            // Permet de modifier dynamiquement la couleur de fond actuelle
-            public void setFondActuel(Color c) {
-                this.fondActuel = c;
-                repaint();
-            }
         };
-
-        // Événements souris pour effet hover et clic
-        panel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                ((JPanel) e.getSource()).setBackground(fondHover);
-                ((JPanel) e.getSource()).setForeground(fondHover);
-                ((JPanel) e.getSource()).repaint();
-                ((JPanel) e.getSource()).setOpaque(false);
-                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondHover);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondNormal);
-                panel.repaint();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondClic);
-                panel.repaint();
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                ((JPanel) e.getSource()).putClientProperty("fondActuel", fondHover);
-                panel.repaint();
-            }
-        });
-
-        return panel;
     }
 
 
@@ -321,3 +318,10 @@ public class MethodsStaticsUtils {
         dialog.setVisible(true);
     }
 }
+
+
+
+
+
+
+
