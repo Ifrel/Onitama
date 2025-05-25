@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import static Global.Paths.PATH_LBL_TXT;
 
 /**
- * Affiche un texte sous forme d'images PNG personnalisées.
+ * Crée un texte sous forme d'images PNG personnalisées.
  * Si une image est absente, le caractère est affiché avec un JLabel standard.
  */
 public class PngText {
