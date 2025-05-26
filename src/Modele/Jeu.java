@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import javax.management.RuntimeErrorException;
+
 import static Global.Config.*;
 import static Global.Config.ETAT_GRILLE.DEFAUT;
 import static Global.Config.ETAT_GRILLE.PION_SELECTIONNE;
@@ -467,6 +469,7 @@ public class Jeu extends Observable implements Runnable {
         System.err.println("UTILISER LA METHODE sauvegarderJeu(String nomFichier)");
     }
     public void sauvegarderJeu(String fichier) throws IOException {
+        Files.createDirectories(SAVE_DIR);
 
         try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(SAVE_DIR.resolve(fichier))))
         {
@@ -866,63 +869,87 @@ public class Jeu extends Observable implements Runnable {
         }
         idJoueurCourant = (idJoueurCourant % 2) + 1;
         return previous;
-    }
+    } 
 
-    private boolean deplacerPion(Point depart, Point arrivee) {
-        try {
+    //Fonction pour deplacer un pion sur la grille
+    private boolean deplacerPion(Point depart, Point arrivee)
+    {
+        try{
             boolean aManger = false;
-            // Récupère l'éventuel pion présent sur la case d'arrivée
-            Pion cible = getCase(arrivee.x, arrivee.y);
-            // Si c'est un pion adverse, il sera écrasé par le setCase suivant
-            if (cible != null && cible.getIDProprietaire() != idJoueurCourant) {
+             //Obtenir le pion sur la case d'arrivée.
+            Pion cible = getCase((int)arrivee.getX(), (int)arrivee.getY());
+             //Vérifier si la cible contient un pion et si il s'agit d'un pion adverse
+            if(cible != null && cible.getIDProprietaire() != idJoueurCourant)
+            {
+                //Dans ce cas, on signale que le pion a été mangé
                 aManger = true;
+
             }
-            // On déplace le pion
-            Pion p = getCase(depart.x, depart.y);
-            setCase(depart.x, depart.y, null);
-            if (! estCaseVide(arrivee.x, arrivee.y) && getRolePionAt(arrivee.x, arrivee.y) == PION_MAITRE) {
+            //On déplace le pion
+            Pion aDeplacer = getCase((int) depart.getX(), (int)depart.getY());
+             //La case devient null (car on va le deplacer)
+            setCase((int)depart.getX(), (int)depart.getY(), null);
+            //Si on mange le roi adversaire:
+            if(cible!=null && cible.getIDProprietaire() != idJoueurCourant && getRolePionAt((int)arrivee.getX(), (int) arrivee.getY()) == PION_MAITRE)
+            {
+                //On le signale
                 logger.info("Le maitre adverse vient d'etre capturé");
                 maitreMort = true;
             }
-            setCase(arrivee.x, arrivee.y, p);
-            p.setNewPosition(arrivee);
-            // Mise à jour des listes de pions
+            //Finalement on deplace le pion
+            setCase((int) arrivee.getX(), (int)arrivee.getY(), aDeplacer);
+            //On met a jour la position du pion
+            aDeplacer.setNewPosition(arrivee);
             majPions();
             return aManger;
-        } catch (CaseVideException ignored) {
+        } catch (CaseVideException ignored)
+        {
             return false;
-
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             throw new RuntimeException(e);
         }
+
     }
 
-
-    private void majPionsJoueur1() {
+    //Fonction pour mettre à jour la liste des pions du joueur 1
+    private void majPionsJoueur1()
+    {
         pionsJoueur1.clear();
-        for (int i = 0; i < LIGNES; i++) {
-            for (int j = 0; j < COLONNES; j++) {
+        for(int i = 0; i<LIGNES ; ++i)
+        {
+            for(int j = 0; j<COLONNES;++j)
+            {
                 Pion p = grille[i][j];
-                if (! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_1) {
+                if(! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_1)
+                {
                     pionsJoueur1.add(p);
                 }
             }
         }
     }
 
-    private void majPionsJoueur2() {
+    //Fonction pour mettre à jour la liste des pions du joueur 2
+    private void majPionsJoueur2()
+    {
         pionsJoueur2.clear();
-        for (int i = 0; i < LIGNES; i++) {
-            for (int j = 0; j < COLONNES; j++) {
+        for(int i = 0; i< LIGNES; ++i)
+        {
+            for(int j = 0; j < COLONNES; ++j)
+            {
                 Pion p = grille[i][j];
-                if (! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_2) {
+                if(! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_2)
+                {
                     pionsJoueur2.add(p);
                 }
             }
         }
     }
 
-    private void majPions() {
+    //Fonction pour mettre a jour les deux listes des deux joueurs (grille implicite)
+    private void majPions()
+    {
         majPionsJoueur1();
         majPionsJoueur2();
     }

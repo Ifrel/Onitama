@@ -17,6 +17,7 @@ import Global.Config.TYPECARTE;
 
 public class JeuTestHistorique {
     @Test
+    //On teste la victoire du joueur 1 lorsque tous les pions du joueur 2 ont été mangés
     public void testVictoireParEliminationPionsJoueur1() {
         ArrayList<Pion> lp1 = new ArrayList<>();
         for(int j = 0; j<5;++j)
@@ -98,7 +99,7 @@ public class JeuTestHistorique {
     }
 
     @Test
-    //Tester si il y'a une victoire dans le cas où le pion 
+    //Tester si il y'a une victoire dans le cas où le pion maitre du joueur 1 est dans le temple du joeur 2
     public void testVictoireParOccupationTemple2() {
         ArrayList<Pion> lp2 = new ArrayList<>();
 
@@ -126,7 +127,7 @@ public class JeuTestHistorique {
     }
 
     @Test
-    //Tester si il y'a une victoire dans le cas où le pion
+    //Tester si il y'a une victoire dans le cas où le pion maitre du joueur 2 est dans le temple du joueur 1
     public void testVictoireParOccupationTemple1() {
         ArrayList<Pion> lp2 = new ArrayList<>();
 
@@ -155,6 +156,7 @@ public class JeuTestHistorique {
     }
 
     @Test
+    //Tester les fonctions de sauvegarde et charger
     public void testSauvegarderEtChargerJeu() throws Exception {
         
 
@@ -195,10 +197,10 @@ public class JeuTestHistorique {
         jeuOriginal.setPionSelectionne(new Point(0, 1));
         Coup coup = new Coup(new Point(0, 1), new Point(1, 1), jeuOriginal.getCarteSupplementaire());
         jeuOriginal.jouerCoup(coup);
-        Path tempFile = Files.createTempFile(Paths.get("res/fichier_de_sauvegarde"), "fich1", ".txt");
-        jeuOriginal.sauvegarderJeu(tempFile.toString());
+        String fichier = "sauvegarde1.txt";
+        jeuOriginal.sauvegarderJeu(fichier);
         Jeu jeuCharge = new Jeu();
-        jeuCharge.chargerJeu(tempFile.toString());
+        jeuCharge.chargerJeu(fichier);
 
         // Assurer que tout est le meme
         assertEquals(jeuOriginal.getIdJoueurCourant(), jeuCharge.getIdJoueurCourant());
@@ -211,6 +213,7 @@ public class JeuTestHistorique {
 
 
     @Test
+    //Tester la fonction de refaire un coup
     public void testRefaireCoup() {
         TYPECARTE carteEnPlus = TYPECARTE.COQ;
         ArrayList<TYPECARTE> cJ1 = new ArrayList<>();
@@ -256,6 +259,8 @@ public class JeuTestHistorique {
         //Pion p = jeu.getCase(1, 1);
         //assertNotNull(p);
     }
+
+
 
 
 
