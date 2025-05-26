@@ -1,6 +1,7 @@
 package Vue;
 
 import Vue.Utils.Boutons.Bouton;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -9,9 +10,11 @@ import java.awt.*;
 import static Global.Paths.PATH_PION_NOIR_ETUDIANT;
 
 
+@DisplayName("TestBouton Tests")
 class TestBouton {
 
-    public void main() {
+    @Test
+    public void principal() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Bouton avec Image Personnalisé Amélioré");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

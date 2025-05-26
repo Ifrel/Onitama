@@ -3,23 +3,24 @@ package Controleur;
 import Global.Config;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
-import Vue.InfosDeConfigUI;
+import Vue.Configuration.InfosDeConfigUI;
 
 import java.awt.*;
-import java.util.logging.Logger;
 
+import static Global.Config.CiblesDesCouleurs.PION_TERRAIN_JOUEUR_1;
+import static Global.Config.CiblesDesCouleurs.PION_TERRAIN_JOUEUR_2;
+import static Global.Config.ID_JOUEUR_1;
+import static Global.Config.ID_JOUEUR_2;
 import static Global.Config.NIVEAU_IA.*;
 
 public class ControleurEcranDeDemarrage implements CollecteurEvenements {
     private final Jeu jeu;
 
     private final InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
-    private static final Logger logger = Logger.getLogger(ControleurEcranDeDemarrage.class.getName());
 
     public ControleurEcranDeDemarrage(Jeu jeu){
         this.jeu = jeu;
     }
-
 
     @Override
     public void clavier(String t) {
@@ -64,84 +65,52 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
         }
     }
 
-    @Override
-    public void setIAReflexion(int tempsMs) {
-        jeu.setIAReflexion(tempsMs);
-    }
-
-    @Override
-    public void setIAHeuristique(boolean active) {
-        jeu.setIAHeuristique(active);
-    }
-
-    @Override
-    public void setIAAlgorithme(String nomAlgorithme) {
-        jeu.setIAAlgorithme(nomAlgorithme);
-
-    }
-
-    @Override
+     @Override
     public void setCouleur(Config.CiblesDesCouleurs cible, Color couleur) {
+        System.err.println("couleur: " + couleur + " cible: " + cible);
         switch (cible){
-            case BLOC_MENU:
-                infosDeConfigUI.setCouleurBlocMenu1(couleur);
-                break;
-            case CASE_TERRAIN:
-                infosDeConfigUI.setCouleurCaseTerrain(couleur);
-                break;
-            case PLATEAU_DE_JEU:
-                infosDeConfigUI.setCouleurPlateauDejeu(couleur);
-                break;
             case CASE_ELEVE_JOUEUR_1:
-                infosDeConfigUI.setCouleurCaseEleveJoueur1(couleur);
+                infosDeConfigUI.setCouleurCaseEleveJoueur(ID_JOUEUR_1, couleur);
                 break;
             case CASE_ELEVE_JOUEUR_2:
-                infosDeConfigUI.setCouleurCaseEleveJoueur2(couleur);
+                infosDeConfigUI.setCouleurCaseEleveJoueur(ID_JOUEUR_2, couleur);
                 break;
             case CASE_MAITRE_JOUEUR_1:
-                infosDeConfigUI.setCouleurCaseMaitreJoueur1(couleur);
+                infosDeConfigUI.setCouleurCaseMaitreJoueur(ID_JOUEUR_1, couleur);
                 break;
             case CASE_MAITRE_JOUEUR_2:
-                infosDeConfigUI.setCouleurCaseMaitreJoueur2(couleur);
+                infosDeConfigUI.setCouleurCaseMaitreJoueur(ID_JOUEUR_2, couleur);
                 break;
             default:break;
         }
 
+     }
+
+    public String getNomCouleurPionJoueur(int idJoueur) {
+        return infosDeConfigUI.getNomCouleurPionJoueur(idJoueur);
     }
 
-    @Override
-    public void setAnimationVitesse(int vitesse) {
-        infosDeConfigUI.setVitesseAnimation(vitesse);
+    public Color getCouleurPionJoueur(int idJoueur) {
+        return infosDeConfigUI.getCouleurPionJoueur(idJoueur);
     }
 
-    @Override
-    public void setAnimationPieces(boolean active) {
-        infosDeConfigUI.setAnimerDeplacementPiece(active);
+    public Color getCouleurCaseMaitreJoueur(int idJoueur) {
+        return infosDeConfigUI.getCouleurCaseMaitreJoueur(idJoueur);
     }
 
-    @Override
-    public void setAnimationSurbrillance(boolean active) {
-        infosDeConfigUI.setAnimerSurbrillace(active);
+    public Color getCouleurCaseEleveJoueur(int idJoueur) {
+        return infosDeConfigUI.getCouleurCaseEleveJoueur(idJoueur);
     }
 
-    @Override
-    public void setSonVolumeGeneral(int volume) {
-        infosDeConfigUI.setConfigSonVolumeGeneral(volume);
+    public void setCouleurPion(Config.CiblesDesCouleurs cible, String nomCouleurPionJoueur) {
+        if (cible == PION_TERRAIN_JOUEUR_1) {
+            infosDeConfigUI.setCouleurPion(ID_JOUEUR_1, nomCouleurPionJoueur);
+        } else if (cible == PION_TERRAIN_JOUEUR_2) {
+            infosDeConfigUI.setCouleurPion(ID_JOUEUR_2, nomCouleurPionJoueur);
+        }
     }
 
-    @Override
-    public void setSonVolumeEffets(int volume) {
-        infosDeConfigUI.setConfigSonVolumeEffets(volume);
+    public void reinitialiserCouleurs() {
+        infosDeConfigUI.reinitialiserCouleurs();
     }
-
-    @Override
-    public void setSonVolumeMusique(int volume) {
-        infosDeConfigUI.setConfigSonVolumeMusique(volume);
-    }
-
-    @Override
-    public void setSonMuet(boolean muet) {
-        infosDeConfigUI.setCouperToutSon(muet);
-    }
-
 }

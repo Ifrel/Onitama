@@ -3,10 +3,8 @@ package Vue.Utils.Boutons;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL; // Ajout de l'import pour URL
 
-import static Global.Paths.PATH_PION_NOIR_ETUDIANT;
-import static Vue.ConfigUI.ARRONDI;
+import static Vue.Configuration.ConfigUI.ARRONDI;
 
 public class Bouton {
 
@@ -31,7 +29,8 @@ public class Bouton {
         Carre,
         Carre_transparent,
         Rectangle,
-        Rectangle_transparent
+        Rectangle_transparent,
+        SansBordure_transparent
     }
 
     // Classe interne pour ajouter la méthode changerImage au JButton retourné
@@ -43,6 +42,8 @@ public class Bouton {
         private float arrondiBordure;
         private Color couleurBordure;
         private Color couleurFondSurvol;
+        private boolean aCouleurDeFond = false;
+        private Color couleurdeFond = new Color(0, 0, 0, 0);
 
         // État dynamique de l’épaisseur de bordure
         private float epaisseurActuelle;
@@ -134,13 +135,7 @@ public class Bouton {
             if (cheminNouvelleImage == null || cheminNouvelleImage.isEmpty()) {
                 this.iconeOriginale = null;
             } else {
-                URL imageURL = getClass().getResource(cheminNouvelleImage);
-                if (imageURL == null) {
-                    System.err.println("Image non trouvée: " + cheminNouvelleImage);
-                    this.iconeOriginale = null;
-                } else {
-                    this.iconeOriginale = new ImageIcon(imageURL);
-                }
+                this.iconeOriginale = new ImageIcon(cheminNouvelleImage);
             }
             // Déclencher une mise à jour de l'icône pour redimensionner la nouvelle image
             // si le bouton est déjà dimensionné.
@@ -167,6 +162,19 @@ public class Bouton {
                 setIcon(null); // Pas de taille connue, l'icône sera définie lors du redimensionnement/affichage
             }
             repaint(); // Redessiner le bouton
+        }
+
+
+        public void chargerCouleurFont(Color color) {
+            this.aCouleurDeFond = true;
+            this.couleurdeFond = color;
+            repaint();
+        }
+
+        public void enleverCouleurFont() {
+            this.aCouleurDeFond = false;
+            this.couleurdeFond = new Color(0, 0, 0, 0);
+            repaint();
         }
 
 
@@ -239,6 +247,12 @@ public class Bouton {
                     (int) (height - epaisseurActuelle),
                     arc, arc
             );
+
+            // Si une couleur de fond chargée
+            if (aCouleurDeFond && couleurdeFond != null) {
+                g2.setColor(couleurdeFond);
+                g2.fillRoundRect(0, 0, width, height, arc, arc);
+            }
 
             g2.dispose();
         }
@@ -329,6 +343,13 @@ public class Bouton {
                 couleurBordure = new Color(200, 200, 200); // Gris clair
                 couleurFondSurvol = new Color(200, 200, 200, 50); // Gris clair semi-transparent
                 break;
+            case SansBordure_transparent:
+                epaisseurInitiale = 2f;
+                epaisseurSurvol = 6f;
+                arrondi = ARRONDI;
+                couleurBordure = new Color(200, 200, 200, 0); // Gris clair
+                couleurFondSurvol = new Color(200, 200, 200, 0); // Gris clair semi-transparent
+                break;
             default:
                 // Configuration par défaut générique si l'énumération n'est pas reconnue
                 epaisseurInitiale = 1f;
@@ -406,58 +427,4 @@ public class Bouton {
         );
     }
 
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Bouton avec Image Personnalisé Amélioré");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setLayout(new FlowLayout());
-
-            // Exemple d'utilisation de la configuration par défaut Cercle
-            // Assurez-vous d'avoir un fichier "icone.png" ou remplacez par un chemin valide
-            BoutonAvecImage boutonCercle = Bouton.creerBouton(
-                    PATH_PION_NOIR_ETUDIANT.toString(), // REMPLACER PAR UN CHEMIN VALIDE VERS VOTRE IMAGE
-                    Bouton.ConfigurationParDefaut.Cercle
-            );
-            boutonCercle.setPreferredSize(new Dimension(100, 100)); // Taille pour bien voir l'effet cercle
-
-            // Exemple d'utilisation de la configuration par défaut Rectangle
-            BoutonAvecImage boutonRectangle = Bouton.creerBouton(
-                    PATH_PION_NOIR_ETUDIANT.toString(), // REMPLACER PAR UN AUTRE CHEMIN VALIDE
-                    Bouton.ConfigurationParDefaut.Rectangle
-            );
-            boutonRectangle.setPreferredSize(new Dimension(120, 80));
-
-
-            // Exemple d'utilisation de la méthode simplifiée
-            BoutonAvecImage boutonSimple = Bouton.creerBouton(
-                    " " // REMPLACER PAR UN AUTRE CHEMIN VALIDE
-            );
-            boutonSimple.setPreferredSize(new Dimension(70, 70));
-
-//            // Exemple d'utilisation de changerImage
-//            Timer timerChangerImage = new Timer(2000, e -> {
-//                // Remplacez par des chemins valides vers vos images
-//                String[] images = {
-//                        " ",
-//                        PATH_PION_NOIR_ETUDIANT.toString(),
-//                        null // Tester avec une image nulle pour voir le comportement
-//                };
-//                int randomIndex = (int) (Math.random() * (images.length));
-//                String nouvelleImage = images[randomIndex];
-//                System.out.println("Changement d'image vers: " + nouvelleImage);
-//                boutonSimple.changerImage(nouvelleImage);
-//            });
-//            timerChangerImage.start();
-
-
-            frame.add(boutonCercle);
-            frame.add(boutonRectangle);
-            frame.add(boutonSimple); // Ajouter le bouton simple pour voir le changement d'image
-
-            frame.setSize(400, 300);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
 }

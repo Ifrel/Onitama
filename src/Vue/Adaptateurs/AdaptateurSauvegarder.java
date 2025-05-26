@@ -14,6 +14,6 @@ public class AdaptateurSauvegarder implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        collecteurEvent.clavier("Sauve");
+        collecteurEvent.clavier("sauvegarder");
     }
 }

@@ -34,7 +34,7 @@ import java.awt.event.ActionListener;
 public class AdaptateurIA implements ActionListener {
 	CollecteurEvenements control;
 
-	AdaptateurIA(CollecteurEvenements c) {
+	public AdaptateurIA(CollecteurEvenements c) {
 		control = c;
 	}
 

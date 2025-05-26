@@ -1,22 +1,20 @@
 package Controleur;
 
-import Global.Config;
-import Modele.*;
+import Modele.CasePlateau;
+import Modele.Jeu;
 import Vue.CollecteurEvenements;
-import Vue.EcranPlateauDeJeu;
-import Vue.InfosDeConfigUI;
-import Vue.InterfaceUser;
-import Vue.Utils.Boutons.BoutonTerrain;
+import Vue.InterfaceGraphique;
+import Vue.Utils.AfficheReglesPDF;
 
 import java.awt.*;
-import java.util.List;
 import java.util.logging.Logger;
+
+import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
 
 public class Mediateur implements CollecteurEvenements {
     private final Jeu jeu;
-    private InterfaceUser vue;
-
-    private CollecteurEvenements controleurAnimation;
+    private final CollecteurEvenements controleurAnimation;
+    private InterfaceGraphique vue;
 
     private static final Logger logger = Logger.getLogger(Mediateur.class.getName());
 
@@ -25,10 +23,10 @@ public class Mediateur implements CollecteurEvenements {
         controleurAnimation = new ControleurAnimation();
     }
 
-
     @Override
     public void clavier(String touche) {
         try {
+            vue = InterfaceGraphique.getInstance();
             switch (touche) {
                 case "exit":
                     jeu.setTerminerJeu();
@@ -40,22 +38,32 @@ public class Mediateur implements CollecteurEvenements {
                 case "refaire":
                     jeu.refaireCoup();
                     break;
-                case "nouvellepartie":
+                case "reprendre":
+                case "didacticiel":
+                case "mesParties":
+                    afficherFonctionEnCours();
+                    break;
+                case "nouvellePartie":
                     jeu.nouvellePartie();
                     break;
                 case "sauvegarder":
                     jeu.sauvegarderJeu();
                     break;
+                case "regles":
+                    // Recherche de la fenêtre ayant le focus
+                    Window fenetreActive = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+                    AfficheReglesPDF.ouvrirReglesPDFExterne(fenetreActive);
+                    break;
                 case "charger":
                     jeu.chargerJeu();
                     break;
-                case "Pause":
+                case "pause":
                     jeu.setPause();
                     break;
-                case "IA":
+                case "ia":
                     jeu.basculeIA();
                     break;
-                case "Full":
+                case "full":
                     vue.toggleFullScreen();
                     break;
                 default:
@@ -91,9 +99,6 @@ public class Mediateur implements CollecteurEvenements {
     public void setCaseSelectionnee(Point coordonnePion) {
         jeu.selectionneCase(coordonnePion);
     }
-
-    ;
-
 
     @Override
     public void boutonTerrainJeu(CasePlateau casePlateau) {

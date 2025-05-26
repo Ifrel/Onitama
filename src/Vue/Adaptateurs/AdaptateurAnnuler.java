@@ -4,6 +4,7 @@ import Vue.CollecteurEvenements;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Logger;
 
 public class AdaptateurAnnuler implements ActionListener {
     CollecteurEvenements collecteurEvent;
@@ -15,7 +16,6 @@ public class AdaptateurAnnuler implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.err.println("bouton: annuler pressé");
         collecteurEvent.clavier("annuler");
     }
 }

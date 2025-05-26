@@ -9,16 +9,12 @@ import java.awt.*;
 import java.util.logging.Logger;
 
 import static Global.Config.DIM_SCENE;
-import static Vue.ConfigUI.WIDTH_MENU;
+import static Vue.Configuration.ConfigUI.WIDTH_MENU;
 
-
-/**
- * Classe principale pour l'affichage graphique du jeu Onitama......
- * Gère la fenêtre, le plateau, les couches superposées, et les interactions comme le menu latéral.*/
-public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur {
-    private CollecteurEvenements collecteurEvent;
+public class InterfaceGraphique extends Component implements Runnable, InterfaceUser, Observateur {
+    private final CollecteurEvenements collecteurEvent;
     private boolean maximized;
-    private Jeu jeu;
+    private final Jeu jeu;
 
     private JFrame frame;
     private JLayeredPane layeredPane;
@@ -30,9 +26,10 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
 
     private static final Logger logger = Logger.getLogger(InterfaceGraphique.class.getName());
 
+    private static InterfaceGraphique instance;
 
     /**
-     * Gestionaire de toutes les interfaces graphiques
+     * Gestionnaire de toutes les interfaces graphiques
      * @param jeu modèle de données observé
      * @param collecteurEvent gestionnaire des événements */
     public InterfaceGraphique(Jeu jeu, CollecteurEvenements collecteurEvent) {
@@ -47,9 +44,26 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         jeu.ajouteObservateur(this);
     }
 
+    /**
+     * Lance l'interface graphique
+     */
+    public static void lancerInterfaceGraphique(Jeu jeu, CollecteurEvenements collecteurEvenements) {
+        try {
+            logger.info("Lancement interface graphique");
+            SwingUtilities.invokeLater(() -> {
+                instance = new InterfaceGraphique(jeu, collecteurEvenements);
+                new Thread(instance).start();
+            });
+            logger.info("Interface graphique lancée");
+        } catch (Exception e) {
+            logger.severe(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
 
-
-
+    public static InterfaceGraphique getInstance() {
+        return instance;
+    }
 
     /**
      * Initialise la fenêtre principale (JFrame)*/
@@ -59,6 +73,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         frame.setPreferredSize(DIM_SCENE);
         frame.setMinimumSize(DIM_SCENE);
         frame.addKeyListener(new AdaptateurClavier(collecteurEvent));
+        ajouterEcouteurFermeture();
     }
 
     /**
@@ -66,6 +81,24 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     private void initialiserLayeredPane() {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
+    }
+
+    /**
+     * Ajoute un écouteur pour gérer la fermeture de la fenêtre proprement
+     */
+    private void ajouterEcouteurFermeture() {
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                fermerApplication();
+            }
+        });
+    }
+
+    @Override
+    public void miseAJour() {
+        // (Réagir aux changements du modèle ici si nécessaire)
+        logger.info("Mise à jour \"InterfaceGraphique\"");
     }
 
     // --- Lancement graphique ---
@@ -79,22 +112,12 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
 
         frame.setContentPane(ecranDeDemarrage);
         frame.pack();
-        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-
-
-    @Override
-    public void miseAJour() {
-        // (Réagir aux changements du modèle ici si nécessaire)
-        logger.info("Mise à jour \"InterfaceGraphique\"");
-    }
-
-
-    private void initialiserEcranDeDemarage(){
-        ecranDeDemarrage = new EcranDeDemarrage(jeu, this);
-        ecranDeDemarrage.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+        frame.setFocusable(true);
+        frame.requestFocusInWindow();
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        // La fermeture sera gérée par l'écouteur windowClosing
     }
 
     /**
@@ -130,8 +153,12 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         ecranMenu = new EcranMenu(jeu, collecteurEvent, this);
         ecranMenu.setBounds(frame.getWidth(), 0, WIDTH_MENU, frame.getHeight());
         ecranMenu.setVisible(false);
-
         layeredPane.add(ecranMenu, JLayeredPane.MODAL_LAYER);
+    }
+
+    private void initialiserEcranDeDemarage() {
+        ecranDeDemarrage = new EcranDeDemarrage(jeu, this);
+        ecranDeDemarrage.setBounds(0, 0, frame.getWidth(), frame.getHeight());
     }
 
     /**
@@ -139,20 +166,28 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
     private void ajouterComportementRedimensionnement() {
         frame.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
-                ecranPlateauDeJeu.setBounds(0, 0, frame.getWidth(), frame.getHeight());
-                backgroundBlur.setBounds(0, 0, frame.getWidth(), frame.getHeight());
-
-                if (ecranMenu.isVisible()) {
-                    ecranMenu.setBounds(frame.getWidth() - WIDTH_MENU, 0, WIDTH_MENU, frame.getHeight());
-                } else {
-                    ecranMenu.setBounds(frame.getWidth(), 0, WIDTH_MENU, frame.getHeight());
-                }
+                mettreAJourDispositions();
             }
         });
     }
 
-
     // --- Gestion des menus ---
+
+    /**
+     * Met à jour la disposition des composants en fonction de la taille de la fenêtre
+     */
+    private void mettreAJourDispositions() {
+        int width = frame.getWidth();
+        int height = frame.getHeight();
+        ecranPlateauDeJeu.setBounds(0, 0, width, height);
+        backgroundBlur.setBounds(0, 0, width, height);
+        if (ecranMenu.isVisible()) {
+            ecranMenu.setBounds(width - WIDTH_MENU, 0, WIDTH_MENU, height);
+        } else {
+            ecranMenu.setBounds(width, 0, WIDTH_MENU, height);
+        }
+    }
+
     /**
      * Ouvre le menu latéral avec animation*/
     public void ouvrirMenu() {
@@ -160,16 +195,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
         if (!ecranMenu.isVisible()) {
             backgroundBlur.setVisible(true);
             ecranMenu.setVisible(true);
-
-            new Thread(() -> {
-                int x = frame.getWidth();
-                while (x > frame.getWidth() - WIDTH_MENU) {
-                    x -= 50;
-                    ecranMenu.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
-                    try { Thread.sleep(2); } catch (InterruptedException ignored) {}
-                }
-                ecranMenu.setBounds(frame.getWidth() - WIDTH_MENU, 0, WIDTH_MENU, frame.getHeight());
-            }).start();
+            animerDeplacementEcran(ecranMenu.getX(), frame.getWidth() - WIDTH_MENU, () -> {});
         }
     }
 
@@ -177,23 +203,42 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
      * Ferme le menu latéral avec animation*/
     public void fermerMenu() {
         logger.info("Fermeture menu");
-        new Thread(() -> {
-            int x = ecranMenu.getX();
-            while (x < frame.getWidth()) {
-                x += 50;
-                ecranMenu.setBounds(x, 0, WIDTH_MENU, frame.getHeight());
-                try { Thread.sleep(2); } catch (InterruptedException ignored) {}
-            }
+        int xCourant = ecranMenu.getX();
+        animerDeplacementEcran(xCourant, frame.getWidth(), () -> {
             ecranMenu.setVisible(false);
             backgroundBlur.setVisible(false);
-        }).start();
+        });
     }
-
 
     // --- Méthodes InterfaceUser ---
     @Override
     public void toggleIA() {
         // (Pas encore implémenté)
+    }
+
+    /**
+     * Animation générique pour déplacer l'écran (ou tout autre composant)
+     */
+    private void animerDeplacementEcran(int xDepart, int xArrivee, Runnable callback) {
+        new Thread(() -> {
+            int x = xDepart;
+            int pas = xArrivee > xDepart ? 50 : -50;
+            while ((pas > 0 && x < xArrivee) || (pas < 0 && x > xArrivee)) {
+                x += pas;
+                if ((pas > 0 && x > xArrivee) || (pas < 0 && x < xArrivee)) {
+                    x = xArrivee;
+                }
+                final int xFinal = x;
+                SwingUtilities.invokeLater(() -> ecranMenu.setBounds(xFinal, 0, WIDTH_MENU, frame.getHeight()));
+                try {
+                    Thread.sleep(25);
+                } catch (InterruptedException ignored) {
+                }
+            }
+            if (callback != null) {
+                SwingUtilities.invokeLater(callback);
+            }
+        }).start();
     }
 
     @Override
@@ -206,42 +251,37 @@ public class InterfaceGraphique implements Runnable, InterfaceUser, Observateur 
             logger.info("Mode plein écran désactivé");
         } else {
             device.setFullScreenWindow(frame);
-            logger.info("Mode plein écran désactivé");
+            logger.info("Mode plein écran activé");
         }
         maximized = !maximized;
     }
 
 
     /**
-     * Lance l'interface graphique      */
-    public static  void lancerInterfaceGraphique(Jeu jeu, CollecteurEvenements collecteurEvenements) {
-        try {
-            logger.info("Lancement interface graphique");
-            SwingUtilities.invokeLater(new InterfaceGraphique(jeu, collecteurEvenements));
-            logger.info("Interface graphique lancée");
-        } catch (Exception e) {
-            logger.severe(e.getLocalizedMessage());
-            throw new RuntimeException(e);
-        }
-
+     * Lance la partie en affichant le plateau
+     */
+    public void lancerPlateauDeJeu() {
+        frame.setContentPane(layeredPane);
+        mettreAJourDispositions();
+        frame.revalidate();
+        frame.repaint();
     }
 
+    /**
+     * Ferme proprement l'application en arrêtant tous les timers et clips
+     */
+    private void fermerApplication() {
+        if (ecranPlateauDeJeu != null && ecranPlateauDeJeu.timerPartie != null && ecranPlateauDeJeu.timerPartie.isRunning()) {
+            ecranPlateauDeJeu.timerPartie.stop();
+        }
+        if (ecranPlateauDeJeu != null && ecranPlateauDeJeu.clip != null && ecranPlateauDeJeu.clip.isRunning()) {
+            ecranPlateauDeJeu.clip.stop();
+        }
+        frame.dispose();
+        System.exit(0);
+    }
 
-    public void lancerPlatauDeJeu(){frame.setContentPane(layeredPane);}
-
-    /*
-         frame.addWindowListener(new java.awt.event.WindowAdapter() {
-             @Override
-             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                 if (ecranPlateauDeJeu.timerPartie != null && ecranPlateauDeJeu.timerPartie.isRunning()) {
-                     ecranPlateauDeJeu.timerPartie.stop();
-                 }
-                 if (ecranPlateauDeJeu.clip != null && ecranPlateauDeJeu.clip.isRunning()) {
-                     ecranPlateauDeJeu.clip.stop();
-                 }
-                 // Autres nettoyages...
-                 System.exit(0); // ou dispose();
-             }
-         });
-         */
+    public EcranPlateauDeJeu getEcranPlateauDeJeu(){
+        return ecranPlateauDeJeu;
+    }
 }

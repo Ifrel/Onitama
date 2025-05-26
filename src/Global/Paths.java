@@ -25,11 +25,12 @@ public class Paths {
     /********************************************
      *              IMAGES BOUTONS              *
      *******************************************/
-    public static Path PATH_ARRIERE  = Path.of("res","vue", "images", "arrierePlans");
-    public final static Path PATH_IMAGE_ARRIERE_PLAN_MENU = Path.of("res/vue/images/arrierePlans/menu.png");
-    public static final Path PATH_ARRIERE_PLAN_ED_O1      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage.png");
-    public static final Path PATH_ARRIERE_PLAN_ED_O2      = Path.of("res/vue/images/arrierePlans/ecran_de_demarrage2.png");
-    public static final Path PATH_ARRIERE_IMG1      = Path.of("res/vue/images/arrierePlans/image1.png");
+    public static final Path PATH_ARRIERE                   = Path.of("res","vue", "images", "arrierePlans");
+    public static final Path PATH_ARRIERE_PLAN_01           = Path.of("res/vue/images/arrierePlans/arrierePlan1.png");
+    public static final Path PATH_ARRIERE_PLAN_O2           = Path.of("res/vue/images/arrierePlans/arrierePlan2.png");
+    public static final Path PATH_ARRIERE_PLAN_03           = Path.of("res/vue/images/arrierePlans/arrierePlan10.png");
+    public static final Path PATH_ARRIERE_PLAN_4 = Path.of("res/vue/images/arrierePlans/arrierePlan4.png");
+    public static final Path PATH_ARRIERE_PLAN_8 = Path.of("res/vue/images/arrierePlans/arrierePlan8.png");
 
 
 
@@ -48,29 +49,28 @@ public class Paths {
     /********************************************
      *              IMAGES BOUTONS              *
      *******************************************/
-    public final static Path PATH_BOUTON_SAUVEGARDER     = Path.of("res/vue/images/buttons/button_sauvegarder.png");
-    public final static Path PATH_BOUTON_DECLINER        = Path.of("res/vue/images/buttons/button_decliner.png");
-    public final static Path PATH_BOUTON_ANNULER         = Path.of("res/vue/images/buttons/button_annuler.png");
     public final static Path PATH_BOUTON_ANNULER_ROUGE   = Path.of("res/vue/images/buttons/button_annuler_rouge.png");
-    public final static Path PATH_BOUTON_VALIDER         = Path.of("res/vue/images/buttons/button_valider.png");
-    public final static Path PATH_BOUTON_REFAIRE         = Path.of("res/vue/images/buttons/button_refaire.png");
-    public final static Path PATH_BOUTON_ENTRER          = Path.of("res/vue/images/buttons/button_entrer.png");
-    public final static Path PATH_BOUTON_RETOUR          = Path.of("res/vue/images/buttons/button_retour.png");
-    public final static Path PATH_BOUTON_EXIT            = Path.of("res/vue/images/buttons/button_exit.png");
-    public final static Path PATH_BOUTON_OFF             = Path.of("res/vue/images/buttons/button_off.png");
-    public final static Path PATH_BOUTON_ON              = Path.of("res/vue/images/buttons/button_on.png");
-
+    public final static Path PATH_BOUTON            = Path.of("res", "vue", "images", "buttons");
 
 
     /********************************************
      *              MUSIQUES                      *
      *******************************************/
-    public static Path PATH_SON_1             = Path.of("/vue/musique/son_1.wav");
+    public final static Path PATH_SON_1             = Path.of("/vue/musique/son_1.wav");
 
 
     /********************************************
      *              DEBUT PATHS                      *
      *******************************************/
-    public static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions");
+    public final static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions");
+
+
+    /********************************************
+     *              INDICATEURS                *
+     *******************************************/
+    public final static Path PATH_LBL_TXT              = Path.of("res","vue", "images", "font_zuma", "png");
+
+    public final static Path REGLES = Path.of("res", "vue", "regles");
+
 
 }

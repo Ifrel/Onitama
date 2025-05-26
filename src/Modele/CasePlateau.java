@@ -1,11 +1,10 @@
 package Modele;
 
-import static Global.Config.*;
-
 import Exceptions.CaseVideException;
-import Vue.InfosDeConfigUI;
 
 import java.awt.*;
+
+import static Global.Config.ROLEPION;
 
 /**
  * Représente une case du plateau de jeu, pouvant contenir un pion ou rien. */
@@ -23,10 +22,15 @@ public class CasePlateau {
 
 
 
-    CasePlateau(Jeu jeu, Point position){
+    public CasePlateau(Jeu jeu, Point position){
         this.jeu = jeu;
         this.position = position;
         // Le constructeur est privé pour implémenter le pattern Singleton.
+    }
+
+
+    public int getIdJoueur() throws CaseVideException {
+       return  jeu.getProprietairePionAt(position.x, position.y);
     }
 
 

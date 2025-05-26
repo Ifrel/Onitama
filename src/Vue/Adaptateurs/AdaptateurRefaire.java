@@ -15,7 +15,6 @@ public class AdaptateurRefaire implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.err.println("bouton: refaire pressé");
         collecteurEvent.clavier("refaire");
     }
 

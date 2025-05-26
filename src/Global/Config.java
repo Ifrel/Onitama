@@ -73,22 +73,20 @@ public class Config {
     public final static int COLONNES = 5;
 
     // -- COULEURS DE BASE --
-    public static final Color COULEUR_PLATEAU_DE_JEU        = new Color(104, 104, 104);
-    public static final Color COULEUR_CASE_TERRAIN          = new Color(255, 255, 255);
-    public static final Color COULEUR_CASE_MAITRE_JOUEUR_1  = new Color(255, 255, 255);
-    public static final Color COULEUR_CASE_MAITRE_JOUEUR_2  = new Color(255, 255, 255);
-    public static final Color COULEUR_CASE_ELEVE_JOUEUR_1   = new Color(255, 255, 255);
-    public static final Color COULEUR_CASE_ELEVE_JOUEUR_2   = new Color(255, 255, 255);
-    public static final Color COULEUR_BLOC_MENU             = new Color(31, 116, 116);
+    public static final Color COULEUR_CASE_TERRAIN = new Color(255, 255, 255, 255);
+    public static final Color COULEUR_CASE_MAITRE_JOUEUR_1  = new Color(255, 255, 255, 0);
+    public static final Color COULEUR_CASE_MAITRE_JOUEUR_2  = new Color(255, 255, 255, 0);
+    public static final Color COULEUR_CASE_ELEVE_JOUEUR_1   = new Color(255, 255, 255, 0);
+    public static final Color COULEUR_CASE_ELEVE_JOUEUR_2   = new Color(255, 255, 255, 0);
     // Enum pour identifier la cible de la couleur (simplifie le listener)
     public enum CiblesDesCouleurs {
-        PLATEAU_DE_JEU,
         CASE_TERRAIN,
         CASE_MAITRE_JOUEUR_1,
         CASE_MAITRE_JOUEUR_2,
         CASE_ELEVE_JOUEUR_1,
         CASE_ELEVE_JOUEUR_2,
-        BLOC_MENU
+        PION_TERRAIN_JOUEUR_1,
+        PION_TERRAIN_JOUEUR_2
     }
 
 

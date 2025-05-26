@@ -1,16 +1,17 @@
 package Vue;
 
 import Vue.Utils.PanelRatioFixe;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 import java.awt.*;
 
+@DisplayName("TestPanelRatioFixe Tests")
 public class TestPanelRatioFixe {
-    /**
-     * Méthode utilitaire pour des tests simples.
-     * @param args non utilisés
-     */
-    public static void main(String[] args) {
+
+    @Test
+    public void principal() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Test PanelRatioFixe");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

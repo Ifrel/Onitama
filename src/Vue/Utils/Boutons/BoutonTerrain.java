@@ -2,13 +2,13 @@ package Vue.Utils.Boutons;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 
-import static Global.Paths.*;
-import static Vue.ConfigUI.ARRONDI;
+import static Vue.Configuration.ConfigUI.ARRONDI;
 
 public class BoutonTerrain extends JButton {
 
@@ -25,6 +25,7 @@ public class BoutonTerrain extends JButton {
     private Color couleurdeFond;
     private boolean aCouleurDeFond = false;
     private boolean aCouleurBordure = true;
+    private Color backgroundColor = new Color(255, 255, 255, 255);
 
 
     public BoutonTerrain(ImageIcon icone, float epaisseurBordure, float arrondi) {
@@ -71,11 +72,9 @@ public class BoutonTerrain extends JButton {
         this(new ImageIcon(cheminImage.toString()), 2.0f, ARRONDI);
     }
 
-
     public BoutonTerrain(BufferedImage image) {
         this((image != null) ? new ImageIcon(image) : new ImageIcon(""), 2.0f, ARRONDI);
     }
-
 
     public void activerAnimation(boolean activer) {
         if (!isEnabled()) return;
@@ -133,6 +132,35 @@ public class BoutonTerrain extends JButton {
     }
 
 
+
+    /**
+     * Définit la couleur d'arrière-plan du composant.
+     * Cette méthode redéfinit la méthode setBackground de la classe parente
+     * et met à jour la couleur interne du composant.
+     *
+     * @param bg la nouvelle couleur d'arrière-plan à appliquer
+     */
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+        this.backgroundColor = bg;
+        setOpaque(true);
+        repaint();
+    }
+
+
+    /**
+     * Dessine le composant avec tous ses éléments graphiques.
+     * Cette méthode gère le rendu complet du composant incluant :
+     * - Le fond avec coins arrondis
+     * - L'image de fond (si présente)
+     * - Les bordures
+     * - Les effets d'animation
+     * - Les états désactivés
+     * - Les couleurs personnalisées
+     *
+     * @param g le contexte graphique dans lequel effectuer le rendu
+     */
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
@@ -144,7 +172,8 @@ public class BoutonTerrain extends JButton {
 
         // 1. Fond
         if (isOpaque()) {
-            g2.setColor(getBackground());
+            // Utilise la couleur d'arrière-plan si elle est définie, sinon utilise la couleur par défaut
+            g2.setColor(backgroundColor);
             g2.fillRoundRect(0, 0, w, h, arc, arc);
         }
 
@@ -222,181 +251,5 @@ public class BoutonTerrain extends JButton {
 }
 
 
-/**************************************
- * ***      AUTRE VERSION   ***********
- * ***********************************/
-
-/*
-public class BoutonTerrain extends JButton {
-
-    private final float epaisseurInitiale;
-    private final float arrondiBordure;
-    private final Color couleurBordureInactive = Color.GRAY;
-    private final Color couleurBordureActive = new Color(198, 71, 207);
-    private final float epaisseurMax = 10.0f;
-    private float epaisseurAnimee;
-    private boolean animationActivee = false;
-    private float phase = 0;
-    private final Timer timer;
-
-    public BoutonTerrain(ImageIcon icone, float epaisseurBordure, float arrondi) {
-        super(icone);
-        this.epaisseurInitiale = epaisseurBordure;
-        this.epaisseurAnimee = epaisseurBordure;
-        this.arrondiBordure = arrondi;
-
-        setOpaque(false);
-        setFocusPainted(false);
-        setBorderPainted(false);
-        setContentAreaFilled(false);
-        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        timer = new Timer(40, e -> {
-            phase += 0.07f;  // contrôle la vitesse de pulsation
-            if (phase > 2 * Math.PI) {
-                phase -= 2 * Math.PI;
-            }
-            repaint();
-        });
-
-        addActionListener(e -> activerAnimationBordure(!animationActivee));
-
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                epaisseurAnimee = epaisseurMax;
-                repaint();
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                epaisseurAnimee = epaisseurInitiale;
-                repaint();
-            }
-        });
-    }
-
-    public BoutonTerrain(Path cheminImage) {
-        this(new ImageIcon(cheminImage.toString()), 4.0f, ARONDI);
-    }
-
-    public void activerAnimationBordure(boolean activer) {
-        this.animationActivee = activer;
-        if (activer) {
-            timer.start();
-        } else {
-            timer.stop();
-            epaisseurAnimee = epaisseurInitiale;
-            repaint();
-        }
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        int w = getWidth();
-        int h = getHeight();
-        int arc = (int) arrondiBordure;
-
-        super.paintComponent(g2);
-
-        // Dessiner la bordure
-        g2.setStroke(new BasicStroke(epaisseurAnimee));
-        g2.setColor(animationActivee ? couleurBordureActive : couleurBordureInactive);
-        g2.drawRoundRect((int)(epaisseurAnimee / 2), (int)(epaisseurAnimee / 2),
-                w - (int) epaisseurAnimee, h - (int) epaisseurAnimee, arc, arc);
-
-        // Animation cible centrale si activée
-        if (animationActivee) {
-            float cx = w / 2f;
-            float cy = h / 2f;
-
-            // Paramètres de pulsation (oscillation entre 0.7 et 1.3)
-            float pulsation = 1.0f + 0.3f * (float)Math.sin(phase);
-
-            // Couleur violette semi-transparente
-            Color violet = new Color(198, 71, 207, 180);
-
-            g2.setStroke(new BasicStroke(3));
-
-            // 3 cercles concentriques pulsants
-            for (int i = 3; i >= 1; i--) {
-                float radius = i * 15 * pulsation;
-                float x = cx - radius;
-                float y = cy - radius;
-
-                // Le cercle intérieur est plus opaque, le plus grand plus transparent
-                int alpha = (int)(180 / i);
-                g2.setColor(new Color(violet.getRed(), violet.getGreen(), violet.getBlue(), alpha));
-                g2.draw(new Ellipse2D.Float(x, y, 2 * radius, 2 * radius));
-            }
-
-            // Halo lumineux au centre (rempli avec dégradé simple)
-            RadialGradientPaint halo = new RadialGradientPaint(
-                    cx, cy, 20 * pulsation,
-                    new float[]{0f, 1f},
-                    new Color[]{new Color(198, 71, 207, 150), new Color(198, 71, 207, 0)}
-            );
-            g2.setPaint(halo);
-            g2.fill(new Ellipse2D.Float(cx - 20 * pulsation, cy - 20 * pulsation, 40 * pulsation, 40 * pulsation));
-        }
-
-        g2.dispose();
-    }
-}
-*/
 
 
-class TestBoutonTerrain {
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame f = new JFrame("Test complet BoutonTerrain");
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            f.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
-
-            // Bouton initial avec image par défaut
-            BoutonTerrain bouton1 = new BoutonTerrain(PATH_PION_NOIR_ETUDIANT);
-            bouton1.setPreferredSize(new Dimension(120, 120));
-            bouton1.setEnabled(false);
-            f.add(bouton1);
-
-            // Bouton avec une autre image et taille plus grande
-            BoutonTerrain bouton2 = new BoutonTerrain(PATH_PION_ROUGE_MAITRE);
-            bouton2.setPreferredSize(new Dimension(150, 150));
-            f.add(bouton2);
-
-            // Bouton testant la méthode de changement d'image dynamique après 3 secondes
-            BoutonTerrain bouton3 = new BoutonTerrain(PATH_BTN_MODE_AUTO_OFF);
-            bouton3.setPreferredSize(new Dimension(120, 120));
-            f.add(bouton3);
-
-            // Lance un timer pour changer l'image de bouton3 après 3 secondes
-            new Timer(3000, e -> {
-                ImageIcon nouvelleImage = new ImageIcon(PATH_PION_BLEU_ETUDIANT.toString());
-                bouton3.changerImage(nouvelleImage);
-                System.out.println("Image changée dynamiquement !");
-            }).start();
-
-            // Bouton sans animation activée initialement, on l'active après 5 secondes
-            BoutonTerrain bouton4 = new BoutonTerrain(PATH_PION_BLEU_ETUDIANT);
-            bouton4.setPreferredSize(new Dimension(120, 120));
-            f.add(bouton4);
-
-            new Timer(5000, e -> {
-                bouton4.activerAnimation(true);
-                System.out.println("Animation activée !");
-            }).start();
-
-            // Bouton testant activation/désactivation animation via clic (par défaut)
-            BoutonTerrain bouton5 = new BoutonTerrain(PATH_PION_NOIR_MAITRE);
-            bouton5.setPreferredSize(new Dimension(120, 120));
-            f.add(bouton5);
-
-            f.setSize(800, 400);
-            f.setLocationRelativeTo(null);
-            f.setVisible(true);
-        });
-    }
-}

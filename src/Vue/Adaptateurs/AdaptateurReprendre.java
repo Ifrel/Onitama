@@ -8,15 +8,13 @@ import java.awt.event.ActionListener;
 
 public class AdaptateurReprendre implements ActionListener {
     CollecteurEvenements collecteurEvent;
-    //BlocMenu bm;
 
-//    public AdaptateurReprendre(CollecteurEvenements collecteurEvent, BlocMenu bm){
-//        this.collecteurEvent = collecteurEvent;
-//        this.bm =bm;
-//    }
+    public AdaptateurReprendre(CollecteurEvenements collecteurEvent){
+        this.collecteurEvent = collecteurEvent;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-//        bm.stopTimerPartieCourante();
-//        collecteurEvent.clavier("Reprendre");
+        collecteurEvent.clavier("reprendre");
     }
 }
