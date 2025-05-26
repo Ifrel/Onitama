@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static Global.Config.ID_JOUEUR_1;
-import static Vue.ConfigUI.COULEUR_FOND_PION_DEPART_SELECTIONE;
+import static Vue.Configuration.ConfigUI.COULEUR_FOND_PION_DEPART_SELECTIONE;
 
 
 public class ControleurAnimation implements CollecteurEvenements {
