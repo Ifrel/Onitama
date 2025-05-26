@@ -4,10 +4,7 @@ import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Jeu;
 import Patterns.Observateur;
-import Vue.Adaptateurs.AdaptateurAnnuler;
-import Vue.Adaptateurs.AdaptateurBoutonTerrain;
-import Vue.Adaptateurs.AdaptateurCarte;
-import Vue.Adaptateurs.AdaptateurRefaire;
+import Vue.Adaptateurs.*;
 import Vue.Animations.AnimationUtils.CardFlipAnimator;
 import Vue.Animations.AnimationUtils.CardFlipLayerUI;
 import Vue.Configuration.InfosDeConfigUI;
@@ -74,7 +71,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private BoutonCarte[] buttonsCartesJoueur1;
     private BoutonCarte[] buttonsCartesJoueur2;
     private BoutonCarte carteDeRotation;
-    private BoutonTerrain annuler, refaire;
+    private BoutonTerrain annuler, refaire, suggestion;
 
     private JButton boutonSon;
 
@@ -320,30 +317,41 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     /** Crée les boutons "Annuler" et "Refaire"*/
     private JPanel creerButtonsAnnulerRefaire() {
-        JPanel boutonsAnnuleRefaire = new JPanel(new GridLayout(6, 1, 0, 10));
+        JPanel boutonsAnnuleRefaire = new JPanel(new GridLayout(7, 1, 0, 10));
         boutonsAnnuleRefaire.setOpaque(false);
 
         annuler = new BoutonTerrain(PATH_BTN_ANNULER);
         refaire = new BoutonTerrain(PATH_BTN_REFAIRE);
+        suggestion = new BoutonTerrain(PATH_BTN.resolve("suggestion.png"));
+
+//        annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent);
+//        refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent);
+//        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+
 
         annuler.setPreferredSize(new Dimension(135, 60));
         refaire.setPreferredSize(new Dimension(135, 60));
+        suggestion.setPreferredSize(new Dimension(135, 60));
 
         annuler.setBackground(new Color(207, 207, 207, 44));
         refaire.setBackground(new Color(207, 207, 207, 44));
+        suggestion.setBackground(new Color(207, 207, 207, 44));
 
         annuler.setOpaque(true);
         refaire.setOpaque(true);
+        suggestion.setOpaque(true);
 
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
+        suggestion.addActionListener(new AdaptateurSuggestion(collecteurEv, this));
 
         boutonsAnnuleRefaire.add(Box.createGlue());
-        boutonsAnnuleRefaire.add(Box.createGlue());
+//        boutonsAnnuleRefaire.add(Box.createGlue());
         boutonsAnnuleRefaire.add(annuler);
         boutonsAnnuleRefaire.add(refaire);
-        boutonsAnnuleRefaire.add(Box.createGlue());
-        boutonsAnnuleRefaire.add(Box.createGlue());
+        boutonsAnnuleRefaire.add(suggestion);
+//        boutonsAnnuleRefaire.add(Box.createGlue());
+//        boutonsAnnuleRefaire.add(Box.createGlue());
 
         return boutonsAnnuleRefaire;
     }

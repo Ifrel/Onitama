@@ -356,7 +356,7 @@ public class Jeu extends Observable implements Runnable {
             }
 
             if (estPartieFinie()) {
-                System.err.println("Impossible d'annuler un Coup\nLA PARTIE EST TERMINEE :)");
+                logger.info("Impossible d'annuler un Coup\nLA PARTIE EST TERMINEE :)");
                 return;
 
             }
@@ -377,6 +377,9 @@ public class Jeu extends Observable implements Runnable {
                 changerJoueur();
                 //Restaurer le joueur qui avait joué le coup
                 restaurerMainJoueur(c.getCarteEchangee(), getCarteSupplementaire());
+
+                dernierCoupJoue = c;
+
                 // met à jour l'interface
                 metAJour();
 
@@ -421,8 +424,11 @@ public class Jeu extends Observable implements Runnable {
 
     public Coup suggererCoup() {
         // sera probablement à modifier, fait de cette manière pour accélerer l'intégration de cette fonctionnalité
-        IA ia_coup = new IAFort(this, getIdJoueurCourant(), "IA suggestion coup");
-        return ia_coup.calculerCoup();
+        IA ia_coup = new IAMoyen(this, getIdJoueurCourant(), "IA suggestion coup");
+        Coup c = ia_coup.calculerCoup();
+        setPionSelectionne(ia_coup.getPionChoisi().getPosition());
+        setCarteSelectionnee(ia_coup.getCarteChoisie());
+        return c;
     }
 
 
@@ -450,6 +456,7 @@ public class Jeu extends Observable implements Runnable {
             changerJoueur();
             //restaurerMainJoueur(getCarteSupplementaire(), c.getCarteEchangee());
 
+            dernierCoupJoue = c;
 
             // met à jour l'interface
             metAJour();
@@ -791,7 +798,32 @@ public class Jeu extends Observable implements Runnable {
         initJoueursCartes();
     }
 
+    public void lancer() {
+        Thread t = new Thread(this);
+        t.start();
+    }
+
     public void nouvellePartie() {
+        String nomJoueur1 = getNomJoueur1();
+        String nomJoueur2 = getNomJoueur2();
+        boolean estActiveIA1 = estActiveIA1();
+        boolean estActiveIA2 = estActiveIA2();
+
+        _Jeu();
+
+        if (estActiveIA1) {
+            toggleIA1();
+        }
+        if (estActiveIA2) {
+            toggleIA2();
+        }
+        cartesDuJeu = initCartesJeu();
+        initJoueursCartes();
+
+        initGrille();
+
+        setNomJoueur1(nomJoueur1);
+        setNomJoueur2(nomJoueur2);
     }
 
     public long getTempsDeJeu() {
@@ -833,7 +865,8 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public int getNumeroRound() {
-        return numRound;
+        // méthode à supprimer
+        return -999999;
     }
 
     public Coup getDernierCoupJoue() {
