@@ -2,8 +2,8 @@ package Vue.Utils;
 
 import Modele.Carte;
 import Vue.Animations.Animations;
+import Vue.Configuration.InfosDeConfigUI;
 import Vue.EcranPlateauDeJeu.TYPE_ELEMENT_SUR_TERRAIN;
-import Vue.InfosDeConfigUI;
 import Vue.Utils.Boutons.Bouton;
 
 import javax.swing.*;
@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static Global.Config.*;
+import static Global.Config.ID_JOUEUR_1;
+import static Global.Config.ID_JOUEUR_2;
 import static Global.Paths.*;
-import static Vue.ConfigUI.ARRONDI;
+import static Vue.Configuration.ConfigUI.ARRONDI;
 
 /**
  * Classe utilitaire regroupant des méthodes statiques pour la création
