@@ -281,6 +281,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         System.exit(0);
     }
 
+
     public EcranPlateauDeJeu getEcranPlateauDeJeu(){
         return ecranPlateauDeJeu;
     }
