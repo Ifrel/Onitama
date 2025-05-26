@@ -1,4 +1,4 @@
-package Vue;
+package Vue.Configuration;
 
 import java.awt.*;
 
@@ -58,6 +58,8 @@ public class ConfigUI {
     public static final String LBL_CASE_MAITRE_JOUEUR_2  = "Case Maitre Joueur 2";
     public static final String LBL_CASE_ELEVE_JOUEUR_1   = "Case Eleve Joueur 1";
     public static final String LBL_CASE_ELEVE_JOUEUR_2   = "Case Eleve Joueur 2";
+    public static final String LBL_PION_TERRAIN_JOUEUR_1 = "Pion Joueur 1";
+    public static final String LBL_PION_TERRAIN_JOUEUR_2 = "Pion Joueur 2";
 
     public static final Dimension DIM_PREVIEW_COULEUR   = new Dimension(30, 30);
 
