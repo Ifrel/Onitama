@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static Vue.ConfigUI.ARRONDI;
+import static Vue.Configuration.ConfigUI.ARRONDI;
 
 
 /**
