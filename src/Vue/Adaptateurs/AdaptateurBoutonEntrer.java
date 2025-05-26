@@ -1,7 +1,7 @@
 package Vue.Adaptateurs;
 
 import Vue.CollecteurEvenements;
-import Vue.InfosDeConfigUI;
+import Vue.Configuration.InfosDeConfigUI;
 import Vue.InterfaceGraphique;
 
 import javax.swing.*;
@@ -10,8 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 
-import static Vue.ConfigUI.INDICATION_SELECTION;
-import static Vue.ConfigUI.OPTION_IA_NON;
+import static Vue.Configuration.ConfigUI.INDICATION_SELECTION;
+import static Vue.Configuration.ConfigUI.OPTION_IA_NON;
 
 /**
  * Adaptateur pour le bouton "Entrer" de l'interface de configuration.

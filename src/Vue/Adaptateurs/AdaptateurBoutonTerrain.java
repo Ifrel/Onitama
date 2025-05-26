@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE.VIDE;
-import static Vue.ConfigUI.COULEUR_FOND_PION_DEPART_SELECTIONE;
 
 public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
     private final Jeu jeu;
