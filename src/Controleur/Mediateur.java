@@ -61,10 +61,10 @@ public class Mediateur implements CollecteurEvenements {
                 case "pause":
                     jeu.setPause();
                     break;
-                case "IA":
+                case "ia":
                     jeu.basculeIA();
                     break;
-                case "Full":
+                case "full":
                     vue.toggleFullScreen();
                     break;
                 default:
