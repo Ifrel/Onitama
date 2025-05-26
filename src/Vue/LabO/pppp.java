@@ -23,7 +23,7 @@
 //// Constantes qui ne sont PAS du texte UI (chemins, dimensions, etc.)
 //import static Global.Config.*;
 //import static Global.Paths.*;
-//import static Vue.ConfigUI.*;
+//import static Vue.Configuration.ConfigUI.*;
 //import static Vue.Utils.MethodsStaticsUtils.*; // Assurez-vous que creerBoutonAvecImage, creerJPanel sont ici
 //
 ///**
