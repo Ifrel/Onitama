@@ -3,9 +3,9 @@ package Vue;
 import Exceptions.CaseVideException;
 import Modele.Carte;
 import Modele.CasePlateau;
+import Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE;
 import Modele.Jeu;
 import Modele.Joueur;
-import Modele.CasePlateau.TYPE_ELEMENT_SUR_CASE;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @DisplayName("InterfaceTextuelle Class Tests")
-public class TestInterfaceTextuelle {
+public class InterfaceTextuelleTest {
 
     private Jeu mockJeu;
     private CollecteurEvenements mockCollecteurEv;
@@ -160,6 +160,32 @@ public class TestInterfaceTextuelle {
         assertTrue(output.contains("--- Informations de la Partie ---"));
         assertTrue(output.contains("--- Plateau de Jeu ---"));
         assertTrue(output.contains("--- Cartes du jeu ---"));
+    }
+
+    @Test
+    @DisplayName("miseAJour updates jeuTermine correctly when game is not finished")
+    void testMiseAJour_GameStateUpdatedAfterRefresh() {
+        when(mockJeu.estPartieFinie()).thenReturn(false);
+
+        InterfaceTextuelle interfaceTextuelle = new InterfaceTextuelle(mockJeu, mockCollecteurEv, true);
+        assertFalse((boolean) getPrivateField(interfaceTextuelle, "jeuTermine")); // Verify initial state
+
+        interfaceTextuelle.miseAJour();
+
+        assertFalse((boolean) getPrivateField(interfaceTextuelle, "jeuTermine")); // Verify game is not marked as finished
+    }
+
+    @Test
+    @DisplayName("miseAJour updates jeuTermine correctly when game is finished")
+    void testMiseAJour_GameStateUpdatedWhenGameIsFinished() {
+        when(mockJeu.estPartieFinie()).thenReturn(true);
+
+        InterfaceTextuelle interfaceTextuelle = new InterfaceTextuelle(mockJeu, mockCollecteurEv, true);
+        assertFalse((boolean) getPrivateField(interfaceTextuelle, "jeuTermine")); // Verify initial state
+
+        interfaceTextuelle.miseAJour();
+
+        assertTrue((boolean) getPrivateField(interfaceTextuelle, "jeuTermine")); // Verify game is marked as finished
     }
 
     @Test
