@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -59,6 +60,62 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     private JLabel nomJoueurBValue;
     private JLabel scoreJoueurBValue;
 
+    private int scoreJoueurA = 0;
+    private int scoreJoueurB = 0;
+    private int round = 0;
+    private Duration dureePartie = Duration.ZERO;
+    private boolean partieEnCours = false;
+    private boolean partieEnPause = false;
+    private boolean partieTerminee = false;
+    private String nomJoueurA = "";
+    private String nomJoueurB = "";
+    private boolean sauvegardeEnCours = false;
+    private JOUEUR JOUEUR_1;
+    private JOUEUR JOUEUR_2;
+
+    private enum JOUEUR {
+        JOUEUR_A(Color.BLUE),
+        JOUEUR_B(new Color(26, 67, 104));
+
+        private String nom;
+        private int score;
+        private final Color couleur;
+
+        JOUEUR(Color couleur) {
+            this.nom = "Joueur";
+            this.score = 0;
+            this.couleur = couleur;
+        }
+
+        public String getNom() {
+            return nom;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public Color getCouleur() {
+            return couleur;
+        }
+
+        public void setNom(String nom) {
+            this.nom = nom != null ? nom : "Joueur";
+        }
+
+        public void setScore(int score) {
+            this.score = Math.max(0, score);
+        }
+
+        public void incrementerScore() {
+            this.score++;
+        }
+    }
+
+    private final JOUEUR joueur1 = JOUEUR.JOUEUR_A;
+    private final JOUEUR joueur2 = JOUEUR.JOUEUR_B;
+    private Instant debutPartie;
+
     /**
      * Constructeur de l'écran de menu principal.
      * Initialise les composants graphiques, les écouteurs d'événements et met à jour les données initiales.
@@ -72,14 +129,18 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         this.jeu = jeu;
         this.collecteurEvenements = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
-
         this.jeu.ajouteObservateur(this);
-
+        
+        initialiserLesStats();
         initialiserLayout();
         miseAJour();
     }
 
-
+    private void initialiserLesStats() {
+        joueur1.setNom(jeu.getNomJoueur1());
+        joueur2.setNom(jeu.getNomJoueur2());
+        debutPartie = Instant.now();
+    }
 
     /**
      * Méthode appelée lorsque le modèle {@link Jeu} notifie un changement.
@@ -94,33 +155,70 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         LOGGER.info("Mise à jour des données de EcranMenu depuis le modèle Jeu.");
 
         SwingUtilities.invokeLater(() -> {
-            roundValue.setText(String.valueOf(jeu.getNumeroRound()));
+            if (jeu.estPartieFinie()) {
+                round++;
+            }
 
-            Duration duree = Duration.ofSeconds(jeu.getTempsDeJeu());
-            long minutes = duree.toMinutes();
-            long secondes = duree.minusMinutes(minutes).getSeconds();
+            // Mise à jour de la durée
+            if (partieEnCours && !partieEnPause) {
+                dureePartie = Duration.between(debutPartie, Instant.now());
+            }
+
+            // Mise à jour de l'affichage
+            roundValue.setText(String.valueOf(round));
+            
+            long minutes = dureePartie.toMinutes();
+            long secondes = dureePartie.minusMinutes(minutes).getSeconds();
             dureePartieValue.setText(String.format("%02d:%02d", minutes, secondes));
 
-            // Mise à jour des infos Joueur 1
-            if (jeu.getJoueur(1) != null) {
-                nomJoueurAValue.setText(jeu.getNomJoueur1() + ": ");
-                scoreJoueurAValue.setText("" + jeu.getJoueur(1).getScore());
-            } else {
-                nomJoueurAValue.setText("Non défini: ");
-                scoreJoueurAValue.setText("0");
-            }
-
-            // Mise à jour des infos Joueur 2
-            if (jeu.getJoueur(2) != null) {
-                nomJoueurBValue.setText(jeu.getNomJoueur2() + ": ");
-                scoreJoueurBValue.setText("" + jeu.getJoueur(2).getScore());
-            } else {
-                nomJoueurBValue.setText("Non défini: ");
-                scoreJoueurBValue.setText("0");
-            }
+            // Mise à jour des scores et noms des joueurs
+            nomJoueurAValue.setText(joueur1.getNom() + ": ");
+            scoreJoueurAValue.setText(String.valueOf(joueur1.getScore()));
+            
+            nomJoueurBValue.setText(joueur2.getNom() + ": ");
+            scoreJoueurBValue.setText(String.valueOf(joueur2.getScore()));
         });
 
         LOGGER.info("Mise à jour de EcranMenu terminée.");
+    }
+
+    public void demarrerPartie() {
+        partieEnCours = true;
+        partieEnPause = false;
+        partieTerminee = false;
+        debutPartie = Instant.now();
+    }
+
+    public void mettreEnPause() {
+        if (partieEnCours) {
+            partieEnPause = true;
+        }
+    }
+
+    public void reprendrePartie() {
+        if (partieEnCours && partieEnPause) {
+            partieEnPause = false;
+            // Ajuster le temps de début pour tenir compte de la pause
+            debutPartie = Instant.now().minus(dureePartie);
+        }
+    }
+
+    public void terminerPartie() {
+        partieEnCours = false;
+        partieTerminee = true;
+        // Figer la durée finale
+        dureePartie = Duration.between(debutPartie, Instant.now());
+    }
+
+    public void reinitialiserStats() {
+        round = 0;
+        dureePartie = Duration.ZERO;
+        joueur1.setScore(0);
+        joueur2.setScore(0);
+        debutPartie = Instant.now();
+        partieEnCours = false;
+        partieEnPause = false;
+        partieTerminee = false;
     }
 
 
@@ -432,4 +530,38 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     public String getImagePath() {
         return PATH_ARRIERE_PLAN_4.toString();
     }
+
+
+
+
+//    private enum JOUEUR {
+//        JOUEUR("nom Joueur", 0);
+//
+//        private String nom;
+//        private int score;
+//
+//        JOUEUR(String nom, int score) {
+//            this.nom = nom;
+//            this.score = score;
+//        }
+//
+//        public String getNom() {
+//            return nom;
+//        }
+//
+//        public int getScore() {
+//            return score;
+//        }
+//
+//        public void setNom(String nom){
+//            this.nom = nom;
+//        }
+//
+//        public void setScore(int score){
+//            this.score = score;
+//        }
+//        public void incrementerScore(){
+//            this.score++;
+//        }
+//    }
 }
