@@ -2,9 +2,8 @@ package Vue;
 
 import Controleur.ControleurEcranDeDemarrage;
 import Modele.Jeu;
-import Vue.Adaptateurs.AdaptateurBoutonEntrer; // We'll need to create a simple mock version for this
-import Vue.Utils.Boutons.Bouton.BoutonAvecImage; // For internal component access via reflection if needed
-
+import Vue.Adaptateurs.AdaptateurBoutonEntrer;
+import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,16 +14,15 @@ import org.mockito.MockitoAnnotations;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Field; // For accessing private fields if necessary
+import java.lang.reflect.Field;
 
 import static Global.Config.COULEUR_CASE_MAITRE_JOUEUR_1;
 import static Global.Config.COULEUR_CASE_TERRAIN;
+import static Global.Config.CiblesDesCouleurs.CASE_MAITRE_JOUEUR_1;
+import static Global.Config.CiblesDesCouleurs.CASE_TERRAIN;
+import static Vue.Configuration.ConfigUI.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*; // For Mockito methods like when, verify, any
-
-// Import constants for comparison
-import static Vue.ConfigUI.*;
-import static Global.Config.CiblesDesCouleurs.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test class for EcranDeDemarrage.
