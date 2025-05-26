@@ -10,6 +10,7 @@ import Vue.Adaptateurs.AdaptateurCarte;
 import Vue.Adaptateurs.AdaptateurRefaire;
 import Vue.Animations.AnimationUtils.CardFlipAnimator;
 import Vue.Animations.AnimationUtils.CardFlipLayerUI;
+import Vue.Configuration.InfosDeConfigUI;
 import Vue.LabO.BordureArrondieAvecOmbre;
 import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
@@ -25,7 +26,6 @@ import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 
 import static Global.Config.*;
 import static Global.Paths.*;
-import static Vue.ConfigUI.ARRONDI;
+import static Vue.Configuration.ConfigUI.ARRONDI;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
 
@@ -642,13 +642,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
      */
     private void apliquerConfifUtilisateur(BoutonTerrain boutonCase, int row, int col) {
         if (row == 0 && col == 2) { // case maitre joueur 1
-            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseMaitreJoueur1());
+            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_1));
         } else if (row == 4 && col == 2) { // case maitre joueur 2
-            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseMaitreJoueur2());
+            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_2));
         } else if (row == 0) {
-            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseEleveJoueur1());
+            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_1));
         } else if (row == 4) {
-            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseEleveJoueur2());
+            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_2));
         }
 
     }
