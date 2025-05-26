@@ -39,6 +39,7 @@ public class Mediateur implements CollecteurEvenements {
                     jeu.refaireCoup();
                     break;
                 case "reprendre":
+                    break;
                 case "didacticiel":
                 case "mesParties":
                     afficherFonctionEnCours();
@@ -65,6 +66,9 @@ public class Mediateur implements CollecteurEvenements {
                     break;
                 case "full":
                     vue.toggleFullScreen();
+                    break;
+                case "demarrer":
+                    vue.lancerPlateauDeJeu();
                     break;
                 default:
                     logger.severe("Touche inconnue : " + touche);
