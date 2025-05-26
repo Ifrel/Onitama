@@ -1151,7 +1151,6 @@ public class Jeu extends Observable implements Runnable {
         return true;
     }
 
-
     /**
      * Démarre une nouvelle partie à partir d'une sélection donnée.
      * @param partieSelectionee Identifiant ou nom de la partie sélectionnée.
@@ -1164,32 +1163,18 @@ public class Jeu extends Observable implements Runnable {
      * Termine la partie en cours avec sauvegarde (ex: quitter).
      */
     public void setTerminerJeu() {
-        //TODO À implémenter
+        for (int i = 0; i < 100_000; i++) {
+            System.err.println("NE PAS UTILISER CETTE METHODE ! (Mediateur:setTerminerJeu()");
+        }
     }
-
 
     /**
      * Met le jeu en pause ou le reprend.
      */
     public void setPause() {
-        //TODO À implémenter
-    }
-
-
-    /**
-     * Active ou désactive la présence de l'IA (mode manuel <-> IA).
-     */
-    public void basculeIA() {
-        //TODO À implémenter
-    }
-
-
-    /**
-     * Définit la case de destination ciblée sur le plateau.
-     * @param casePlateau La case cible.
-     */
-    public void setCasePlateauCible(CasePlateau casePlateau) {
-        //TODO À implémenter
+        for (int i = 0; i < 100_000; i++) {
+            System.err.println("NE PAS UTILISER CETTE METHODE ! (Mediateur:setPause()");
+        }
     }
 
     /**
