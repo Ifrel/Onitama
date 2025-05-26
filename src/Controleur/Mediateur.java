@@ -1,16 +1,12 @@
 package Controleur;
 
-import Global.Config;
-import Modele.*;
+import Modele.CasePlateau;
+import Modele.Jeu;
 import Vue.CollecteurEvenements;
-import Vue.EcranPlateauDeJeu;
-import Vue.InfosDeConfigUI;
 import Vue.InterfaceUser;
 import Vue.Utils.AfficheReglesPDF;
-import Vue.Utils.Boutons.BoutonTerrain;
 
 import java.awt.*;
-import java.util.List;
 import java.util.logging.Logger;
 
 import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
