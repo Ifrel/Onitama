@@ -2,13 +2,13 @@ package Vue.Utils.Boutons;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 
-import static Global.Paths.*;
-import static Vue.ConfigUI.ARRONDI;
+import static Vue.Configuration.ConfigUI.ARRONDI;
 
 public class BoutonTerrain extends JButton {
 
