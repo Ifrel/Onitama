@@ -26,6 +26,8 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
 
     private static final Logger logger = Logger.getLogger(InterfaceGraphique.class.getName());
 
+    private static InterfaceGraphique instance;
+
     /**
      * Gestionnaire de toutes les interfaces graphiques
      * @param jeu modèle de données observé
@@ -49,7 +51,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         try {
             logger.info("Lancement interface graphique");
             SwingUtilities.invokeLater(() -> {
-                InterfaceGraphique instance = new InterfaceGraphique(jeu, collecteurEvenements);
+                instance = new InterfaceGraphique(jeu, collecteurEvenements);
                 new Thread(instance).start();
             });
             logger.info("Interface graphique lancée");
@@ -57,6 +59,10 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
             logger.severe(e.getLocalizedMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public static InterfaceGraphique getInstance() {
+        return instance;
     }
 
     /**
@@ -249,6 +255,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         }
         maximized = !maximized;
     }
+
 
     /**
      * Lance la partie en affichant le plateau
