@@ -3,6 +3,9 @@
     <output-path>$PROJECT_DIR$</output-path>
     <root id="archive" name="Onitama.jar">
       <element id="module-output" name="PROG6-PROJET-2024-25" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/fontbox/2.0.30/fontbox-2.0.30.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/pdfbox/2.0.30/pdfbox-2.0.30.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
