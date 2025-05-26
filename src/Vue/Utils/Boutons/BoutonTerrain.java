@@ -105,13 +105,13 @@ public class BoutonTerrain extends JButton {
         repaint();
     }
 
-    public void chargerCouleurFont(Color color) {
+    public void chargerCouleurFond(Color color) {
         this.aCouleurDeFond = true;
         this.couleurdeFond = color;
         repaint();
     }
 
-    public void enleverCouleurFont() {
+    public void enleverCouleurFond() {
         this.aCouleurDeFond = false;
         this.couleurdeFond = new Color(0, 0, 0, 0);
         repaint();
@@ -140,13 +140,12 @@ public class BoutonTerrain extends JButton {
      *
      * @param bg la nouvelle couleur d'arrière-plan à appliquer
      */
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-        this.backgroundColor = bg;
-        setOpaque(true);
-        repaint();
-    }
+//    public void setBackColor(Color bg) {
+////        super.setBackground(bg);
+//        this.backgroundColor = bg;
+//        setOpaque(true);
+//        repaint();
+//    }
 
 
     /**
@@ -171,11 +170,11 @@ public class BoutonTerrain extends JButton {
         int arc = (int) arrondiBordure;
 
         // 1. Fond
-        if (isOpaque()) {
-            // Utilise la couleur d'arrière-plan si elle est définie, sinon utilise la couleur par défaut
-            g2.setColor(backgroundColor);
-            g2.fillRoundRect(0, 0, w, h, arc, arc);
-        }
+//        if (isOpaque()) {
+//            // Utilise la couleur d'arrière-plan si elle est définie, sinon utilise la couleur par défaut
+//            g2.setColor(backgroundColor);
+//            g2.fillRoundRect(0, 0, w, h, arc, arc);
+//        }
 
         float epaisseurBordureTotale = epaisseurAnimee + (animationActivee ? 2.5f : 0f);
         int marge = (int) (epaisseurBordureTotale + 2f);

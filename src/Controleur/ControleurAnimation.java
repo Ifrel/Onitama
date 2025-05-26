@@ -45,7 +45,7 @@ public class ControleurAnimation implements CollecteurEvenements {
             System.err.println("bouton animation activé:" + cible);
         }
 
-        ecranPlateauDeJeu.getBoutonterrainAt(coupPossible.get(0).getDepart()).chargerCouleurFont(COULEUR_FOND_PION_DEPART_SELECTIONE);
+        ecranPlateauDeJeu.getBoutonterrainAt(coupPossible.get(0).getDepart()).chargerCouleurFond(COULEUR_FOND_PION_DEPART_SELECTIONE);
         peutDesactiver = true;
     }
 
@@ -58,7 +58,7 @@ public class ControleurAnimation implements CollecteurEvenements {
                 System.err.println("bouton animation désactivé:" + cible);
             }
 
-            ecranPlateauDeJeu.getBoutonterrainAt(coupPrecedant.get(0).getDepart()).enleverCouleurFont();
+            ecranPlateauDeJeu.getBoutonterrainAt(coupPrecedant.get(0).getDepart()).enleverCouleurFond();
             peutDesactiver = false;
         }
     }

@@ -643,13 +643,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
      */
     private void apliquerConfifUtilisateur(BoutonTerrain boutonCase, int row, int col) {
         if (row == 0 && col == 2) { // case maitre joueur 1
-            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_1));
+            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_1));
         } else if (row == 4 && col == 2) { // case maitre joueur 2
-            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_2));
+            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_2));
         } else if (row == 0) {
-            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_1));
+            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_1));
         } else if (row == 4) {
-            boutonCase.setBackground(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_2));
+            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_2));
         }
 
     }
