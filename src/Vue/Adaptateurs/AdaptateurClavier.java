@@ -29,10 +29,11 @@ package Vue.Adaptateurs;
 
 import Vue.CollecteurEvenements;
 
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class AdaptateurClavier extends KeyAdapter {
+
+public class AdaptateurClavier implements KeyListener {
     CollecteurEvenements control;
 
     public AdaptateurClavier(CollecteurEvenements c) {
@@ -43,22 +44,38 @@ public class AdaptateurClavier extends KeyAdapter {
     public void keyPressed(KeyEvent event) {
         switch (event.getKeyCode()) {
             case KeyEvent.VK_U:
-                control.clavier("Undo");
-                System.err.println("Undo");
+                control.clavier("annuler");
+                System.out.println("annuler");
                 break;
             case KeyEvent.VK_R:
-                control.clavier("Redo");
+                control.clavier("refaire");
+                System.out.println("refaire");
                 break;
             case KeyEvent.VK_Q:
             case KeyEvent.VK_A:
-                control.clavier("Quit");
+                control.clavier("exit");
+                System.out.println("exit");
+                break;
             case KeyEvent.VK_I:
-                control.clavier("IA");
+                control.clavier("ia");
+                System.out.println("ia");
                 break;
             case KeyEvent.VK_ESCAPE:
-                control.clavier("Full");
+                control.clavier("full");
+                System.out.println("full");
                 break;
         }
     }
-}
 
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Pas utilisé, mais doit être implémenté.
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // Non utilisé, mais doit être implémenté.
+    }
+
+
+}
