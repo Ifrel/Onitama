@@ -61,8 +61,8 @@ public class Mediateur implements CollecteurEvenements {
                 case "pause":
                     jeu.setPause();
                     break;
-                case "ia":
-                    jeu.basculeIA();
+                case "humain":
+//                    jeu.basculeIA();
                     break;
                 case "full":
                     vue.toggleFullScreen();
@@ -84,10 +84,6 @@ public class Mediateur implements CollecteurEvenements {
         //TODO
     }
 
-    @Override
-    public void setCiblePion(CasePlateau casePlateau) {
-        jeu.setCasePlateauCible(casePlateau);
-    }
 
     @Override
     public void setCiblePion(int xDest, int yDest) {
@@ -102,11 +98,6 @@ public class Mediateur implements CollecteurEvenements {
     @Override
     public void setCaseSelectionnee(Point coordonnePion) {
         jeu.selectionneCase(coordonnePion);
-    }
-
-    @Override
-    public void boutonTerrainJeu(CasePlateau casePlateau) {
-        jeu.setCasePlateauCible(casePlateau);
     }
 
     @Override
