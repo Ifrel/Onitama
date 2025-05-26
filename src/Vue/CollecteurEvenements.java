@@ -199,4 +199,8 @@ public interface CollecteurEvenements {
 
     default void desactiveAnimationDeRotation(BoutonCarte boutonCarte, int idJoueurCourant){};
 
+    default void desactiveSuggestion(Coup coup, EcranPlateauDeJeu ecranPlateauDeJeu){};
+
+    default void activeSuggestion(Coup coup, EcranPlateauDeJeu ecranPlateauDeJeu){};
+
 }

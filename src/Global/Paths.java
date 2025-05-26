@@ -13,6 +13,8 @@ public class Paths {
     /********************************************
      *              IMAGES BOUTONS              *
      *******************************************/
+    public static final Path PATH_BTN             = Path.of("res", "vue", "images", "buttons");
+
     public static final Path PATH_BTN_MODE_AUTO_OFF       = Path.of("res/vue/images/buttons/button_off.png");
     public static final Path PATH_BTN_MODE_AUTO_ON        = Path.of("res/vue/images/buttons/button_on.png");
     public static final Path PATH_BTN_ENTRER              = Path.of("res/vue/images/buttons/button_entrer.png");

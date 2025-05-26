@@ -73,4 +73,18 @@ public class ControleurAnimation implements CollecteurEvenements {
         }
     }
 
+    @Override
+    public  void desactiveSuggestion(Coup coup, EcranPlateauDeJeu ecranPlateauDeJeu){
+        if (coup == null) return;
+        ecranPlateauDeJeu.getBoutonterrainAt(coup.getDepart()).enleverCouleurFond();
+        ecranPlateauDeJeu.getBoutonterrainAt(coup.getArrivee()).activerAnimation(false);
+    };
+
+    @Override
+    public  void activeSuggestion(Coup coup, EcranPlateauDeJeu ecranPlateauDeJeu){
+        if (coup == null) return;
+        ecranPlateauDeJeu.getBoutonterrainAt(coup.getDepart()).chargerCouleurFond(COULEUR_FOND_PION_DEPART_SELECTIONE);
+        ecranPlateauDeJeu.getBoutonterrainAt(coup.getArrivee()).activerAnimation(true);
+    };
+
 }
