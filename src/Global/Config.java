@@ -82,6 +82,8 @@ public class Config {
         CASE_MAITRE_JOUEUR_2,
         CASE_ELEVE_JOUEUR_1,
         CASE_ELEVE_JOUEUR_2,
+        PION_TERRAIN_JOUEUR_1,
+        PION_TERRAIN_JOUEUR_2
     }
 
 
