@@ -68,7 +68,7 @@ public class AdaptateurBoutonEntrer implements ActionListener {
         }
 
         System.err.println(InfosDeConfigUI.getInstance());
-        interfaceGraphique.lancerPlatauDeJeu();
+        interfaceGraphique.lancerPlateauDeJeu();
     }
 
 
