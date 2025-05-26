@@ -17,12 +17,10 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import static Global.Config.*;
 import static Global.Config.CiblesDesCouleurs.*;
 import static Global.Paths.*;
-import static Vue.ConfigUI.*;
-import static Vue.Utils.MethodsStaticsUtils.*;
+import static Vue.Configuration.ConfigUI.*;
 
 
 /**
@@ -32,7 +30,7 @@ import static Vue.Utils.MethodsStaticsUtils.*;
  */
 public class EcranDeDemarrage extends JTabbedPane {
     private final Jeu jeu;
-    private final ControleurEcranDeDemarrage controleurDemarrage;
+    private final ControleurEcranDeDemarrage CD;
     private final InterfaceGraphique interfaceGraphique;
 
     // Onglet Général
@@ -66,10 +64,10 @@ public class EcranDeDemarrage extends JTabbedPane {
      */
     public EcranDeDemarrage(Jeu jeu, InterfaceGraphique interfaceGraphique) {
         this.jeu = jeu;
-        this.controleurDemarrage = new ControleurEcranDeDemarrage(jeu); // Instancie le contrôleur
+        this.CD = new ControleurEcranDeDemarrage(jeu); // Instancie le contrôleur
         this.interfaceGraphique = interfaceGraphique;
         this.estModeAutoIA = false;
-        this.actionListenerEntree = new AdaptateurBoutonEntrer(controleurDemarrage, interfaceGraphique);
+        this.actionListenerEntree = new AdaptateurBoutonEntrer(CD, interfaceGraphique);
         creerInterfaceUtilisateur();
     }
 
@@ -262,22 +260,80 @@ public class EcranDeDemarrage extends JTabbedPane {
         ongletCouleur.add(titreOnglet, gbc);
 
         // Ajouter les sélecteurs de couleur pour chaque cible
-        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_1, COULEUR_CASE_MAITRE_JOUEUR_1, ligneCourante++, CASE_MAITRE_JOUEUR_1);
-        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_2, COULEUR_CASE_MAITRE_JOUEUR_2, ligneCourante++, CASE_MAITRE_JOUEUR_2);
-        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_1, COULEUR_CASE_ELEVE_JOUEUR_1, ligneCourante++, CASE_ELEVE_JOUEUR_1);
-        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_2, COULEUR_CASE_ELEVE_JOUEUR_2, ligneCourante++, CASE_ELEVE_JOUEUR_2);
+        ajouterLigneSecteurCouleur(ongletCouleur, LBL_PION_TERRAIN_JOUEUR_1, CD.getCouleurPionJoueur(ID_JOUEUR_1), ligneCourante++, PION_TERRAIN_JOUEUR_1);
+        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_1, CD.getCouleurCaseMaitreJoueur(ID_JOUEUR_1), ligneCourante++, CASE_MAITRE_JOUEUR_1);
+        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_1, CD.getCouleurCaseEleveJoueur(ID_JOUEUR_1), ligneCourante++, CASE_ELEVE_JOUEUR_1);
+        ajouterLigneSecteurCouleur(ongletCouleur, LBL_PION_TERRAIN_JOUEUR_2, CD.getCouleurPionJoueur(ID_JOUEUR_2), ligneCourante++, PION_TERRAIN_JOUEUR_2);
+        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_MAITRE_JOUEUR_2, CD.getCouleurCaseMaitreJoueur(ID_JOUEUR_2), ligneCourante++, CASE_MAITRE_JOUEUR_2);
+        ajouterLigneSecteurCouleur(ongletCouleur, LBL_CASE_ELEVE_JOUEUR_2, CD.getCouleurCaseEleveJoueur(ID_JOUEUR_2), ligneCourante++, CASE_ELEVE_JOUEUR_2);
 
+
+        // Panel pour les boutons en bas
+        JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        panelBoutons.setOpaque(false);
+
+        // Bouton "Réinitialiser"
+        BoutonAvecImage boutonReinitialiser = Bouton.creerBouton(
+                PATH_BOUTON.resolve("button_reset_all.png").toString(),
+                Bouton.ConfigurationParDefaut.Cercle_transparent);
+        boutonReinitialiser.setPreferredSize(new Dimension(98, 98));
+        boutonReinitialiser.setToolTipText("Réinitialiser toutes les couleurs");
+        boutonReinitialiser.addActionListener(e -> {
+            int choix = JOptionPane.showConfirmDialog(
+                    EcranDeDemarrage.this,
+                    "Voulez-vous vraiment réinitialiser toutes les couleurs ?",
+                    "Confirmation de réinitialisation",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (choix == JOptionPane.YES_OPTION) {
+                // Réinitialiser les couleurs
+                CD.reinitialiserCouleurs();
+
+                // Recharger l'onglet des couleurs
+                removeTabAt(1);
+                addTab(null, creerOngletCouleur());
+                setTabComponentAt(1, creerPanelTitreOnglet(TITRE_ONGLET_COULEUR));
+
+                JOptionPane.showMessageDialog(
+                        EcranDeDemarrage.this,
+                        "Les couleurs ont été réinitialisées avec succès.",
+                        "Réinitialisation réussie",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        });
+        panelBoutons.add(boutonReinitialiser);
+
+        // Bouton "Entrer"
+        BoutonAvecImage boutonEntrer = Bouton.creerBouton(
+                PATH_BTN_ENTRER.toString(),
+                Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        boutonEntrer.setPreferredSize(new Dimension(200, 98));
+        boutonEntrer.addActionListener(actionListenerEntree);
+        panelBoutons.add(boutonEntrer);
+
+        // Ajouter le panel des boutons
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = ligneCourante += 2;
+        gbc.gridwidth = 5;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+        ongletCouleur.add(panelBoutons, gbc);
 
         // Espace Vertical Flexible en bas
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = ligneCourante;
+        gbc.gridy = ligneCourante + 1;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.VERTICAL;
         ongletCouleur.add(Box.createVerticalGlue(), gbc);
 
         return ongletCouleur;
     }
+
 
 
 
@@ -323,18 +379,52 @@ public class EcranDeDemarrage extends JTabbedPane {
         boutonSelectionCouleur.setFocusPainted(true);
         boutonSelectionCouleur.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
-        boutonSelectionCouleur.addActionListener(e -> {
-            Color couleurChoisie = JColorChooser.showDialog(
-                    EcranDeDemarrage.this,
-                    "Sélectionner une couleur pour " + texteEtiquette,
-                    boutonSelectionCouleur.getBackground()
-            );
-            if (couleurChoisie != null) {
-                boutonSelectionCouleur.chargerCouleurFont(couleurChoisie);
-                controleurDemarrage.setCouleur(cible, couleurChoisie);
-            }
-        });
+        if (cible == PION_TERRAIN_JOUEUR_1 || cible == PION_TERRAIN_JOUEUR_2) {
+            JComboBox<String> choixCouleur = new JComboBox<>(new String[]{"noir", "rouge", "bleu"});
+            choixCouleur.setFont(FONT_COMPONENT);
+            choixCouleur.setBackground(new Color(255, 255, 255, 255));
 
+            boutonSelectionCouleur.addActionListener(e -> {
+                int result = JOptionPane.showConfirmDialog(
+                        EcranDeDemarrage.this,
+                        choixCouleur,
+                        "Sélectionner une couleur pour " + texteEtiquette,
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                if (result == JOptionPane.OK_OPTION) {
+                    Color couleurChoisie;
+                    switch (choixCouleur.getSelectedItem().toString()) {
+                        case "noir":
+                            couleurChoisie = new Color(1, 1, 1);
+                            break;
+                        case "rouge":
+                            couleurChoisie = new Color(200, 85, 27);
+                            break;
+                        case "bleu":
+                            couleurChoisie = new Color(26, 67, 104);
+                            break;
+                        default:
+                            return;
+                    }
+                    boutonSelectionCouleur.chargerCouleurFont(couleurChoisie);
+                    CD.setCouleurPion(cible, choixCouleur.getSelectedItem().toString());
+                }
+            });
+        } else {
+            boutonSelectionCouleur.addActionListener(e -> {
+                Color couleurChoisie = JColorChooser.showDialog(
+                        EcranDeDemarrage.this,
+                        "Sélectionner une couleur pour " + texteEtiquette,
+                        boutonSelectionCouleur.getBackground()
+                );
+                if (couleurChoisie != null) {
+                    boutonSelectionCouleur.chargerCouleurFont(couleurChoisie);
+                    CD.setCouleur(cible, couleurChoisie);
+                }
+            });
+        }
         GridBagConstraints gbcBouton = new GridBagConstraints();
         gbcBouton.gridx = 2;
         gbcBouton.gridy = ligne;
@@ -352,7 +442,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         boutonReinitialiser.addActionListener(e -> {
             Color couleurDefaut = couleursInitiales.get(cible);
             boutonSelectionCouleur.chargerCouleurFont(couleurDefaut);
-            controleurDemarrage.setCouleur(cible, couleurDefaut);
+            CD.setCouleur(cible, couleurDefaut);
         });
 
         GridBagConstraints gbcReset = new GridBagConstraints();
