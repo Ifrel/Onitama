@@ -354,7 +354,7 @@ public class Jeu extends Observable implements Runnable {
             }
 
             if (estPartieFinie()) {
-                System.err.println("Impossible d'annuler un Coup\nLA PARTIE EST TERMINEE :)");
+                logger.info("Impossible d'annuler un Coup\nLA PARTIE EST TERMINEE :)");
                 return;
 
             }
@@ -375,6 +375,9 @@ public class Jeu extends Observable implements Runnable {
                 changerJoueur();
                 //Restaurer le joueur qui avait joué le coup
                 restaurerMainJoueur(c.getCarteEchangee(), getCarteSupplementaire());
+
+                dernierCoupJoue = c;
+
                 // met à jour l'interface
                 metAJour();
 
@@ -448,6 +451,7 @@ public class Jeu extends Observable implements Runnable {
             changerJoueur();
             //restaurerMainJoueur(getCarteSupplementaire(), c.getCarteEchangee());
 
+            dernierCoupJoue = c;
 
             // met à jour l'interface
             metAJour();
@@ -789,6 +793,26 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public void nouvellePartie() {
+        String nomJoueur1 = getNomJoueur1();
+        String nomJoueur2 = getNomJoueur2();
+        boolean estActiveIA1 = estActiveIA1();
+        boolean estActiveIA2 = estActiveIA2();
+
+        _Jeu();
+
+        if (estActiveIA1) {
+            toggleIA1();
+        }
+        if (estActiveIA2) {
+            toggleIA2();
+        }
+        cartesDuJeu = initCartesJeu();
+        initJoueursCartes();
+
+        initGrille();
+
+        setNomJoueur1(nomJoueur1);
+        setNomJoueur2(nomJoueur2);
     }
 
     public long getTempsDeJeu() {
@@ -830,7 +854,8 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public int getNumeroRound() {
-        return numRound;
+        // méthode à supprimer
+        return -999999;
     }
 
     public Coup getDernierCoupJoue() {
