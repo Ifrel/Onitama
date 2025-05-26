@@ -40,3 +40,4 @@ build/
 .log/
 launch_Intelliji.sh
 *.dat
+*.json
