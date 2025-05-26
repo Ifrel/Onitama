@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import static Vue.ConfigUI.ARRONDI;
+import static Vue.Configuration.ConfigUI.ARRONDI;
 
 public class Bouton {
 
