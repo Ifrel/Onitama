@@ -84,12 +84,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private int numRound;
 
     // Gestion du son
-    private Clip clip;
+    Clip clip;
     private boolean musiqueActive = false;
 
     // Gestion du temps
     private Instant debutTempsPartie;
-    private Timer timerPartie;
+    Timer timerPartie;
     private JPanel terrain;
     private int ID_JOUEUR_PRECEDANT = ID_JOUEUR_2;
 
