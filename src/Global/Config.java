@@ -70,7 +70,7 @@ public class Config {
     public final static int COLONNES = 5;
 
     // -- COULEURS DE BASE --
-    public static final Color COULEUR_CASE_TERRAIN          = new Color(168, 168, 168, 115);
+    public static final Color COULEUR_CASE_TERRAIN = new Color(255, 255, 255, 255);
     public static final Color COULEUR_CASE_MAITRE_JOUEUR_1  = new Color(255, 255, 255, 0);
     public static final Color COULEUR_CASE_MAITRE_JOUEUR_2  = new Color(255, 255, 255, 0);
     public static final Color COULEUR_CASE_ELEVE_JOUEUR_1   = new Color(255, 255, 255, 0);
