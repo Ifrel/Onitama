@@ -3,7 +3,7 @@ package Controleur;
 import Modele.CasePlateau;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
-import Vue.InterfaceUser;
+import Vue.InterfaceGraphique;
 import Vue.Utils.AfficheReglesPDF;
 
 import java.awt.*;
@@ -13,9 +13,8 @@ import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
 
 public class Mediateur implements CollecteurEvenements {
     private final Jeu jeu;
-    private InterfaceUser vue;
-
-    private CollecteurEvenements controleurAnimation;
+    private final CollecteurEvenements controleurAnimation;
+    private InterfaceGraphique vue;
 
     private static final Logger logger = Logger.getLogger(Mediateur.class.getName());
 
@@ -24,10 +23,10 @@ public class Mediateur implements CollecteurEvenements {
         controleurAnimation = new ControleurAnimation();
     }
 
-
     @Override
     public void clavier(String touche) {
         try {
+            vue = InterfaceGraphique.getInstance();
             switch (touche) {
                 case "exit":
                     jeu.setTerminerJeu();
@@ -100,9 +99,6 @@ public class Mediateur implements CollecteurEvenements {
     public void setCaseSelectionnee(Point coordonnePion) {
         jeu.selectionneCase(coordonnePion);
     }
-
-    ;
-
 
     @Override
     public void boutonTerrainJeu(CasePlateau casePlateau) {
