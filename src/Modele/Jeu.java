@@ -339,36 +339,52 @@ public class Jeu extends Observable implements Runnable {
 // ######## ANNULER / REFAIRE ########
 
     public boolean peutAnnulerCoup() {
-        return historique.peutAnnuler();
+        return historique.peutAnnuler() && ! estActiveIA2();
     }
 
     public boolean peutRefaireCoup() {
-        return historique.peutRefaire();
+        return historique.peutRefaire() && ! estActiveIA2();
     }
 
     public void annulerCoup() {
-        if (!peutAnnulerCoup()) {
-            logger.info("Impossible d'annuler un Coup");
-            return;
-        }
+        try {
+            if (!peutAnnulerCoup()) {
+                logger.info("Impossible d'annuler un Coup");
+                return;
+            }
 
-        if (estPartieFinie()) {
-            System.err.println("Impossible d'annuler un Coup\nLA PARTIE EST TERMINEE :)");
-            return;
+            if (estPartieFinie()) {
+                System.err.println("Impossible d'annuler un Coup\nLA PARTIE EST TERMINEE :)");
+                return;
 
+            }
+
+            int nbAAnnuler = 1;
+            if (estActiveIA1()) {
+                nbAAnnuler = 2;
+            }
+
+            for (int i = 0; i < nbAAnnuler; i++) {
+                Coup c = historique.annuler();
+                Point depart = c.getDepart();
+                Point arrivee = c.getArrivee();
+                boolean pionMange = c.getPionMange();
+                //Restaurer la grille avant de jouer le coup
+                restaurerGrille(depart, arrivee, pionMange);
+                //Restaurer la main du joueur avant de joueur le coup
+                changerJoueur();
+                //Restaurer le joueur qui avait joué le coup
+                restaurerMainJoueur(c.getCarteEchangee(), getCarteSupplementaire());
+                // met à jour l'interface
+                metAJour();
+
+                if (i == 0 && nbAAnnuler == 2) {
+                    Thread.sleep(1000);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Coup c = historique.annuler();
-        Point depart = c.getDepart();
-        Point arrivee = c.getArrivee();
-        boolean pionMange = c.getPionMange();
-        //Restaurer la grille avant de jouer le coup
-        restaurerGrille(depart,arrivee,pionMange);
-        //Restaurer la main du joueur avant de joueur le coup
-        changerJoueur();
-        //Restaurer le joueur qui avait joué le coup
-        restaurerMainJoueur(c.getCarteEchangee(), getCarteSupplementaire());
-        // met à jour l'interface
-        metAJour();
     }
 
     private void restaurerMainJoueur(Carte c1, Carte c2) {
@@ -540,7 +556,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public Carte getCarteSupplementaire() {
-        return carteSupplementaire;
+        return carteSupplementaire.clone();
     }
 
     public void setCarteSupplementaire(Carte c) {
@@ -553,7 +569,7 @@ public class Jeu extends Observable implements Runnable {
 
 
     public Pion getPionSelectionne() {
-        return this.pionSelectionne;
+        return this.pionSelectionne.clone();
     }
 
     public boolean estPionDuJoueurCourant(int i, int j) throws CaseVideException {
@@ -765,10 +781,12 @@ public class Jeu extends Observable implements Runnable {
 
     public void setNomJoueur1(String nom) {
         this.joueur1.setNom(nom);
+        metAJour();
     }
 
     public void setNomJoueur2(String nom) {
         this.joueur2.setNom(nom);
+        metAJour();
     }
 
     public String getNomJoueur1() {

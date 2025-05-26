@@ -55,8 +55,10 @@ public class Coup implements Serializable{
         return this.arrivee;
     }
 
-    public Carte getCarteEchangee()
-    {
+    public Carte getCarteEchangee() {
+        if (carteEchangee == null) {
+            return new Carte(carteEnPlus);
+        }
         return carteEchangee;
     }
 

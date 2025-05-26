@@ -17,7 +17,7 @@ import java.util.Objects;
  * Cette classe est axée sur les propriétés de la carte; la logique d'application de l'effet
  * sera généralement gérée ailleurs (par exemple, dans la classe Jeu ou un gestionnaire d'effets).
  */
-public class Carte implements Serializable{
+public class Carte implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
     private String nom;                 // Nom unique ou identifiant de la carte
     private TYPECARTE type;             // Type de la carte
@@ -105,6 +105,15 @@ public class Carte implements Serializable{
         return Objects.hash(nom, type);
     }
 
+
+    @Override
+    public Carte clone() {
+        try {
+            return (Carte) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     /**
