@@ -43,6 +43,27 @@ class InfosDeConfigUITest {
     }
 
     @Test
+    void testGetInstanceThreadSafety() throws InterruptedException {
+        final InfosDeConfigUI[] instances = new InfosDeConfigUI[10];
+
+        Thread[] threads = new Thread[10];
+        for (int i = 0; i < threads.length; i++) {
+            final int index = i;
+            threads[i] = new Thread(() -> instances[index] = InfosDeConfigUI.getInstance());
+            threads[i].start();
+        }
+
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        // Assert that all threads returned the same instance
+        for (int i = 1; i < instances.length; i++) {
+            assertSame(instances[0], instances[i], "getInstance should return the same instance across all threads");
+        }
+    }
+
+    @Test
     void testGetInstanceNotNull() {
         InfosDeConfigUI instance = InfosDeConfigUI.getInstance();
 
