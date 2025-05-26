@@ -792,6 +792,11 @@ public class Jeu extends Observable implements Runnable {
         initJoueursCartes();
     }
 
+    public void lancer() {
+        Thread t = new Thread(this);
+        t.start();
+    }
+
     public void nouvellePartie() {
         String nomJoueur1 = getNomJoueur1();
         String nomJoueur2 = getNomJoueur2();
