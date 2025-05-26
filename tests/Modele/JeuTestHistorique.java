@@ -196,9 +196,9 @@ public class JeuTestHistorique {
         Coup coup = new Coup(new Point(0, 1), new Point(1, 1), jeuOriginal.getCarteSupplementaire());
         jeuOriginal.jouerCoup(coup);
         Path tempFile = Files.createTempFile(Paths.get("res/fichier_de_sauvegarde"), "fich1", ".txt");
-        jeuOriginal.sauvegarderJeu(tempFile);
+        jeuOriginal.sauvegarderJeu(tempFile.toString());
         Jeu jeuCharge = new Jeu();
-        jeuCharge.chargerJeu(tempFile);
+        jeuCharge.chargerJeu(tempFile.toString());
 
         // Assurer que tout est le meme
         assertEquals(jeuOriginal.getIdJoueurCourant(), jeuCharge.getIdJoueurCourant());

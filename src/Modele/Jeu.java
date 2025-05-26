@@ -1,6 +1,7 @@
 package Modele;
 
 import Exceptions.CaseVideException;
+import Global.Config;
 import Modele.IA.IA;
 import Modele.IA.IAFaible;
 import Modele.IA.IAFort;
@@ -8,6 +9,7 @@ import Modele.IA.IAMoyen;
 import Patterns.Observable;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,7 +38,6 @@ public class Jeu extends Observable implements Runnable {
     private Joueur joueur1, joueur2;
     private Joueur JOUEUR_1, JOUEUR_2; // probablement pas incroyable, mais on garde une référence des deux joueurs au cas où, comme pour les IA
     private Joueur joueurCourant;
-    private int lignes, colonnes;
     private int idJoueurCourant; // identifiant du joueur courant
     private int numCarteSelectionee;
     private long tempsJeu; // temps écoulé depuis le début de la partie
@@ -62,9 +63,6 @@ public class Jeu extends Observable implements Runnable {
     // -- GRILLE -- //
     private final List<Pion> pionsJoueur1 = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
     private final List<Pion> pionsJoueur2 = new ArrayList<>(); //idem pour le deuxième joueur
-
-    CasePlateau casePlateau ;
-
 
     private static final Logger logger = Logger.getLogger(Jeu.class.getName());
 
@@ -164,7 +162,6 @@ public class Jeu extends Observable implements Runnable {
      */
     private void _Jeu() {
         try {
-            lignes = colonnes = 5;
             grille = new Pion[LIGNES][COLONNES];
             historique = new Historique<>();
             idJoueurCourant = ID_JOUEUR_1;
@@ -293,14 +290,14 @@ public class Jeu extends Observable implements Runnable {
 
         // Ajouter pion étudiant
         // Pour le joueur 1 et 2, on ajoute les positions initiales des pions étudiants et maitres, selon le joueur bien sur
-        ajouterPion(new ArrayList<Point>()
+        ajouterPion(new ArrayList<>()
         {{
             add(new Point(0,0));
             add(new Point(0,1));
             add(new Point(0,3));
             add(new Point(0,4));
         }}, ID_JOUEUR_1, PION_ETUDIANT);
-        ajouterPion(new ArrayList<Point>()
+        ajouterPion(new ArrayList<>()
         {{
             add(new Point(4,0));
             add(new Point(4,1));
@@ -309,8 +306,8 @@ public class Jeu extends Observable implements Runnable {
         }}, ID_JOUEUR_2, PION_ETUDIANT);
 
         // Ajouter pion maitre
-        ajouterPion(new ArrayList<Point>(){{add(new Point(0, 2));}}, ID_JOUEUR_1, PION_MAITRE);
-        ajouterPion(new ArrayList<Point>(){{add(new Point(4, 2));}}, ID_JOUEUR_2, PION_MAITRE);
+        ajouterPion(new ArrayList<>(){{add(new Point(0, 2));}}, ID_JOUEUR_1, PION_MAITRE);
+        ajouterPion(new ArrayList<>(){{add(new Point(4, 2));}}, ID_JOUEUR_2, PION_MAITRE);
     }
 
     private void initJoueursCartes() {
@@ -431,11 +428,11 @@ public class Jeu extends Observable implements Runnable {
     public static final Path CHEMIN_SAUVEGARDE = Paths.get("res", "fichier_de_sauvegarde", "fich1.dat");
 
     public void sauvegarderJeu() throws IOException {
-        sauvegarderJeu(CHEMIN_SAUVEGARDE);
+        System.err.println("UTILISER LA METHODE sauvegarderJeu(String nomFichier)");
     }
-    public void sauvegarderJeu(Path fichier) throws IOException {
+    public void sauvegarderJeu(String fichier) throws IOException {
 
-        try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(fichier)))
+        try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(SAVE_DIR.resolve(fichier))))
         {
             out.writeObject(idJoueurCourant);
             out.writeObject(grille);
@@ -449,13 +446,13 @@ public class Jeu extends Observable implements Runnable {
 
 
     public void chargerJeu() throws IOException, ClassNotFoundException{
-        chargerJeu(CHEMIN_SAUVEGARDE);
+        System.err.println("UTILISER LA METHODE chargerJeu(String nomFichier)");
     }
 
 
     @SuppressWarnings("unchecked")
-    public void chargerJeu(Path fichier) throws IOException, ClassNotFoundException {
-        try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(fichier)))
+    public void chargerJeu(String fichier) throws IOException, ClassNotFoundException {
+        try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(SAVE_DIR.resolve(fichier))))
         {
             idJoueurCourant = (Integer) in.readObject();
             grille = (Pion[][]) in.readObject();
@@ -468,26 +465,27 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public List<String> listerSauvegardes() {
-        return null;
+        ArrayList<String> liste = new ArrayList<>();
+        File saveDir = new File(SAVE_DIR.toString());
+        if (! saveDir.exists()) {
+            return liste;
+        }
+        File[] files = saveDir.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                String name = file.getName();
+                liste.add(name);
+            }
+        }
+        return liste;
     }
 
     // ######## STATUT / DONNEES ########
 
-    public int lignes() {
-        return lignes;
-    }
-
-    public int colonnes() {
-        return colonnes;
-    }
-
-    public int casesTotales() {
-        return lignes() * colonnes();
-    }
-
     public void verifieSiDansGrille(int i, int j) {
-        if (i < 0 || i >= lignes() || j < 0 || j >= colonnes()) {
-            throw new IndexOutOfBoundsException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + lignes() + "x" + colonnes());
+        if (i < 0 || i >= LIGNES || j < 0 || j >= COLONNES) {
+            throw new IndexOutOfBoundsException("Tentative d'accèder à la case [" + i + "," + j + "] dans un Jeu de taille " + LIGNES + "x" + COLONNES);
         }
     }
 
@@ -517,50 +515,6 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-    public boolean estPionEtudiantJoueur1(int i, int j) throws CaseVideException {
-        try {
-            Pion p = getCase(i, j);
-            return p.getIDProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_ETUDIANT;
-        } catch (NullPointerException e) {
-            throw new CaseVideException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean estPionEtudiantJoueur2(int i, int j) throws CaseVideException {
-        try {
-            Pion p = getCase(i, j);
-            return p.getIDProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_ETUDIANT;
-        } catch (NullPointerException e) {
-            throw new CaseVideException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean estPionMaitreJoueur1(int i, int j) throws CaseVideException {
-        try {
-            Pion p = getCase(i, j);
-            return p.getIDProprietaire() == ID_JOUEUR_1 && p.getRole() == PION_MAITRE;
-        } catch (NullPointerException e) {
-            throw new CaseVideException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean estPionMaitreJoueur2(int i, int j) throws CaseVideException {
-        try {
-            Pion p = getCase(i, j);
-            return p.getIDProprietaire() == ID_JOUEUR_2 && p.getRole() == PION_MAITRE;
-        } catch (NullPointerException e) {
-            throw new CaseVideException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public List<Pion> getPionsJoueur1() {
         return new ArrayList<>(pionsJoueur1);
     }
@@ -570,11 +524,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public List<Pion> getPionsJoueurCourant() {
-        if (getIdJoueurCourant() == ID_JOUEUR_1) {
-            return new ArrayList<>(pionsJoueur1);
-        } else {
-            return new ArrayList<>(pionsJoueur2);
-        }
+        return joueurCourant.getPions();
     }
 
     public List<Carte> getCartesJoueur1() {
@@ -586,11 +536,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public List<Carte> getCartesJoueurCourant() {
-        if (getIdJoueurCourant() == ID_JOUEUR_1) {
-            return joueur1.getCartesEnMain();
-        } else {
-            return joueur2.getCartesEnMain();
-        }
+        return joueurCourant.getCartesEnMain();
     }
 
     public Carte getCarteSupplementaire() {
@@ -685,15 +631,12 @@ public class Jeu extends Observable implements Runnable {
                 joueur1 = JOUEUR_1;
                 joueur2 = IA_1;
             }
-            joueurCourant = IA_1;
-            // idJoueurCourant = ID_IA_1;
-            idJoueurCourant = ID_JOUEUR_1;
         } else {
             joueur1 = JOUEUR_1;
             joueur2 = JOUEUR_2;
-            joueurCourant = joueur1;
-            idJoueurCourant = ID_JOUEUR_1;
         }
+        joueurCourant = joueur1;
+        idJoueurCourant = ID_JOUEUR_1;
         initJoueursCartes();
     }
 
@@ -716,22 +659,17 @@ public class Jeu extends Observable implements Runnable {
         if (estActiveIA2()) {
             joueur1 = IA_1;
             joueur2 = IA_2;
-            joueurCourant = IA_1;
-            // idJoueurCourant = ID_IA_1;
-            idJoueurCourant = ID_JOUEUR_1;
         } else {
             if (estActiveIA1()) {
                 joueur1 = JOUEUR_1;
                 joueur2 = IA_1;
-                joueurCourant = joueur1;
-                idJoueurCourant = ID_JOUEUR_1;
             } else {
                 joueur1 = JOUEUR_1;
                 joueur2 = JOUEUR_2;
-                joueurCourant = joueur1;
-                idJoueurCourant = ID_JOUEUR_1;
             }
         }
+        joueurCourant = joueur1;
+        idJoueurCourant = ID_JOUEUR_1;
         initJoueursCartes();
     }
 
@@ -815,7 +753,6 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public void nouvellePartie() {
-        return;
     }
 
     public long getTempsDeJeu() {
@@ -874,14 +811,6 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-    public Joueur getJoueur(int id) {
-        return (id == ID_JOUEUR_1) ? joueur1 : joueur2;
-    }
-
-    public boolean estDeplacementConforme(int i, int j) {
-        return false;
-    }
-
     public boolean estPartieFinie() {
         return partieFinie;
     }
@@ -892,6 +821,11 @@ public class Jeu extends Observable implements Runnable {
 
     private int changerJoueur() {
         int previous = idJoueurCourant;
+        if (previous == ID_JOUEUR_1) {
+            joueurCourant = joueur2;
+        } else {
+            joueurCourant = joueur1;
+        }
         idJoueurCourant = (idJoueurCourant % 2) + 1;
         return previous;
     }
@@ -928,8 +862,8 @@ public class Jeu extends Observable implements Runnable {
 
     private void majPionsJoueur1() {
         pionsJoueur1.clear();
-        for (int i = 0; i < lignes; i++) {
-            for (int j = 0; j < colonnes; j++) {
+        for (int i = 0; i < LIGNES; i++) {
+            for (int j = 0; j < COLONNES; j++) {
                 Pion p = grille[i][j];
                 if (! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_1) {
                     pionsJoueur1.add(p);
@@ -938,11 +872,10 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-
     private void majPionsJoueur2() {
         pionsJoueur2.clear();
-        for (int i = 0; i < lignes; i++) {
-            for (int j = 0; j < colonnes; j++) {
+        for (int i = 0; i < LIGNES; i++) {
+            for (int j = 0; j < COLONNES; j++) {
                 Pion p = grille[i][j];
                 if (! estCaseVide(i, j) && p.getIDProprietaire() == ID_JOUEUR_2) {
                     pionsJoueur2.add(p);
@@ -950,7 +883,6 @@ public class Jeu extends Observable implements Runnable {
             }
         }
     }
-
 
     private void majPions() {
         majPionsJoueur1();
@@ -968,7 +900,6 @@ public class Jeu extends Observable implements Runnable {
 
 
     }
-
 
     public Carte getCarteSelectionnee()
     {
@@ -1310,21 +1241,18 @@ public class Jeu extends Observable implements Runnable {
     public String toString() {
         try {
             StringBuilder S = new StringBuilder();
-            for (int i = 0; i < lignes(); i++) {
-                for (int j = 0; j < colonnes(); j++) {
+            for (int i = 0; i < LIGNES; i++) {
+                for (int j = 0; j < COLONNES; j++) {
                     if (estCaseVide(i, j)) {
-                        S.append("  ");
-                    } else if (estPionEtudiantJoueur1(i, j)) {
-                        S.append("E1");
-                    } else if (estPionEtudiantJoueur2(i, j)) {
-                        S.append("E2");
-                    } else if (estPionMaitreJoueur1(i, j)) {
-                        S.append("M1");
-                    } else if (estPionMaitreJoueur2(i, j)) {
-                        S.append("M2");
-                    } else {
-                        S.append("??");
+                        S.append(" ");
+                        continue;
                     }
+                    if (getRolePionAt(i, j) == PION_MAITRE) {
+                        S.append("M");
+                    } else {
+                        S.append("E");
+                    }
+                    S.append(getProprietairePionAt(i, j));
                 }
                 S.append("\n");
             }
@@ -1376,7 +1304,7 @@ public class Jeu extends Observable implements Runnable {
         try {
             int delai = 1500;
             boucle:
-            while (true) {
+            while (! estPartieFinie()) {
                 Coup c;
                 synchronized (this) {
                     switch (etatJeu) {
@@ -1411,7 +1339,6 @@ public class Jeu extends Observable implements Runnable {
                                 setPionSelectionne(IA_2.getPionChoisi().getPosition());
                                 jouerCoup(c);
                                 etatJeu = IA2_A_JOUE;
-                                return;
                             }
                             break;
                         case FIN:

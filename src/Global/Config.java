@@ -1,6 +1,7 @@
 package Global;
 
 import java.awt.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,8 @@ public class Config {
     }
 
     public static final int TAILLE_VECTEUR_BITS = 96;
+
+    public static final Path SAVE_DIR = Path.of("saves");
 
     public static final int ID_JOUEUR_1 = 1;
     public static final int ID_JOUEUR_2 = 2;
