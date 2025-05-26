@@ -423,7 +423,10 @@ public class Jeu extends Observable implements Runnable {
     public Coup suggererCoup() {
         // sera probablement à modifier, fait de cette manière pour accélerer l'intégration de cette fonctionnalité
         IA ia_coup = new IAFort(this, getIdJoueurCourant(), "IA suggestion coup");
-        return ia_coup.calculerCoup();
+        Coup c = ia_coup.calculerCoup();
+        setPionSelectionne(ia_coup.getPionChoisi().getPosition());
+        setCarteSelectionnee(ia_coup.getCarteChoisie());
+        return c;
     }
 
 
