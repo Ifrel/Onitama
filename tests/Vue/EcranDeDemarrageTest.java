@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * We use @Nested classes to group related tests for better organization.
  */
 @DisplayName("EcranDeDemarrage Tests")
-class TestEcranDeDemarrage {
+class EcranDeDemarrageTest {
 
     private EcranDeDemarrage ecranDeDemarrage;
 
