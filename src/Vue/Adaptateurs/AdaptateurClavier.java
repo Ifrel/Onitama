@@ -64,6 +64,9 @@ public class AdaptateurClavier implements KeyListener {
                 control.clavier("full");
                 System.out.println("full");
                 break;
+            case KeyEvent.VK_ENTER:
+                control.clavier("demarrer");
+                break;
         }
     }
 
