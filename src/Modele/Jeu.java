@@ -430,25 +430,38 @@ public class Jeu extends Observable implements Runnable {
             return;
         }
 
-        Coup c = historique.refaire();
+        int nbAAnnuler = 1;
+        if (estActiveIA1()) {
+            nbAAnnuler = 2;
+        }
 
-        //repliquer le mouvement original
-        deplacerPion(c.getDepart(), c.getArrivee());
-        echangerCartes(getJoueurCourant(), c.getCarteEchangee());
-        //restaurer selection /viasual
-        setPionSelectionne(c.getArrivee());
+        for (int i = 0; i < nbAAnnuler; i++) {
 
-        changerJoueur();
-        //restaurerMainJoueur(getCarteSupplementaire(), c.getCarteEchangee());
+            Coup c = historique.refaire();
+
+            //repliquer le mouvement original
+            deplacerPion(c.getDepart(), c.getArrivee());
+            echangerCartes(getJoueurCourant(), c.getCarteEchangee());
+            //restaurer selection /viasual
+            setPionSelectionne(c.getArrivee());
+
+            changerJoueur();
+            //restaurerMainJoueur(getCarteSupplementaire(), c.getCarteEchangee());
 
 
-        // met à jour l'interface
-        metAJour();
+            // met à jour l'interface
+            metAJour();
+            if (i == 0 && nbAAnnuler == 2) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     // ######### CHARGER / SAUVEGARDER ########
-
-    public static final Path CHEMIN_SAUVEGARDE = Paths.get("res", "fichier_de_sauvegarde", "fich1.dat");
 
     public void sauvegarderJeu() throws IOException {
         System.err.println("UTILISER LA METHODE sauvegarderJeu(String nomFichier)");
@@ -1136,85 +1149,6 @@ public class Jeu extends Observable implements Runnable {
             throw new RuntimeException(e);
         }
         return true;
-    }
-
-
-
-    /**
-     * @return Temps de réflexion en millisecondes configuré pour l'IA.
-     */
-    public int getConfigIAReflexion() {
-        //TODO À implémenter
-        return 1000;
-    }
-
-    /**
-     * @return true si l'IA utilise une heuristique, false sinon.
-     */
-    public boolean getConfigIAHeuristique() {
-        //TODO À implémenter
-        return false;
-    }
-
-    /**
-     * @return Nom de l'algorithme actuellement utilisé par l'IA (ex: "Minimax Simple").
-     */
-    public String getConfigIAAlgorithme() {
-        //TODO À implémenter
-        return "Minimax Simple";
-    }
-
-
-    /**
-     * @return Vitesse d'animation configurée.
-     */
-    public int getConfigAnimationVitesse() {
-        //TODO À implémenter
-        return 0;
-    }
-
-    /**
-     * Change l'algorithme d'IA utilisé.
-     * @param nomAlgorithme Le nom de l'algorithme (ex: "Minimax", "AlphaBeta", etc.)
-     */
-    public void setIAAlgorithme(String nomAlgorithme) {
-        //TODO À implémenter
-    }
-
-
-    /**
-     * Active ou désactive l'utilisation d'une heuristique par l'IA.
-     * @param active true pour activer l'heuristique, false pour la désactiver.
-     */
-    public void setIAHeuristique(boolean active) {
-        //TODO À implémenter
-    }
-
-
-    /**
-     * Définit le temps de réflexion alloué à l'IA.
-     * @param tempsMs Temps en millisecondes.
-     */
-    public void setIAReflexion(int tempsMs) {
-        //TODO À implémenter
-    }
-
-
-    /**
-     * Active ou désactive le mode automatique (jeu sans intervention utilisateur).
-     * @param nouvelEtat true pour activer le mode automatique, false pour le désactiver.
-     */
-    public void setModeAuto(boolean nouvelEtat) {
-        //TODO À implémenter
-    }
-
-
-    /**
-     * Définit le niveau de difficulté de l’IA.
-     * @param niveauIA Chaîne représentant le niveau (ex: "Facile", "Moyen", "Fort").
-     */
-    public void setNiveauIA(String niveauIA) {
-        //TODO À implémenter
     }
 
 
