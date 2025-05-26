@@ -113,6 +113,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         creerButtonsCartes();
         initialiserInterface();
+        mettreAJourImagesTerrain();
 
         miseAJour();
     }
@@ -732,5 +733,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         PION_ETUDIANT_J2,
         PION_MAITRE_J1,
         PION_MAITRE_J2
+    }
+
+    public Duration getDebutTempsPartie() {
+        return Duration.between(debutTempsPartie, Instant.now());
     }
 }
