@@ -1,11 +1,10 @@
 package Modele;
 
-import static Global.Config.*;
-
 import Exceptions.CaseVideException;
-import Vue.InfosDeConfigUI;
 
 import java.awt.*;
+
+import static Global.Config.ROLEPION;
 
 /**
  * Représente une case du plateau de jeu, pouvant contenir un pion ou rien. */
