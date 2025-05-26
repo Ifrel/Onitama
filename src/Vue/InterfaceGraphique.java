@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.logging.Logger;
 
 import static Global.Config.DIM_SCENE;
-import static Vue.ConfigUI.WIDTH_MENU;
+import static Vue.Configuration.ConfigUI.WIDTH_MENU;
 
 
 /**
