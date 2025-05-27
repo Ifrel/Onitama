@@ -2,6 +2,7 @@ package Vue;
 
 import Controleur.ControleurEcranDeDemarrage;
 import Global.Config;
+import Global.Paths;
 import Modele.Jeu;
 import Vue.Adaptateurs.AdaptateurBoutonEntrer;
 import Vue.Utils.Boutons.Bouton;
@@ -274,7 +275,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // Bouton "Réinitialiser"
         BoutonAvecImage boutonReinitialiser = Bouton.creerBouton(
-                PATH_BOUTON.resolve("button_reset_all.png").toString(),
+                Paths.PATH_BTN.resolve("button_reset_all.png").toString(),
                 Bouton.ConfigurationParDefaut.Cercle_transparent);
         boutonReinitialiser.setPreferredSize(new Dimension(98, 98));
         boutonReinitialiser.setToolTipText("Réinitialiser toutes les couleurs");
@@ -436,7 +437,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         panneau.add(boutonSelectionCouleur, gbcBouton);
 
         // Bouton de réinitialisation de la couleur
-        BoutonAvecImage boutonReinitialiser = Bouton.creerBouton(PATH_BOUTON.resolve("button_annuler_rouge.png").toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
+        BoutonAvecImage boutonReinitialiser = Bouton.creerBouton(Paths.PATH_BTN.resolve("button_annuler_rouge.png").toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
         boutonReinitialiser.setPreferredSize(DIM_PREVIEW_COULEUR);
         boutonReinitialiser.setToolTipText("Réinitialiser à la couleur par défaut");
         boutonReinitialiser.addActionListener(e -> {

@@ -4,75 +4,70 @@ import java.nio.file.Path;
 
 public class Paths {
     /********************************************
-     *              IMAGES CARTES                      *
+     *              IMAGES RACINE              *
      *******************************************/
-    public static Path PATH_CARTE  = Path.of("res","vue", "images", "cartes");
-
-
+    public static final Path VUE = Path.of("res", "vue");
+    public static final Path IMAGES = VUE.resolve("images");
 
     /********************************************
-     *              IMAGES BOUTONS              *
+     *              IMAGES CARTES              *
      *******************************************/
-    public static final Path PATH_BTN             = Path.of("res", "vue", "images", "buttons");
-
-    public static final Path PATH_BTN_MODE_AUTO_OFF       = Path.of("res/vue/images/buttons/button_off.png");
-    public static final Path PATH_BTN_MODE_AUTO_ON        = Path.of("res/vue/images/buttons/button_on.png");
-    public static final Path PATH_BTN_ENTRER              = Path.of("res/vue/images/buttons/button_entrer.png");
-    public static final Path PATH_BTN_ANNULER             = Path.of("res/vue/images/buttons/button_annuler.png");
-    public static final Path PATH_BTN_REFAIRE             = Path.of("res/vue/images/buttons/button_refaire.png");
-    public static final Path PATH_BTN_MENU                = Path.of("res/vue/images/buttons/menu.png");
-    public static final Path PATH_BTN_MUET                = Path.of("res/vue/images/buttons/muet.png");
-    public static final Path PATH_BTN_MONTER_LE_SON       = Path.of("res/vue/images/buttons/monter-le-son.png");
+    public static final Path PATH_CARTE = IMAGES.resolve("cartes");
 
     /********************************************
-     *              IMAGES BOUTONS              *
+     *              IMAGES BOUTONS             *
      *******************************************/
-    public static final Path PATH_ARRIERE                   = Path.of("res","vue", "images", "arrierePlans");
-    public static final Path PATH_ARRIERE_PLAN_01           = Path.of("res/vue/images/arrierePlans/arrierePlan1.png");
-    public static final Path PATH_ARRIERE_PLAN_O2           = Path.of("res/vue/images/arrierePlans/arrierePlan2.png");
-    public static final Path PATH_ARRIERE_PLAN_03           = Path.of("res/vue/images/arrierePlans/arrierePlan10.png");
-    public static final Path PATH_ARRIERE_PLAN_4 = Path.of("res/vue/images/arrierePlans/arrierePlan4.png");
-    public static final Path PATH_ARRIERE_PLAN_8 = Path.of("res/vue/images/arrierePlans/arrierePlan8.png");
-
-
+    public static final Path PATH_BTN = IMAGES.resolve("buttons");
+    public static final Path PATH_BTN_MODE_AUTO_OFF = PATH_BTN.resolve("button_off.png");
+    public static final Path PATH_BTN_MODE_AUTO_ON = PATH_BTN.resolve("button_on.png");
+    public static final Path PATH_BTN_ENTRER = PATH_BTN.resolve("button_entrer.png");
+    public static final Path PATH_BTN_ANNULER = PATH_BTN.resolve("button_annuler.png");
+    public static final Path PATH_BTN_REFAIRE = PATH_BTN.resolve("button_refaire.png");
+    public static final Path PATH_BTN_MENU = PATH_BTN.resolve("menu.png");
+    public static final Path PATH_BTN_MUET = PATH_BTN.resolve("muet.png");
+    public static final Path PATH_BTN_MONTER_LE_SON = PATH_BTN.resolve("monter-le-son.png");
+    public static final Path PATH_BOUTON_ANNULER_ROUGE = PATH_BTN.resolve("button_annuler_rouge.png");
 
     /********************************************
-     *              IMAGES PIONS              *
+     *              IMAGES ARRIERE PLANS       *
      *******************************************/
-    public final static Path PATH_PION_BLEU_ETUDIANT_CLIQUE     = Path.of("res/vue/images/pions/pion_etudiant_bleu_clique.png");
-    public final static Path PATH_PION_ROUGE_ETUDIANT           = Path.of("res/vue/images/pions/pion_etudiant_rouge.png");
-    public final static Path PATH_PION_BLEU_ETUDIANT            = Path.of("res/vue/images/pions/pion_etudiant_bleu.png");
-    public final static Path PATH_PION_NOIR_ETUDIANT            = Path.of("res/vue/images/pions/pion_etudiant_noir.png");
-    public final static Path PATH_PION_ROUGE_MAITRE             = Path.of("res/vue/images/pions/pion_maitre_rouge.png");
-    public final static Path PATH_PION_NOIR_MAITRE              = Path.of("res/vue/images/pions/pion_maitre_noir.png");
-    public final static Path PATH_PION_BLEU_MAITRE              = Path.of("res/vue/images/pions/pion_maitre_bleu.png");
-
+    public static final Path PATH_ARRIERE = IMAGES.resolve("arrierePlans");
+    public static final Path PATH_ARRIERE_PLAN_01 = PATH_ARRIERE.resolve("arrierePlan1.png");
+    public static final Path PATH_ARRIERE_PLAN_O2 = PATH_ARRIERE.resolve("arrierePlan2.png");
+    public static final Path PATH_ARRIERE_PLAN_03 = PATH_ARRIERE.resolve("arrierePlan10.png");
+    public static final Path PATH_ARRIERE_PLAN_4 = PATH_ARRIERE.resolve("arrierePlan4.png");
+    public static final Path PATH_ARRIERE_PLAN_8 = PATH_ARRIERE.resolve("arrierePlan8.png");
 
     /********************************************
-     *              IMAGES BOUTONS              *
+     *              IMAGES PIONS               *
      *******************************************/
-    public final static Path PATH_BOUTON_ANNULER_ROUGE   = Path.of("res/vue/images/buttons/button_annuler_rouge.png");
-    public final static Path PATH_BOUTON            = Path.of("res", "vue", "images", "buttons");
-
+    public static final Path PATH_PION = IMAGES.resolve("pions");
+    public static final Path PATH_PION_BLEU_ETUDIANT_CLIQUE = PATH_PION.resolve("pion_etudiant_bleu_clique.png");
+    public static final Path PATH_PION_ROUGE_ETUDIANT = PATH_PION.resolve("pion_etudiant_rouge.png");
+    public static final Path PATH_PION_BLEU_ETUDIANT = PATH_PION.resolve("pion_etudiant_bleu.png");
+    public static final Path PATH_PION_NOIR_ETUDIANT = PATH_PION.resolve("pion_etudiant_noir.png");
+    public static final Path PATH_PION_ROUGE_MAITRE = PATH_PION.resolve("pion_maitre_rouge.png");
+    public static final Path PATH_PION_NOIR_MAITRE = PATH_PION.resolve("pion_maitre_noir.png");
+    public static final Path PATH_PION_BLEU_MAITRE = PATH_PION.resolve("pion_maitre_bleu.png");
 
     /********************************************
-     *              MUSIQUES                      *
+     *              MUSIQUES                   *
      *******************************************/
-    public final static Path PATH_SON_1             = Path.of("/vue/musique/son_1.wav");
-
+    public static final Path MUSIQUE = VUE.resolve("musique");
+    public static final Path PATH_SON_1 = MUSIQUE.resolve("son_1.wav");
 
     /********************************************
-     *              DEBUT PATHS                      *
+     *              DEBUT PATHS                *
      *******************************************/
-    public final static Path PATH_DEBUT_PION = Path.of("res","vue", "images", "pions");
-
+    public static final Path PATH_DEBUT_PION = PATH_PION;
 
     /********************************************
      *              INDICATEURS                *
      *******************************************/
-    public final static Path PATH_LBL_TXT              = Path.of("res","vue", "images", "font_zuma", "png");
+    public static final Path PATH_LBL_TXT = IMAGES.resolve("font_zuma").resolve("png");
 
-    public final static Path REGLES = Path.of("res", "vue", "regles");
-
-
+    /********************************************
+     *              REGLES                     *
+     *******************************************/
+    public static final Path REGLES = VUE.resolve("regles");
 }
