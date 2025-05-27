@@ -245,6 +245,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         setLayout(new BorderLayout());
         add(new PanelRatioFixe(contenu, 1), BorderLayout.CENTER);
 
+
         // Démarrage du timer
         debutTempsPartie = Instant.now();
         timerPartie = new Timer(1000, e -> miseAjourTemps());
