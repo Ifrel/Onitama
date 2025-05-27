@@ -91,6 +91,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private JPanel terrain;
     private int ID_JOUEUR_PRECEDANT = ID_JOUEUR_2;
 
+
+    // Configuration Mode Joueur
     private JButton boutonFlottant;
     private JPanel panelTemporaire;
     private Timer timerDisparition;
@@ -788,13 +790,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
     private JPanel creerPanelConfig() {
-        JPanel mainPanel = PanelChoixJoueur.creerPanelCoinsdArrondi();
+        JPanel mainPanel = ConfigModeJoueur.creerPanelCoinsdArrondi();
         mainPanel.setLayout(new GridLayout(3, 1));
-        mainPanel.setBackground(PanelChoixJoueur.COULEUR_FOND_PRINCIPAL);
+        mainPanel.setBackground(ConfigModeJoueur.COULEUR_FOND_PRINCIPAL);
         mainPanel.setPreferredSize(new Dimension(500, 200));
 
-        JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
-        JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
+        JPanel joueur1 = ConfigModeJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
+        JPanel joueur2 = ConfigModeJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
 
         mainPanel.add(joueur1);
         mainPanel.add(Box.createHorizontalStrut(20));
@@ -806,16 +808,16 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private void creerPanelTemporaire() {
         // Création du panel
-        panelTemporaire = PanelChoixJoueur.creerPanelCoinsdArrondi();
+        panelTemporaire = ConfigModeJoueur.creerPanelCoinsdArrondi();
         panelTemporaire.setLayout(new BoxLayout(panelTemporaire, BoxLayout.Y_AXIS));
-        panelTemporaire.setBackground(PanelChoixJoueur.COULEUR_FOND_PRINCIPAL);
+        panelTemporaire.setBackground(ConfigModeJoueur.COULEUR_FOND_PRINCIPAL);
 
         // Contenu
         panelTemporaire.add(new JLabel("Menu Temporaire"));
         panelTemporaire.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelTemporaire.add(new JSeparator());
-        JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur(jeu.getNomJoueur1(), 1, collecteurEv);
-        JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur(jeu.getNomJoueur2(), 2, collecteurEv);
+        JPanel joueur1 = ConfigModeJoueur.creerPanelChoixJoueur(jeu.getNomJoueur1(), 1, collecteurEv);
+        JPanel joueur2 = ConfigModeJoueur.creerPanelChoixJoueur(jeu.getNomJoueur2(), 2, collecteurEv);
 
         panelTemporaire.add(joueur1);
         panelTemporaire.add(Box.createHorizontalStrut(100));
@@ -928,7 +930,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
 
-class PanelChoixJoueur {
+class ConfigModeJoueur {
 
     // Constantes pour le style et les dimensions
     private static final int PANEL_WIDTH = 320;
