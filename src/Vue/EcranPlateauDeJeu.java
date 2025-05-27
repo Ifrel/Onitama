@@ -40,7 +40,6 @@ import java.util.logging.Logger;
 import static Global.Config.*;
 import static Global.Paths.*;
 import static Vue.Configuration.ConfigUI.ARRONDI;
-import static Vue.Configuration.ConfigUI.LBL_TITRE_CONFIG;
 import static Vue.Utils.MethodsStaticsUtils.*;
 
 
@@ -94,6 +93,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private int ID_JOUEUR_PRECEDANT = ID_JOUEUR_2;
 
 
+    private JButton boutonFlottant;
+    private JPanel panelTemporaire;
+    private Timer timerDisparition;
+    private boolean isPanelHovered = false;
+
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -145,6 +149,10 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         creerCartesNord();
         creerCarteGauche();
         creerCartesSud();
+        creerBoutonFlottant();
+        creerPanelTemporaire();
+
+
 
         //  Conteneur principal avec GridBagLayout
         JPanel contenu = new JPanel(new GridBagLayout());
@@ -475,8 +483,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         panel.setOpaque(false);
 
-        panel.add(creerPanelConfig());
-
         for (int i = 1; i <= 2; i++) {
             BoutonAvecImage bouton = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Carre_transparent);
             bouton.setPreferredSize(new Dimension(50, 50));
@@ -780,18 +786,143 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
 
-    // Dans votre classe EcranPlateauDeJeu par exemple
+
+
     private JPanel creerPanelConfig() {
-        // Création du panel de configuration
-        PanelConfigJoueurs panelConfig = new PanelConfigJoueurs(collecteurEv);
+        JPanel mainPanel = PanelChoixJoueur.creerPanelAvecBordArrondi();
+        mainPanel.setLayout(new GridLayout(3, 1));
+        mainPanel.setBackground(PanelChoixJoueur.COULEUR_FOND_PRINCIPAL);
+        mainPanel.setPreferredSize(new Dimension(500, 200));
 
-        // Ajout au panel approprié (par exemple dans la barre supérieure)
-        JPanel barreSuperieure = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        barreSuperieure.setOpaque(false);
-        barreSuperieure.add(panelConfig);
+        JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
+        JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
 
-        return panelConfig;
+        mainPanel.add(joueur1);
+        mainPanel.add(Box.createHorizontalStrut(20));
+        mainPanel.add(joueur2);
+
+        return mainPanel;
     }
+
+
+
+
+    private void creerPanelTemporaire() {
+        // Création du panel
+        panelTemporaire = PanelChoixJoueur.creerPanelAvecBordArrondi();
+        panelTemporaire.setLayout(new BoxLayout(panelTemporaire, BoxLayout.Y_AXIS));
+        panelTemporaire.setBackground(PanelChoixJoueur.COULEUR_FOND_PRINCIPAL);
+
+        // Contenu
+        panelTemporaire.add(new JLabel("Menu Temporaire"));
+        panelTemporaire.add(new JSeparator());
+        JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
+        JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
+
+        panelTemporaire.add(joueur1);
+        panelTemporaire.add(Box.createHorizontalStrut(50));
+        panelTemporaire.add(joueur2);
+
+        // Taille et style
+        panelTemporaire.setSize(new Dimension(300, 400));
+
+        // Par défaut, le panel est invisible
+        panelTemporaire.setVisible(false);
+
+        // Ajout au conteneur principal
+        this.add(panelTemporaire);
+
+        // Création du timer
+        timerDisparition = new Timer(2000, e -> {
+            if (!isPanelHovered) {
+                panelTemporaire.setVisible(false);
+                timerDisparition.stop();
+            }
+        });
+        timerDisparition.setRepeats(false);
+
+        // Gestion du survol
+        panelTemporaire.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                isPanelHovered = true;
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                isPanelHovered = false;
+                // Redémarrer le timer quand la souris quitte le panel
+                timerDisparition.restart();
+            }
+        });
+    }
+
+
+
+
+    private void creerBoutonFlottant() {
+        boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+        boutonFlottant.setSize(120, 120);
+
+        // Rendre le bouton déplaçable
+        MouseAdapter dragListener = new MouseAdapter() {
+            private Point offset;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                offset = e.getPoint();
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (boutonFlottant.getParent() != null) {
+                    int newX = boutonFlottant.getX() + e.getX() - offset.x;
+                    int newY = boutonFlottant.getY() + e.getY() - offset.y;
+
+                    // Limiter le déplacement dans les bornes du parent
+                    newX = Math.max(0, Math.min(newX, boutonFlottant.getParent().getWidth() - boutonFlottant.getWidth()));
+                    newY = Math.max(0, Math.min(newY, boutonFlottant.getParent().getHeight() - boutonFlottant.getHeight()));
+
+                    boutonFlottant.setLocation(newX, newY);
+                }
+            }
+        };
+
+        boutonFlottant.addMouseListener(dragListener);
+        boutonFlottant.addMouseMotionListener(dragListener);
+
+        // Style du bouton
+        boutonFlottant.setBackground(new Color(64, 158, 255));
+        boutonFlottant.setForeground(Color.WHITE);
+        boutonFlottant.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        boutonFlottant.setFocusPainted(false);
+
+        // Position initiale
+        boutonFlottant.setLocation(20, 300);
+        boutonFlottant.setVisible(true);
+        boutonFlottant.setToolTipText("Option de Configuration des Joueurs");
+
+        boutonFlottant.addActionListener(e -> {
+            // Positionner le panel près du bouton flottant
+            Point boutonLocation = boutonFlottant.getLocation();
+            panelTemporaire.setLocation(
+                    boutonLocation.x - (panelTemporaire.getWidth()/2 + boutonFlottant.getWidth()),
+                    boutonLocation.y + boutonFlottant.getHeight() + 5
+            );
+
+            // Afficher le panel
+            panelTemporaire.setVisible(true);
+
+            // Démarrer le timer
+            timerDisparition.restart();
+        });
+
+
+        // Ajouter au panel principal avec un layout null pour permettre le positionnement absolu
+        this.setLayout(null);
+        this.add(boutonFlottant);
+    }
+
 
 
 }
@@ -962,6 +1093,214 @@ class ExempleUtilisation {
             // Configuration de la fenêtre
             frame.setSize(600, 400);
             frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
+    }
+}
+
+class PanelChoixJoueur {
+
+    // Constantes pour le style et les dimensions
+    private static final int PANEL_WIDTH = 320;
+    private static final int PANEL_HEIGHT = 170;
+    private static final int COMBO_WIDTH = 220;
+    private static final int COMBO_HEIGHT = 35;
+    private static final int CORNER_RADIUS = ARRONDI;
+    private static final Font COMBO_FONT = new Font("SansSerif", Font.PLAIN, 15); // Police moderne
+    static final Color COULEUR_FOND_PRINCIPAL = new Color(238, 242, 245); // Bleu très clair/gris
+    private static final Color COULEUR_PANEL_CENTRAL = Color.WHITE;
+    private static final Color COULEUR_OMBRE = new Color(0, 0, 0, 30); // Ombre un peu plus visible
+    private static final Color COULEUR_BORDURE_PANEL = new Color(200, 205, 210); // Bordure subtile
+    private static final Color COULEUR_SELECTION_COMBO = new Color(200, 220, 255); // Bleu clair pour la sélection
+    private static final Insets MARGES_PANEL_PRINCIPAL = new Insets(25, 25, 25, 25);
+    private static final Insets MARGES_INTERNES_GB = new Insets(15, 15, 15, 15); // Espacement pour GridBag
+    private static final Insets MARGES_COMBO_GB = new Insets(10, 15, 20, 15); // Espacement spécifique pour la ComboBox
+
+    // Énumération pour les types de joueurs
+    public enum TypeJoueur {
+        HUMAIN("Humain"),
+        IA_FACILE("IA - Facile"), // Labels plus descriptifs
+        IA_MOYEN("IA - Moyen"),
+        IA_DIFFICILE("IA - Difficile");
+
+        private final String libelle;
+
+        TypeJoueur(String libelle) {
+            this.libelle = libelle;
+        }
+
+        @Override
+        public String toString() {
+            return libelle;
+        }
+    }
+
+    public static JPanel creerPanelChoixJoueur(String nomJoueur, int idJoueur, CollecteurEvenements collecteurEv) {
+        JPanel mainPanel = creerMainPanel();
+        JPanel panelCentral = creerPanelAvecBordArrondi();
+        // JPanel panelNom = creerPanelNom(nomJoueur);
+        JLabel panelNom = new JLabel(nomJoueur);
+        panelNom.setFont(new Font("SansSerif", Font.BOLD, 18));
+
+        JComboBox<TypeJoueur> comboType = creerComboType(idJoueur, collecteurEv);
+
+        assemblerComposants(mainPanel, panelCentral, panelNom, comboType);
+
+        return mainPanel;
+    }
+
+    private static JPanel creerMainPanel() {
+        JPanel mainPanel = creerPanelAvecBordArrondi();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(
+                MARGES_PANEL_PRINCIPAL.top, MARGES_PANEL_PRINCIPAL.left,
+                MARGES_PANEL_PRINCIPAL.bottom, MARGES_PANEL_PRINCIPAL.right));
+        mainPanel.setBackground(COULEUR_FOND_PRINCIPAL);
+        return mainPanel;
+    }
+
+    static JPanel creerPanelAvecBordArrondi() {
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g); // Important pour la propreté du rendu
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+                int width = getWidth();
+                int height = getHeight();
+
+                // Ombre portée subtile
+                g2.setColor(COULEUR_OMBRE);
+                g2.fillRoundRect(3, 3, width - 4, height - 4, CORNER_RADIUS, CORNER_RADIUS); // Ombre légèrement décalée
+
+                // Fond du panel
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
+
+                // Bordure
+                g2.setColor(COULEUR_BORDURE_PANEL);
+                g2.setStroke(new BasicStroke(1f)); // Bordure fine
+                g2.drawRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
+                g2.dispose();
+            }
+        };
+        panel.setBackground(COULEUR_PANEL_CENTRAL);
+        panel.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+        panel.setLayout(new GridBagLayout());
+        panel.setOpaque(false); // Nécessaire car on dessine notre propre fond et ombre
+        return panel;
+    }
+
+
+    private static JComboBox<TypeJoueur> creerComboType(int idJoueur, CollecteurEvenements collecteurEv) {
+        JComboBox<TypeJoueur> comboType = new JComboBox<>(TypeJoueur.values());
+        styliserComboBox(comboType);
+        ajouterEcouteurComboBox(comboType, idJoueur, collecteurEv);
+        return comboType;
+    }
+
+    private static void styliserComboBox(JComboBox<TypeJoueur> comboType) {
+//        comboType.setPreferredSize(new Dimension(COMBO_WIDTH, COMBO_HEIGHT));
+        comboType.setFont(COMBO_FONT);
+        comboType.setBackground(Color.WHITE); // Fond blanc pour la ComboBox
+        comboType.setForeground(new Color(50, 50, 50)); // Texte foncé
+
+        // Renderer pour l'élément sélectionné et la liste déroulante
+        comboType.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                          int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                setHorizontalAlignment(SwingConstants.CENTER);
+                setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15)); // Padding généreux
+
+                if (isSelected) {
+                    setBackground(COULEUR_SELECTION_COMBO);
+                    setForeground(new Color(30, 30, 30));
+                } else {
+                    setBackground(Color.WHITE); // Fond des items non sélectionnés
+                    setForeground(new Color(50, 50, 50));
+                }
+                return this;
+            }
+        });
+
+        // Pour enlever la bordure par défaut de la ComboBox si souhaité (plus complexe, via UI delegate)
+//         ((JComponent) comboType.getRenderer()).setBorder(BorderFactory.createEmptyBorder(2,5,2,0));
+//         comboType.setBorder(BorderFactory.createLineBorder(COULEUR_BORDURE_PANEL)); // Bordure personnalisée
+    }
+
+    private static void ajouterEcouteurComboBox(JComboBox<TypeJoueur> comboType, int idJoueur, CollecteurEvenements collecteurEv) {
+        comboType.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                TypeJoueur typeSelectionne = (TypeJoueur) e.getItem();
+                if (typeSelectionne != null && collecteurEv != null) {
+                    // Format de l'événement : EPDT-<LibelleType>-<idJoueur>
+                    // EPDT = Ecran Plateau De Jeu
+                    collecteurEv.clavier("EPDT-" + typeSelectionne + "-" + idJoueur);
+                }
+            }
+        });
+    }
+
+    private static void assemblerComposants(JPanel mainPanel, JPanel panelCentral, JLabel panelNom, JComboBox<TypeJoueur> comboType) {
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        // Ajout du panel du nom
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.weighty = 0.5; // Donne plus d'espace en haut
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = MARGES_INTERNES_GB;
+        panelCentral.add(panelNom, gbc);
+
+        // Ajout de la ComboBox
+        gbc.gridy = 1;
+        gbc.weighty = 0.5; // Donne plus d'espace en bas
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Permet à la ComboBox de prendre la largeur si nécessaire
+        gbc.anchor = GridBagConstraints.PAGE_END; // Ancrer en bas de son espace
+        gbc.insets = MARGES_COMBO_GB;
+        panelCentral.add(comboType, gbc);
+
+        mainPanel.add(panelCentral, BorderLayout.CENTER);
+    }
+
+
+
+
+    // Méthode main pour tester (nécessite PngText et CollecteurEvenements stubs)
+    public static void main(String[] args) {
+        // Stubs pour les classes manquantes (à remplacer par vos vraies implémentations)
+        // Ces stubs sont juste pour que le code compile et s'exécute pour la démo.
+        // Vous devrez les remplacer par vos classes PngText, CollecteurEvenements, et Mediateur.
+
+
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Configuration du Joueur - Améliorée");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+
+            frame.setBackground(COULEUR_FOND_PRINCIPAL); // Assortir le fond de la frame
+
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+            mainPanel.setBackground(COULEUR_FOND_PRINCIPAL);
+            mainPanel.setPreferredSize(new Dimension(500, 200));
+
+            JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
+            JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
+
+            mainPanel.add(joueur1);
+            mainPanel.add(Box.createHorizontalStrut(20));
+            mainPanel.add(joueur2);
+
+            frame.add(mainPanel);
+
+            frame.pack();
+            frame.setLocationRelativeTo(null); // Centrer à l'écran
             frame.setVisible(true);
         });
     }
