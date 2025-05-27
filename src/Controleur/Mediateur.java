@@ -29,7 +29,7 @@ public class Mediateur implements CollecteurEvenements {
             vue = InterfaceGraphique.getInstance();
             switch (touche) {
                 case "exit":
-                    jeu.setTerminerJeu();
+//                    jeu.setTerminerJeu();
                     System.exit(0);
                     break;
                 case "annuler":
@@ -60,9 +60,6 @@ public class Mediateur implements CollecteurEvenements {
                     break;
                 case "pause":
                     jeu.setPause();
-                    break;
-                case "humain":
-//                    jeu.basculeIA();
                     break;
                 case "full":
                     vue.toggleFullScreen();

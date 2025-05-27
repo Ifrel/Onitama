@@ -33,7 +33,7 @@ import static Global.Paths.PATH_BTN;
  * @see CollecteurEvenements
  * @see InterfaceGraphique
  */
-public class EcranMenu extends PanelAvecImage implements Observateur {
+public class  EcranMenu extends PanelAvecImage implements Observateur {
 
     private static final Logger LOGGER = Logger.getLogger(EcranMenu.class.getName());
     private final Jeu jeu;
