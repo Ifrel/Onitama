@@ -282,7 +282,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
         gbc.gridy = 6;
         gbc.weighty = 0.25;
         gbc.fill = GridBagConstraints.VERTICAL;
-        add(Box.createVerticalStrut(20), gbc); // Espace fixe en bas
+        add(Box.createVerticalStrut(100), gbc); // Espace fixe en bas
     }
 
 
@@ -472,7 +472,6 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
 
         // Liste des configurations pour les boutons d'action
         List<BoutonConfig> configs = Arrays.asList(
-                new BoutonConfig("reprendre.png", AdaptateurReprendre::new),
                 new BoutonConfig("mes_parties.png", AdaptateurMesParties::new),
                 new BoutonConfig("nouvelle_partie.png", AdaptateurNouvellePartie::new),
                 new BoutonConfig("didacticiel.png", AdaptateurDidacticiel::new),
