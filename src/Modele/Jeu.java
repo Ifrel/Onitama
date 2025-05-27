@@ -1,7 +1,6 @@
 package Modele;
 
 import Exceptions.CaseVideException;
-import Global.Config;
 import Modele.IA.IA;
 import Modele.IA.IAFaible;
 import Modele.IA.IAFort;
@@ -14,14 +13,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
-
-import javax.management.RuntimeErrorException;
 
 import static Global.Config.*;
 import static Global.Config.ETAT_GRILLE.DEFAUT;
@@ -662,7 +657,7 @@ public class Jeu extends Observable implements Runnable {
             if (estActiveIA2()) {
                 id = ID_JOUEUR_1;
             }
-            IA_1 = new IAFaible(this, id, "IA 1");
+            IA_1 = new IAMoyen(this, id, "IA 1");
         }
 
         if (! estActiveIA1() && estActiveIA2()) {
@@ -700,7 +695,7 @@ public class Jeu extends Observable implements Runnable {
         }
         IA2Activee = !IA2Activee;
         if (estActiveIA2()) {
-            IA_2 = new IAFaible(this, ID_JOUEUR_2, "IA 2");
+            IA_2 = new IAMoyen(this, ID_JOUEUR_2, "IA 2");
         }
         if (estActiveIA2()) {
             joueur1 = IA_1;
@@ -747,6 +742,7 @@ public class Jeu extends Observable implements Runnable {
             logger.info("L'IA 1 n'est pas active, impossible de définir son niveau");
             return;
         }
+        List<Carte> cartesIA1 = IA_1.getCartesEnMain();
         int id = ID_JOUEUR_1;
         String nom = "IA 1";
         if (! estActiveIA2()) {
@@ -764,12 +760,18 @@ public class Jeu extends Observable implements Runnable {
                 IA_1 = new IAFort(this, id, nom);
                 break;
         }
+        if (partieACommence) {
+            IA_1.clearHand();
+            IA_1.addCards(cartesIA1);
+        }
         if (id == ID_JOUEUR_1) {
             joueur1 = IA_1;
         } else {
             joueur2 = IA_1;
         }
-        initJoueursCartes();
+        if (!partieACommence) {
+            initJoueursCartes();
+        }
     }
 
     /**
@@ -782,6 +784,7 @@ public class Jeu extends Observable implements Runnable {
             logger.info("L'IA 2 n'est pas active, impossible de définir son niveau");
             return;
         }
+        List<Carte> cartesIA2 = IA_2.getCartesEnMain();
         switch (niveau) {
             case FAIBLE:
                 IA_2 = new IAFaible(this, ID_JOUEUR_2, "IA 2");
@@ -794,8 +797,14 @@ public class Jeu extends Observable implements Runnable {
                 break;
 
         }
+        if (partieACommence) {
+            IA_2.clearHand();
+            IA_2.addCards(cartesIA2);
+        }
         joueur2 = IA_2;
-        initJoueursCartes();
+        if (!partieACommence) {
+            initJoueursCartes();
+        }
     }
 
     public void lancer() {
