@@ -23,19 +23,18 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ItemEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
@@ -142,8 +141,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         cartesNord = new JPanel();
         cartesEst = new JPanel();
         cartesSud = new JPanel();
-        JPanel choixJoueur1 = PanelChoixJoueur.creerPanelChoixJoueur(jeu.getNomJoueur1(), ID_JOUEUR_1, collecteurEv);
-        JPanel choixJoueur2 = PanelChoixJoueur.creerPanelChoixJoueur(jeu.getNomJoueur2(), ID_JOUEUR_2, collecteurEv);
         creerTerrain();
         creerCartesNord();
         creerCarteGauche();
@@ -160,7 +157,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Ligne 0 : Haut (son | timer | menu)
         JPanel barreIndication = new JPanel();
-        barreIndication.setLayout(new FlowLayout(FlowLayout.TRAILING,0 , 0));
+        barreIndication.setLayout(new FlowLayout(FlowLayout.TRAILING, 10, 10));
         barreIndication.setOpaque(false);
         barreIndication.add(creerBoutonSon());
         barreIndication.add(creerBarredesBoutons());
@@ -178,37 +175,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.insets = new Insets(0, 0, ESPACE, 0);
         contenu.add(barreIndication, gbc);
 
-        // === Ligne 1 : Panel choix joueur 1
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.insets = new Insets(15, 0, 0, 0);
-//        contenu.add(choixJoueur1, gbc);
-
         // === Ligne 1 : Texte du tour ===
-        gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
         gbc.weighty = 0;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
         gbc.insets = new Insets(15, 0, 0, 0);
         contenu.add(creerPanelNomJoueurCourant(), gbc);
-
-        // === Ligne 1 : Panel choix joueur 2
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.insets = new Insets(15, 0, 0, 0);
-//        contenu.add(choixJoueur2, gbc);
 
         // === Saut de ligne entre ligne 1 et 2 ===
         gbc.gridy = 2;
@@ -501,7 +474,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         panel.setOpaque(false);
 
-        for (int i = 1; i <= 4; i++) {
+        panel.add(creerPanelConfig());
+
+        for (int i = 1; i <= 2; i++) {
             BoutonAvecImage bouton = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Carre_transparent);
             bouton.setPreferredSize(new Dimension(50, 50));
             int index = i;
@@ -688,15 +663,15 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
      * @param col la colonne de la case du plateau
      */
     private void apliquerConfifUtilisateur(BoutonTerrain boutonCase, int row, int col) {
-        if (row == 0 && col == 2) { // case maitre joueur 1
-            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_1));
-        } else if (row == 4 && col == 2) { // case maitre joueur 2
-            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_2));
-        } else if (row == 0) {
-            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_1));
-        } else if (row == 4) {
-            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_2));
-        }
+//        if (row == 0 && col == 2) { // case maitre joueur 1
+//            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_1));
+//        } else if (row == 4 && col == 2) { // case maitre joueur 2
+//            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseMaitreJoueur(ID_JOUEUR_2));
+//        } else if (row == 0) {
+//            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_1));
+//        } else if (row == 4) {
+//            boutonCase.chargerCouleurFond(infosDeConfigUI.getCouleurCaseEleveJoueur(ID_JOUEUR_2));
+//        }
 
     }
 
@@ -804,202 +779,188 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
 
+    // Dans votre classe EcranPlateauDeJeu par exemple
+    private JPanel creerPanelConfig() {
+        // Création du panel de configuration
+        PanelConfigJoueurs panelConfig = new PanelConfigJoueurs(collecteurEv);
+
+        // Ajout au panel approprié (par exemple dans la barre supérieure)
+        JPanel barreSuperieure = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        barreSuperieure.setOpaque(false);
+        barreSuperieure.add(panelConfig);
+
+        return panelConfig;
+    }
+
 
 }
 
 
 
-class PanelChoixJoueur {
 
-    // Constantes pour le style et les dimensions
-    private static final int PANEL_WIDTH = 320;
-    private static final int PANEL_HEIGHT = 170;
-    private static final int COMBO_WIDTH = 220;
-    private static final int COMBO_HEIGHT = 35;
-    private static final int CORNER_RADIUS = ARRONDI;
-    private static final Font COMBO_FONT = new Font("SansSerif", Font.PLAIN, 15); // Police moderne
-    private static final Color COULEUR_FOND_PRINCIPAL = new Color(238, 242, 245); // Bleu très clair/gris
-    private static final Color COULEUR_PANEL_CENTRAL = Color.WHITE;
-    private static final Color COULEUR_OMBRE = new Color(0, 0, 0, 30); // Ombre un peu plus visible
-    private static final Color COULEUR_BORDURE_PANEL = new Color(200, 205, 210); // Bordure subtile
-    private static final Color COULEUR_SELECTION_COMBO = new Color(200, 220, 255); // Bleu clair pour la sélection
-    private static final Insets MARGES_PANEL_PRINCIPAL = new Insets(25, 25, 25, 25);
-    private static final Insets MARGES_INTERNES_GB = new Insets(15, 15, 15, 15); // Espacement pour GridBag
-    private static final Insets MARGES_COMBO_GB = new Insets(10, 15, 20, 15); // Espacement spécifique pour la ComboBox
 
-    // Énumération pour les types de joueurs
-    public enum TypeJoueur {
-        HUMAIN("Humain"),
-        IA_FACILE("IA - Facile"), // Labels plus descriptifs
-        IA_MOYEN("IA - Moyen"),
-        IA_DIFFICILE("IA - Difficile");
 
-        private final String libelle;
 
-        TypeJoueur(String libelle) {
-            this.libelle = libelle;
-        }
+class PanelConfigJoueurs extends JPanel {
+    private final JButton boutonConfig;
+    private final JDialog dialogConfig;
+    private final JComboBox<String> comboJ1;
+    private final JComboBox<String> comboJ2;
+    private final CollecteurEvenements collecteur;
 
-        @Override
-        public String toString() {
-            return libelle;
-        }
-    }
+    public PanelConfigJoueurs(CollecteurEvenements collecteur) {
+        this.collecteur = collecteur;
+        setOpaque(false);
+        setLayout(new GridBagLayout());
 
-    public static JPanel creerPanelChoixJoueur(String nomJoueur, int idJoueur, CollecteurEvenements collecteurEv) {
-        JPanel mainPanel = creerMainPanel();
-        JPanel panelCentral = creerPanelCentral();
-        JPanel panelNom = creerPanelNom(nomJoueur);
-        JComboBox<TypeJoueur> comboType = creerComboType(idJoueur, collecteurEv);
+        // Création du bouton principal
+        boutonConfig = new JButton("Configurer les joueurs");
+        styliserBouton(boutonConfig);
 
-        assemblerComposants(mainPanel, panelCentral, panelNom, comboType);
+        // Création de la boîte de dialogue
+        dialogConfig = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Configuration des joueurs", true);
+        dialogConfig.setLayout(new GridBagLayout());
 
-        return mainPanel;
-    }
+        // Configuration des combo boxes
+        String[] options = {"Humain", "IA - Facile", "IA - Moyen", "IA - Difficile"};
+        comboJ1 = new JComboBox<>(options);
+        comboJ2 = new JComboBox<>(options);
 
-    private static JPanel creerMainPanel() {
-        JPanel mainPanel = creerPanelCentral();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(
-                MARGES_PANEL_PRINCIPAL.top, MARGES_PANEL_PRINCIPAL.left,
-                MARGES_PANEL_PRINCIPAL.bottom, MARGES_PANEL_PRINCIPAL.right));
-        mainPanel.setBackground(COULEUR_FOND_PRINCIPAL);
-        return mainPanel;
-    }
+        // Configuration de la boîte de dialogue
+        initDialogConfig();
 
-    private static JPanel creerPanelCentral() {
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g); // Important pour la propreté du rendu
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-                int width = getWidth();
-                int height = getHeight();
-
-                // Ombre portée subtile
-                g2.setColor(COULEUR_OMBRE);
-                g2.fillRoundRect(3, 3, width - 4, height - 4, CORNER_RADIUS, CORNER_RADIUS); // Ombre légèrement décalée
-
-                // Fond du panel
-                g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
-
-                // Bordure
-                g2.setColor(COULEUR_BORDURE_PANEL);
-                g2.setStroke(new BasicStroke(1f)); // Bordure fine
-                g2.drawRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
-                g2.dispose();
-            }
-        };
-        panel.setBackground(COULEUR_PANEL_CENTRAL);
-        panel.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
-        panel.setLayout(new GridBagLayout());
-        panel.setOpaque(false); // Nécessaire car on dessine notre propre fond et ombre
-        return panel;
-    }
-
-    private static JPanel creerPanelNom(String nomJoueur) {
-        JPanel nomPanel = PngText.createPngPanel(nomJoueur, 20); // Gardons la taille originale pour l'instant
-        nomPanel.setOpaque(false);
-        return nomPanel;
-    }
-
-    private static JComboBox<TypeJoueur> creerComboType(int idJoueur, CollecteurEvenements collecteurEv) {
-        JComboBox<TypeJoueur> comboType = new JComboBox<>(TypeJoueur.values());
-        styliserComboBox(comboType);
-        ajouterEcouteurComboBox(comboType, idJoueur, collecteurEv);
-        return comboType;
-    }
-
-    private static void styliserComboBox(JComboBox<TypeJoueur> comboType) {
-        comboType.setPreferredSize(new Dimension(COMBO_WIDTH, COMBO_HEIGHT));
-        comboType.setFont(COMBO_FONT);
-        comboType.setBackground(Color.WHITE); // Fond blanc pour la ComboBox
-        comboType.setForeground(new Color(50, 50, 50)); // Texte foncé
-
-        // Renderer pour l'élément sélectionné et la liste déroulante
-        comboType.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value,
-                                                          int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                setHorizontalAlignment(SwingConstants.CENTER);
-                setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15)); // Padding généreux
-
-                if (isSelected) {
-                    setBackground(COULEUR_SELECTION_COMBO);
-                    setForeground(new Color(30, 30, 30));
-                } else {
-                    setBackground(Color.WHITE); // Fond des items non sélectionnés
-                    setForeground(new Color(50, 50, 50));
-                }
-                return this;
-            }
+        // Action du bouton principal
+        boutonConfig.addActionListener(e -> {
+            Point p = boutonConfig.getLocationOnScreen();
+            dialogConfig.setLocation(p.x - dialogConfig.getWidth()/2 + boutonConfig.getWidth()/2,
+                    p.y + boutonConfig.getHeight());
+            dialogConfig.setVisible(true);
         });
 
-        // Pour enlever la bordure par défaut de la ComboBox si souhaité (plus complexe, via UI delegate)
-        // ((JComponent) comboType.getRenderer()).setBorder(BorderFactory.createEmptyBorder(2,5,2,0));
-        // comboType.setBorder(BorderFactory.createLineBorder(COULEUR_BORDURE_PANEL)); // Bordure personnalisée
+        add(boutonConfig);
     }
 
-    private static void ajouterEcouteurComboBox(JComboBox<TypeJoueur> comboType, int idJoueur, CollecteurEvenements collecteurEv) {
-        comboType.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                TypeJoueur typeSelectionne = (TypeJoueur) e.getItem();
-                if (typeSelectionne != null && collecteurEv != null) {
-                    // Format de l'événement : EPDT-<LibelleType>-<idJoueur>
-                    // EPDT = Ecran Plateau De Jeu
-                    collecteurEv.clavier("EPDT-" + typeSelectionne.toString() + "-" + idJoueur);
-                }
-            }
-        });
-    }
+    private void initDialogConfig() {
+        JPanel content = new JPanel(new GridBagLayout());
+        content.setBackground(Color.WHITE);
+        content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-    private static void assemblerComposants(JPanel mainPanel, JPanel panelCentral, JPanel panelNom, JComboBox<TypeJoueur> comboType) {
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Ajout du panel du nom
-        gbc.gridy = 0;
+        // Joueur 1
         gbc.gridx = 0;
-        gbc.weighty = 0.5; // Donne plus d'espace en haut
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = MARGES_INTERNES_GB;
-        panelCentral.add(panelNom, gbc);
+        gbc.gridy = 0;
+        JLabel labelJ1 = new JLabel("Joueur 1");
+        labelJ1.setFont(new Font("Serif", Font.BOLD, 18));
+        content.add(labelJ1, gbc);
 
-        // Ajout de la ComboBox
         gbc.gridy = 1;
-        gbc.weighty = 0.5; // Donne plus d'espace en bas
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Permet à la ComboBox de prendre la largeur si nécessaire
-        gbc.anchor = GridBagConstraints.PAGE_END; // Ancrer en bas de son espace
-        gbc.insets = MARGES_COMBO_GB;
-        panelCentral.add(comboType, gbc);
+        styliserCombo(comboJ1);
+        content.add(comboJ1, gbc);
 
-        mainPanel.add(panelCentral, BorderLayout.CENTER);
+        // Espace
+        gbc.gridy = 2;
+        content.add(Box.createVerticalStrut(20), gbc);
+
+        // Joueur 2
+        gbc.gridy = 3;
+        JLabel labelJ2 = new JLabel("Joueur 2");
+        labelJ2.setFont(new Font("Serif", Font.BOLD, 18));
+        content.add(labelJ2, gbc);
+
+        gbc.gridy = 4;
+        styliserCombo(comboJ2);
+        content.add(comboJ2, gbc);
+
+        // Bouton Valider
+        gbc.gridy = 5;
+        gbc.insets = new Insets(20, 10, 10, 10);
+        JButton valider = new JButton("Valider");
+        styliserBouton(valider);
+        valider.addActionListener(e -> {
+            String typeJ1 = (String) comboJ1.getSelectedItem();
+            String typeJ2 = (String) comboJ2.getSelectedItem();
+            if (collecteur != null) {
+                collecteur.clavier(typeJ1 + "-1");
+                collecteur.clavier(typeJ2 + "-2");
+            }
+            dialogConfig.setVisible(false);
+        });
+        content.add(valider, gbc);
+
+        dialogConfig.add(content);
+        dialogConfig.pack();
+        dialogConfig.setResizable(false);
     }
 
+    private void styliserBouton(JButton bouton) {
+        bouton.setFont(new Font("Serif", Font.BOLD, 16));
+        bouton.setBackground(new Color(255, 215, 0));
+        bouton.setForeground(new Color(60, 40, 0));
+        bouton.setFocusPainted(false);
+        bouton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 150, 0), 2),
+                BorderFactory.createEmptyBorder(8, 20, 8, 20)
+        ));
+        bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+        bouton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bouton.setBackground(new Color(255, 235, 80));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bouton.setBackground(new Color(255, 215, 0));
+            }
+        });
+    }
 
+    private void styliserCombo(JComboBox<String> combo) {
+        combo.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        combo.setPreferredSize(new Dimension(200, 30));
+        combo.setBackground(Color.WHITE);
+        combo.setForeground(new Color(50, 50, 50));
+        combo.setFocusable(false);
+    }
+}
 
-    // Méthode main pour tester (nécessite PngText et CollecteurEvenements stubs)
+class ExempleUtilisation {
     public static void main(String[] args) {
-        // Stubs pour les classes manquantes (à remplacer par vos vraies implémentations)
-        // Ces stubs sont juste pour que le code compile et s'exécute pour la démo.
-        // Vous devrez les remplacer par vos classes PngText, CollecteurEvenements, et Mediateur.
-
-
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Configuration du Joueur - Améliorée");
+            // Création de la fenêtre principale
+            JFrame frame = new JFrame("Configuration des Joueurs");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setBackground(COULEUR_FOND_PRINCIPAL); // Assortir le fond de la frame
+            frame.setLayout(new BorderLayout());
 
-            JPanel joueurPanel = PanelChoixJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
-            frame.add(joueurPanel, BorderLayout.CENTER);
+            // Création d'un collecteur d'événements simplifié pour l'exemple
+            CollecteurEvenements collecteur = new CollecteurEvenements() {
+                @Override
+                public void clavier(String t) {}
 
-            frame.pack();
-            frame.setLocationRelativeTo(null); // Centrer à l'écran
+                @Override
+                public void tictac() {}
+
+                @Override
+                public void setNiveauIA(String niveau) {
+                    System.out.println("Niveau IA sélectionné : " + niveau);
+                }
+            };
+
+            // Création du panneau de configuration
+            PanelConfigJoueurs panelConfig = new PanelConfigJoueurs(collecteur);
+
+            // Création d'un panneau contenant le panneau de configuration
+            JPanel mainPanel = new JPanel(new GridBagLayout());
+            mainPanel.setBackground(new Color(238, 242, 245));
+            mainPanel.add(panelConfig);
+
+            // Ajout du panneau principal à la fenêtre
+            frame.add(mainPanel);
+
+            // Configuration de la fenêtre
+            frame.setSize(600, 400);
+            frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
     }
