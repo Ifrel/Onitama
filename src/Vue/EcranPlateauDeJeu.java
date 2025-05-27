@@ -898,7 +898,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         boutonFlottant.setFocusPainted(false);
 
         // Position initiale
-        boutonFlottant.setLocation(20, 300);
+        boutonFlottant.setLocation(100, 80);
         boutonFlottant.setVisible(true);
         boutonFlottant.setToolTipText("Option de Configuration des Joueurs");
 
@@ -906,7 +906,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             // Positionner le panel près du bouton flottant
             Point boutonLocation = boutonFlottant.getLocation();
             panelTemporaire.setLocation(
-                    boutonLocation.x - (panelTemporaire.getWidth()/2 + boutonFlottant.getWidth()),
+                    boutonLocation.x - (panelTemporaire.getWidth()/2 - boutonFlottant.getWidth()/2),
                     boutonLocation.y + boutonFlottant.getHeight() + 5
             );
 
