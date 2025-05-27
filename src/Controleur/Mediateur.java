@@ -1,6 +1,5 @@
 package Controleur;
 
-import Global.Config;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceGraphique;
@@ -9,6 +8,7 @@ import Vue.Utils.AfficheReglesPDF;
 import java.awt.*;
 import java.util.logging.Logger;
 
+import static Global.Config.NIVEAU_IA.*;
 import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
 
 public class Mediateur implements CollecteurEvenements {
@@ -71,42 +71,42 @@ public class Mediateur implements CollecteurEvenements {
                     vue.lancerPlateauDeJeu();
                     break;
                 case "Humain-1":
-                    if (!jeu.estActiveIA1())
+                    if (jeu.estActiveIA1())
                         jeu.toggleIA1();
                     break;
                 case "IA - Facile-1":
                     if (!jeu.estActiveIA1())
                         jeu.toggleIA1();
-                    jeu.setNiveauIA1(Config.NIVEAU_IA.FAIBLE);
+                    jeu.setNiveauIA1(FAIBLE);
                     break;
                 case "IA - Moyen-1":
                     if (!jeu.estActiveIA1())
                         jeu.toggleIA1();
-                    jeu.setNiveauIA1(Config.NIVEAU_IA.MOYEN);
+                    jeu.setNiveauIA1(MOYEN);
                     break;
                 case "IA - Difficile-1":
                     if (!jeu.estActiveIA1())
                         jeu.toggleIA1();
-                    jeu.setNiveauIA1(Config.NIVEAU_IA.FORT);
+                    jeu.setNiveauIA1(FORT);
                     break;
                 case "Humain-2":
-                    if (!jeu.estActiveIA2())
+                    if (jeu.estActiveIA2())
                         jeu.toggleIA2();
                     break;
                 case "IA - Facile-2":
                     if (!jeu.estActiveIA2())
                         jeu.toggleIA2();
-                    jeu.setNiveauIA2(Config.NIVEAU_IA.FAIBLE);
+                    jeu.setNiveauIA2(FAIBLE);
                     break;
                 case "IA - Moyen-2":
                     if (!jeu.estActiveIA2())
                         jeu.toggleIA2();
-                    jeu.setNiveauIA2(Config.NIVEAU_IA.MOYEN);
+                    jeu.setNiveauIA2(MOYEN);
                     break;
                 case "IA - Difficile-2":
                     if (!jeu.estActiveIA2())
                         jeu.toggleIA2();
-                    jeu.setNiveauIA2(Config.NIVEAU_IA.FORT);
+                    jeu.setNiveauIA2(FORT);
                     break;
                 default:
                     logger.severe("Touche inconnue : " + touche);

@@ -23,8 +23,6 @@ public class Onitama {
 
             logger.info("Lancement du modèle du jeu");
             Jeu jeu = new Jeu();
-//            jeu.toggleIA1();
-//            jeu.setNiveauIA1(Config.NIVEAU_IA.MOYEN);
             jeu.lancer();
 
             logger.info("Initialisation du collecteur d'évènements");

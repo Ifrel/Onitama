@@ -34,15 +34,12 @@ public class Jeu extends Observable implements Runnable {
     private Pion [][] grille; // grille de pions
     private Historique<Coup> historique;
     private Joueur joueur1, joueur2;
-    private Joueur JOUEUR_1, JOUEUR_2; // probablement pas incroyable, mais on garde une référence des deux joueurs au cas où, comme pour les IA
+    private IA IA_1, IA_2;
     private Joueur joueurCourant;
     private int idJoueurCourant; // identifiant du joueur courant
     private int numCarteSelectionee;
-    private long tempsJeu; // temps écoulé depuis le début de la partie
-    private int numRound; // à quel round on en est
-    private boolean partieFinie;
+    private boolean estPartieFinie;
     private boolean IA1Activee, IA2Activee;
-    private IA IA_1, IA_2;
     private boolean partieACommence;
     private boolean maitreMort;
     private Pion pionSelectionne;
@@ -163,11 +160,10 @@ public class Jeu extends Observable implements Runnable {
             grille = new Pion[LIGNES][COLONNES];
             historique = new Historique<>();
             idJoueurCourant = ID_JOUEUR_1;
-            numRound = 1;
-            partieFinie = false;
-            tempsJeu = 0;
-            joueur1 = JOUEUR_1 = new Joueur(1, "Joueur 1");
-            joueur2 = JOUEUR_2 = new Joueur(2, "Joueur 2");
+            estPartieFinie = false;
+            joueur1 = new Joueur(1, "Joueur 1");
+            joueur2 = new Joueur(2, "Joueur 2");
+            joueurCourant = joueur1;
             toutesLesCartes = initCartes();
             numCarteSelectionee = 0;
             pionSelectionne = null;
@@ -176,10 +172,9 @@ public class Jeu extends Observable implements Runnable {
             etatGrille = DEFAUT;
             etatJeu = DEBUT;
             dernierCoupJoue = null;
-            joueurCourant = joueur1;
 
-            IA_1 = IA_2 = null;
             IA1Activee = IA2Activee = false;
+            IA_1 = IA_2 = null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -634,85 +629,59 @@ public class Jeu extends Observable implements Runnable {
     // ######## PARTIE ########
 
 
-    public void launchIA() {
+    synchronized public void launchIA() {
         if (! estActiveIA1() || ! estActiveIA2()) {
             logger.info("Il faut d'abord activer les IA avant de les lancer");
             return;
         }
 
-        etatJeu = DEBUT_IA;
+        etatJeu = getIdJoueurCourant() == ID_JOUEUR_1 ? J2_A_JOUE : J1_A_JOUE;
     }
 
     /**
      * Active / désactive l'IA 1
      */
-    public void toggleIA1() {
-        if (partieACommence) {
-            logger.info("Impossible de changer l'état de l'IA 1, la partie a commencé");
-            return;
-        }
+    synchronized public void toggleIA1() {
         IA1Activee = !IA1Activee; // si l'IA est activée, la désactive, vice-versa
 
+        List<Carte> cartesJ1 = getCartesJoueur1();
+        String nomJ1 = getNomJoueur1();
+
         if (estActiveIA1()) {
-            int id = ID_JOUEUR_2;
-            if (estActiveIA2()) {
-                id = ID_JOUEUR_1;
-            }
-            IA_1 = new IAMoyen(this, id, "IA 1");
+            joueur1 = IA_1 = new IAMoyen(this, ID_JOUEUR_1, "IA 1");
+        } else {
+            IA_1 = null;
+            joueur1 = new Joueur(ID_JOUEUR_1, nomJ1);
         }
 
-        if (! estActiveIA1() && estActiveIA2()) {
-            toggleIA2();
+        if (! partieACommence) {
+           initJoueursCartes();
+           return;
         }
-        // si l'IA 1 est activée, elle sera joueur 1 si face à l'IA 2, joueur 2 si face à un humain (joueur 1)
-        if (estActiveIA1()) {
-            if (estActiveIA2()) {
-                joueur1 = IA_1;
-                joueur2 = IA_2;
-            } else {
-                joueur1 = JOUEUR_1;
-                joueur2 = IA_1;
-            }
-        } else {
-            joueur1 = JOUEUR_1;
-            joueur2 = JOUEUR_2;
-        }
-        joueurCourant = joueur1;
-        idJoueurCourant = ID_JOUEUR_1;
-        initJoueursCartes();
+        joueur1.addCards(cartesJ1);
     }
 
     /**
-     * Active / désactive l'IA 2 (ne peut as être activée sans que l'IA 1 ne soit activée)
+     * Active / désactive l'IA 2
      */
-    public void toggleIA2() {
-        if (partieACommence) {
-            logger.info("Impossible de changer l'état de l'IA 2, la partie a commencé");
-            return;
-        }
-        if (!estActiveIA1()) {
-            logger.info("L'IA 2 ne peut pas être utilisée sans l'IA 1");
-            return;
-        }
-        IA2Activee = !IA2Activee;
+    synchronized public void toggleIA2() {
+        IA2Activee = !IA2Activee; // si l'IA est activée, la désactive, vice-versa
+
+        List<Carte> cartesJ2 = getCartesJoueur2();
+        String nomJ2 = getNomJoueur2();
+
         if (estActiveIA2()) {
-            IA_2 = new IAMoyen(this, ID_JOUEUR_2, "IA 2");
-        }
-        if (estActiveIA2()) {
-            joueur1 = IA_1;
-            joueur2 = IA_2;
+            joueur2 = IA_2 = new IAMoyen(this, ID_JOUEUR_2, "IA 2");
         } else {
-            if (estActiveIA1()) {
-                joueur1 = JOUEUR_1;
-                joueur2 = IA_1;
-            } else {
-                joueur1 = JOUEUR_1;
-                joueur2 = JOUEUR_2;
-            }
+            IA_2 = null;
+            joueur2 = new Joueur(ID_JOUEUR_2, nomJ2);
         }
-        joueurCourant = joueur1;
-        idJoueurCourant = ID_JOUEUR_1;
-        initJoueursCartes();
+
+        if (! partieACommence) {
+            initJoueursCartes();
+            return;
+        }
+        joueur2.addCards(cartesJ2);
     }
 
     /**
@@ -720,7 +689,7 @@ public class Jeu extends Observable implements Runnable {
      *
      * @return vrai si l'IA 1 est activée
      */
-    public boolean estActiveIA1() {
+    synchronized public boolean estActiveIA1() {
         return IA1Activee;
     }
 
@@ -729,7 +698,7 @@ public class Jeu extends Observable implements Runnable {
      *
      * @return vrai si l'IA 2 est activée
      */
-    public boolean estActiveIA2() {
+    synchronized public boolean estActiveIA2() {
         return IA2Activee;
     }
 
@@ -738,39 +707,29 @@ public class Jeu extends Observable implements Runnable {
      *
      * @param niveau FAIBLE | MOYEN | FORT
      */
-    public void setNiveauIA1(NIVEAU_IA niveau) {
+    synchronized public void setNiveauIA1(NIVEAU_IA niveau) {
         if (!estActiveIA1()) {
             logger.info("L'IA 1 n'est pas active, impossible de définir son niveau");
             return;
         }
-        List<Carte> cartesIA1 = IA_1.getCartesEnMain();
-        int id = ID_JOUEUR_1;
-        String nom = "IA 1";
-        if (! estActiveIA2()) {
-            id = ID_JOUEUR_2;
-            nom = "IA";
-        }
+
+        List<Carte> cartesIA1 = joueur1.getCartesEnMain();
+        String nomIA1 = joueur1.getNom();
+
         switch (niveau) {
             case FAIBLE:
-                IA_1 = new IAFaible(this, id, nom);
+                joueur1 = IA_1 = new IAFaible(this, ID_JOUEUR_1, nomIA1);
                 break;
             case MOYEN:
-                IA_1 = new IAMoyen(this, id, nom);
+                joueur1 = IA_1 = new IAMoyen(this, ID_JOUEUR_1, nomIA1);
                 break;
             case FORT:
-                IA_1 = new IAFort(this, id, nom);
+                joueur1 = IA_1 = new IAFort(this, ID_JOUEUR_1, nomIA1);
                 break;
         }
         if (partieACommence) {
-            IA_1.clearHand();
-            IA_1.addCards(cartesIA1);
-        }
-        if (id == ID_JOUEUR_1) {
-            joueur1 = IA_1;
+            joueur1.addCards(cartesIA1);
         } else {
-            joueur2 = IA_1;
-        }
-        if (!partieACommence) {
             initJoueursCartes();
         }
     }
@@ -780,30 +739,28 @@ public class Jeu extends Observable implements Runnable {
      *
      * @param niveau FAIBLE | MOYEN | FORT
      */
-    public void setNiveauIA2(NIVEAU_IA niveau) {
+    synchronized public void setNiveauIA2(NIVEAU_IA niveau) {
         if (!estActiveIA2()) {
             logger.info("L'IA 2 n'est pas active, impossible de définir son niveau");
             return;
         }
-        List<Carte> cartesIA2 = IA_2.getCartesEnMain();
+        List<Carte> cartesIA2 = joueur2.getCartesEnMain();
+        String nomIA2 = joueur2.getNom();
+
         switch (niveau) {
             case FAIBLE:
-                IA_2 = new IAFaible(this, ID_JOUEUR_2, "IA 2");
+                joueur2 = IA_2 = new IAFaible(this, ID_JOUEUR_2, nomIA2);
                 break;
             case MOYEN:
-                IA_2 = new IAMoyen(this, ID_JOUEUR_2, "IA 2");
+                joueur2 = IA_2 = new IAMoyen(this, ID_JOUEUR_2, nomIA2);
                 break;
             case FORT:
-                IA_2 = new IAFort(this, ID_JOUEUR_2, "IA 2");
+                joueur2 = IA_2 = new IAFort(this, ID_JOUEUR_2, nomIA2);
                 break;
-
         }
         if (partieACommence) {
-            IA_2.clearHand();
-            IA_2.addCards(cartesIA2);
-        }
-        joueur2 = IA_2;
-        if (!partieACommence) {
+            joueur2.addCards(cartesIA2);
+        } else {
             initJoueursCartes();
         }
     }
@@ -837,7 +794,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public long getTempsDeJeu() {
-        return tempsJeu;
+        return -99999999;
     }
 
     public void joueurQuiCommence(int id) {
@@ -849,10 +806,6 @@ public class Jeu extends Observable implements Runnable {
             return;
         }
         this.idJoueurCourant = id;
-    }
-
-    public void setTempsDeJeu(long secondes) {
-        this.tempsJeu = secondes;
     }
 
     public void setNomJoueur1(String nom) {
@@ -907,7 +860,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public boolean estPartieFinie() {
-        return partieFinie;
+        return estPartieFinie;
     }
 
     public List<Coup> getCoupsPossibles(Carte carteSelectionee, Point positionPion) throws IllegalStateException {
@@ -1008,14 +961,20 @@ public class Jeu extends Observable implements Runnable {
         majPionsJoueur2();
     }
 
-    private void echangerCartes(Joueur joueur, Carte carteSelectionne) {
+    public void echangerCartes(Joueur joueur, Carte carteSeleccionnee){
+        //Conserver la reference de l'ancienne carte supplementaire
+        Carte ancienneSup = this.carteSupplementaire;
 
-        joueur.removeCard(carteSelectionne);
-        Carte nouvelleCarteJoueurCourant = getCarteSupplementaire();
-        carteSelectionne.setProprietaire(0);
-        setCarteSupplementaire(carteSelectionne);
-        joueur.addCard(nouvelleCarteJoueurCourant);
-        nouvelleCarteJoueurCourant.setProprietaire(joueur.getId());
+        //Retirer la carte selectioneé de la main du joueur
+        joueur.removeCard(carteSeleccionnee);
+        carteSeleccionnee.setProprietaire(0);
+
+        //Definir la carte selectioneé comme la nouvelle carte suplementaire
+        setCarteSupplementaire(carteSeleccionnee);
+
+        //ajouter l'ancienne carte suplementaire à la main du joueur
+        joueur.addCard(ancienneSup);
+        ancienneSup.setProprietaire(joueur.getId());
 
 
     }
@@ -1143,6 +1102,10 @@ public class Jeu extends Observable implements Runnable {
         try {
             switch (etatGrille) {
                 case DEFAUT:
+                    if (getJoueurCourant().getTypeJoueur() == JOUEUR_IA) {
+                        logger.info("Impossible de séléctionner une case à la place de l'IA");
+                        return;
+                    }
                     if (estCaseVide(p.x, p.y)) {
                         return;
                     }
@@ -1206,7 +1169,7 @@ public class Jeu extends Observable implements Runnable {
             resetPionSelectionne();
 
             if(verifierVictoire()) {
-                partieFinie = true;
+                estPartieFinie = true;
                 logger.info("Le joueur" + getIdJoueurCourant() + " a gagné !!!!!!!!!");
                 metAJour();
                 etatJeu = FIN;
@@ -1221,11 +1184,12 @@ public class Jeu extends Observable implements Runnable {
             // met à jour l'interface
             metAJour();
             // met à jour l'automate
-            if (previous == ID_JOUEUR_1 && joueur1.getTypeJoueur() == JOUEUR_HUMAIN) {
-                etatJeu = J1_A_JOUE;
-            } else if (previous == ID_JOUEUR_2 && joueur2.getTypeJoueur() == JOUEUR_HUMAIN) {
-                etatJeu = J2_A_JOUE;
-            }
+//            if (previous == ID_JOUEUR_1 && joueur1.getTypeJoueur() == JOUEUR_HUMAIN) {
+//                etatJeu = J1_A_JOUE;
+//            } else if (previous == ID_JOUEUR_2 && joueur2.getTypeJoueur() == JOUEUR_HUMAIN) {
+//                etatJeu = J2_A_JOUE;
+//            }
+            etatJeu = previous == ID_JOUEUR_1 ? J1_A_JOUE : J2_A_JOUE;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -1342,43 +1306,24 @@ public class Jeu extends Observable implements Runnable {
                     switch (etatJeu) {
                         case DEBUT:
                             break;
-                        case DEBUT_IA:
-                        case IA2_A_JOUE:
-                            c = IA_1.calculerCoup();
-                            Thread.sleep(delai);
-                            setCarteSelectionnee(IA_1.getCarteChoisie());
-                            setPionSelectionne(IA_1.getPionChoisi().getPosition());
-                            jouerCoup(c);
-                            etatJeu = IA1_A_JOUE;
-                            break;
                         case J1_A_JOUE:
-                            if (joueur2.getTypeJoueur() == JOUEUR_IA) {
-                                etatJeu = IA1_A_JOUE;
-                                break;
-                            }
-                            if (estActiveIA1()) {
-                                c = IA_1.calculerCoup();
-                                Thread.sleep(delai);
-                                setCarteSelectionnee(IA_1.getCarteChoisie());
-                                setPionSelectionne(IA_1.getPionChoisi().getPosition());
-                                jouerCoup(c);
-                                etatJeu = IA1_A_JOUE;
-                            }
-                            break;
-                        case J2_A_JOUE:
-                            if (joueur1.getTypeJoueur() == JOUEUR_IA) {
-                                etatJeu = IA2_A_JOUE;
-                                break;
-                            }
-                            break;
-                        case IA1_A_JOUE:
                             if (estActiveIA2()) {
                                 c = IA_2.calculerCoup();
                                 Thread.sleep(delai);
-                                setCarteSelectionnee(IA_2.getCarteChoisie());
                                 setPionSelectionne(IA_2.getPionChoisi().getPosition());
+                                setCarteSelectionnee(IA_2.getCarteChoisie());
                                 jouerCoup(c);
-                                etatJeu = IA2_A_JOUE;
+                                etatJeu = J2_A_JOUE;
+                            }
+                            break;
+                        case J2_A_JOUE:
+                            if (estActiveIA1()) {
+                                c = IA_1.calculerCoup();
+                                Thread.sleep(delai);
+                                setPionSelectionne(IA_1.getPionChoisi().getPosition());
+                                setCarteSelectionnee(IA_1.getCarteChoisie());
+                                jouerCoup(c);
+                                etatJeu = J1_A_JOUE;
                             }
                             break;
                         case FIN:
