@@ -6,7 +6,6 @@ import Modele.Pion;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static Global.Config.NIVEAU_IA;
 import static Modele.IA.Heuristiques.heuristiqueAvancee;
 
 public class ArbreMinMax {
@@ -25,9 +24,9 @@ public class ArbreMinMax {
         logger.info("Nombre de noeuds total parcouru : " + nbEtats + ", dont feuilles : " + nbFeuilles);
         for (Noeud nSucc : n.getSuccesseurs()) {
             if (nSucc.getValeur() == val) {
-                Coup coup = nSucc.getId().getCoup();
-                carteChoisie = nSucc.getId().getCarteChoisie();
-                pionChoisi = nSucc.getId().getPionChoisi();
+                Coup coup = nSucc.getEtatJeu().getCoup();
+                carteChoisie = nSucc.getEtatJeu().getCarteChoisie();
+                pionChoisi = nSucc.getEtatJeu().getPionChoisi();
                 return coup;
             }
         }
@@ -38,11 +37,11 @@ public class ArbreMinMax {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
-            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getId()));
+            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getEtatJeu()));
         }
         double valeur = Double.NEGATIVE_INFINITY;
 
-        List<EtatJeu> successeurs = n.getId().getSuccesseurs();
+        List<EtatJeu> successeurs = n.getEtatJeu().getSuccesseurs();
         for (EtatJeu ej : successeurs) {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
@@ -61,11 +60,11 @@ public class ArbreMinMax {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
-            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getId()));
+            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getEtatJeu()));
         }
         double valeur = Double.POSITIVE_INFINITY;
 
-        List<EtatJeu> successeurs = n.getId().getSuccesseurs();
+        List<EtatJeu> successeurs = n.getEtatJeu().getSuccesseurs();
         for (EtatJeu ej : successeurs) {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);

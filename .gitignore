@@ -41,3 +41,4 @@ build/
 launch_Intelliji.sh
 *.dat
 *.json
+*.nfs*
