@@ -815,6 +815,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Contenu
         panelTemporaire.add(new JLabel("Menu Temporaire"));
+        panelTemporaire.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelTemporaire.add(new JSeparator());
         JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
         JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
@@ -833,7 +834,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         this.add(panelTemporaire);
 
         // Création du timer
-        timerDisparition = new Timer(2000, e -> {
+        timerDisparition = new Timer(5000, e -> {
             if (!isPanelHovered) {
                 panelTemporaire.setVisible(false);
                 timerDisparition.stop();
@@ -861,6 +862,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
     private void creerBoutonFlottant() {
+        final boolean[] estClique = {false};
         boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
         boutonFlottant.setSize(120, 120);
 
@@ -911,10 +913,15 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             );
 
             // Afficher le panel
-            panelTemporaire.setVisible(true);
+            estClique[0] = !estClique[0];
+            if (estClique[0]) {
+                panelTemporaire.setVisible(true);
+                timerDisparition.restart();
+            } else {
+                panelTemporaire.setVisible(false);
+                timerDisparition.stop();
+            }
 
-            // Démarrer le timer
-            timerDisparition.restart();
         });
 
 
@@ -922,8 +929,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         this.setLayout(null);
         this.add(boutonFlottant);
     }
-
-
 
 }
 
