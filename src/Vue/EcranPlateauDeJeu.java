@@ -484,16 +484,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         panel.setOpaque(false);
 
-        for (int i = 1; i <= 2; i++) {
-            BoutonAvecImage bouton = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Carre_transparent);
-            bouton.setPreferredSize(new Dimension(50, 50));
-            int index = i;
-            bouton.addActionListener(e -> {
-                System.out.println("Bouton " + index + " cliqué !");
-            });
-            panel.add(bouton);
-        }
-
+        BoutonAvecImage bouton = Bouton.creerBouton(PATH_BTN.resolve("ia.png").toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        bouton.setPreferredSize(new Dimension(100, 100));
+        bouton.setToolTipText("IA vs IA");
+        bouton.addActionListener(e -> { collecteurEv.clavier("ia vs ia"); });
+        panel.add(bouton);
         return panel;
     }
 
