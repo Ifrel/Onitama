@@ -170,11 +170,11 @@ public class BoutonTerrain extends JButton {
         int arc = (int) arrondiBordure;
 
         // 1. Fond
-//        if (isOpaque()) {
-//            // Utilise la couleur d'arrière-plan si elle est définie, sinon utilise la couleur par défaut
-//            g2.setColor(backgroundColor);
-//            g2.fillRoundRect(0, 0, w, h, arc, arc);
-//        }
+        if (isOpaque()) {
+            // Utilise la couleur d'arrière-plan si elle est définie, sinon utilise la couleur par défaut
+            g2.setColor(getBackground() != null ? getBackground() : backgroundColor);
+            g2.fillRoundRect(0, 0, w, h, arc, arc);
+        }
 
         float epaisseurBordureTotale = epaisseurAnimee + (animationActivee ? 2.5f : 0f);
         int marge = (int) (epaisseurBordureTotale + 2f);

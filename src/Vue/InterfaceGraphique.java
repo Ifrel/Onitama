@@ -16,7 +16,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
     private boolean maximized;
     private final Jeu jeu;
 
-    private JFrame frame;
+    JFrame frame;
     private JLayeredPane layeredPane;
     private JPanel backgroundBlur;
 
@@ -176,7 +176,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
     /**
      * Met à jour la disposition des composants en fonction de la taille de la fenêtre
      */
-    private void mettreAJourDispositions() {
+    public void mettreAJourDispositions() {
         int width = frame.getWidth();
         int height = frame.getHeight();
         ecranPlateauDeJeu.setBounds(0, 0, width, height);
@@ -281,9 +281,21 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         System.exit(0);
     }
 
-
-
     public EcranPlateauDeJeu getEcranPlateauDeJeu(){
         return ecranPlateauDeJeu;
+    }
+
+
+    /**
+     * Affiche l'écran de victoire dans l'application.
+     *
+     * @param nomGagnant Le nom du joueur gagnant.
+     */
+    public void afficherEcranVictoire(String nomGagnant) {
+        ecranPlateauDeJeu.afficherEcranVictoire(nomGagnant);
+    }
+
+    public void setContentPane(Container component) {
+        frame.setContentPane(component);
     }
 }
