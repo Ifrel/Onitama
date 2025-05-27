@@ -16,7 +16,6 @@ import Vue.Utils.Boutons.BoutonCarte;
 import Vue.Utils.Boutons.BoutonTerrain;
 import Vue.Utils.PanelAvecImage;
 import Vue.Utils.PanelRatioFixe;
-import Vue.Utils.PngText;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -92,11 +91,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private JPanel terrain;
     private int ID_JOUEUR_PRECEDANT = ID_JOUEUR_2;
 
-
     private JButton boutonFlottant;
     private JPanel panelTemporaire;
     private Timer timerDisparition;
     private boolean isPanelHovered = false;
+    private boolean estCliqueBoutonFlotant = false;
 
 
     /**
@@ -789,7 +788,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
     private JPanel creerPanelConfig() {
-        JPanel mainPanel = PanelChoixJoueur.creerPanelAvecBordArrondi();
+        JPanel mainPanel = PanelChoixJoueur.creerPanelCoinsdArrondi();
         mainPanel.setLayout(new GridLayout(3, 1));
         mainPanel.setBackground(PanelChoixJoueur.COULEUR_FOND_PRINCIPAL);
         mainPanel.setPreferredSize(new Dimension(500, 200));
@@ -805,11 +804,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
 
-
-
     private void creerPanelTemporaire() {
         // Création du panel
-        panelTemporaire = PanelChoixJoueur.creerPanelAvecBordArrondi();
+        panelTemporaire = PanelChoixJoueur.creerPanelCoinsdArrondi();
         panelTemporaire.setLayout(new BoxLayout(panelTemporaire, BoxLayout.Y_AXIS));
         panelTemporaire.setBackground(PanelChoixJoueur.COULEUR_FOND_PRINCIPAL);
 
@@ -817,11 +814,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         panelTemporaire.add(new JLabel("Menu Temporaire"));
         panelTemporaire.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelTemporaire.add(new JSeparator());
-        JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
-        JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
+        JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur(jeu.getNomJoueur1(), 1, collecteurEv);
+        JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur(jeu.getNomJoueur2(), 2, collecteurEv);
 
         panelTemporaire.add(joueur1);
-        panelTemporaire.add(Box.createHorizontalStrut(50));
+        panelTemporaire.add(Box.createHorizontalStrut(100));
         panelTemporaire.add(joueur2);
 
         // Taille et style
@@ -838,6 +835,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             if (!isPanelHovered) {
                 panelTemporaire.setVisible(false);
                 timerDisparition.stop();
+                estCliqueBoutonFlotant = false;
             }
         });
         timerDisparition.setRepeats(false);
@@ -859,10 +857,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
 
-
-
     private void creerBoutonFlottant() {
-        final boolean[] estClique = {false};
         boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
         boutonFlottant.setSize(120, 120);
 
@@ -913,8 +908,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             );
 
             // Afficher le panel
-            estClique[0] = !estClique[0];
-            if (estClique[0]) {
+            estCliqueBoutonFlotant = !estCliqueBoutonFlotant;
+            if (estCliqueBoutonFlotant) {
                 panelTemporaire.setVisible(true);
                 timerDisparition.restart();
             } else {
@@ -923,7 +918,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             }
 
         });
-
 
         // Ajouter au panel principal avec un layout null pour permettre le positionnement absolu
         this.setLayout(null);
@@ -934,182 +928,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
 
-
-
-
-
-class PanelConfigJoueurs extends JPanel {
-    private final JButton boutonConfig;
-    private final JDialog dialogConfig;
-    private final JComboBox<String> comboJ1;
-    private final JComboBox<String> comboJ2;
-    private final CollecteurEvenements collecteur;
-
-    public PanelConfigJoueurs(CollecteurEvenements collecteur) {
-        this.collecteur = collecteur;
-        setOpaque(false);
-        setLayout(new GridBagLayout());
-
-        // Création du bouton principal
-        boutonConfig = new JButton("Configurer les joueurs");
-        styliserBouton(boutonConfig);
-
-        // Création de la boîte de dialogue
-        dialogConfig = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Configuration des joueurs", true);
-        dialogConfig.setLayout(new GridBagLayout());
-
-        // Configuration des combo boxes
-        String[] options = {"Humain", "IA - Facile", "IA - Moyen", "IA - Difficile"};
-        comboJ1 = new JComboBox<>(options);
-        comboJ2 = new JComboBox<>(options);
-
-        // Configuration de la boîte de dialogue
-        initDialogConfig();
-
-        // Action du bouton principal
-        boutonConfig.addActionListener(e -> {
-            Point p = boutonConfig.getLocationOnScreen();
-            dialogConfig.setLocation(p.x - dialogConfig.getWidth()/2 + boutonConfig.getWidth()/2,
-                    p.y + boutonConfig.getHeight());
-            dialogConfig.setVisible(true);
-        });
-
-        add(boutonConfig);
-    }
-
-    private void initDialogConfig() {
-        JPanel content = new JPanel(new GridBagLayout());
-        content.setBackground(Color.WHITE);
-        content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Joueur 1
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        JLabel labelJ1 = new JLabel("Joueur 1");
-        labelJ1.setFont(new Font("Serif", Font.BOLD, 18));
-        content.add(labelJ1, gbc);
-
-        gbc.gridy = 1;
-        styliserCombo(comboJ1);
-        content.add(comboJ1, gbc);
-
-        // Espace
-        gbc.gridy = 2;
-        content.add(Box.createVerticalStrut(20), gbc);
-
-        // Joueur 2
-        gbc.gridy = 3;
-        JLabel labelJ2 = new JLabel("Joueur 2");
-        labelJ2.setFont(new Font("Serif", Font.BOLD, 18));
-        content.add(labelJ2, gbc);
-
-        gbc.gridy = 4;
-        styliserCombo(comboJ2);
-        content.add(comboJ2, gbc);
-
-        // Bouton Valider
-        gbc.gridy = 5;
-        gbc.insets = new Insets(20, 10, 10, 10);
-        JButton valider = new JButton("Valider");
-        styliserBouton(valider);
-        valider.addActionListener(e -> {
-            String typeJ1 = (String) comboJ1.getSelectedItem();
-            String typeJ2 = (String) comboJ2.getSelectedItem();
-            if (collecteur != null) {
-                collecteur.clavier(typeJ1 + "-1");
-                collecteur.clavier(typeJ2 + "-2");
-            }
-            dialogConfig.setVisible(false);
-        });
-        content.add(valider, gbc);
-
-        dialogConfig.add(content);
-        dialogConfig.pack();
-        dialogConfig.setResizable(false);
-    }
-
-    private void styliserBouton(JButton bouton) {
-        bouton.setFont(new Font("Serif", Font.BOLD, 16));
-        bouton.setBackground(new Color(255, 215, 0));
-        bouton.setForeground(new Color(60, 40, 0));
-        bouton.setFocusPainted(false);
-        bouton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 150, 0), 2),
-                BorderFactory.createEmptyBorder(8, 20, 8, 20)
-        ));
-        bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        bouton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bouton.setBackground(new Color(255, 235, 80));
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bouton.setBackground(new Color(255, 215, 0));
-            }
-        });
-    }
-
-    private void styliserCombo(JComboBox<String> combo) {
-        combo.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        combo.setPreferredSize(new Dimension(200, 30));
-        combo.setBackground(Color.WHITE);
-        combo.setForeground(new Color(50, 50, 50));
-        combo.setFocusable(false);
-    }
-}
-
-class ExempleUtilisation {
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            // Création de la fenêtre principale
-            JFrame frame = new JFrame("Configuration des Joueurs");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setLayout(new BorderLayout());
-
-            // Création d'un collecteur d'événements simplifié pour l'exemple
-            CollecteurEvenements collecteur = new CollecteurEvenements() {
-                @Override
-                public void clavier(String t) {}
-
-                @Override
-                public void tictac() {}
-
-                @Override
-                public void setNiveauIA(String niveau) {
-                    System.out.println("Niveau IA sélectionné : " + niveau);
-                }
-            };
-
-            // Création du panneau de configuration
-            PanelConfigJoueurs panelConfig = new PanelConfigJoueurs(collecteur);
-
-            // Création d'un panneau contenant le panneau de configuration
-            JPanel mainPanel = new JPanel(new GridBagLayout());
-            mainPanel.setBackground(new Color(238, 242, 245));
-            mainPanel.add(panelConfig);
-
-            // Ajout du panneau principal à la fenêtre
-            frame.add(mainPanel);
-
-            // Configuration de la fenêtre
-            frame.setSize(600, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
-}
-
 class PanelChoixJoueur {
 
     // Constantes pour le style et les dimensions
     private static final int PANEL_WIDTH = 320;
     private static final int PANEL_HEIGHT = 170;
-    private static final int COMBO_WIDTH = 220;
-    private static final int COMBO_HEIGHT = 35;
     private static final int CORNER_RADIUS = ARRONDI;
     private static final Font COMBO_FONT = new Font("SansSerif", Font.PLAIN, 15); // Police moderne
     static final Color COULEUR_FOND_PRINCIPAL = new Color(238, 242, 245); // Bleu très clair/gris
@@ -1140,9 +963,10 @@ class PanelChoixJoueur {
         }
     }
 
+
     public static JPanel creerPanelChoixJoueur(String nomJoueur, int idJoueur, CollecteurEvenements collecteurEv) {
-        JPanel mainPanel = creerMainPanel();
-        JPanel panelCentral = creerPanelAvecBordArrondi();
+        JPanel mainPanel = creerPanelCoinsArondiAvecBordure();
+        JPanel panelCentral = creerPanelCoinsdArrondi();
         // JPanel panelNom = creerPanelNom(nomJoueur);
         JLabel panelNom = new JLabel(nomJoueur);
         panelNom.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -1154,8 +978,9 @@ class PanelChoixJoueur {
         return mainPanel;
     }
 
-    private static JPanel creerMainPanel() {
-        JPanel mainPanel = creerPanelAvecBordArrondi();
+
+    private static JPanel creerPanelCoinsArondiAvecBordure() {
+        JPanel mainPanel = creerPanelCoinsdArrondi();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(
                 MARGES_PANEL_PRINCIPAL.top, MARGES_PANEL_PRINCIPAL.left,
@@ -1164,7 +989,8 @@ class PanelChoixJoueur {
         return mainPanel;
     }
 
-    static JPanel creerPanelAvecBordArrondi() {
+
+    public static JPanel creerPanelCoinsdArrondi() {
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -1206,8 +1032,8 @@ class PanelChoixJoueur {
         return comboType;
     }
 
+
     private static void styliserComboBox(JComboBox<TypeJoueur> comboType) {
-//        comboType.setPreferredSize(new Dimension(COMBO_WIDTH, COMBO_HEIGHT));
         comboType.setFont(COMBO_FONT);
         comboType.setBackground(Color.WHITE); // Fond blanc pour la ComboBox
         comboType.setForeground(new Color(50, 50, 50)); // Texte foncé
@@ -1232,23 +1058,20 @@ class PanelChoixJoueur {
             }
         });
 
-        // Pour enlever la bordure par défaut de la ComboBox si souhaité (plus complexe, via UI delegate)
-//         ((JComponent) comboType.getRenderer()).setBorder(BorderFactory.createEmptyBorder(2,5,2,0));
-//         comboType.setBorder(BorderFactory.createLineBorder(COULEUR_BORDURE_PANEL)); // Bordure personnalisée
     }
+
 
     private static void ajouterEcouteurComboBox(JComboBox<TypeJoueur> comboType, int idJoueur, CollecteurEvenements collecteurEv) {
         comboType.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 TypeJoueur typeSelectionne = (TypeJoueur) e.getItem();
                 if (typeSelectionne != null && collecteurEv != null) {
-                    // Format de l'événement : EPDT-<LibelleType>-<idJoueur>
-                    // EPDT = Ecran Plateau De Jeu
-                    collecteurEv.clavier("EPDT-" + typeSelectionne + "-" + idJoueur);
+                    collecteurEv.clavier(typeSelectionne + "-" + idJoueur);
                 }
             }
         });
     }
+
 
     private static void assemblerComposants(JPanel mainPanel, JPanel panelCentral, JLabel panelNom, JComboBox<TypeJoueur> comboType) {
         GridBagConstraints gbc = new GridBagConstraints();
@@ -1270,43 +1093,5 @@ class PanelChoixJoueur {
         panelCentral.add(comboType, gbc);
 
         mainPanel.add(panelCentral, BorderLayout.CENTER);
-    }
-
-
-
-
-    // Méthode main pour tester (nécessite PngText et CollecteurEvenements stubs)
-    public static void main(String[] args) {
-        // Stubs pour les classes manquantes (à remplacer par vos vraies implémentations)
-        // Ces stubs sont juste pour que le code compile et s'exécute pour la démo.
-        // Vous devrez les remplacer par vos classes PngText, CollecteurEvenements, et Mediateur.
-
-
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Configuration du Joueur - Améliorée");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
-
-            frame.setBackground(COULEUR_FOND_PRINCIPAL); // Assortir le fond de la frame
-
-            JPanel mainPanel = new JPanel();
-            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
-            mainPanel.setBackground(COULEUR_FOND_PRINCIPAL);
-            mainPanel.setPreferredSize(new Dimension(500, 200));
-
-            JPanel joueur1 = PanelChoixJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
-            JPanel joueur2 = PanelChoixJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
-
-            mainPanel.add(joueur1);
-            mainPanel.add(Box.createHorizontalStrut(20));
-            mainPanel.add(joueur2);
-
-            frame.add(mainPanel);
-
-            frame.pack();
-            frame.setLocationRelativeTo(null); // Centrer à l'écran
-            frame.setVisible(true);
-        });
     }
 }

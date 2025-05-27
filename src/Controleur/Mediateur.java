@@ -26,6 +26,7 @@ public class Mediateur implements CollecteurEvenements {
 
     @Override
     public void clavier(String touche) {
+        logger.info("Touche clavier : " + touche);
         try {
             vue = InterfaceGraphique.getInstance();
             switch (touche) {
