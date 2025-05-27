@@ -16,6 +16,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static Global.Config.*;
@@ -30,6 +31,11 @@ import static Vue.Configuration.ConfigUI.*;
  Interagit avec le {@link ControleurEcranDeDemarrage} pour signaler les actions de l'utilisateur.
  */
 public class EcranDeDemarrage extends JTabbedPane {
+    // Ajoutez ces constantes en haut de la classe EcranDeDemarrage
+    private static final double BUTTON_WIDTH_RATIO = 0.15;  // 15% de la largeur
+    private static final double BUTTON_HEIGHT_RATIO = 0.1;  // 10% de la hauteur
+    private static final double COMBOBOX_WIDTH_RATIO = 0.25; // 25% de la largeur
+    private static final double TEXTFIELD_WIDTH_RATIO = 0.25; // 25% de la largeur
     private final Jeu jeu;
     private final ControleurEcranDeDemarrage CD;
     private final InterfaceGraphique interfaceGraphique;
@@ -130,7 +136,9 @@ public class EcranDeDemarrage extends JTabbedPane {
         int ligneCourante = 6;
 
         // Ligne 1 : Reprendre une partie
-        comboBoxPartie = creerListeDeroulanteAvecIndication(OPTIONS_REPRENDRE);
+        List<String> listeParties = jeu.listerSauvegardes();
+        listeParties.add(0, INDICATION_SELECTION);
+        comboBoxPartie = creerListeDeroulanteAvecIndication(listeParties.toArray(new String[0]));
         comboBoxPartie.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
         actionListenerEntree.setPartieSelectionnee(INDICATION_SELECTION);
         comboBoxPartie.addActionListener(e -> {
@@ -217,7 +225,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
 
         // Bouton règles && Bouton Entrer
-        JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         panelBoutons.setOpaque(false);
 
         // Bouton "Regles"
@@ -235,9 +243,11 @@ public class EcranDeDemarrage extends JTabbedPane {
         panelBoutons.add(boutonEntrer);
 
         gbc = new GridBagConstraints();
-        gbc.gridx = 6;
+        gbc.gridx = 5;
         gbc.gridy = ligneCourante;
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.2;
         ongletGeneral.add(panelBoutons, gbc);
 
         // Espace Vertical Flexible en bas
