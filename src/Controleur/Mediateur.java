@@ -114,6 +114,16 @@ public class Mediateur implements CollecteurEvenements {
                         jeu.toggleIA2();
                     jeu.setNiveauIA2(Config.NIVEAU_IA.FORT);
                     break;
+                case "ia vs ia":
+                    if (!jeu.estActiveIA1())
+                        jeu.toggleIA1();
+
+                    if (!jeu.estActiveIA2())
+                        jeu.toggleIA2();
+
+                    jeu.setNiveauIA1(Config.NIVEAU_IA.MOYEN);
+                    jeu.setNiveauIA2(Config.NIVEAU_IA.MOYEN);
+                    break;
                 default:
                     logger.severe("Touche inconnue : " + touche);
                     break;
