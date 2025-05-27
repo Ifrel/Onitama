@@ -72,7 +72,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private BoutonCarte[] buttonsCartesJoueur1;
     private BoutonCarte[] buttonsCartesJoueur2;
     private BoutonCarte carteDeRotation;
-    private BoutonTerrain annuler, refaire, suggestion;
+    private JButton annuler, refaire, suggestion;
 
     private JButton boutonSon;
 
@@ -227,8 +227,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         // terrain
         centreGbc.gridx = 1;
         centreGbc.gridy = 1;
-        centreGbc.weightx = 0.5;
-        centreGbc.weighty = 0.5;
+        centreGbc.weightx = 1;
+        centreGbc.weighty = 1;
         centreGbc.insets = new Insets(20, 20, 20, 20);
         panelCentreEmpile.add(new PanelRatioFixe(terrain, 1), centreGbc);
 //        panelCentreEmpile.add(terrain, centreGbc);
@@ -336,47 +336,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         }
     }
 
-    /** Crée les boutons "Annuler" et "Refaire"*/
-    private JPanel creerButtonsAnnulerRefaire() {
-        JPanel boutonsAnnuleRefaire = new JPanel(new GridLayout(7, 1, 0, 10));
-        boutonsAnnuleRefaire.setOpaque(false);
-
-        annuler = new BoutonTerrain(PATH_BTN_ANNULER);
-        refaire = new BoutonTerrain(PATH_BTN_REFAIRE);
-        suggestion = new BoutonTerrain(PATH_BTN.resolve("suggestion.png"));
-
-//        annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent);
-//        refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent);
-//        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
-
-
-        annuler.setPreferredSize(new Dimension(135, 60));
-        refaire.setPreferredSize(new Dimension(135, 60));
-        suggestion.setPreferredSize(new Dimension(135, 60));
-
-        annuler.setBackground(new Color(207, 207, 207, 44));
-        refaire.setBackground(new Color(207, 207, 207, 44));
-        suggestion.setBackground(new Color(207, 207, 207, 44));
-
-        annuler.setOpaque(true);
-        refaire.setOpaque(true);
-        suggestion.setOpaque(true);
-
-        annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
-        refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
-        suggestion.addActionListener(new AdaptateurSuggestion(collecteurEv, this));
-
-        boutonsAnnuleRefaire.add(Box.createGlue());
-//        boutonsAnnuleRefaire.add(Box.createGlue());
-        boutonsAnnuleRefaire.add(annuler);
-        boutonsAnnuleRefaire.add(refaire);
-        boutonsAnnuleRefaire.add(suggestion);
-//        boutonsAnnuleRefaire.add(Box.createGlue());
-//        boutonsAnnuleRefaire.add(Box.createGlue());
-
-        return boutonsAnnuleRefaire;
-    }
-
     private void creerCartesNord() {
         cartesNord.setLayout(new GridLayout(1, 4, 25, 0));
         cartesNord.setOpaque(false);
@@ -411,34 +370,59 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private JPanel creerBoutonsDroite() {
-        JPanel droite = new JPanel();
-        droite.setLayout(new BoxLayout(droite, BoxLayout.X_AXIS));
-        droite.add(Box.createGlue());
-        droite.add(creerButtonsAnnulerRefaire());
-        droite.add(Box.createGlue());
+        JPanel droite = new JPanel(new GridLayout(4, 1, 0, 10));
+//        droite.setPreferredSize(new Dimension(140, 0));
         droite.setOpaque(false);
+
+        annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Cercle_transparent_V2);
+        refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Cercle_transparent_V2);
+        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent_V2);
+
+        Dimension DIM = new Dimension(70, 70);
+        annuler.setPreferredSize(DIM);
+        refaire.setPreferredSize(DIM);
+        suggestion.setPreferredSize(DIM);
+
+        annuler.setBackground(new Color(207, 207, 207, 44));
+        refaire.setBackground(new Color(207, 207, 207, 44));
+        suggestion.setBackground(new Color(207, 207, 207, 44));
+
+        annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
+        refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
+        suggestion.addActionListener(new AdaptateurSuggestion(collecteurEv, this));
+
+        droite.add(Box.createGlue());
+//        droite.add(Box.createGlue());
+        droite.add(annuler);
+        droite.add(refaire);
+        droite.add(suggestion);
+//        boutonsAnnuleRefaire.add(Box.createGlue());
+//        droite.add(Box.createGlue());
 
         return droite;
     }
 
     private JButton creerBoutonSon() {
-        boutonSon = Bouton.creerBouton(PATH_BTN_MUET.toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
-        boutonSon.setPreferredSize(new Dimension(50, 50));
-        boutonSon.setText(musiqueActive ? "on" : "off");
+        boutonSon = Bouton.creerBouton(PATH_BTN_MUET.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        boutonSon.setPreferredSize(new Dimension(80, 80));
+        boutonSon.setToolTipText("Musique");
         boutonSon.addActionListener(e -> toggleMusique(boutonSon));
 
         return boutonSon;
     }
 
     private JPanel creerPanelNomJoueurCourant() {
-        JPanel textNomPanel = new JPanel();
+        JPanel textNomPanel = ConfigModeJoueur.creerPanelCoinsArondiAvecBordure();
+        textNomPanel.setPreferredSize(new Dimension(300, 120));
         textNomPanel.setLayout(new BoxLayout(textNomPanel, BoxLayout.Y_AXIS));
         textNomPanel.setBackground(new Color(214, 214, 214, 107));
+        textNomPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textNomPanel.setToolTipText("Nom du joueur qui joue actuellement");
 
         JLabel txt = new JLabel("C'est au tour de");
-        txt.setFont(new Font("Arial", Font.PLAIN, 20));
+        txt.setFont(new Font("Arial", Font.BOLD, 20));
         txt.setAlignmentX(Component.CENTER_ALIGNMENT);
-        txt.setForeground(new Color(232, 231, 231));
+        txt.setForeground(new Color(197, 7, 184));
 
         nomJoueurCourantLabel = new JLabel(jeu.getNomJoueurCourant());
         nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 30));
@@ -453,30 +437,35 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private JPanel creerPanelRoundTemps() {
-        JPanel panel = creerPanelArrondi();
-        panel.setBackground(new Color(255, 255, 255, 255));
+        JPanel panel = ConfigModeJoueur.creerPanelCoinsdArrondi();
+        panel.setPreferredSize(new Dimension(300, 80));
+        panel.setBackground(new Color(221, 221, 221, 131));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.setToolTipText("Nombre de partie jouée et temps écoulé");
 
         numRound = jeu.getNumeroRound();
-        roundLabel = new JLabel("Round: " + numRound);
+        roundLabel = new JLabel("Partie : " + numRound);
         roundLabel.setOpaque(false);
         roundLabel.setFont(new Font("Arial", Font.PLAIN, 25));
-        roundLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 50));
 
         tempsLabel = new JLabel("00:00");
         tempsLabel.setOpaque(false);
         tempsLabel.setFont(new Font("Arial", Font.BOLD, 25));
 
+        panel.add(Box.createGlue());
         panel.add(roundLabel);
+        panel.add(Box.createRigidArea(new Dimension(20, 0)));
         panel.add(tempsLabel);
+        panel.add(Box.createGlue());
 
         return panel;
     }
 
     private JButton creerBoutonMenu() {
-        BoutonAvecImage menu = Bouton.creerBouton(PATH_BTN_MENU.toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
-        menu.setPreferredSize(new Dimension(50, 50));
+        BoutonAvecImage menu = Bouton.creerBouton(PATH_BTN_MENU.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        menu.setPreferredSize(new Dimension(100, 100));
+        menu.setToolTipText("Menu");
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
-
         return menu;
     }
 
@@ -556,6 +545,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         }
     }
 
+
+
+    // =========================================
+    // ============== Mise à jour ==============
+    // =========================================
+
+
     private void miseAjourTemps() {
         if (debutTempsPartie != null && tempsLabel != null) {
             Duration duration = Duration.between(debutTempsPartie, Instant.now());
@@ -564,11 +560,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             tempsLabel.setText(String.format("%02d:%02d", minutes, secondes));
         }
     }
-
-    // =========================================
-    // ============== Mise à jour ==============
-    // =========================================
-
     /**
      * Met à jour les images des boutons de cartes en utilisant les images
      * déjà chargées et associées aux types de cartes.
@@ -602,7 +593,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             nomJoueurCourantLabel.setText(nomJoueur);
 
             numRound = jeu.getNumeroRound();
-            roundLabel.setText("Round: " + numRound);
+            roundLabel.setText("Partie: " + numRound);
 
             nomJoueurCourantLabel.setForeground(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()));
         }
@@ -855,7 +846,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
     private void creerBoutonFlottant() {
-        boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+        boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent_V2);
         boutonFlottant.setSize(120, 120);
 
         // Rendre le bouton déplaçable
@@ -976,7 +967,7 @@ class ConfigModeJoueur {
     }
 
 
-    private static JPanel creerPanelCoinsArondiAvecBordure() {
+    public static JPanel creerPanelCoinsArondiAvecBordure() {
         JPanel mainPanel = creerPanelCoinsdArrondi();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(
