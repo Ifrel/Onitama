@@ -1008,14 +1008,20 @@ public class Jeu extends Observable implements Runnable {
         majPionsJoueur2();
     }
 
-    private void echangerCartes(Joueur joueur, Carte carteSelectionne) {
+    public void echangerCartes(Joueur joueur, Carte carteSeleccionnee){
+        //Conserver la reference de l'ancienne carte supplementaire
+        Carte ancienneSup = this.carteSupplementaire;
 
-        joueur.removeCard(carteSelectionne);
-        Carte nouvelleCarteJoueurCourant = getCarteSupplementaire();
-        carteSelectionne.setProprietaire(0);
-        setCarteSupplementaire(carteSelectionne);
-        joueur.addCard(nouvelleCarteJoueurCourant);
-        nouvelleCarteJoueurCourant.setProprietaire(joueur.getId());
+        //Retirer la carte selectioneé de la main du joueur
+        joueur.removeCard(carteSeleccionnee);
+        carteSeleccionnee.setProprietaire(0);
+
+        //Definir la carte selectioneé comme la nouvelle carte suplementaire
+        setCarteSupplementaire(carteSeleccionnee);
+
+        //ajouter l'ancienne carte suplementaire à la main du joueur
+        joueur.addCard(ancienneSup);
+        ancienneSup.setProprietaire(joueur.getId());
 
 
     }
