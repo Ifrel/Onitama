@@ -839,6 +839,17 @@ public class Jeu extends Observable implements Runnable {
         return tempsJeu;
     }
 
+    public void joueurQuiCommence(int id) {
+        if (id > 2 || id < 0) {
+            throw new IllegalStateException("Le joueur qui commence la partie doit etre le joueur 1 ou 2, pas " + id);
+        }
+        if (partieACommence) {
+            logger.info("La partie à déjà commencé, impossible de choisir qui va commencer");
+            return;
+        }
+        this.idJoueurCourant = id;
+    }
+
     public void setTempsDeJeu(long secondes) {
         this.tempsJeu = secondes;
     }
