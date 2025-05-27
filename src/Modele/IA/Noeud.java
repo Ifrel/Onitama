@@ -1,24 +1,22 @@
 package Modele.IA;
 
-import Modele.Coup;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Noeud {
-    private EtatJeu id;
+    private EtatJeu etatJeu;
     private double valeur;
     private List<Noeud> successeurs;
 
 
-    public Noeud(EtatJeu id, List<Noeud> successeurs) {
-        this.id = id;
+    public Noeud(EtatJeu etatJeu, List<Noeud> successeurs) {
+        this.etatJeu = etatJeu;
         this.successeurs = successeurs;
         this.successeurs = new ArrayList<>();
     }
 
     public boolean estFeuille() {
-        return id.estEtatFinal();
+        return etatJeu.estEtatFinal();
     }
 
     public double getValeur() {
@@ -30,12 +28,12 @@ public class Noeud {
         return this.valeur;
     }
 
-    public EtatJeu getId() {
-        return this.id;
+    public EtatJeu getEtatJeu() {
+        return this.etatJeu;
     }
 
-    public void setId(EtatJeu id) {
-        this.id = id;
+    public void setEtatJeu(EtatJeu etatJeu) {
+        this.etatJeu = etatJeu;
     }
 
     public List<Noeud> getSuccesseurs() {
