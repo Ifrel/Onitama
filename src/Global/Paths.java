@@ -53,7 +53,7 @@ public class Paths {
     /********************************************
      *              MUSIQUES                   *
      *******************************************/
-    public static final Path MUSIQUE = VUE.resolve("musique");
+    public static final Path MUSIQUE = Path.of("/", "vue", "musique");
     public static final Path PATH_SON_1 = MUSIQUE.resolve("son_1.wav");
 
     /********************************************
