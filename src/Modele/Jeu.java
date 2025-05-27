@@ -26,6 +26,7 @@ import static Global.Config.ROLEPION.PION_ETUDIANT;
 import static Global.Config.ROLEPION.PION_MAITRE;
 import static Global.Config.TYPECARTE.*;
 import static Global.Config.TYPE_JOUEUR.JOUEUR_HUMAIN;
+import static Global.Config.TYPE_JOUEUR.JOUEUR_IA;
 import static Modele.Utils.*;
 
 
@@ -840,7 +841,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public void joueurQuiCommence(int id) {
-        if (id > 2 || id < 0) {
+        if (id > 2 || id < 1) {
             throw new IllegalStateException("Le joueur qui commence la partie doit etre le joueur 1 ou 2, pas " + id);
         }
         if (partieACommence) {
@@ -877,7 +878,7 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public Joueur getJoueurCourant() {
-        return (idJoueurCourant == ID_JOUEUR_1) ? joueur1 : joueur2;
+        return (idJoueurCourant == ID_JOUEUR_1) ? joueur1.clone() : joueur2.clone();
     }
 
     public int getIdJoueurCourant() {
@@ -1257,6 +1258,13 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
+    public Joueur getJoueur(int id) {
+        if (id > 2 || id < 1) {
+            throw new IllegalStateException("Le joueur à récupérer doit etre le joueur 1 ou 2, pas " + id);
+        }
+        return id == ID_JOUEUR_1 ? joueur1.clone() : joueur2.clone();
+    }
+
     /**
      * Renvoie la représentation textuelle du jeu
      * @return chaine de caractères représentant le jeu
@@ -1344,6 +1352,10 @@ public class Jeu extends Observable implements Runnable {
                             etatJeu = IA1_A_JOUE;
                             break;
                         case J1_A_JOUE:
+                            if (joueur2.getTypeJoueur() == JOUEUR_IA) {
+                                etatJeu = IA1_A_JOUE;
+                                break;
+                            }
                             if (estActiveIA1()) {
                                 c = IA_1.calculerCoup();
                                 Thread.sleep(delai);
@@ -1354,6 +1366,10 @@ public class Jeu extends Observable implements Runnable {
                             }
                             break;
                         case J2_A_JOUE:
+                            if (joueur1.getTypeJoueur() == JOUEUR_IA) {
+                                etatJeu = IA2_A_JOUE;
+                                break;
+                            }
                             break;
                         case IA1_A_JOUE:
                             if (estActiveIA2()) {

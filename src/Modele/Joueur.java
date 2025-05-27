@@ -13,7 +13,7 @@ import static Global.Config.TYPE_JOUEUR.JOUEUR_HUMAIN;
  * Représente un joueur participant à la partie.
  * Un joueur possède un nom, une couleur, un identifiant, un score,
  * une main de cartes et potentiellement des pions sur le plateau. */
-public class Joueur implements Serializable{
+public class Joueur implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
     private String nom;
     private final int id;
@@ -264,6 +264,15 @@ public class Joueur implements Serializable{
     public int hashCode() {
         // Utiliser l'identifiant pour le hashCode
         return Objects.hash(id);
+    }
+
+    @Override
+    public Joueur clone() {
+        try {
+            return (Joueur) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
