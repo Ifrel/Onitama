@@ -1,5 +1,6 @@
 package Vue.Utils;
 
+import Global.Paths;
 import Vue.Utils.Boutons.Bouton;
 
 import javax.swing.*;
@@ -125,7 +126,7 @@ public class AfficheReglesPDF {
         fondPanel.add(scrollPane, BorderLayout.CENTER);
 
         // 4. Bouton de fermeture
-        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(PATH_BOUTON.resolve("exit.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(Paths.PATH_BTN.resolve("exit.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
         fermer.setPreferredSize(new Dimension(60,60));
         fermer.addActionListener(e -> SwingUtilities.getWindowAncestor(fondPanel).dispose());
         JPanel panelBtn = new JPanel();

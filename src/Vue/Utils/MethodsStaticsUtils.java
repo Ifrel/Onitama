@@ -1,5 +1,6 @@
 package Vue.Utils;
 
+import Global.Paths;
 import Modele.Carte;
 import Vue.Animations.Animations;
 import Vue.Configuration.InfosDeConfigUI;
@@ -295,7 +296,7 @@ public class MethodsStaticsUtils {
         panel.add(message, BorderLayout.CENTER);
 
         // Bouton de fermeture
-        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(PATH_BOUTON.resolve("exit.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(Paths.PATH_BTN.resolve("exit.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
         fermer.setPreferredSize(new Dimension(60,60));
         fermer.addActionListener(e -> SwingUtilities.getWindowAncestor(panel).dispose());
         JPanel panelBtn = new JPanel();

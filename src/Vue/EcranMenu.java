@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 
 import static Global.Paths.PATH_ARRIERE_PLAN_4;
-import static Global.Paths.PATH_BOUTON;
+import static Global.Paths.PATH_BTN;
 
 /**
  * La classe {@code EcranMenu} représente l'écran de menu principal du jeu.
@@ -410,7 +410,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelRetour() {
         return creerPanelAvecBouton(
-                PATH_BOUTON.resolve("decliner.png").toString(),
+                PATH_BTN.resolve("decliner.png").toString(),
                 DIM_BOUTON_RETOUR,
                 e -> interfaceGraphique.fermerMenu(),
                 FlowLayout.RIGHT,
@@ -426,7 +426,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelSauvegarde() {
         return creerPanelAvecBouton(
-                PATH_BOUTON.resolve("sauvegarder.png").toString(),
+                PATH_BTN.resolve("sauvegarder.png").toString(),
                 DIM_BOUTON_SAUVEGARDER,
                 new AdaptateurSauvegarder(collecteurEvenements),
                 FlowLayout.LEFT,
@@ -443,7 +443,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelExit() {
         return creerPanelAvecBouton(
-                PATH_BOUTON.resolve("exit.png").toString(),
+                PATH_BTN.resolve("exit.png").toString(),
                 DIM_BOUTON_EXIT,
                 new AdaptateurExit(collecteurEvenements),
                 FlowLayout.RIGHT,
@@ -482,7 +482,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         for (int i = 0; i < configs.size(); i++) {
             BoutonConfig config = configs.get(i);
             Bouton.BoutonAvecImage bouton = Bouton.creerBouton(
-                    PATH_BOUTON.resolve(config.nomImage).toString(),
+                    PATH_BTN.resolve(config.nomImage).toString(),
                     Bouton.ConfigurationParDefaut.SansBordure_transparent
             );
             bouton.setPreferredSize(DIM_BOUTON_ACTION);
