@@ -128,7 +128,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // Titre de l'onglet Général
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 0.2;
         gbc.gridx = GRID_COLUMN_LABEL;
         gbc.gridy = 3;

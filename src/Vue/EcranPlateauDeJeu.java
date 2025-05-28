@@ -34,7 +34,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
@@ -134,9 +133,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         this.setFocusable(true);
         this.addKeyListener(new AdaptateurClavier(collecteurEv));
 
-        statsJeu.setNomJoueur1(jeu.getNomJoueur1());
-        statsJeu.setNomJoueur2(jeu.getNomJoueur2());
-
 
 
         jeu.ajouteObservateur(this);
@@ -176,6 +172,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         // Mise a jour des Infos des Statatistiques
         SwingUtilities.invokeLater(() -> {
             // Mise à jour des stats
+            statsJeu.setNomJoueur1(jeu.getNomJoueur1());
+            statsJeu.setNomJoueur2(jeu.getNomJoueur2());
+            
             if (jeu.estPartieFinie()) {
                 statsJeu.incrementerNombreParties();
 
@@ -278,7 +277,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         // Ajout de l'espace
         gbc.gridy = 2;
         gbc.weightx = 0;
-        gbc.weighty = 0;
+        gbc.weighty = 0.21;
         contenu.add(Box.createGlue(), gbc);
     }
 
@@ -335,7 +334,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridy = 1;
         gbc.weightx = 5.0;
         gbc.weighty = 5.0;
-//        gbc.insets = new Insets(20, 20, 20, 20);
+        gbc.insets = new Insets(20, 20, 20, 20);
 
         // Utilisation de PanelRatioFixe pour maintenir le ratio 1:1 du terrain
         panel.add(new PanelRatioFixe(terrain, 1.0), gbc);
@@ -443,12 +442,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridy = 0;
-        gbc.weighty = 0;
+        gbc.weighty = 1;
 
         // Espacement élastique à gauche
         gbc.gridx = 0;
         gbc.weightx = 1.0;
-        cartesNord.add(Box.createHorizontalGlue(), gbc);
+        cartesNord.add(Box.createGlue(), gbc);
 
         // Première carte
         gbc.gridx = 1;
@@ -468,7 +467,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 3;
         gbc.weightx = 1.0;
         gbc.insets = new Insets(0, 0, 0, 10);
-        cartesNord.add(Box.createHorizontalGlue(), gbc);
+        cartesNord.add(Box.createGlue(), gbc);
     }
 
     private void creerCartesSud() {
@@ -479,7 +478,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridy = 0;
-        gbc.weighty = 0;
+        gbc.weighty = 1;
 
         // Espacement élastique à gauche
         gbc.gridx = 0;
@@ -617,7 +616,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private JPanel creerPanelNomJoueurCourant() {
         JPanel textNomPanel = ConfigModeJoueur.creerPanelCoinsArondiAvecBordure();
-        textNomPanel.setPreferredSize(new Dimension(200, 65));
+        textNomPanel.setPreferredSize(new Dimension(200, 70));
         textNomPanel.setLayout(new BoxLayout(textNomPanel, BoxLayout.Y_AXIS));
         textNomPanel.setBackground(new Color(214, 214, 214, 107));
         textNomPanel.setToolTipText("Nom du joueur qui joue actuellement");
@@ -748,12 +747,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             if (clip != null && clip.isRunning()) {
                 clip.stop();
             }
-            bouton.setIcon(new ImageIcon(PATH_BTN_MUET.toString()));
+            bouton.setIcon(new ImageIcon(PATH_BTN_MUET));
         } else {
             if (clip == null || !clip.isRunning()) {
-                jouerMusique(PATH_SON_1.toString());
+                jouerMusique();
             }
-            bouton.setIcon(new ImageIcon(PATH_BTN_MONTER_LE_SON.toString()));
+            bouton.setIcon(new ImageIcon(PATH_BTN_MONTER_LE_SON));
         }
         musiqueActive = !musiqueActive;
     }
@@ -765,14 +764,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     // ========= Gestion Son & Musique =========
     // =========================================
 
-    private void jouerMusique(String chemin) {
+    private void jouerMusique() {
         try {
             if (clip != null) {
                 clip.close();
             }
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
-                    Objects.requireNonNull(getClass().getResource(chemin), "Ressource audio introuvable: " + chemin)
-            );
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Paths.PATH_SON_1);
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -1216,8 +1213,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         try {
             Point boutonLocation = boutonReference.getLocationOnScreen();
             frameTimer.setLocation(
-                    boutonLocation.x + boutonReference.getWidth() + 10,
-                    boutonLocation.y + (boutonReference.getHeight() - frameTimer.getHeight()) / 2
+                    boutonLocation.x + (boutonReference.getWidth() - frameTimer.getWidth()) / 2,
+                    boutonLocation.y + boutonReference.getHeight() + 5
             );
         } catch (IllegalComponentStateException e) {
             // Gérer le cas où le bouton n'est pas encore affiché
@@ -1233,12 +1230,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
                     progress[0] = (int) (((double) (dureeSecondes - tempsRestant[0]) / dureeSecondes) * 360);
                     panelTimer.repaint();
 
-                    // Mettre à jour la position si le bouton de référence bouge
+                    // Mettre à jour la position pour qu'il apparaisse en bas du bouton
                     try {
                         Point boutonLocation = boutonReference.getLocationOnScreen();
                         frameTimer.setLocation(
-                                boutonLocation.x + boutonReference.getWidth() + 10,
-                                boutonLocation.y + (boutonReference.getHeight() - frameTimer.getHeight()) / 2
+                                boutonLocation.x + (boutonReference.getWidth() - frameTimer.getWidth()) / 2,
+                                boutonLocation.y + boutonReference.getHeight() + 5
                         );
                     } catch (IllegalComponentStateException ex) {
                         // Ignorer si le bouton n'est pas visible

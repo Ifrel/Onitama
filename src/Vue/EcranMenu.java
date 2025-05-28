@@ -68,18 +68,11 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         this.interfaceGraphique = interfaceGraphique;
         this.jeu.ajouteObservateur(this);
 
-        initialiserLesStats();
         initialiserLayout();
         miseAJour();
     }
 
-    /**
-     * Initialise les statistiques de jeu.
-     */
-    private void initialiserLesStats() {
-        joueur1.setNom(jeu.getNomJoueur1());
-        joueur2.setNom(jeu.getNomJoueur2());
-    }
+
 
     /**
      * Met à jour l'interface en fonction des changements du modèle.
@@ -87,6 +80,8 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     @Override
     public void miseAJour() {
         LOGGER.info("Mise à jour des données de EcranMenu depuis le modèle Jeu.");
+        joueur1.setNom(jeu.getNomJoueur1());
+        joueur2.setNom(jeu.getNomJoueur2());
 
         updateDisplayValues();
 
@@ -104,10 +99,10 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         long secondes = dureePartie.minusMinutes(minutes).getSeconds();
         dureePartieValue.setText(String.format("%02d:%02d", minutes, secondes));
 
-        nomJoueurAValue.setText(joueur1.getNom() + ": ");
+        nomJoueurAValue.setText(statsJeu.getNomJoueur1()+ ": ");
         scoreJoueurAValue.setText(statsJeu.getScoreJoueur1() + " pts");
 
-        nomJoueurBValue.setText(joueur2.getNom() + ": ");
+        nomJoueurBValue.setText(statsJeu.getNomJoueur2() + ": ");
         scoreJoueurBValue.setText(statsJeu.getScoreJoueur2() + " pts");
     }
 
