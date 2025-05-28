@@ -110,7 +110,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         initialiserMenu();
         ajouterComportementRedimensionnement();
 
-        frame.setContentPane(ecranDeDemarrage);
+        frame.setContentPane(ecranPlateauDeJeu);
         frame.pack();
         frame.setVisible(true);
         frame.setFocusable(true);

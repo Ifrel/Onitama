@@ -16,6 +16,6 @@ public class AdaptateurExit implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        collecteurEvenements.clavier("exit");
+        collecteurEvenements.clavier("exit-menu");
     }
 }

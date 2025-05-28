@@ -48,7 +48,6 @@ public class AdaptateurCarte implements ActionListener, Observateur {
 
         jeu.ajouteObservateur(this);
         miseAJour();
-        System.err.println("Adaptateur carte: constructeur");
     }
 
 
@@ -61,12 +60,13 @@ public class AdaptateurCarte implements ActionListener, Observateur {
         activeAnimation();
         collecteurEv.setCarteSelectionne(idCarte);
         desactiveAnimation();
-        System.err.println("_____________________________________________________" +
-                "\n Nom carte: "+carte.getNom() +
-                "\nAdaptateur carte: actionPerformed\n" +
-                "carte.getProprietaire(): "+carte.getProprietaire() +
-                "\njeu.getJoueurCourant().getId() :"+ jeu.getJoueurCourant().getId() +
-                "\njeu.getIdJoueurCourant() :"+jeu.getIdJoueurCourant());
+
+//        System.err.println("_____________________________________________________" +
+//                "\n Nom carte: "+carte.getNom() +
+//                "\nAdaptateur carte: actionPerformed\n" +
+//                "carte.getProprietaire(): "+carte.getProprietaire() +
+//                "\njeu.getJoueurCourant().getId() :"+ jeu.getJoueurCourant().getId() +
+//                "\njeu.getIdJoueurCourant() :"+jeu.getIdJoueurCourant());
     }
 
 
@@ -75,13 +75,11 @@ public class AdaptateurCarte implements ActionListener, Observateur {
         if (estSelectionne) {
             boutonCarte.demarrerAnimation();
         }
-//        collecteurEv.getCollecteurAnimation().activeAnimationDeRotation(boutonCarte, carte, jeu.getJoueurCourant().getId());
 
     }
 
     private void desactiveAnimation(){
         boutonCarte.arreterAnimation();
-//        collecteurEv.getCollecteurAnimation().desactiveAnimationDeRotation(boutonCarte, carte, jeu.getIdJoueurCourant());
     }
 
 
@@ -95,8 +93,8 @@ public class AdaptateurCarte implements ActionListener, Observateur {
         this.estSelectionne = jeu.getNumCarteSelectionnee() == idCarte && carte.getProprietaire()==jeu.getJoueurCourant().getId();
 
 
-        System.err.println("_______________________________________________" +
-                "\nAdaptateur carte ("+carte.getNom() +"): miseAJour");
+//        System.err.println("_______________________________________________" +
+//                "\nAdaptateur carte ("+carte.getNom() +"): miseAJour");
         desactiveAnimation();
         activeAnimation();
 

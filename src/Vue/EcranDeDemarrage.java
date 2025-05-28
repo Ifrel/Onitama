@@ -16,6 +16,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static Global.Config.*;
@@ -30,6 +31,11 @@ import static Vue.Configuration.ConfigUI.*;
  Interagit avec le {@link ControleurEcranDeDemarrage} pour signaler les actions de l'utilisateur.
  */
 public class EcranDeDemarrage extends JTabbedPane {
+    // Ajoutez ces constantes en haut de la classe EcranDeDemarrage
+    private static final double BUTTON_WIDTH_RATIO = 0.15;  // 15% de la largeur
+    private static final double BUTTON_HEIGHT_RATIO = 0.1;  // 10% de la hauteur
+    private static final double COMBOBOX_WIDTH_RATIO = 0.25; // 25% de la largeur
+    private static final double TEXTFIELD_WIDTH_RATIO = 0.25; // 25% de la largeur
     private final Jeu jeu;
     private final ControleurEcranDeDemarrage CD;
     private final InterfaceGraphique interfaceGraphique;
@@ -129,7 +135,24 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         int ligneCourante = 6;
 
-        // Ligne 1 : Mode Auto IA
+        // Ligne 1 : Reprendre une partie
+        List<String> listeParties = jeu.listerSauvegardes();
+        listeParties.add(0, INDICATION_SELECTION);
+        comboBoxPartie = creerListeDeroulanteAvecIndication(listeParties.toArray(new String[0]));
+        comboBoxPartie.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
+        actionListenerEntree.setPartieSelectionnee(INDICATION_SELECTION);
+        comboBoxPartie.addActionListener(e -> {
+            int indexSelectionne = comboBoxPartie.getSelectedIndex();
+            nomPartieSelectionnee = comboBoxPartie.getItemAt(indexSelectionne);
+            actionListenerEntree.setPartieSelectionnee(nomPartieSelectionnee);
+
+            // Gèle le champ du joueur 2 si une partie est sélectionnée pour être reprise
+            champNomJoueur2.setEnabled(indexSelectionne == 0);
+        });
+        ajouterLigneConfiguration(ongletGeneral, LBL_REPRENDRE, comboBoxPartie, ligneCourante++, FONT_LABEL);
+
+
+        // Ligne 2 : Mode Auto IA
         boutonModeAuto = Bouton.creerBouton(PATH_BTN_MODE_AUTO_OFF.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         boutonModeAuto.setPreferredSize(new Dimension(125, 60));
         boutonModeAuto.addActionListener(e -> {
@@ -145,20 +168,6 @@ public class EcranDeDemarrage extends JTabbedPane {
         });
         ajouterLigneConfiguration(ongletGeneral, LBL_MODE_AUTO, boutonModeAuto, ligneCourante++, FONT_LABEL);
 
-
-        // Ligne 2 : Reprendre une partie
-        comboBoxPartie = creerListeDeroulanteAvecIndication(OPTIONS_REPRENDRE);
-        comboBoxPartie.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
-        actionListenerEntree.setPartieSelectionnee(INDICATION_SELECTION);
-        comboBoxPartie.addActionListener(e -> {
-            int indexSelectionne = comboBoxPartie.getSelectedIndex();
-            nomPartieSelectionnee = comboBoxPartie.getItemAt(indexSelectionne);
-            actionListenerEntree.setPartieSelectionnee(nomPartieSelectionnee);
-
-            // Gèle le champ du joueur 2 si une partie est sélectionnée pour être reprise
-            champNomJoueur2.setEnabled(indexSelectionne == 0);
-        });
-        ajouterLigneConfiguration(ongletGeneral, LBL_REPRENDRE, comboBoxPartie, ligneCourante++, FONT_LABEL);
 
 
         // Ligne 3 : Jouer avec l'IA
@@ -214,15 +223,32 @@ public class EcranDeDemarrage extends JTabbedPane {
         champNomJoueur2.setText(jeu.getNomJoueur2());
         ajouterLigneConfiguration(ongletGeneral, LBL_JOUEUR_2, champNomJoueur2, ligneCourante++, FONT_LABEL);
 
+
+        // Bouton règles && Bouton Entrer
+        JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        panelBoutons.setOpaque(false);
+
+        // Bouton "Regles"
+        BoutonAvecImage regles = Bouton.creerBouton(Paths.PATH_BTN.resolve("regles.png").toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        regles.setPreferredSize(new Dimension(200, 90));
+        regles.setToolTipText("Voir les Règles du jeu");
+        regles.addActionListener(e -> { CD.clavier("regles");});
+        panelBoutons.add(regles);
+
         // Bouton "Entrer"
         BoutonAvecImage boutonEntrer = Bouton.creerBouton(PATH_BTN_ENTRER.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         boutonEntrer.setPreferredSize(new Dimension(200, 98));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 6;
-        gbc.gridy = ligneCourante;
-        gbc.fill = GridBagConstraints.NONE;
         boutonEntrer.addActionListener(actionListenerEntree);
-        ongletGeneral.add(boutonEntrer, gbc);
+        boutonEntrer.setToolTipText("Lancer le jeu");
+        panelBoutons.add(boutonEntrer);
+
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = ligneCourante;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.2;
+        ongletGeneral.add(panelBoutons, gbc);
 
         // Espace Vertical Flexible en bas
         gbc = new GridBagConstraints();

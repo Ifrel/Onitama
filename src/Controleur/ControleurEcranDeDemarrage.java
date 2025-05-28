@@ -4,8 +4,10 @@ import Global.Config;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.Configuration.InfosDeConfigUI;
+import Vue.Utils.AfficheReglesPDF;
 
 import java.awt.*;
+import java.util.logging.Logger;
 
 import static Global.Config.CiblesDesCouleurs.PION_TERRAIN_JOUEUR_1;
 import static Global.Config.CiblesDesCouleurs.PION_TERRAIN_JOUEUR_2;
@@ -15,16 +17,21 @@ import static Global.Config.NIVEAU_IA.*;
 
 public class ControleurEcranDeDemarrage implements CollecteurEvenements {
     private final Jeu jeu;
-
     private final InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
+    Logger LOGGER = Logger.getLogger(ControleurEcranDeDemarrage.class.getName());
 
     public ControleurEcranDeDemarrage(Jeu jeu){
         this.jeu = jeu;
     }
 
     @Override
-    public void clavier(String t) {
-
+    public void clavier(String commande) {
+        if (commande.equals("regles")) {// Recherche de la fenêtre ayant le focus
+            Window fenetreActive = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+            AfficheReglesPDF.ouvrirReglesPDFExterne(fenetreActive);
+        } else {
+            LOGGER.severe("Commande inconnue : " + commande);
+        }
     }
 
     @Override
