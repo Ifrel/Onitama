@@ -25,7 +25,7 @@ public class Mediateur implements CollecteurEvenements {
     }
 
     @Override
-    public void clavier(String touche) {
+   synchronized public void clavier(String touche) {
         logger.info("Touche clavier : " + touche);
         try {
             vue = InterfaceGraphique.getInstance();
@@ -115,14 +115,17 @@ public class Mediateur implements CollecteurEvenements {
                     jeu.setNiveauIA2(FORT);
                     break;
                 case "ia vs ia":
-                    if (!jeu.estActiveIA1())
+                    if (!jeu.estActiveIA1()) {
                         jeu.toggleIA1();
+                    }
 
-                    if (!jeu.estActiveIA2())
+                    if (!jeu.estActiveIA2()) {
                         jeu.toggleIA2();
+                    }
 
-                    jeu.setNiveauIA1(MOYEN);
-                    jeu.setNiveauIA2(MOYEN);
+                    Thread.sleep(1000);
+                    logger.info("Lancement du mode IA(" + jeu.getNiveauIA1() + ") vs IA(" + jeu.getNiveauIA2() + ")");
+                    jeu.toggleIAvsIA();
                     break;
                 default:
                     logger.severe("Touche inconnue : " + touche);

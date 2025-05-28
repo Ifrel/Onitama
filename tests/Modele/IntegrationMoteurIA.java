@@ -1,6 +1,5 @@
 package Modele;
 
-import Global.Config;
 import static Global.Config.NIVEAU_IA.*;
         import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,7 @@ public class IntegrationMoteurIA {
         jeu.toggleIA2();
         jeu.setNiveauIA1(FAIBLE);
         jeu.setNiveauIA2(FAIBLE);
-        jeu.launchIA();
+        jeu.toggleIAvsIA();
     }
 
 }

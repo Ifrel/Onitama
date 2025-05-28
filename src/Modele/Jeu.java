@@ -25,7 +25,6 @@ import static Global.Config.ETAT_JEU.*;
 import static Global.Config.ROLEPION.PION_ETUDIANT;
 import static Global.Config.ROLEPION.PION_MAITRE;
 import static Global.Config.TYPECARTE.*;
-import static Global.Config.TYPE_JOUEUR.JOUEUR_HUMAIN;
 import static Global.Config.TYPE_JOUEUR.JOUEUR_IA;
 import static Modele.Utils.*;
 
@@ -40,6 +39,7 @@ public class Jeu extends Observable implements Runnable {
     private int numCarteSelectionee;
     private boolean estPartieFinie;
     private boolean IA1Activee, IA2Activee;
+    private boolean IAvsIAActive;
     private boolean partieACommence;
     private boolean maitreMort;
     private Pion pionSelectionne;
@@ -170,10 +170,11 @@ public class Jeu extends Observable implements Runnable {
             partieACommence = false;
             maitreMort = false;
             etatGrille = DEFAUT;
-            etatJeu = DEBUT;
+            etatJeu = ETAT_JEU.DEFAUT;
             dernierCoupJoue = null;
 
             IA1Activee = IA2Activee = false;
+            IAvsIAActive = false;
             IA_1 = IA_2 = null;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -584,16 +585,16 @@ public class Jeu extends Observable implements Runnable {
         return carteSupplementaire.clone();
     }
 
-    public void setCarteSupplementaire(Carte c) {
+    synchronized public void setCarteSupplementaire(Carte c) {
         carteSupplementaire = c;
     }
 
-    public int getNumCarteSelectionnee() {
+    synchronized public int getNumCarteSelectionnee() {
         return this.numCarteSelectionee;
     }
 
 
-    public Pion getPionSelectionne() {
+    synchronized public Pion getPionSelectionne() {
         if (this.pionSelectionne == null) {
             return null;
         }
@@ -636,13 +637,20 @@ public class Jeu extends Observable implements Runnable {
     // ######## PARTIE ########
 
 
-    synchronized public void launchIA() {
+    synchronized public void toggleIAvsIA() {
         if (! estActiveIA1() || ! estActiveIA2()) {
             logger.info("Il faut d'abord activer les IA avant de les lancer");
             return;
         }
 
-        etatJeu = getIdJoueurCourant() == ID_JOUEUR_1 ? J2_A_JOUE : J1_A_JOUE;
+        IAvsIAActive = ! IAvsIAActive;
+
+        if (IAvsIAActive) {
+            etatJeu = getIdJoueurCourant() == ID_JOUEUR_1 ? J2_A_JOUE : J1_A_JOUE;
+        } else {
+            etatJeu = ETAT_JEU.DEFAUT;
+        }
+
     }
 
     /**
@@ -778,6 +786,20 @@ public class Jeu extends Observable implements Runnable {
         metAJour();
     }
 
+    public NIVEAU_IA getNiveauIA1() {
+        if (! estActiveIA1()) {
+            throw new IllegalStateException("Il faut activer l'IA 1 avant d'essayer d'obtenir son niveau");
+        }
+        return IA_1.getNiveau();
+    }
+
+    public NIVEAU_IA getNiveauIA2() {
+        if (! estActiveIA2()) {
+            throw new IllegalStateException("Il faut activer l'IA 2 avant d'essayer d'obtenir son niveau");
+        }
+        return IA_2.getNiveau();
+    }
+
     public void lancer() {
         Thread t = new Thread(this);
         t.start();
@@ -819,6 +841,11 @@ public class Jeu extends Observable implements Runnable {
             return;
         }
         this.idJoueurCourant = id;
+        if (idJoueurCourant == ID_JOUEUR_1) {
+            joueurCourant = joueur1;
+        } else {
+            joueurCourant = joueur2;
+        }
     }
 
     public void setNomJoueur1(String nom) {
@@ -1015,7 +1042,7 @@ public class Jeu extends Observable implements Runnable {
 
     }
 
-    public void setCarteSelectionnee(int c) {
+    synchronized public void setCarteSelectionnee(int c) {
         if (c > 1 || c < 0) {
             throw new IllegalStateException("La carte à choisir est 0 ou 1 pas " + c);
         }
@@ -1025,7 +1052,7 @@ public class Jeu extends Observable implements Runnable {
         metAJour();
     }
 
-    public boolean setPionSelectionne(Point positionPion) {
+    synchronized public boolean setPionSelectionne(Point positionPion) {
         try {
             if (estCaseVide(positionPion.x, positionPion.y)) {
                 logger.info("La case sélectionnée n'est pas un pion");
@@ -1143,7 +1170,7 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
-    public boolean jouerCoup(Coup c) {
+    synchronized public boolean jouerCoup(Coup c) {
         try {
             if (pionSelectionne == null) {
                 throw new IllegalStateException("Il faut d'abord choisir un pion avant de jouer un Coup");
@@ -1317,7 +1344,7 @@ public class Jeu extends Observable implements Runnable {
                 Coup c;
                 synchronized (this) {
                     switch (etatJeu) {
-                        case DEBUT:
+                        case DEFAUT:
                             break;
                         case J1_A_JOUE:
                             if (estActiveIA2()) {
