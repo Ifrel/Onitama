@@ -305,7 +305,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Espacement vertical en bas
         gbc.gridy = 3;
-        gbc.weighty = 0;
+        gbc.weighty = 0.5;
         panel.add(Box.createVerticalGlue(), gbc);
     }
 

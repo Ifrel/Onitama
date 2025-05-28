@@ -50,7 +50,7 @@ public class Mediateur implements CollecteurEvenements {
                     afficherFonctionEnCours();
                     break;
                 case "nouvellePartie":
-                    jeu.nouvellePartie();
+                    vue.demarrerNouvellePartie();
                     break;
                 case "sauvegarder":
                     String nomFichier = demanderNomFichierSauvegarde();
