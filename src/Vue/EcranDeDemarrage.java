@@ -126,19 +126,27 @@ public class EcranDeDemarrage extends JTabbedPane {
         PanelAvecImage ongletGeneral = new PanelAvecImage(getArrierePlanPath("arrierePlan10.png"));
         ongletGeneral.setLayout(new GridBagLayout());
 
-        // Titre de l'onglet Général
+        // GridBagConstraints pour centrer globalement
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weighty = 0.2;
-        gbc.gridx = GRID_COLUMN_LABEL;
-        gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.gridwidth = 3;
-        gbc.insets = MARGES_TITRE;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        // Titre de l'onglet Général
         JPanel titreOnglet = PngText.createPngPanel(LBL_TITRE_CONFIG, 50);
         titreOnglet.setOpaque(false);
+        gbc.insets = new Insets(20, 0, 40, 0); // Espacement autour du titre
         ongletGeneral.add(titreOnglet, gbc);
 
-        int ligneCourante = 6;
+        // Panel central contenant les composants
+        JPanel panelCentral = new JPanel(new GridBagLayout());
+        panelCentral.setOpaque(false);
+
+        int ligneCourante = 0; // Index de ligne dans panelCentral
 
         // Ligne 1 : Reprendre une partie
         List<String> listeParties = jeu.listerSauvegardes();
@@ -150,12 +158,9 @@ public class EcranDeDemarrage extends JTabbedPane {
             int indexSelectionne = comboBoxPartie.getSelectedIndex();
             nomPartieSelectionnee = comboBoxPartie.getItemAt(indexSelectionne);
             actionListenerEntree.setPartieSelectionnee(nomPartieSelectionnee);
-
-            // Gèle le champ du joueur 2 si une partie est sélectionnée pour être reprise
-            champNomJoueur2.setEnabled(indexSelectionne == 0);
+            champNomJoueur2.setEnabled(indexSelectionne == 0); // Gèle le champ si une partie est choisie
         });
-        ajouterLigneConfiguration(ongletGeneral, LBL_REPRENDRE, comboBoxPartie, ligneCourante++, FONT_LABEL);
-
+        ajouterLigneConfiguration(panelCentral, LBL_REPRENDRE, comboBoxPartie, ligneCourante++, FONT_LABEL);
 
         // Ligne 2 : Mode Auto IA
         boutonModeAuto = Bouton.creerBouton(PATH_BTN_MODE_AUTO_OFF, Bouton.ConfigurationParDefaut.SansBordure_transparent);
@@ -164,15 +169,12 @@ public class EcranDeDemarrage extends JTabbedPane {
             estModeAutoIA = !estModeAutoIA;
             boutonModeAuto.changerImage(estModeAutoIA ? PATH_BTN_MODE_AUTO_ON : PATH_BTN_MODE_AUTO_OFF);
             actionListenerEntree.setModeAutoIA(estModeAutoIA);
-
-            // Geler/dégeler les autres options de configuration dans l'onglet général
             comboBoxPartie.setEnabled(!estModeAutoIA);
             comboBoxNiveauIA.setEnabled(!estModeAutoIA);
             champNomJoueur1.setEnabled(!estModeAutoIA);
             champNomJoueur2.setEnabled(!estModeAutoIA);
         });
-        ajouterLigneConfiguration(ongletGeneral, LBL_MODE_AUTO, boutonModeAuto, ligneCourante++, FONT_LABEL);
-
+        ajouterLigneConfiguration(panelCentral, LBL_MODE_AUTO, boutonModeAuto, ligneCourante++, FONT_LABEL);
 
         // Ligne 3 : Jouer avec l'IA
         comboBoxNiveauIA = creerListeDeroulanteAvecIndication(OPTIONS_IA);
@@ -180,111 +182,91 @@ public class EcranDeDemarrage extends JTabbedPane {
         actionListenerEntree.setNiveauIAselectione(OPTION_IA_NON);
         comboBoxNiveauIA.addActionListener(e -> {
             niveauIASelectionne = comboBoxNiveauIA.getItemAt(comboBoxNiveauIA.getSelectedIndex());
-            // Vérifie si la sélection n'est pas "Non" et n'est pas l'indication
             boolean iaActive = !niveauIASelectionne.equals(OPTION_IA_NON);
             actionListenerEntree.setNiveauIAselectione(niveauIASelectionne);
-
-            // Gèle la saisie du nom du joueur 2 si l'IA est activée
-            champNomJoueur2.setEnabled(!iaActive);
+            champNomJoueur2.setEnabled(!iaActive); // Gèle le champ si l'IA est activée
         });
-        ajouterLigneConfiguration(ongletGeneral, LBL_JOUER_IA, comboBoxNiveauIA, ligneCourante++, FONT_LABEL);
-
+        ajouterLigneConfiguration(panelCentral, LBL_JOUER_IA, comboBoxNiveauIA, ligneCourante++, FONT_LABEL);
 
         // Ligne 4 : Nom Joueur 1
         champNomJoueur1 = new JTextField(LARGEUR_CHAMP_TEXTE);
-        champNomJoueur1.setBackground(new Color(255, 255, 255, 255));
+        champNomJoueur1.setBackground(new Color(255, 255, 255));
         champNomJoueur1.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
         champNomJoueur1.setFont(FONT_COMPONENT);
         champNomJoueur1.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                updateChampJoueur1();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                updateChampJoueur1();
-            }
-
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 updateChampJoueur1();
             }
-
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateChampJoueur1();
+            }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateChampJoueur1();
+            }
             private void updateChampJoueur1() {
                 champNomJoueur1.setBorder(UIManager.getBorder("TextField.border"));
                 actionListenerEntree.setChampJoueur(1, champNomJoueur1);
             }
         });
-        // Préremplir avec un nom par défaut depuis le modèle
         champNomJoueur1.setText(jeu.getNomJoueur1());
-        ajouterLigneConfiguration(ongletGeneral, LBL_JOUEUR_1, champNomJoueur1, ligneCourante++, FONT_LABEL);
-
+        ajouterLigneConfiguration(panelCentral, LBL_JOUEUR_1, champNomJoueur1, ligneCourante++, FONT_LABEL);
 
         // Ligne 5 : Nom Joueur 2
         champNomJoueur2 = new JTextField(LARGEUR_CHAMP_TEXTE);
-        champNomJoueur2.setBackground(new Color(255, 255, 255, 255)); // Fond opaque blanc
+        champNomJoueur2.setBackground(new Color(255, 255, 255));
         champNomJoueur2.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
         champNomJoueur2.setFont(FONT_COMPONENT);
         champNomJoueur2.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                updateChampJoueur2();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                updateChampJoueur2();
-            }
-
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 updateChampJoueur2();
             }
-
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateChampJoueur2();
+            }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateChampJoueur2();
+            }
             private void updateChampJoueur2() {
                 champNomJoueur2.setBorder(UIManager.getBorder("TextField.border"));
                 actionListenerEntree.setChampJoueur(2, champNomJoueur2);
             }
         });
-        // Préremplir avec un nom par défaut depuis le modèle
         champNomJoueur2.setText(jeu.getNomJoueur2());
-        ajouterLigneConfiguration(ongletGeneral, LBL_JOUEUR_2, champNomJoueur2, ligneCourante++, FONT_LABEL);
+        ajouterLigneConfiguration(panelCentral, LBL_JOUEUR_2, champNomJoueur2, ligneCourante++, FONT_LABEL);
 
-
-        // Bouton règles && Bouton Entrer
-        JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        // Boutons : Règles et Entrer
+        JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         panelBoutons.setOpaque(false);
-
-        // Bouton "Regles"
         BoutonAvecImage regles = Bouton.creerBouton(Paths.getButtonPath("regles.png"), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         regles.setPreferredSize(new Dimension(200, 90));
-        regles.setToolTipText("Voir les Règles du jeu");
-        regles.addActionListener(e -> {
-            CD.clavier("regles");
-        });
+        regles.addActionListener(e -> CD.clavier("regles"));
         panelBoutons.add(regles);
-
-        // Bouton "Entrer"
         BoutonAvecImage boutonEntrer = Bouton.creerBouton(PATH_BTN_ENTRER, Bouton.ConfigurationParDefaut.SansBordure_transparent);
         boutonEntrer.setPreferredSize(new Dimension(200, 98));
         boutonEntrer.addActionListener(actionListenerEntree);
-        boutonEntrer.setToolTipText("Lancer le jeu");
         panelBoutons.add(boutonEntrer);
 
-        gbc = new GridBagConstraints();
-        gbc.gridx = 5;
-        gbc.gridy = ligneCourante;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 0.2;
-        ongletGeneral.add(panelBoutons, gbc);
+        GridBagConstraints gbcBoutons = new GridBagConstraints();
+        gbcBoutons.gridx = 0;
+        gbcBoutons.gridwidth = 6;
+        gbcBoutons.gridy = ligneCourante++;
+        gbcBoutons.anchor = GridBagConstraints.CENTER;
+        panelCentral.add(panelBoutons, gbcBoutons);
 
-        // Espace Vertical Flexible en bas
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = ligneCourante;
-        gbc.weighty = 0.5;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        ongletGeneral.add(Box.createVerticalGlue(), gbc);
+        // Ajouter le panel central à l'onglet
+        gbc.gridy = 1; // Position centrale sous le titre
+        gbc.weighty = 1.0; // Distribuer l'espace vertical
+        gbc.fill = GridBagConstraints.BOTH; // Étirer pour occuper l'espace disponible
+        ongletGeneral.add(panelCentral, gbc);
 
         return ongletGeneral;
     }
-
 
     /**
      * Crée l'onglet de personnalisation des couleurs.
@@ -526,7 +508,7 @@ public class EcranDeDemarrage extends JTabbedPane {
     private void ajouterLigneConfiguration(JPanel panneau, String texteEtiquette, JComponent composant, int ligne, Font policeEtiquette) {
         // Contraintes de l'Étiquette
         GridBagConstraints gbcLabel = new GridBagConstraints();
-        gbcLabel.gridx = GRID_COLUMN_LABEL;
+        gbcLabel.gridx = GRID_COLUMN_LABEL-1;
         gbcLabel.gridy = ligne;
         gbcLabel.anchor = GridBagConstraints.LINE_END;
         gbcLabel.insets = MARGES_DEFAUT;
@@ -543,7 +525,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // --- Contraintes du Composant ---
         GridBagConstraints gbcComponent = new GridBagConstraints();
-        gbcComponent.gridx = 5;
+        gbcComponent.gridx = GRID_COLUMN_LABEL;
         gbcComponent.gridy = ligne;
         gbcComponent.anchor = GridBagConstraints.LINE_START;
         gbcComponent.weighty = 0.1;
