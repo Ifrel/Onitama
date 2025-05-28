@@ -828,6 +828,7 @@ public class Jeu extends Observable implements Runnable {
         setNomJoueur2(nomJoueur2);
 
         metAJour();
+        lancer();
     }
 
     public long getTempsDeJeu() {
@@ -1236,23 +1237,6 @@ public class Jeu extends Observable implements Runnable {
             throw new RuntimeException(e);
         }
         return true;
-    }
-
-    /**
-     * Démarre une nouvelle partie à partir d'une sélection donnée.
-     * @param partieSelectionee Identifiant ou nom de la partie sélectionnée.
-     */
-    public void setNouvellePartie(String partieSelectionee) {
-        //TODO À implémenter
-    }
-
-    /**
-     * Termine la partie en cours avec sauvegarde (ex: quitter).
-     */
-    public void setTerminerJeu() {
-        for (int i = 0; i < 100_000; i++) {
-            System.err.println("NE PAS UTILISER CETTE METHODE ! (Mediateur:setTerminerJeu()");
-        }
     }
 
     /**

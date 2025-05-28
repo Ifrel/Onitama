@@ -46,7 +46,7 @@ public class ArbreMinMax {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
             valeur = Math.max(valeur, joueur2((idJoueur % 2) + 1, newNoeud, profondeur - 1, alpha, beta));
-            if (valeur > beta) {
+            if (valeur >= beta) {
                 return n.setValeur(beta);
             }
             alpha = Math.max(alpha, valeur);
@@ -69,7 +69,7 @@ public class ArbreMinMax {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
             valeur = Math.min(valeur, joueur1((idJoueur % 2) + 1, newNoeud, profondeur - 1, alpha, beta));
-            if (valeur < alpha) {
+            if (valeur <= alpha) {
                 return n.setValeur(alpha);
             }
             beta = Math.min(beta, valeur);
