@@ -498,6 +498,7 @@ public class Jeu extends Observable implements Runnable {
             carteSupplementaire = (Carte) in.readObject();
             historique = (Historique<Coup>) in.readObject();
             majPions();
+            metAJour();
         }
     }
 
