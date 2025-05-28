@@ -3,6 +3,9 @@ package Vue.Utils.Boutons;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
 
 import static Vue.Configuration.ConfigUI.ARRONDI;
 
@@ -179,6 +182,7 @@ public class Bouton {
         }
 
 
+
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -192,32 +196,39 @@ public class Bouton {
             boolean survol = getModel().isRollover();
             boolean clique = getModel().isPressed();
             boolean focus = isFocusOwner();
+            boolean estDesactive = !isEnabled();
 
-            // Fond survol ou focus
-            if (survol || focus) {
-                g2.setColor(couleurFondSurvol);
+            // Applique un effet grisé si le bouton est désactivé
+            if (estDesactive) {
+                g2.setColor(new Color(200, 200, 200, 50));
                 g2.fillRoundRect(0, 0, width, height, arc, arc);
-            }
+            } else {
+                // Fond survol ou focus (seulement si le bouton est activé)
+                if (survol || focus) {
+                    g2.setColor(couleurFondSurvol);
+                    g2.fillRoundRect(0, 0, width, height, arc, arc);
+                }
 
-            // Fond appuyé
-            if (clique) {
-                g2.setColor(new Color(0, 0, 0, 50));
-                g2.fillRoundRect(0, 0, width, height, arc, arc);
+                // Fond appuyé (seulement si le bouton est activé)
+                if (clique) {
+                    g2.setColor(new Color(0, 0, 0, 50));
+                    g2.fillRoundRect(0, 0, width, height, arc, arc);
+                }
             }
 
             // Calcul marge dynamique — ajusté pour éviter un rayon négatif ou 0
             int tailleMin = Math.min(width, height);
-            float margeArrondie = arc * 0.15f; // marge liée à la forme arrondie
+            float margeArrondie = arc * 0.15f;
             float margeFixe = 4f;
             float margeMin = 2f;
             float marge = Math.max(margeFixe, Math.max(epaisseurActuelle, margeArrondie));
-            marge = Math.min(marge, tailleMin / 6.5f); // empêche que la marge prenne tout
+            marge = Math.min(marge, tailleMin / 6.5f);
 
             // Dessin de l'image centrée
             Icon icon = getIcon();
-            if (icon instanceof ImageIcon) {                // Vérifie que l’icône est bien une ImageIcon (contient une image)
-                ImageIcon imageIcon = (ImageIcon) icon;      // Convertit l’icône en ImageIcon pour accéder à l’image
-                Image image = imageIcon.getImage();          // Récupère l’objet Image depuis l’ImageIcon
+            if (icon instanceof ImageIcon) {
+                ImageIcon imageIcon = (ImageIcon) icon;
+                Image image = imageIcon.getImage();
 
                 int iw = image.getWidth(this);
                 int ih = image.getHeight(this);
@@ -233,12 +244,24 @@ public class Bouton {
                     int x = (width - nw) / 2;
                     int y = (height - nh) / 2;
 
-                    g2.drawImage(image, x, y, nw, nh, this);
+                    // Applique un filtre gris si le bouton est désactivé
+                    if (estDesactive) {
+                        ImageFilter filter = new GrayFilter(true, 50);
+                        ImageProducer producer = new FilteredImageSource(image.getSource(), filter);
+                        Image grayImage = Toolkit.getDefaultToolkit().createImage(producer);
+                        g2.drawImage(grayImage, x, y, nw, nh, this);
+                    } else {
+                        g2.drawImage(image, x, y, nw, nh, this);
+                    }
                 }
             }
 
-            // Bordure
-            g2.setColor(couleurBordure);
+            // Bordure (avec couleur grisée si désactivé)
+            if (estDesactive) {
+                g2.setColor(new Color(200, 200, 200, 150));
+            } else {
+                g2.setColor(couleurBordure);
+            }
             g2.setStroke(new BasicStroke(epaisseurActuelle));
             float halfStroke = epaisseurActuelle / 2f;
             g2.drawRoundRect(
@@ -249,8 +272,8 @@ public class Bouton {
                     arc, arc
             );
 
-            // Si une couleur de fond chargée
-            if (aCouleurDeFond && couleurdeFond != null) {
+            // Si une couleur de fond chargée (seulement si le bouton est activé)
+            if (!estDesactive && aCouleurDeFond && couleurdeFond != null) {
                 g2.setColor(couleurdeFond);
                 g2.fillRoundRect(0, 0, width, height, arc, arc);
             }

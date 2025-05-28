@@ -371,7 +371,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private JPanel creerBoutonsDroite() {
         JPanel droite = new JPanel(new GridLayout(5, 1, 0, 10));
-//        droite.setPreferredSize(new Dimension(140, 0));
         droite.setOpaque(false);
 
         annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
