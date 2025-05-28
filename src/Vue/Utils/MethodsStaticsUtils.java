@@ -241,8 +241,7 @@ public class MethodsStaticsUtils {
         }
 
         /**
-         * Associe une animation au bouton.
-         * @param animation l’objet animation à lier         */
+         * Associe une animation au bouton.*/
         public void setPathBouton(Path pathBouton){
             this.pathBouton = pathBouton;
         }

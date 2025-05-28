@@ -6,14 +6,12 @@ import Patterns.Observateur;
 import Vue.Adaptateurs.*;
 import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.PanelAvecImage;
+import Vue.Utils.StatsJeu;
 
-import javax.print.DocFlavor;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.net.URL;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -21,38 +19,29 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
-import static Global.Paths.PATH_ARRIERE_PLAN_4;
-
 /**
  * La classe {@code EcranMenu} représente l'écran de menu principal du jeu.
- * Elle affiche des options de navigation comme "Nouvelle Partie", "Reprendre", "Règles", etc.,
- * et affiche désormais des statistiques de jeu.
- * Elle implémente l'interface {@link Observateur} pour réagir aux mises à jour du modèle {@link Jeu}.
- * L'arrière-plan de cet écran est une image.
- *
- * @see PanelAvecImage
- * @see Observateur
- * @see Jeu
- * @see CollecteurEvenements
- * @see InterfaceGraphique
+ * Elle hérite de {@link PanelAvecImage} et implémente {@link Observateur}.
  */
-public class  EcranMenu extends PanelAvecImage implements Observateur {
-
+public class EcranMenu extends PanelAvecImage implements Observateur {
     private static final Logger LOGGER = Logger.getLogger(EcranMenu.class.getName());
-    private final Jeu jeu;
 
-    // Constantes pour les dimensions et espacements
+    // Constantes de dimensions et marges
     private static final Dimension DIM_BOUTON_ACTION = new Dimension(250, 65);
-    private final InterfaceGraphique interfaceGraphique;
     private static final Dimension DIM_BOUTON_RETOUR = new Dimension(60, 60);
     private static final Dimension DIM_BOUTON_SAUVEGARDER = new Dimension(200, 60);
     private static final Dimension DIM_BOUTON_EXIT = new Dimension(120, 60);
+
     private static final Insets MARGE_BOUTONS_ACTION = new Insets(10, 0, 10, 0);
     private static final Insets MARGE_PANEL_RETOUR = new Insets(10, 0, 0, 20);
     private static final Insets MARGE_PANEL_SAUVEGARDER = new Insets(0, 50, 20, 0);
     private static final Insets MARGE_PANEL_EXIT = new Insets(0, 0, 20, 50);
     private static final Insets MARGE_CONTENEUR_ACTIONS = new Insets(20, 50, 20, 50);
     private static final Insets MARGE_PANEL_STATS = new Insets(20, 20, 20, 20);
+
+    // Composants du modèle
+    private final Jeu jeu;
+    private final InterfaceGraphique interfaceGraphique;
     private final CollecteurEvenements collecteurEvenements;
 
     // Composants UI pour les statistiques
@@ -63,19 +52,18 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
     private JLabel nomJoueurBValue;
     private JLabel scoreJoueurBValue;
 
-    private int scoreJoueurA = 0;
-    private int scoreJoueurB = 0;
+    // État du jeu
     private int round = 0;
     private Duration dureePartie = Duration.ZERO;
-    private boolean partieEnCours = false;
-    private boolean partieEnPause = false;
-    private boolean partieTerminee = false;
-    private String nomJoueurA = "";
-    private String nomJoueurB = "";
-    private boolean sauvegardeEnCours = false;
-    private JOUEUR JOUEUR_1;
-    private JOUEUR JOUEUR_2;
 
+
+    // Gestion des joueurs
+    private final JOUEUR joueur1 = JOUEUR.JOUEUR_A;
+    private final JOUEUR joueur2 = JOUEUR.JOUEUR_B;
+
+    /**
+     * Enumération représentant les joueurs avec leurs attributs.
+     */
     private enum JOUEUR {
         JOUEUR_A(Color.BLUE),
         JOUEUR_B(new Color(26, 67, 104));
@@ -115,114 +103,68 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
         }
     }
 
-    private final JOUEUR joueur1 = JOUEUR.JOUEUR_A;
-    private final JOUEUR joueur2 = JOUEUR.JOUEUR_B;
-    private Instant debutPartie;
+
+    private final StatsJeu statsJeu = StatsJeu.getInstance();
+
+
+
 
     /**
-     * Constructeur de l'écran de menu principal.
-     * Initialise les composants graphiques, les écouteurs d'événements et met à jour les données initiales.
-     *
-     * @param jeu                L'instance du modèle de jeu, fournissant les données.
-     * @param collecteurEv       Le collecteur d'événements pour gérer les interactions utilisateur.
-     * @param interfaceGraphique L'interface graphique principale, permettant par exemple de fermer ce menu.
+     * Constructeur de l'écran de menu.
      */
     public EcranMenu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
-        super(PATH_ARRIERE_PLAN_4);
+        super(Paths.PATH_ARRIERE_PLAN_4);
         this.jeu = jeu;
         this.collecteurEvenements = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
         this.jeu.ajouteObservateur(this);
-        
+
         initialiserLesStats();
         initialiserLayout();
         miseAJour();
     }
 
+    /**
+     * Initialise les statistiques de jeu.
+     */
     private void initialiserLesStats() {
         joueur1.setNom(jeu.getNomJoueur1());
         joueur2.setNom(jeu.getNomJoueur2());
-        debutPartie = Instant.now();
     }
 
+
+
     /**
-     * Méthode appelée lorsque le modèle {@link Jeu} notifie un changement.
-     * Met à jour les données affichées ou utilisées par cet écran.
-     * <p>
-     * Note: Les mises à jour des composants Swing sont effectuées sur l'Event Dispatch Thread (EDT)
-     * via {@code SwingUtilities.invokeLater()} pour garantir la sécurité des threads.
-     * </p>
+     * Met à jour l'interface en fonction des changements du modèle.
      */
     @Override
     public void miseAJour() {
         LOGGER.info("Mise à jour des données de EcranMenu depuis le modèle Jeu.");
 
-        SwingUtilities.invokeLater(() -> {
-            if (jeu.estPartieFinie()) {
-                round++;
-            }
-
-            // Mise à jour de la durée
-            if (partieEnCours && !partieEnPause) {
-                dureePartie = Duration.between(debutPartie, Instant.now());
-            }
-
-            // Mise à jour de l'affichage
-            roundValue.setText(String.valueOf(round));
-            
-            long minutes = dureePartie.toMinutes();
-            long secondes = dureePartie.minusMinutes(minutes).getSeconds();
-            dureePartieValue.setText(String.format("%02d:%02d", minutes, secondes));
-
-            // Mise à jour des scores et noms des joueurs
-            nomJoueurAValue.setText(joueur1.getNom() + ": ");
-            scoreJoueurAValue.setText(String.valueOf(joueur1.getScore()));
-            
-            nomJoueurBValue.setText(joueur2.getNom() + ": ");
-            scoreJoueurBValue.setText(String.valueOf(joueur2.getScore()));
-        });
+        updateDisplayValues();
 
         LOGGER.info("Mise à jour de EcranMenu terminée.");
     }
 
-    public void demarrerPartie() {
-        partieEnCours = true;
-        partieEnPause = false;
-        partieTerminee = false;
-        debutPartie = Instant.now();
+
+    /**
+     * Met à jour les valeurs affichées dans l'interface.
+     */
+    private void updateDisplayValues() {
+        roundValue.setText(statsJeu.getNombreParties() + "");
+
+        dureePartie = statsJeu.getDureePartie();
+        long minutes = dureePartie.toMinutes();
+        long secondes = dureePartie.minusMinutes(minutes).getSeconds();
+        dureePartieValue.setText(String.format("%02d:%02d", minutes, secondes));
+
+        nomJoueurAValue.setText(joueur1.getNom() + ": ");
+        scoreJoueurAValue.setText(statsJeu.getScoreJoueur1() + " pts");
+
+        nomJoueurBValue.setText(joueur2.getNom() + ": ");
+        scoreJoueurBValue.setText(statsJeu.getScoreJoueur2() + " pts");
     }
 
-    public void mettreEnPause() {
-        if (partieEnCours) {
-            partieEnPause = true;
-        }
-    }
-
-    public void reprendrePartie() {
-        if (partieEnCours && partieEnPause) {
-            partieEnPause = false;
-            // Ajuster le temps de début pour tenir compte de la pause
-            debutPartie = Instant.now().minus(dureePartie);
-        }
-    }
-
-    public void terminerPartie() {
-        partieEnCours = false;
-        partieTerminee = true;
-        // Figer la durée finale
-        dureePartie = Duration.between(debutPartie, Instant.now());
-    }
-
-    public void reinitialiserStats() {
-        round = 0;
-        dureePartie = Duration.ZERO;
-        joueur1.setScore(0);
-        joueur2.setScore(0);
-        debutPartie = Instant.now();
-        partieEnCours = false;
-        partieEnPause = false;
-        partieTerminee = false;
-    }
 
 
     /**
@@ -389,8 +331,8 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
      * @param borderInsets        Marges intérieures pour le panel.
      * @return Un {@link JPanel} configuré avec le bouton.
      */
-    private JPanel creerPanelAvecBouton(URL imagePath, Dimension dimension, ActionListener listener, int flowLayoutAlignment, Insets borderInsets) {
-        Bouton.BoutonAvecImage bouton = Bouton.creerBouton(imagePath, Bouton.ConfigurationParDefaut.SansBordure_transparent);
+    private JPanel creerPanelAvecBouton(String imagePath, Dimension dimension, ActionListener listener, int flowLayoutAlignment, Insets borderInsets) {
+        Bouton.BoutonAvecImage bouton = Bouton.creerBouton(Paths.getButtonPath(imagePath), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         bouton.setPreferredSize(dimension);
         if (listener != null) {
             bouton.addActionListener(listener);
@@ -413,7 +355,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelRetour() {
         return creerPanelAvecBouton(
-                Paths.getButtonPath("decliner.png"),
+                "decliner.png",
                 DIM_BOUTON_RETOUR,
                 e -> interfaceGraphique.fermerMenu(),
                 FlowLayout.RIGHT,
@@ -429,7 +371,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelSauvegarde() {
         return creerPanelAvecBouton(
-                Paths.getButtonPath("sauvegarder.png"),
+                "sauvegarder.png",
                 DIM_BOUTON_SAUVEGARDER,
                 new AdaptateurSauvegarder(collecteurEvenements),
                 FlowLayout.LEFT,
@@ -446,7 +388,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelExit() {
         return creerPanelAvecBouton(
-                Paths.getButtonPath("exit.png"),
+                "exit.png",
                 DIM_BOUTON_EXIT,
                 new AdaptateurExit(collecteurEvenements),
                 FlowLayout.RIGHT,
@@ -528,42 +470,4 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
         }
     }
 
-
-    public String getImagePath() {
-        return PATH_ARRIERE_PLAN_4.toString();
-    }
-
-
-
-
-//    private enum JOUEUR {
-//        JOUEUR("nom Joueur", 0);
-//
-//        private String nom;
-//        private int score;
-//
-//        JOUEUR(String nom, int score) {
-//            this.nom = nom;
-//            this.score = score;
-//        }
-//
-//        public String getNom() {
-//            return nom;
-//        }
-//
-//        public int getScore() {
-//            return score;
-//        }
-//
-//        public void setNom(String nom){
-//            this.nom = nom;
-//        }
-//
-//        public void setScore(int score){
-//            this.score = score;
-//        }
-//        public void incrementerScore(){
-//            this.score++;
-//        }
-//    }
 }
