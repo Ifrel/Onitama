@@ -6,6 +6,9 @@ import Vue.Adaptateurs.AdaptateurClavier;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import static Global.Config.DIM_SCENE;
@@ -26,7 +29,12 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
 
     private static final Logger logger = Logger.getLogger(InterfaceGraphique.class.getName());
 
-    private static InterfaceGraphique instance;
+//    private static InterfaceGraphique instance;
+
+    private static final AtomicReference<InterfaceGraphique> instance = new AtomicReference<>();
+    private final ExecutorService animationExecutor = Executors.newSingleThreadExecutor();
+    private EcranVictoire ecranVictoire;
+
 
     /**
      * Gestionnaire de toutes les interfaces graphiques
@@ -36,12 +44,11 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         this.jeu = jeu;
         this.collecteurEvent = collecteurEvent;
         this.maximized = false;
-
-        InitiliserLaScene();
-        initialiserLayeredPane();
-
-        // Observer pour mettre à jour l'affichage si nécessaire
+        this.frame = initialiserLaScene();
+        this.layeredPane = initialiserLayeredPane();
+        this.backgroundBlur = new JPanel();
         jeu.ajouteObservateur(this);
+
     }
 
     /**
@@ -51,8 +58,9 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         try {
             logger.info("Lancement interface graphique");
             SwingUtilities.invokeLater(() -> {
-                instance = new InterfaceGraphique(jeu, collecteurEvenements);
-                new Thread(instance).start();
+                InterfaceGraphique ig = new InterfaceGraphique(jeu, collecteurEvenements);
+                instance.set(ig);
+                new Thread(ig).start();
             });
             logger.info("Interface graphique lancée");
         } catch (Exception e) {
@@ -62,31 +70,36 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
     }
 
     public static InterfaceGraphique getInstance() {
-        return instance;
+        return instance.get();
     }
+
 
     /**
      * Initialise la fenêtre principale (JFrame)*/
-    private void InitiliserLaScene() {
-        frame = new JFrame("Onitama");
+    private JFrame initialiserLaScene() {
+        JFrame frame = new JFrame("Onitama");
         frame.setLayout(new BorderLayout());
         frame.setPreferredSize(DIM_SCENE);
         frame.setMinimumSize(DIM_SCENE);
         frame.addKeyListener(new AdaptateurClavier(collecteurEvent));
-        ajouterEcouteurFermeture();
+        ajouterEcouteurFermeture(frame);
+        return frame;
     }
+
 
     /**
      * Initialise le JLayeredPane qui superpose les composants*/
-    private void initialiserLayeredPane() {
-        layeredPane = new JLayeredPane();
-        layeredPane.setLayout(null);
+    private JLayeredPane initialiserLayeredPane() {
+        JLayeredPane pane = new JLayeredPane();
+        pane.setLayout(null);
+        return pane;
     }
+
 
     /**
      * Ajoute un écouteur pour gérer la fermeture de la fenêtre proprement
      */
-    private void ajouterEcouteurFermeture() {
+    private void ajouterEcouteurFermeture(JFrame frame) {
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -95,21 +108,40 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         });
     }
 
+
+
+
     @Override
     public void miseAJour() {
-        // (Réagir aux changements du modèle ici si nécessaire)
         logger.info("Mise à jour \"InterfaceGraphique\"");
+        SwingUtilities.invokeLater(this::rafraichirInterface);
     }
+
+    private void rafraichirInterface() {
+        frame.revalidate();
+        frame.repaint();
+    }
+
+
 
     // --- Lancement graphique ---
     @Override
     public void run() {
-        initialiserEcranDeDemarage();
+        initialiserComposants();
+        configurerFenetre();
+    }
+
+
+
+    private void initialiserComposants() {
+        initialiserEcranDemarrage();
         initialiserPlateau();
         initialiserBackgroundBlur();
         initialiserMenu();
         ajouterComportementRedimensionnement();
+    }
 
+    private void configurerFenetre() {
         frame.setContentPane(ecranDeDemarrage);
         frame.pack();
         frame.setVisible(true);
@@ -117,8 +149,13 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         frame.requestFocusInWindow();
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        // La fermeture sera gérée par l'écouteur windowClosing
     }
+
+    private void initialiserEcranDemarrage() {
+        ecranDeDemarrage = new EcranDeDemarrage(jeu, this);
+        ecranDeDemarrage.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+    }
+
 
     /**
      * Initialise le plateau de jeu */
@@ -128,16 +165,15 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         layeredPane.add(ecranPlateauDeJeu, JLayeredPane.DEFAULT_LAYER);
     }
 
+
     /**
      * Crée un panneau gris semi-transparent pour le flou de fond*/
     private void initialiserBackgroundBlur() {
-        backgroundBlur = new JPanel();
         backgroundBlur.setToolTipText("JEU EN PAUSE");
-        backgroundBlur.setBackground(new Color(161, 160, 160, 50)); // Gris transparent
+        backgroundBlur.setBackground(new Color(161, 160, 160, 50));
         backgroundBlur.setBounds(0, 0, frame.getWidth(), frame.getHeight());
         backgroundBlur.setOpaque(false);
         backgroundBlur.setVisible(false);
-
         backgroundBlur.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -146,6 +182,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         });
         layeredPane.add(backgroundBlur, JLayeredPane.PALETTE_LAYER);
     }
+
 
     /**
      * Initialise le menu latéral (caché par défaut)*/
@@ -156,10 +193,6 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         layeredPane.add(ecranMenu, JLayeredPane.MODAL_LAYER);
     }
 
-    private void initialiserEcranDeDemarage() {
-        ecranDeDemarrage = new EcranDeDemarrage(jeu, this);
-        ecranDeDemarrage.setBounds(0, 0, frame.getWidth(), frame.getHeight());
-    }
 
     /**
      * Gère le redimensionnement dynamique de tous les éléments*/
@@ -171,36 +204,16 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         });
     }
 
-//    // --- Gestion des menus ---
-//
-//    /**
-//     * Met à jour la disposition des composants en fonction de la taille de la fenêtre
-//     */
-//    public void mettreAJourDispositions() {
-//        int width = frame.getWidth();
-//        int height = frame.getHeight();
-//        ecranPlateauDeJeu.setBounds(0, 0, width, height);
-//        backgroundBlur.setBounds(0, 0, width, height);
-//        if (ecranMenu.isVisible()) {
-//            ecranMenu.setBounds(width - WIDTH_MENU, 0, WIDTH_MENU, height);
-//        } else {
-//            ecranMenu.setBounds(width, 0, WIDTH_MENU, height);
-//        }
-//    }
 
-    /**
-     * Ouvre le menu latéral avec animation*/
     public void ouvrirMenu() {
-        logger.info("Ouverture menu");
         if (!ecranMenu.isVisible()) {
+            logger.info("Ouverture menu");
             backgroundBlur.setVisible(true);
             ecranMenu.setVisible(true);
             animerDeplacementEcran(ecranMenu.getX(), frame.getWidth() - WIDTH_MENU, () -> {});
         }
     }
 
-    /**
-     * Ferme le menu latéral avec animation*/
     public void fermerMenu() {
         logger.info("Fermeture menu");
         int xCourant = ecranMenu.getX();
@@ -210,36 +223,57 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         });
     }
 
+
+
+    private void animerDeplacementEcran(int xDepart, int xArrivee, Runnable callback) {
+        animationExecutor.execute(new SwingWorker<Void, Integer>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                int x = xDepart;
+                int pas = xArrivee > xDepart ? 50 : -50;
+                while ((pas > 0 && x < xArrivee) || (pas < 0 && x > xArrivee)) {
+                    x += pas;
+                    if ((pas > 0 && x > xArrivee) || (pas < 0 && x < xArrivee)) {
+                        x = xArrivee;
+                    }
+                    publish(x);
+                    Thread.sleep(25);
+                }
+                return null;
+            }
+
+            @Override
+            protected void process(java.util.List<Integer> chunks) {
+                int xFinal = chunks.get(chunks.size() - 1);
+                ecranMenu.setBounds(xFinal, 0, WIDTH_MENU, frame.getHeight());
+            }
+
+            @Override
+            protected void done() {
+                if (callback != null) {
+                    SwingUtilities.invokeLater(callback);
+                }
+            }
+        });
+    }
+
+
+    private void initialiserEcranDeDemarage() {
+        ecranDeDemarrage = new EcranDeDemarrage(jeu, this);
+        ecranDeDemarrage.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+    }
+
+
+
+
+
+
     // --- Méthodes InterfaceUser ---
     @Override
     public void toggleIA() {
         // (Pas encore implémenté)
     }
 
-    /**
-     * Animation générique pour déplacer l'écran (ou tout autre composant)
-     */
-    private void animerDeplacementEcran(int xDepart, int xArrivee, Runnable callback) {
-        new Thread(() -> {
-            int x = xDepart;
-            int pas = xArrivee > xDepart ? 50 : -50;
-            while ((pas > 0 && x < xArrivee) || (pas < 0 && x > xArrivee)) {
-                x += pas;
-                if ((pas > 0 && x > xArrivee) || (pas < 0 && x < xArrivee)) {
-                    x = xArrivee;
-                }
-                final int xFinal = x;
-                SwingUtilities.invokeLater(() -> ecranMenu.setBounds(xFinal, 0, WIDTH_MENU, frame.getHeight()));
-                try {
-                    Thread.sleep(25);
-                } catch (InterruptedException ignored) {
-                }
-            }
-            if (callback != null) {
-                SwingUtilities.invokeLater(callback);
-            }
-        }).start();
-    }
 
     @Override
     public void toggleFullScreen() {
@@ -294,7 +328,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
 
 
 
-    private EcranVictoire ecranVictoire;
+//    private EcranVictoire ecranVictoire;
 
     /**
      * Affiche l'écran de victoire dans l'application.
