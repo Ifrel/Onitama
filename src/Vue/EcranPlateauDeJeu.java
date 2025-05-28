@@ -140,9 +140,34 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     /**
      * Initialise l'interface utilisateur avec GridBagLayout.
-    */
+     */
     private void initialiserInterface() {
-        // Creation des composants
+        // Initialisation des composants principaux
+        initialiserComposantsPrincipaux();
+
+        // Création du conteneur principal
+        JPanel contenu = new JPanel(new GridBagLayout());
+        contenu.setBorder(BorderFactory.createEmptyBorder(ESPACE, ESPACE, ESPACE, ESPACE));
+        contenu.setOpaque(false);
+
+        // Configuration de la barre supérieure
+        ajouterBarreSuperieure(contenu);
+
+        // Configuration du panneau central
+        ajouterPanneauCentral(contenu);
+
+        // Configuration finale
+        this.setLayout(new BorderLayout());
+        this.add(new PanelRatioFixe(contenu, 1), BorderLayout.CENTER);
+
+        // Démarrage du timer
+        debutTempsPartie = Instant.now();
+        timerPartie = new Timer(1000, e -> miseAjourTemps());
+        timerPartie.start();
+    }
+
+
+    private void initialiserComposantsPrincipaux() {
         cartesNord = new JPanel();
         cartesEst = new JPanel();
         cartesSud = new JPanel();
@@ -152,22 +177,15 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         creerCartesSud();
         creerBoutonFlottant();
         creerPanelTemporaire();
+    }
 
 
-
-        //  Conteneur principal avec GridBagLayout
-        JPanel contenu = new JPanel(new GridBagLayout());
-        contenu.setBorder(BorderFactory.createEmptyBorder(ESPACE, ESPACE, ESPACE, ESPACE));
-        contenu.setOpaque(false);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.anchor = GridBagConstraints.CENTER;
-
-        // Ligne 0 : Haut (son | timer | menu)
-        JPanel barreIndication = new JPanel();
-        barreIndication.setLayout(new FlowLayout(FlowLayout.TRAILING, 10, 10));
+    private void ajouterBarreSuperieure(JPanel contenu) {
+        // Création de la barre d'indication
+        JPanel barreIndication = new JPanel(new FlowLayout(FlowLayout.TRAILING, 10, 10));
         barreIndication.setOpaque(false);
+
+        // Ajout des composants à la barre
         barreIndication.add(creerBoutonSon());
         barreIndication.add(creerBoutonIA());
         barreIndication.add(Box.createHorizontalStrut(ESPACE));
@@ -176,6 +194,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         barreIndication.add(Box.createHorizontalStrut(ESPACE));
         barreIndication.add(creerBoutonMenu());
 
+        // Configuration et ajout de la barre
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
@@ -184,7 +204,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.insets = new Insets(0, 0, ESPACE, 0);
         contenu.add(barreIndication, gbc);
 
-        // === Ligne 1 : Texte du tour ===
+        // Ajout du panneau nom joueur
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
@@ -192,76 +212,74 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.insets = new Insets(15, 0, 0, 0);
         contenu.add(creerPanelNomJoueurCourant(), gbc);
 
-        // === Saut de ligne entre ligne 1 et 2 ===
+        // Ajout de l'espace
         gbc.gridy = 2;
         gbc.weightx = 0.25;
         gbc.weighty = 0.2;
         contenu.add(Box.createGlue(), gbc);
+    }
 
-        // === Ligne 3 : Plateau avec layout empilé ===
+
+    private void ajouterPanneauCentral(JPanel contenu) {
+        JPanel panelCentreEmpile = new JPanel(new GridBagLayout());
+        panelCentreEmpile.setOpaque(false);
+
+        // Configuration des contraintes pour le panneau central
+        GridBagConstraints centreGbc = new GridBagConstraints();
+        centreGbc.fill = GridBagConstraints.BOTH;
+
+        // Ajout des composants au panneau central
+        ajouterComposantsCentraux(panelCentreEmpile, centreGbc);
+
+        // Ajout du panneau central au conteneur principal
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.insets = new Insets(0, 0, ESPACE * 3, 0);
-
-        JPanel panelCentreEmpile = new JPanel(new GridBagLayout());
-        panelCentreEmpile.setOpaque(false);
-        GridBagConstraints centreGbc = new GridBagConstraints();
-        centreGbc.fill = GridBagConstraints.BOTH;
-
-        // Cartes nord
-        centreGbc.gridx = 1;
-        centreGbc.gridy = 0;
-        centreGbc.weightx = 2.5;
-        centreGbc.weighty = 0.37;
-        panelCentreEmpile.add(cartesNord, centreGbc);
-
-        // Carte gauche
-        centreGbc.gridx = 0;
-        centreGbc.gridy = 1;
-        centreGbc.weightx = 1.0;
-        centreGbc.weighty = 0.37;
-        panelCentreEmpile.add(cartesEst, centreGbc);
-
-        // terrain
-        centreGbc.gridx = 1;
-        centreGbc.gridy = 1;
-        centreGbc.weightx = 1;
-        centreGbc.weighty = 1;
-        centreGbc.insets = new Insets(20, 20, 20, 20);
-        panelCentreEmpile.add(new PanelRatioFixe(terrain, 1), centreGbc);
-//        panelCentreEmpile.add(terrain, centreGbc);
-        centreGbc.insets = new Insets(0, 0, 0, 0);
-
-        // Boutons à droite
-        centreGbc.gridx = 2;
-        centreGbc.gridy = 1;
-        centreGbc.weightx = 1.0;
-        centreGbc.weighty = 1.0;
-        panelCentreEmpile.add(creerBoutonsDroite(), centreGbc);
-
-        // Cartes sud
-        centreGbc.gridx = 1;
-        centreGbc.gridy = 2;
-        centreGbc.weightx = 2.5;
-        centreGbc.weighty = 0.37;
-        panelCentreEmpile.add(cartesSud, centreGbc);
-
         contenu.add(panelCentreEmpile, gbc);
-
-        // Ajout du conteneur principal au panneau
-        setLayout(new BorderLayout());
-        add(new PanelRatioFixe(contenu, 1), BorderLayout.CENTER);
-
-
-        // Démarrage du timer
-        debutTempsPartie = Instant.now();
-        timerPartie = new Timer(1000, e -> miseAjourTemps());
-        timerPartie.start();
     }
 
 
+    private void ajouterComposantsCentraux(JPanel panel, GridBagConstraints gbc) {
+        // Cartes nord
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.5;
+        panel.add(cartesNord, gbc);
+
+        // Cartes est
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        panel.add(cartesEst, gbc);
+
+        // Terrain central
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(20, 20, 20, 20);
+        panel.add(terrain, gbc);
+        gbc.insets = new Insets(0, 0, 0, 0);
+
+        // Boutons droite
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        panel.add(creerBoutonsDroite(), gbc);
+
+        // Cartes sud
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.5;
+        panel.add(cartesSud, gbc);
+    }
 
 
 
@@ -337,23 +355,67 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private void creerCartesNord() {
-        cartesNord.setLayout(new GridLayout(1, 4, 25, 0));
-        cartesNord.setOpaque(false);
+        // Utilisation de GridBagLayout pour un meilleur contrôle
+        cartesNord.setLayout(new GridBagLayout());
+//        cartesNord.setOpaque(false);
 
-        cartesNord.add(Box.createGlue());
-        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[0]));
-        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[1]));
-        cartesNord.add(Box.createGlue());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+
+        // Espacement élastique à gauche
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        cartesNord.add(Box.createHorizontalGlue(), gbc);
+
+        // Première carte
+        gbc.gridx = 1;
+        gbc.weightx = 2.0;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        cartesNord.add(buttonsCartesJoueur1[0], gbc);
+
+        // Deuxième carte
+        gbc.gridx = 2;
+        cartesNord.add(buttonsCartesJoueur1[1], gbc);
+
+        // Espacement élastique à droite
+        gbc.gridx = 3;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        cartesNord.add(Box.createHorizontalGlue(), gbc);
     }
 
     private void creerCartesSud() {
-        cartesSud.setLayout(new GridLayout(1, 4, 25, 0));
-        cartesSud.setOpaque(false);
+        // Utilisation de GridBagLayout pour un meilleur contrôle
+        cartesSud.setLayout(new GridBagLayout());
+//        cartesSud.setOpaque(false);
 
-        cartesSud.add(Box.createGlue());
-        cartesSud.add(buttonsCartesJoueur2[0]);
-        cartesSud.add(buttonsCartesJoueur2[1]);
-        cartesSud.add(Box.createGlue());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+
+        // Espacement élastique à gauche
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        cartesSud.add(Box.createHorizontalGlue(), gbc);
+
+        // Première carte
+        gbc.gridx = 1;
+        gbc.weightx = 2.0;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        cartesSud.add(buttonsCartesJoueur2[0], gbc);
+
+        // Deuxième carte
+        gbc.gridx = 2;
+        cartesSud.add(buttonsCartesJoueur2[1], gbc);
+
+        // Espacement élastique à droite
+        gbc.gridx = 3;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        cartesSud.add(Box.createHorizontalGlue(), gbc);
     }
 
     private void creerCarteGauche() {
@@ -390,32 +452,57 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private JPanel creerBoutonsDroite() {
-        JPanel droite = new JPanel(new GridLayout(5, 1, 0, 10));
-        droite.setOpaque(false);
+        // Création du panel principal avec GridBagLayout
+        JPanel droite = new JPanel(new GridBagLayout());
+//        droite.setOpaque(false);
 
+        // Création des boutons
         annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
         refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
         suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion_on.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
 
-        Dimension DIM = new Dimension(70, 70);
-        annuler.setPreferredSize(DIM);
-        refaire.setPreferredSize(DIM);
-        suggestion.setPreferredSize(new Dimension(70, 100));
+        // Configuration des dimensions
+        Dimension dimensionBoutonNormal = new Dimension(70, 70);
+        Dimension dimensionBoutonSuggestion = new Dimension(70, 100);
 
-        annuler.setBackground(new Color(207, 207, 207, 44));
-        refaire.setBackground(new Color(207, 207, 207, 44));
-        suggestion.setBackground(new Color(207, 207, 207, 44));
+        annuler.setPreferredSize(dimensionBoutonNormal);
+        refaire.setPreferredSize(dimensionBoutonNormal);
+        suggestion.setPreferredSize(dimensionBoutonSuggestion);
 
+        // Configuration de l'apparence
+        Color couleurFond = new Color(207, 207, 207, 44);
+        annuler.setBackground(couleurFond);
+        refaire.setBackground(couleurFond);
+        suggestion.setBackground(couleurFond);
+
+        // Ajout des écouteurs
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
         suggestion.addActionListener(new AdaptateurSuggestion(collecteurEv, this));
 
-//        droite.add(Box.createGlue());
-        droite.add(Box.createGlue());
-        droite.add(annuler);
-        droite.add(refaire);
-        droite.add(suggestion);
-        droite.add(Box.createGlue());
+        // Configuration du GridBagConstraints
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.weighty = 1.0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 0, 5, 0); // Espacement vertical entre les boutons
+
+        // Ajout de l'espace élastique en haut
+        gbc.gridy = 0;
+
+        // Ajout des boutons
+        droite.add(annuler, gbc);
+
+        gbc.gridy++;
+        droite.add(refaire, gbc);
+
+        gbc.gridy++;
+        droite.add(suggestion, gbc);
+
+        // Ajout de l'espace élastique en bas
+        gbc.gridy++;
+        droite.add(Box.createVerticalGlue(), gbc);
 
         return droite;
     }
@@ -654,19 +741,47 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
      * selon le contenu initial de chaque case du plateau.
      */
     private void initBoutonsTerrain() {
+        // Configuration par défaut des boutons
+        Dimension dimensionBouton = new Dimension(10, 10);
+
+        // Utilisation de GridBagLayout pour une meilleure gestion du positionnement
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+
+        // Initialisation des boutons
         for (int row = 0; row < LIGNES; row++) {
+            gbc.gridy = row;
+
             for (int col = 0; col < COLONNES; col++) {
+                gbc.gridx = col;
+
+                // Récupération des informations de la case
                 CasePlateau casePlateau = jeu.getCasePlateau(row, col);
                 TYPE_ELEMENT_SUR_TERRAIN typeElement = determinerTypeElement(casePlateau);
-
                 BufferedImage image = imagesCaseTerrain.get(typeElement);
+
+                // Création et configuration du bouton
                 BoutonTerrain boutonCase = new BoutonTerrain(image);
-                boutonCase.setPreferredSize(new Dimension(10, 10));
+                boutonCase.setPreferredSize(dimensionBouton);
+
+                // Application des configurations utilisateur
                 apliquerConfifUtilisateur(boutonCase, row, col);
 
-                boutonCase.addActionListener(new AdaptateurBoutonTerrain(boutonCase, casePlateau, collecteurEv, this));
+                // Ajout de l'écouteur d'événements
+                boutonCase.addActionListener(new AdaptateurBoutonTerrain(
+                        boutonCase,
+                        casePlateau,
+                        collecteurEv,
+                        this
+                ));
+
+                // Stockage du bouton dans le tableau
                 buttonsTerrain[row][col] = boutonCase;
-                terrain.add(boutonCase);
+
+                // Ajout au terrain avec les contraintes
+                terrain.add(boutonCase, gbc);
             }
         }
     }
