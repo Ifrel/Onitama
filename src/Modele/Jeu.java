@@ -30,30 +30,30 @@ import static Modele.Utils.*;
 
 
 public class Jeu extends Observable implements Runnable {
-    private Pion [][] grille; // grille de pions
-    private Historique<Coup> historique;
-    private Joueur joueur1, joueur2;
-    private IA IA_1, IA_2;
-    private Joueur joueurCourant;
-    private int idJoueurCourant; // identifiant du joueur courant
-    private int numCarteSelectionee;
-    private boolean estPartieFinie;
-    private boolean IA1Activee, IA2Activee;
-    private boolean IAvsIAActive;
-    private boolean partieACommence;
-    private boolean maitreMort;
-    private Pion pionSelectionne;
-    private ETAT_GRILLE etatGrille;
-    private ETAT_JEU etatJeu;
-    private Coup dernierCoupJoue;
+    private volatile Pion [][] grille; // grille de pions
+    private volatile Historique<Coup> historique;
+    private volatile Joueur joueur1, joueur2;
+    private volatile IA IA_1, IA_2;
+    private volatile Joueur joueurCourant;
+    private volatile int idJoueurCourant; // identifiant du joueur courant
+    private volatile int numCarteSelectionee;
+    private volatile boolean estPartieFinie;
+    private volatile boolean IA1Activee, IA2Activee;
+    private volatile boolean IAvsIAActive;
+    private volatile boolean partieACommence;
+    private volatile boolean maitreMort;
+    private volatile Pion pionSelectionne;
+    private volatile ETAT_GRILLE etatGrille;
+    private volatile ETAT_JEU etatJeu;
+    private volatile Coup dernierCoupJoue;
 
 
     // --- CARTES -- //
-    private List<Carte> toutesLesCartes; //Toutes les cartes confondues
-    private List<Carte> cartesDuJeu; // 5 cartes, les cartes qui circulent dans le jeu.
+    private volatile List<Carte> toutesLesCartes; //Toutes les cartes confondues
+    private volatile List<Carte> cartesDuJeu; // 5 cartes, les cartes qui circulent dans le jeu.
 
     // --- Carte d'échange -- //
-    private Carte carteSupplementaire; //La carte qui sera en échange
+    private volatile Carte carteSupplementaire; //La carte qui sera en échange
 
     // -- GRILLE -- //
     private final List<Pion> pionsJoueur1 = new ArrayList<>(); //Grille implicite: Liste de pions (chaque pion est associé à une position) du premier joueur
@@ -826,6 +826,8 @@ public class Jeu extends Observable implements Runnable {
 
         setNomJoueur1(nomJoueur1);
         setNomJoueur2(nomJoueur2);
+
+        metAJour();
     }
 
     public long getTempsDeJeu() {
