@@ -59,6 +59,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     // Pour la Gestion des Animations : Renversement des cartes
     private final ArrayList<CardFlipAnimator> listeDescardFlipAnimators = new ArrayList<>();
+    int idCartePrecedementSelectionnee;
 
     // Chargement des images dans une liste
     HashMap<TYPECARTE, BufferedImage> imagesCartes = new HashMap<>();
@@ -111,6 +112,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
+        this.idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
 
         jeu.ajouteObservateur(this);
         logger.info("Interface Plateau de jeu lancée");
@@ -172,10 +174,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         cartesNord = new JPanel();
         cartesEst = new JPanel();
         cartesSud = new JPanel();
+        // L'ordre compte
         creerTerrain();
         creerCartesNord();
-        creerCarteGauche();
         creerCartesSud();
+        creerCarteGauche();
         creerBoutonFlottant();
         creerPanelTemporaire();
     }
@@ -386,11 +389,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 1;
         gbc.weightx = 0.5;
         gbc.insets = new Insets(0, 10, 0, 10);
-        cartesNord.add(buttonsCartesJoueur1[0], gbc);
+        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[0],0), gbc);
 
         // Deuxième carte
         gbc.gridx = 2;
-        cartesNord.add(buttonsCartesJoueur1[1], gbc);
+        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[1], 1), gbc);
 
         // Espacement élastique à droite
         gbc.gridx = 3;
@@ -418,11 +421,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 1;
         gbc.weightx = 0.5;
         gbc.insets = new Insets(0, 10, 0, 10);
-        cartesSud.add(buttonsCartesJoueur2[0], gbc);
+        cartesSud.add(cardFlipAnimator(buttonsCartesJoueur2[0], 2), gbc);
 
         // Deuxième carte
         gbc.gridx = 2;
-        cartesSud.add(buttonsCartesJoueur2[1], gbc);
+        cartesSud.add(cardFlipAnimator(buttonsCartesJoueur2[1], 3), gbc);
 
         // Espacement élastique à droite
         gbc.gridx = 3;
@@ -620,7 +623,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         animator.addAnimationListener(layer::repaint);
 
-        listeDescardFlipAnimators.add(animator);
+        listeDescardFlipAnimators.add(idCarte, animator);
 
         return layer;
     }
@@ -629,11 +632,20 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
                 jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT) {
 
-            for (CardFlipAnimator animator : listeDescardFlipAnimators) {
-                animator.startAnimation();
+//            for (CardFlipAnimator animator : listeDescardFlipAnimators) {
+//                animator.startAnimation();
+//            }
+            int numCarte = idCartePrecedementSelectionnee;
+            if (jeu.getJoueurCourant().getId() == ID_JOUEUR_1){
+                numCarte += 2;
             }
+
+            listeDescardFlipAnimators.get(4).startAnimation();
+            listeDescardFlipAnimators.get(numCarte).startAnimation();
+
             ID_JOUEUR_PRECEDANT = jeu.getIdJoueurCourant();
         }
+        idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
     }
 
     private void toggleMusique(JButton bouton) {
@@ -650,6 +662,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         }
         musiqueActive = !musiqueActive;
     }
+
+
+
 
     // =========================================
     // ========= Gestion Son & Musique =========
