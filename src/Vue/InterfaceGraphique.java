@@ -373,19 +373,33 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
      * Ferme l'écran de victoire et lance une nouvelle partie
      */
     public void demarrerNouvellePartie() {
-        if (ecranVictoire != null) {
-            layeredPane.remove(ecranVictoire);
-            ecranVictoire = null;
+        // 1. Réinitialiser le jeu
+        jeu.nouvellePartie();
 
-            // Réinitialiser et lancer une nouvelle partie
-            initialiserPlateau();
-            lancerPlateauDeJeu();
+        // 2. Nettoyer le layeredPane
+        layeredPane.removeAll();
 
-            // Mettre à jour l'affichage
+        // 3. Réinitialiser les composants du jeu
+        initialiserPlateau();
+        initialiserBackgroundBlur();
+        initialiserMenu();
+
+        // 4. Relancer l'affichage du plateau
+        lancerPlateauDeJeu();
+
+        // 5. Mettre à jour l'affichage
+        SwingUtilities.invokeLater(() -> {
             frame.revalidate();
             frame.repaint();
-        }
+        });
+
+        // 6. Réinitialiser la référence à l'écran de victoire
+        ecranVictoire = null;
     }
+
+
+
+
 
     /**
      * Met à jour la disposition des composants en fonction de la taille de la fenêtre
