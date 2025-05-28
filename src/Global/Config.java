@@ -4,6 +4,7 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class Config {
@@ -302,6 +303,30 @@ public class Config {
          */
         COBRA,
     }
+
+    public enum COULEUR_CARTE {
+        BLEU,
+        ROUGE
+    }
+
+    public HashMap<TYPECARTE, COULEUR_CARTE> COULEURS_CARTES = new HashMap<>() {{
+        put(TYPECARTE.TIGRE, COULEUR_CARTE.BLEU);
+        put(TYPECARTE.DRAGON, COULEUR_CARTE.ROUGE);
+        put(TYPECARTE.GRENOUILLE, COULEUR_CARTE.ROUGE);
+        put(TYPECARTE.LAPIN, COULEUR_CARTE.BLEU);
+        put(TYPECARTE.CRABE, COULEUR_CARTE.BLEU);
+        put(TYPECARTE.ELEPHANT, COULEUR_CARTE.ROUGE);
+        put(TYPECARTE.OIE, COULEUR_CARTE.BLEU);
+        put(TYPECARTE.COQ, COULEUR_CARTE.ROUGE);
+        put(TYPECARTE.SINGE, COULEUR_CARTE.BLEU);
+        put(TYPECARTE.MANTE, COULEUR_CARTE.ROUGE);
+        put(TYPECARTE.CHEVAL, COULEUR_CARTE.ROUGE);
+        put(TYPECARTE.BOEUF, COULEUR_CARTE.BLEU);
+        put(TYPECARTE.GRUE, COULEUR_CARTE.BLEU);
+        put(TYPECARTE.SANGLIER, COULEUR_CARTE.ROUGE);
+        put(TYPECARTE.ANGUILLE, COULEUR_CARTE.BLEU);
+        put(TYPECARTE.COBRA, COULEUR_CARTE.ROUGE);
+    }};
 
     public static HashMap<TYPECARTE, List<Point>> MOUVEMENTCARTE =
             new HashMap<TYPECARTE, List<Point>>() {{

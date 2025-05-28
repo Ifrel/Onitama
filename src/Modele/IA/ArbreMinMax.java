@@ -37,7 +37,7 @@ public class ArbreMinMax {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
-            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getEtatJeu()));
+            return n.setValeur(heuristiqueAvancee(idJoueur, n.getEtatJeu()));
         }
         double valeur = Double.NEGATIVE_INFINITY;
 
@@ -45,7 +45,7 @@ public class ArbreMinMax {
         for (EtatJeu ej : successeurs) {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
-            valeur = Math.max(valeur, joueur2((idJoueur % 2) + 1, newNoeud, profondeur - 1, alpha, beta));
+            valeur = Math.max(valeur, joueur2(idJoueur, newNoeud, profondeur - 1, alpha, beta));
             if (valeur >= beta) {
                 return n.setValeur(beta);
             }
@@ -60,7 +60,7 @@ public class ArbreMinMax {
         nbEtats++;
         if (n.estFeuille() || profondeur == 0) {
             nbFeuilles++;
-            return n.setValeur(heuristiqueAvancee((idJoueur % 2) + 1, n.getEtatJeu()));
+            return n.setValeur(heuristiqueAvancee(idJoueur, n.getEtatJeu()));
         }
         double valeur = Double.POSITIVE_INFINITY;
 
@@ -68,7 +68,7 @@ public class ArbreMinMax {
         for (EtatJeu ej : successeurs) {
             Noeud newNoeud = new Noeud(ej, null);
             n.addSucc(newNoeud);
-            valeur = Math.min(valeur, joueur1((idJoueur % 2) + 1, newNoeud, profondeur - 1, alpha, beta));
+            valeur = Math.min(valeur, joueur1(idJoueur, newNoeud, profondeur - 1, alpha, beta));
             if (valeur <= alpha) {
                 return n.setValeur(alpha);
             }

@@ -53,7 +53,7 @@ public class Heuristiques {
      */
     public static double heuristiqueDeBase(EtatJeu etatJeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 1.5 * nbPions(etatJeu) + -2 * distancePionsCourantMaitreAdverse(etatJeu) + -2 * distanceMaitreAdverseTemple(etatJeu);
+        return 1.5 * nbPions(etatJeu) + -2 * distancePionsCourantMaitreAdverse(etatJeu) + -2 * distanceMaitreAdverseTempleCourant(etatJeu);
     }
 
     // TODO
@@ -75,13 +75,13 @@ public class Heuristiques {
      */
     public static double heuristiqueAvancee(int idJoueur, EtatJeu etatJeu) {
         // TODO cette méthode devra probablement être un wrapper de son équivalent utilisant un vecteur de bits
-        return 100_000 * nbPions(etatJeu)
+        return 100 * nbPions(etatJeu)
                 + valeurCartes(etatJeu)
                 + 2 * successeursNombreCaptures(etatJeu)
-                + -3 * distancePionsCourantMaitreAdverse(etatJeu)
-                + 5 * distancePionsAdverseMaitreCourant(etatJeu)
-                + -3 * distanceMaitreAdverseTemple(etatJeu)
-                + 1.5 * distanceMaitreCourantTemple(etatJeu)
+                + -2 * distancePionsCourantMaitreAdverse(etatJeu)
+                + 2 * distancePionsAdverseMaitreCourant(etatJeu)
+                + -1.5 * distanceMaitreAdverseTempleCourant(etatJeu)
+                + 1.5 * distanceMaitreCourantTempleAdverse(etatJeu)
                 + victoireDefaite(idJoueur, etatJeu);
     }
 
@@ -203,7 +203,7 @@ public class Heuristiques {
                 for (Pion p : pionsJoueurCourant) {
                     List<Coup> coupsPossibles = Utils.getCoupsPossibles(etatJeu, c.getType(), p.getPosition());
                     for (Coup cp : coupsPossibles) {
-                        res += 1;
+                        res += 100;
                         Point arrivee = cp.getArrivee();
                         for (Pion pa : pionsAdverse) {
                             if (pa.getPosition().equals(arrivee)) {
@@ -249,7 +249,7 @@ public class Heuristiques {
         }
         for (Pion p : pionsJoueurCourant) {
             Point positionPion = p.getPosition();
-            res += (int) (Math.sqrt(Math.pow(Math.abs(positionPion.x - maitreAdverse.x), 2) + Math.pow(Math.abs(positionPion.y - maitreAdverse.y), 2)));
+            res += Math.abs(positionPion.x - maitreAdverse.x) + Math.abs(positionPion.y - maitreAdverse.y);
         }
 
         return -1 * res;
@@ -284,7 +284,7 @@ public class Heuristiques {
         }
         for (Pion p : pionsAdverse) {
             Point positionPion = p.getPosition();
-            res += (int) (Math.sqrt(Math.pow(Math.abs(positionPion.x - maitreCourant.x), 2) + Math.pow(Math.abs(positionPion.y - maitreCourant.y), 2)));
+            res += Math.abs(positionPion.x - maitreCourant.x) + Math.abs(positionPion.y - maitreCourant.y);
         }
 
         return res;
@@ -296,7 +296,7 @@ public class Heuristiques {
      * @param etatJeu référence du jeu
      * @return distance entre le pion maître du joueur courant et la case temple adverse
      */
-    public static int distanceMaitreAdverseTemple(EtatJeu etatJeu) {
+    public static int distanceMaitreAdverseTempleCourant(EtatJeu etatJeu) {
         Point positionMaitre = null;
         Point templeAdverse;
         List<Pion> pionsJoueurCourant = etatJeu.getPionsJoueurCourant();
@@ -316,7 +316,7 @@ public class Heuristiques {
         if (positionMaitre == null) {
             return 0;
         }
-        return (int) (-1 * Math.sqrt(Math.pow(Math.abs(templeAdverse.x - positionMaitre.x), 2) + Math.pow(Math.abs(templeAdverse.y - positionMaitre.y), 2)));
+        return Math.abs(templeAdverse.x - positionMaitre.x) + Math.abs(templeAdverse.y - positionMaitre.y);
     }
 
     /**
@@ -325,7 +325,7 @@ public class Heuristiques {
      * @param etatJeu référence du jeu
      * @return proximité entre la case temple et le pion ma�tre du joueur courant
      */
-    public static int distanceMaitreCourantTemple(EtatJeu etatJeu) {
+    public static int distanceMaitreCourantTempleAdverse(EtatJeu etatJeu) {
         Point positionMaitre = null;
         Point temple;
 
@@ -344,7 +344,7 @@ public class Heuristiques {
         if (positionMaitre == null) {
             return 0;
         }
-        return (int) (Math.sqrt(Math.pow(Math.abs(temple.x - positionMaitre.x), 2) + Math.pow(Math.abs(temple.y - positionMaitre.y), 2)));
+        return Math.abs(temple.x - positionMaitre.x) + Math.abs(temple.y - positionMaitre.y);
     }
 
     public static int victoireDefaite(int idJoueur, EtatJeu etatJeu) {
