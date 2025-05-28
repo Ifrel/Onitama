@@ -75,7 +75,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private BoutonCarte[] buttonsCartesJoueur1;
     private BoutonCarte[] buttonsCartesJoueur2;
     private BoutonCarte carteDeRotation;
-    private JButton annuler, refaire,  suggestion;
+    private JButton annuler,
+            refaire,
+            suggestion;
 
     private JButton boutonSon;
 
@@ -167,7 +169,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Verification si partie finie
         if (jeu.estPartieFinie()) {interfaceGraphique.afficherEcranVictoire(jeu.getJoueurCourant().getNom());}
-        suggestion.setEnabled(jeu.getJoueurCourant().getTypeJoueur() != TYPE_JOUEUR.JOUEUR_IA);
 
         // animation de switchage de carte
         idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
