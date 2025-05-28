@@ -591,7 +591,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.setToolTipText("Nombre de partie jouée et temps écoulé");
 
-        numRound = jeu.getNumeroRound();
+        numRound = 1;
         roundLabel = new JLabel("Partie : " + numRound);
         roundLabel.setOpaque(false);
         roundLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -757,7 +757,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             String nomJoueur = jeu.getJoueurCourant().getNom();
             nomJoueurCourantLabel.setText(nomJoueur);
 
-            numRound = jeu.getNumeroRound();
+            numRound = 1;
             roundLabel.setText("Partie: " + numRound);
 
             nomJoueurCourantLabel.setForeground(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()));

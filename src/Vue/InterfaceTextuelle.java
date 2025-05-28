@@ -99,9 +99,9 @@ public class InterfaceTextuelle implements Observateur {
         System.out.println("                                             |");
         System.out.println("     --- Informations de la Partie ---       |");
         System.out.printf("         Round : %d | Temps : %02d:%02d           |%n",
-                jeu.getNumeroRound(),
-                TimeUnit.SECONDS.toMinutes(jeu.getTempsDeJeu()),
-                jeu.getTempsDeJeu() % 60);
+               1,
+                TimeUnit.SECONDS.toMinutes(120),
+                120 % 60);
 
         System.out.println("                                             |");
         System.out.println("             C'est au tour de :              |");

@@ -130,4 +130,14 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
         }
 
     }
+
+
+    /**
+     * Définit quel joueur commence la partie
+     * @param numJoueur Le numéro du joueur (1 ou 2)
+     */
+
+    public void setJoueurQuiCommence(int numJoueur) {
+        jeu.joueurQuiCommence(numJoueur);
+    }
 }

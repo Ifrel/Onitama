@@ -258,6 +258,44 @@ public class EcranDeDemarrage extends JTabbedPane {
         gbc.fill = GridBagConstraints.VERTICAL;
         ongletGeneral.add(Box.createVerticalGlue(), gbc);
 
+
+        // Ajouter le bouton de sélection du joueur qui commence
+        BoutonAvecImage boutonPremierJoueur = Bouton.creerBouton(
+                PATH_BTN.resolve("joueur1.png").toString(),
+                Bouton.ConfigurationParDefaut.Rectangle_transparent_V2
+        );
+        boutonPremierJoueur.setPreferredSize(new Dimension(60, 60));
+        boutonPremierJoueur.setToolTipText("Cliquez pour changer le joueur qui commence");
+
+        final int[] joueurQuiCommence = {1}; // 1 pour joueur 1, 2 pour joueur 2
+
+        boutonPremierJoueur.addActionListener(e -> {
+            joueurQuiCommence[0] = (joueurQuiCommence[0] == 1) ? 2 : 1;
+            String nomJoueur = (joueurQuiCommence[0] == 1) ?
+                    champNomJoueur1.getText() : champNomJoueur2.getText();
+            boutonPremierJoueur.setToolTipText(
+                    "Le " + nomJoueur + " commence la partie"
+            );
+            // Mettre à jour l'image du bouton selon le joueur sélectionné
+            String imagePath = PATH_BTN.resolve(
+                    "joueur" + joueurQuiCommence[0] + ".png"
+            ).toString();
+            boutonPremierJoueur.changerImage(imagePath);
+
+            // Informer le contrôleur du changement
+            CD.setJoueurQuiCommence(joueurQuiCommence[0]);
+        });
+
+        // Ajouter le bouton avec une étiquette appropriée
+        ajouterLigneConfiguration(
+                ongletGeneral,
+                "Joueur qui\n commence",
+                boutonPremierJoueur,
+                5, // Ajuster le numéro de ligne selon votre mise en page
+                FONT_LABEL
+        );
+
+
         return ongletGeneral;
     }
 

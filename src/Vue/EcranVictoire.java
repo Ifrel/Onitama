@@ -58,16 +58,18 @@ public class EcranVictoire extends JPanel {
     }
 
     private void ajouterBoutons(JPanel panneauBoutons) {
-        JButton boutonMenu = creerBoutonStyle("Retour au menu");
+        JButton boutonMenu = creerBoutonStyle("Quitter");
         boutonMenu.addActionListener(e -> {
+            // Arrêter les animations avant de fermer
             animationTimer.stop();
-            interfaceGraphique.ouvrirMenu();
+            interfaceGraphique.getControler().clavier("exit");
         });
 
         JButton boutonRejouer = creerBoutonStyle("Nouvelle partie");
         boutonRejouer.addActionListener(e -> {
+            // Arrêter les animations avant de fermer
             animationTimer.stop();
-            interfaceGraphique.lancerPlateauDeJeu();
+            interfaceGraphique.demarrerNouvellePartie();
         });
 
         panneauBoutons.add(boutonMenu);
@@ -161,8 +163,8 @@ public class EcranVictoire extends JPanel {
 
     private ConfettiParticle createConfetti(Random random) {
         return new ConfettiParticle(
-                random.nextInt(getWidth()),
-                -random.nextInt(getHeight()),
+                random.nextInt(getWidth()+1),
+                -random.nextInt(getHeight()+1),
                 random.nextInt(8) + 4,
                 random.nextFloat() * 2 - 1,
                 2 + random.nextFloat() * 2,

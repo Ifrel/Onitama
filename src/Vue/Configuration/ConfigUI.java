@@ -22,7 +22,7 @@ public class ConfigUI {
     public static final String TITRE_ONGLET_COULEUR     = "Couleur";
 
     public static final String LBL_TITRE_CONFIG     = "configuration";
-    public static final String LBL_MODE_AUTO        = "IA vs IA ";
+    public static final String LBL_MODE_AUTO        = "IA vs IA";
     public static final String LBL_REPRENDRE        = "reprendre";
     public static final String LBL_JOUER_IA         = "contre ia";
     public static final String LBL_JOUEUR_1         = "joueur 1";
