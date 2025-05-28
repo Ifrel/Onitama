@@ -469,10 +469,32 @@ public class Jeu extends Observable implements Runnable {
 
         try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(SAVE_DIR.resolve(fichier))))
         {
-            out.writeObject(idJoueurCourant);
+            out.writeInt(idJoueurCourant);
             out.writeObject(grille);
-            out.writeObject(joueur1);
-            out.writeObject(joueur2);
+            boolean isIA1 = joueur1 instanceof IA;
+            out.writeBoolean(isIA1);
+            if(isIA1){
+                IA ia = (IA) joueur1;
+                out.writeInt(ia.getNiveau().ordinal());
+                out.writeUTF(ia.getNom());
+                //out.writeObject(joueur1.getCartesEnMain());
+            }else{
+                out.writeObject(joueur1);
+            }
+
+
+            out.writeBoolean(joueur2 instanceof IA);
+            if(joueur2 instanceof  IA){
+                IA ia = (IA) joueur2;
+                out.writeInt(ia.getNiveau().ordinal());
+                out.writeUTF(ia.getNom());
+            }else{
+                out.writeObject(joueur2);
+            }
+
+            out.writeObject(joueur1.getCartesEnMain());
+            out.writeObject(joueur2.getCartesEnMain());
+
             out.writeObject(carteSupplementaire);
             out.writeObject(historique);
 
@@ -484,15 +506,74 @@ public class Jeu extends Observable implements Runnable {
     public void chargerJeu(String fichier) throws IOException, ClassNotFoundException {
         try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(SAVE_DIR.resolve(fichier))))
         {
-            idJoueurCourant = (Integer) in.readObject();
+            idJoueurCourant = in.readInt();
             grille = (Pion[][]) in.readObject();
-            joueur1 = (Joueur) in.readObject();
-            joueur2 = (Joueur) in.readObject();
+
+
+            boolean isIA1 = in.readBoolean();
+            if(isIA1) {
+                int ord = in.readInt();
+                String nom = in.readUTF();
+                NIVEAU_IA niv = NIVEAU_IA.values()[ord];
+                switch (niv) {
+                    case FAIBLE:
+                        joueur1 = new IAFaible(this, ID_JOUEUR_1, nom);
+                        break;
+                    case MOYEN:
+                        joueur1 = new IAMoyen(this, ID_JOUEUR_1, nom);
+                        break;
+                    case FORT:
+                        joueur1 = new IAFort(this, ID_JOUEUR_1, nom);
+                        break;
+                    default:
+                        throw new IllegalStateException("Niveau IA invalide: " + niv);
+                }
+            }else {
+                joueur1 = (Joueur) in.readObject();
+            }
+
+
+            boolean isIA2 = in.readBoolean();
+            if(isIA2) {
+                int ord = in.readInt();
+                String nom = in.readUTF();
+                NIVEAU_IA niv = NIVEAU_IA.values()[ord];
+                switch (niv) {
+                    case FAIBLE:
+                        joueur2 = new IAFaible(this, ID_JOUEUR_2, nom);
+                        break;
+                    case MOYEN:
+                        joueur2 = new IAMoyen(this, ID_JOUEUR_2, nom);
+                        break;
+                    case FORT:
+                        joueur2 = new IAFort(this, ID_JOUEUR_2, nom);
+                        break;
+                    default:
+                        throw new IllegalStateException("Niveau IA invalide: " + niv);
+                }
+            }else {
+                joueur2 = (Joueur) in.readObject();
+            }
+
+
+
+            List<Carte> cartes1 = (List<Carte>) in.readObject();
+            joueur1.clearHand();
+            joueur1.addCards(cartes1);
+
+
+            List<Carte> cartes2 = (List<Carte>) in.readObject();
+            joueur2.clearHand();
+            joueur2.addCards(cartes2);
+
+
+
             carteSupplementaire = (Carte) in.readObject();
             historique = (Historique<Coup>) in.readObject();
-            majPions();
-            metAJour();
+
         }
+        majPions();
+        metAJour();
     }
 
     public List<String> listerSauvegardes() {
