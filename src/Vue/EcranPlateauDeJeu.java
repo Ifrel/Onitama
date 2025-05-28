@@ -6,6 +6,7 @@ import Modele.CasePlateau;
 import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.*;
+import Vue.Animations.AnimateurDeCartes;
 import Vue.Animations.AnimationUtils.CardFlipAnimator;
 import Vue.Animations.AnimationUtils.CardFlipLayerUI;
 import Vue.Configuration.InfosDeConfigUI;
@@ -109,6 +110,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     int compCliqueBoutonSuggestion = 0;
 
+    // Animations
+    AnimateurDeCartes animateurDeCartes;
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -127,6 +130,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         logger.info("Interface Plateau de jeu lancée");
         setLayout(new BorderLayout());
 
+        animateurDeCartes = new AnimateurDeCartes();
+
+
         creerButtonsCartes();
         initialiserInterface();
         mettreAJourImagesTerrain();
@@ -143,14 +149,21 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         updatePlayerAndRoundInfo();
         updateUndoRedoButtons();
 
+        // Rotation carte
         if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
                 jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT) {
             listeDescardFlipAnimators.get(4).startAnimation();
             ID_JOUEUR_PRECEDANT   = jeu.getIdJoueurCourant();
         }
 
+        // Verification si partie finie
         if (jeu.estPartieFinie()) {interfaceGraphique.afficherEcranVictoire(jeu.getJoueurCourant().getNom());}
         suggestion.setEnabled(jeu.getJoueurCourant().getTypeJoueur() != TYPE_JOUEUR.JOUEUR_IA);
+
+        // animation de switchage de carte
+        if (jeu.getDernierCoupJoue() != null) { animerEchangeCartes(); }
+
+        idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
 
         logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }
@@ -1224,6 +1237,42 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             }
         });
     }
+
+
+
+    private void animerEchangeCartes() {
+        // Récupérer les positions des cartes
+        Point posCarteSupp = carteDeRotation.getLocation();
+
+        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+            // Animation pour le joueur 1
+            BoutonCarte carteJouee = buttonsCartesJoueur2[idCartePrecedementSelectionnee];
+            animateurDeCartes.animerDeplacement(carteJouee, posCarteSupp);
+
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    Thread.sleep(500); // Attendre que l'animation se termine
+                    animateurDeCartes.animerDeplacement(carteDeRotation, carteJouee.getLocation());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            // Animation pour le joueur 2
+            BoutonCarte carteJouee = buttonsCartesJoueur1[idCartePrecedementSelectionnee];
+            animateurDeCartes.animerDeplacement(carteJouee, posCarteSupp);
+
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    Thread.sleep(500);
+                    animateurDeCartes.animerDeplacement(carteDeRotation, carteJouee.getLocation());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
 
 }
 

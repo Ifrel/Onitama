@@ -30,6 +30,8 @@ public class InfosDeConfigUI implements ConfigurationUI {
     private static final InfosDeConfigUI INSTANCE = new InfosDeConfigUI();
     private final Map<Integer, ConfigurationCouleurJoueur> configurationParJoueur;
 
+
+
     /**
      * Constructeur privé pour le pattern Singleton
      * Initialise la configuration soit depuis le fichier, soit avec les valeurs par défaut
@@ -52,6 +54,7 @@ public class InfosDeConfigUI implements ConfigurationUI {
     private void enregistrerSauvegardeFermeture() {
         Runtime.getRuntime().addShutdownHook(new Thread(this::sauvegarderConfiguration));
     }
+
 
     /**
      * Initialise la configuration par défaut avec des couleurs aléatoires pour chaque joueur
@@ -244,8 +247,7 @@ public class InfosDeConfigUI implements ConfigurationUI {
      */
     private enum TypeCouleur {
         BLEU(new Color(26, 67, 104), "bleu"),
-        ROUGE(new Color(200, 85, 27), "rouge"),
-        NOIR(new Color(1, 1, 1), "noir");
+        ROUGE(new Color(200, 85, 27), "rouge");
 
         private final Color couleur;
         private final String nom;

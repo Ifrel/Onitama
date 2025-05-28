@@ -259,44 +259,6 @@ public class EcranDeDemarrage extends JTabbedPane {
         gbc.fill = GridBagConstraints.VERTICAL;
         ongletGeneral.add(Box.createVerticalGlue(), gbc);
 
-
-        // Ajouter le bouton de sélection du joueur qui commence
-        BoutonAvecImage boutonPremierJoueur = Bouton.creerBouton(
-                Paths.getButtonPath("joueur1.png"),
-                Bouton.ConfigurationParDefaut.Rectangle_transparent_V2
-        );
-        boutonPremierJoueur.setPreferredSize(new Dimension(60, 60));
-        boutonPremierJoueur.setToolTipText("Cliquez pour changer le joueur qui commence");
-
-        final int[] joueurQuiCommence = {1}; // 1 pour joueur 1, 2 pour joueur 2
-
-        boutonPremierJoueur.addActionListener(e -> {
-            joueurQuiCommence[0] = (joueurQuiCommence[0] == 1) ? 2 : 1;
-            String nomJoueur = (joueurQuiCommence[0] == 1) ?
-                    champNomJoueur1.getText() : champNomJoueur2.getText();
-            boutonPremierJoueur.setToolTipText(
-                    "Le " + nomJoueur + " commence la partie"
-            );
-            // Mettre à jour l'image du bouton selon le joueur sélectionné
-            URL imagePath = Paths.getButtonPath(
-                    "joueur" + joueurQuiCommence[0] + ".png"
-            );
-            boutonPremierJoueur.changerImage(imagePath);
-
-            // Informer le contrôleur du changement
-            CD.setJoueurQuiCommence(joueurQuiCommence[0]);
-        });
-
-        // Ajouter le bouton avec une étiquette appropriée
-        ajouterLigneConfiguration(
-                ongletGeneral,
-                "Joueur qui\n commence",
-                boutonPremierJoueur,
-                5, // Ajuster le numéro de ligne selon votre mise en page
-                FONT_LABEL
-        );
-
-
         return ongletGeneral;
     }
 
@@ -446,7 +408,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         boutonSelectionCouleur.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
         if (cible == PION_TERRAIN_JOUEUR_1 || cible == PION_TERRAIN_JOUEUR_2) {
-            JComboBox<String> choixCouleur = new JComboBox<>(new String[]{"noir", "rouge", "bleu"});
+            JComboBox<String> choixCouleur = new JComboBox<>(new String[]{"rouge", "bleu"});
             choixCouleur.setFont(FONT_COMPONENT);
             choixCouleur.setBackground(new Color(255, 255, 255, 255));
 
@@ -462,17 +424,13 @@ public class EcranDeDemarrage extends JTabbedPane {
                 if (result == JOptionPane.OK_OPTION) {
                     Color couleurChoisie;
                     switch (choixCouleur.getSelectedItem().toString()) {
-                        case "noir":
-                            couleurChoisie = new Color(1, 1, 1);
-                            break;
                         case "rouge":
                             couleurChoisie = new Color(200, 85, 27);
                             break;
                         case "bleu":
                             couleurChoisie = new Color(26, 67, 104);
                             break;
-                        default:
-                            return;
+                        default:return;
                     }
                     boutonSelectionCouleur.chargerCouleurFont(couleurChoisie);
                     CD.setCouleurPion(cible, choixCouleur.getSelectedItem().toString());
@@ -553,6 +511,10 @@ public class EcranDeDemarrage extends JTabbedPane {
         JPanel etiquettePanel = PngText.createPngPanel(texteEtiquette, 30);
         etiquettePanel.setOpaque(false);
         panneau.add(etiquettePanel, gbcLabel);
+//        JLabel etiquettePanel = new JLabel(texteEtiquette);
+//        etiquettePanel.setOpaque(false);
+//        etiquettePanel.setFont(policeEtiquette);
+//        panneau.add(etiquettePanel, gbcLabel);
 
         // --- Contraintes du Composant ---
         GridBagConstraints gbcComponent = new GridBagConstraints();

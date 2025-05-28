@@ -1,8 +1,6 @@
 package Vue.Utils;
 
 import Global.Paths;
-import Modele.Carte;
-import Vue.Animations.Animations;
 import Vue.Configuration.InfosDeConfigUI;
 import Vue.EcranPlateauDeJeu.TYPE_ELEMENT_SUR_TERRAIN;
 import Vue.Utils.Boutons.Bouton;
@@ -227,8 +225,6 @@ public class MethodsStaticsUtils {
         public PanelAvecImage panel;
 
         /** Animation associée au bouton (peut être null) */
-        public Animations animation;
-
         public Path pathBouton;
 
         public URL urlBouton;
@@ -241,17 +237,12 @@ public class MethodsStaticsUtils {
         public BoutonAvecI(JButton bouton, PanelAvecImage panel) {
             this.bouton = bouton;
             this.panel = panel;
-            this.animation = null;
             this.pathBouton = null;
         }
 
         /**
          * Associe une animation au bouton.
          * @param animation l’objet animation à lier         */
-        public void setAnimation(Animations animation) {
-            this.animation = animation;
-        }
-
         public void setPathBouton(Path pathBouton){
             this.pathBouton = pathBouton;
         }
