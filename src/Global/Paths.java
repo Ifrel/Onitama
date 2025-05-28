@@ -41,8 +41,6 @@ public class Paths {
      *******************************************/
     private static final String ARRIERE_PLANS_PATH = IMAGES_PATH + "arrierePlans/";
     public static URL getArrierePlanPath(String filename) {
-        System.out.println("abcd " + ARRIERE_PLANS_PATH + filename);
-        System.out.println("bonjour " + Paths.class.getResource(ARRIERE_PLANS_PATH + filename));
         return Paths.class.getResource(ARRIERE_PLANS_PATH + filename);
     }
 

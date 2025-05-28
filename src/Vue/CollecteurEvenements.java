@@ -83,7 +83,7 @@ public interface CollecteurEvenements {
     /**
      * Gère l'activation ou la désactivation d'un mode de jeu automatique
      * impliquant potentiellement des IA.
-     * @param nouvelEtat Le nouvel état du mode automatique (true pour activé, false pour désactivé).     */
+     * Le nouvel état du mode automatique (true pour activé, false pour désactivé).     */
     default void setModeAuto(){};
 
 
