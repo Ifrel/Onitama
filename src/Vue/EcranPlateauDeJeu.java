@@ -370,7 +370,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private void creerCartesNord() {
         // Utilisation de GridBagLayout pour un meilleur contrôle
         cartesNord.setLayout(new GridBagLayout());
-//        cartesNord.setOpaque(false);
+        cartesNord.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
@@ -402,7 +402,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private void creerCartesSud() {
         // Utilisation de GridBagLayout pour un meilleur contrôle
         cartesSud.setLayout(new GridBagLayout());
-//        cartesSud.setOpaque(false);
+        cartesSud.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
@@ -450,7 +450,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridy = 1;
         gbc.weightx = 0.45;
         gbc.weighty = 0.45;
-        cartesEstbis.add(cardFlipAnimator(carteDeRotation), gbc);
+        cartesEstbis.add(cardFlipAnimator(carteDeRotation, 4), gbc);
 
         // Espacement vertical en bas
         gbc.gridy = 2;
@@ -613,7 +613,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         return panel;
     }
 
-    private JLayer<JButton> cardFlipAnimator(BoutonCarte boutonCarte) {
+    private JLayer<JButton> cardFlipAnimator(BoutonCarte boutonCarte, int idCarte) {
         CardFlipAnimator animator = new CardFlipAnimator();
         CardFlipLayerUI<JButton> layerUI = new CardFlipLayerUI<>(animator);
         JLayer<JButton> layer = new JLayer<>(boutonCarte, layerUI);
