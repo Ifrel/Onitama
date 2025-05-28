@@ -60,6 +60,15 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
         this.coupPossible = jeu.getCoupsPossibles(jeu.getCarteSelectionnee(), casePlateau.getCoordonnee());
         desactiveAnimationCible();
         marquerLeCoupPrecedent();
+
+        // Désactive les boutons des pions du joueur qui n'a pas la main
+        if (casePlateau.getTypeElement() != VIDE) {
+            if (casePlateau.getProprietaire() != jeu.getJoueurCourant().getId()) {
+                boutonTerrain.setEnabled(false);
+            }else {
+                boutonTerrain.setEnabled(true);
+            }
+        }
     }
 
 

@@ -258,7 +258,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridwidth = 1;
         gbc.weightx = 2.0;
         gbc.weighty = 1.0;
-//        cartesNord.setPreferredSize(new Dimension(0, 100));
         panel.add(cartesNord, gbc);
 
         // Panneau est (cartes)
@@ -267,7 +266,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridwidth = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 2.0;
-//        cartesEst.setPreferredSize(new Dimension(100, 0));
         panel.add(cartesEst, gbc);
 
         // Terrain central (maintenu carré)
@@ -287,15 +285,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.weightx = 1.0;
         gbc.weighty = 2.0;
         JPanel boutonsDroite = creerBoutonsDroite();
-//        boutonsDroite.setPreferredSize(new Dimension(100, 0));
         panel.add(boutonsDroite, gbc);
 
         // Panneau sud (cartes)
         gbc.gridx = 1;
         gbc.gridy = 2;
-        gbc.weightx = 2.2;
+        gbc.weightx = 2.0;
         gbc.weighty = 1.0;
-//        cartesSud.setPreferredSize(new Dimension(0, 100));
         panel.add(cartesSud, gbc);
     }
 
@@ -437,31 +433,34 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private void creerCarteGauche() {
         JPanel cartesEstbis = new JPanel(new GridBagLayout());
-//        cartesEstbis.setOpaque(false);
+        cartesEstbis.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
+
 
         // Espacement vertical en haut
         gbc.gridy = 0;
-        gbc.weighty = 1.0;
+        gbc.weightx = 2;
+        gbc.weighty = 1.1;
         cartesEstbis.add(Box.createVerticalGlue(), gbc);
 
         // Carte de rotation au centre
         gbc.gridy = 1;
+        gbc.weightx = 0.45;
         gbc.weighty = 0.45;
         cartesEstbis.add(cardFlipAnimator(carteDeRotation), gbc);
 
         // Espacement vertical en bas
         gbc.gridy = 2;
-        gbc.weighty = 1.0;
+        gbc.weightx = 1.1;
+        gbc.weighty = 1.1;
         cartesEstbis.add(Box.createVerticalGlue(), gbc);
 
         // Configuration du panel Est
         cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.X_AXIS));
-//        cartesEst.setOpaque(false);
+        cartesEst.setOpaque(false);
 
         // Ajout d'un espacement horizontal et du panel de la carte
         cartesEst.add(Box.createHorizontalGlue());
@@ -471,7 +470,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private JPanel creerBoutonsDroite() {
         // Création du panel principal avec GridBagLayout
         JPanel droite = new JPanel(new GridBagLayout());
-//        droite.setOpaque(false);
+        droite.setOpaque(false);
 
         // Création des boutons
         annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
@@ -507,8 +506,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Ajout de l'espace élastique en haut
         gbc.gridy = 0;
+        droite.add(Box.createVerticalGlue(), gbc);
+        gbc.gridy++;
+        droite.add(Box.createVerticalGlue(), gbc);
 
         // Ajout des boutons
+        gbc.gridy++;
         droite.add(annuler, gbc);
 
         gbc.gridy++;
@@ -518,6 +521,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         droite.add(suggestion, gbc);
 
         // Ajout de l'espace élastique en bas
+        gbc.gridy++;
+        droite.add(Box.createVerticalGlue(), gbc);
         gbc.gridy++;
         droite.add(Box.createVerticalGlue(), gbc);
 
