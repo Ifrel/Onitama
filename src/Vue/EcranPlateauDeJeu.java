@@ -357,16 +357,36 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private void creerCarteGauche() {
-        JPanel cartesEstbis = new JPanel(new GridLayout(3, 1, 0, 100));
-        cartesEstbis.setOpaque(false);
-        cartesEstbis.add(Box.createVerticalGlue());
-        cartesEstbis.add(cardFlipAnimator(carteDeRotation));
-        cartesEstbis.add(Box.createVerticalGlue());
+        JPanel cartesEstbis = new JPanel(new GridBagLayout());
+//        cartesEstbis.setOpaque(false);
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+
+        // Espacement vertical en haut
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+        cartesEstbis.add(Box.createVerticalGlue(), gbc);
+
+        // Carte de rotation au centre
+        gbc.gridy = 1;
+        gbc.weighty = 0.45;
+        cartesEstbis.add(cardFlipAnimator(carteDeRotation), gbc);
+
+        // Espacement vertical en bas
+        gbc.gridy = 2;
+        gbc.weighty = 1.0;
+        cartesEstbis.add(Box.createVerticalGlue(), gbc);
+
+        // Configuration du panel Est
         cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.X_AXIS));
-        cartesEst.add(Box.createGlue());
+//        cartesEst.setOpaque(false);
+
+        // Ajout d'un espacement horizontal et du panel de la carte
+        cartesEst.add(Box.createHorizontalGlue());
         cartesEst.add(cartesEstbis);
-        cartesEst.setOpaque(false);
     }
 
     private JPanel creerBoutonsDroite() {
@@ -375,12 +395,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
         refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
-        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion_on.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
 
         Dimension DIM = new Dimension(70, 70);
         annuler.setPreferredSize(DIM);
         refaire.setPreferredSize(DIM);
-        suggestion.setPreferredSize(DIM);
+        suggestion.setPreferredSize(new Dimension(70, 100));
 
         annuler.setBackground(new Color(207, 207, 207, 44));
         refaire.setBackground(new Color(207, 207, 207, 44));
