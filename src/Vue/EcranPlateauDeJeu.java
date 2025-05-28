@@ -1085,11 +1085,22 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
 
-    private void afficherTimerFlottant(int dureeSecondes, JButton suggestion) {
-         // Créer un JDialog flottant
-        JDialog dialogTimer = new JDialog();
-        dialogTimer.setUndecorated(true);
-        dialogTimer.setBackground(new Color(0, 0, 0, 0));
+
+    /**
+     * Displays a floating countdown timer next to a reference button. The timer is rendered as
+     * a circular progress visualization and positioned dynamically relative to the provided
+     * button. This floating timer remains on top of other application windows and updates its
+     * location if the reference button is moved during the countdown.
+     *
+     * @param dureeSecondes the duration of the countdown timer in seconds
+     * @param boutonReference the reference button used to position the floating timer
+     */
+    private void afficherTimerFlottant(int dureeSecondes, JButton boutonReference) {
+        // Créer un JFrame flottant au lieu d'un JDialog
+        JFrame frameTimer = new JFrame();
+        frameTimer.setUndecorated(true);
+        frameTimer.setBackground(new Color(0, 0, 0, 0));
+        frameTimer.setAlwaysOnTop(true);
 
         // Variables pour le timer
         final int[] tempsRestant = new int[1];
@@ -1127,28 +1138,49 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         panelTimer.setPreferredSize(new Dimension(80, 80));
         panelTimer.setOpaque(false);
-        dialogTimer.add(panelTimer);
-        dialogTimer.pack();
+        frameTimer.add(panelTimer);
+        frameTimer.pack();
+
+        // Rendre la fenêtre transparente
+        frameTimer.setBackground(new Color(0, 0, 0, 0));
 
         // Positionner le timer à côté du bouton suggestion
-        Point boutonLocation = suggestion.getLocationOnScreen();
-        dialogTimer.setLocation(
-                boutonLocation.x + suggestion.getWidth() + 10, // 10 pixels à droite du bouton
-                boutonLocation.y + (suggestion.getHeight() - dialogTimer.getHeight()) / 2 // Centré verticalement
-        );
+        try {
+            Point boutonLocation = boutonReference.getLocationOnScreen();
+            frameTimer.setLocation(
+                    boutonLocation.x + boutonReference.getWidth() + 10,
+                    boutonLocation.y + (boutonReference.getHeight() - frameTimer.getHeight()) / 2
+            );
+        } catch (IllegalComponentStateException e) {
+            // Gérer le cas où le bouton n'est pas encore affiché
+            frameTimer.setLocationRelativeTo(null);
+        }
 
         // Créer et démarrer le timer
         Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tempsRestant[0]--;
-                progress[0] = (int) (((double) (dureeSecondes - tempsRestant[0]) / dureeSecondes) * 360);
+                if (tempsRestant[0] > 0) {
+                    tempsRestant[0]--;
+                    progress[0] = (int) (((double) (dureeSecondes - tempsRestant[0]) / dureeSecondes) * 360);
+                    panelTimer.repaint();
 
-                panelTimer.repaint();
+                    // Mettre à jour la position si le bouton de référence bouge
+                    try {
+                        Point boutonLocation = boutonReference.getLocationOnScreen();
+                        frameTimer.setLocation(
+                                boutonLocation.x + boutonReference.getWidth() + 10,
+                                boutonLocation.y + (boutonReference.getHeight() - frameTimer.getHeight()) / 2
+                        );
+                    } catch (IllegalComponentStateException ex) {
+                        // Ignorer si le bouton n'est pas visible
+                    }
+                }
 
                 if (tempsRestant[0] <= 0) {
                     ((Timer)e.getSource()).stop();
-                    dialogTimer.dispose();
+                    // Attendre un court instant avant de fermer pour montrer le "0"
+                    new Timer(1000, evt -> frameTimer.dispose()).start();
 
                     suggestion.setIcon(new ImageIcon(PATH_BTN.resolve("suggestion_on.png").toString()));
                     suggestion.setEnabled(true);
@@ -1156,11 +1188,22 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             }
         });
 
-        dialogTimer.setVisible(true);
+        frameTimer.setVisible(true);
         timer.start();
+
+        // Gérer la fermeture propre de la fenêtre
+        frameTimer.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                timer.stop();
+                frameTimer.dispose();
+            }
+        });
     }
 
 }
+
+
 
 
 
