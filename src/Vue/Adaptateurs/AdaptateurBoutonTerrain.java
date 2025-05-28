@@ -7,6 +7,7 @@ import Patterns.Observateur;
 import Vue.CollecteurEvenements;
 import Vue.EcranPlateauDeJeu;
 import Vue.Utils.Boutons.BoutonTerrain;
+import Vue.Utils.StatsJeu;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,6 +28,7 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
     private Coup coupPrecedantLeDernierCoupJouer;
 
     private static final Logger logger = Logger.getLogger(AdaptateurBoutonTerrain.class.getName());
+    private final StatsJeu statsJeu = StatsJeu.getInstance();
 
 
     public AdaptateurBoutonTerrain(
@@ -69,6 +71,12 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
                 boutonTerrain.setEnabled(true);
             }
         }
+
+        // Mise à jour des stats si nécessaire
+        if (jeu.estPartieFinie()) {
+            statsJeu.incrementerRound();
+        }
+
     }
 
 

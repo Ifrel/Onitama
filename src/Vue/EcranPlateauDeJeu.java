@@ -17,6 +17,7 @@ import Vue.Utils.Boutons.BoutonCarte;
 import Vue.Utils.Boutons.BoutonTerrain;
 import Vue.Utils.PanelAvecImage;
 import Vue.Utils.PanelRatioFixe;
+import Vue.Utils.StatsJeu;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -30,8 +31,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -83,7 +82,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private JLabel nomJoueurCourantLabel;
     private JLabel tempsLabel;
     private JLabel roundLabel;
-    private int numRound;
+    private int parties = 1;
 
     // Gestion du son
     Clip clip;
@@ -112,6 +111,17 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     // Animations
     AnimateurDeCartes animateurDeCartes;
+
+
+    // Gestions de Statistiques
+    private final StatsJeu statsJeu = StatsJeu.getInstance();
+    private boolean partieEnCours = false;
+    private boolean partieEnPause = false;
+    private boolean partieEnVictoire = false;
+    private boolean partieEnDefaite = false;
+    private boolean partieEnFinDePartie = false;
+    private boolean partieEnFinDeJeu = false;
+
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -162,11 +172,51 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // animation de switchage de carte
         if (jeu.getDernierCoupJoue() != null) { animerEchangeCartes(); }
-
         idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
+
+        // Mise a jour des Infos des Statatistiques
+        SwingUtilities.invokeLater(() -> {
+            // Mise à jour des stats
+            if (jeu.estPartieFinie()) {
+                statsJeu.incrementerRound();
+            }
+
+            if (partieEnCours && !partieEnPause) {
+                statsJeu.updateDureePartie();
+            }
+
+            // Mise à jour des scores
+            if (jeu.estPartieFinie()) {
+                if (jeu.getJoueurCourant().getId() == ID_JOUEUR_1) {
+                    statsJeu.setScoreJoueur1(statsJeu.getScoreJoueur1() + 1);
+                } else {
+                    statsJeu.setScoreJoueur2(statsJeu.getScoreJoueur2() + 1);
+                }
+            }
+
+            // Mise à jour du reste de l'interface
+            updatePlayerAndRoundInfo2();
+            mettreAJourImagesCartes();
+            updateUndoRedoButtons();
+        });
+
+
 
         logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }
+
+
+    private void updatePlayerAndRoundInfo2() {
+        roundLabel.setText("Partie: " + statsJeu.getNombreParties());
+        Duration duree = statsJeu.getDureePartie();
+        long minutes = duree.toMinutes();
+        long secondes = duree.minusMinutes(minutes).getSeconds();
+        tempsLabel.setText(String.format("Temps: %02d:%02d", minutes, secondes));
+    }
+
+
+
+
 
     /**
      * Initialise l'interface utilisateur avec GridBagLayout.
@@ -615,8 +665,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.setToolTipText("Nombre de partie jouée et temps écoulé");
 
-        numRound = 1;
-        roundLabel = new JLabel("Partie : " + numRound);
+        parties = 1;
+        roundLabel = new JLabel("Partie : " + parties);
         roundLabel.setOpaque(false);
         roundLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
@@ -803,8 +853,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             String nomJoueur = jeu.getJoueurCourant().getNom();
             nomJoueurCourantLabel.setText(nomJoueur);
 
-            numRound = 1;
-            roundLabel.setText("Partie: " + numRound);
+            parties = 1;
+            roundLabel.setText("Partie: " + parties);
 
             nomJoueurCourantLabel.setForeground(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()));
         }

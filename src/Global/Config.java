@@ -60,7 +60,7 @@ public class Config {
     }
 
     // -- DIMENSION --
-    public static final Dimension DIM_SCENE = new Dimension(1000, 900);
+    public static final Dimension DIM_SCENE = new Dimension(900, 600);
 
     // --- DEBUG --
     public static final boolean MODEDEBUG = true;
