@@ -1,8 +1,6 @@
 package Vue.Utils;
 
 import Global.Paths;
-import Modele.Carte;
-import Vue.Animations.Animations;
 import Vue.Configuration.InfosDeConfigUI;
 import Vue.EcranPlateauDeJeu.TYPE_ELEMENT_SUR_TERRAIN;
 import Vue.Utils.Boutons.Bouton;
@@ -16,6 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.net.URL;
 
 import static Global.Config.ID_JOUEUR_1;
 import static Global.Config.ID_JOUEUR_2;
@@ -46,7 +45,7 @@ public class MethodsStaticsUtils {
      * - Le chemin est construit en résolvant le nom du fichier par rapport à PATH_DEBUT_PION.
      * - Le rôle peut être "etudiant" ou "maitre", et la couleur est récupérée dynamiquement selon le joueur.
      */
-    public static Path getCheminImagePion(InfosDeConfigUI infosDeConfigUI, TYPE_ELEMENT_SUR_TERRAIN type) {
+    public static URL getCheminImagePion(InfosDeConfigUI infosDeConfigUI, TYPE_ELEMENT_SUR_TERRAIN type) {
         if (type == TYPE_ELEMENT_SUR_TERRAIN.VIDE) {
             return null; // ou retourne un chemin vers une image "vide" si besoin
         }
@@ -80,25 +79,10 @@ public class MethodsStaticsUtils {
         }
 
         String nomFichier = role + nomCouleurPion + ".png";
-        return PATH_DEBUT_PION.resolve(nomFichier);
+        return getPionPath(nomFichier);
     }
 
-
-
-
-    /**
-     * Retourne le chemin du fichier image correspondant à la carte donnée.
-     *
-     * @param carte La carte dont on souhaite obtenir l'image.
-     * @return Le chemin relatif vers l'image de la carte (format PNG), construit à partir du nom de la carte.
-     *
-     * Exemple : pour une carte nommée "tigre", le chemin retourné sera "PATH_CARTE/tigre.png".
-     */
-
-    public static Path getCheminImageCarte(Carte carte){
-        Path path = PATH_CARTE.resolve(carte.getNom() +".png");
-        return path;
-    }
+    
 
 
     /**
@@ -208,20 +192,21 @@ public class MethodsStaticsUtils {
      * Crée un bouton transparent avec une image d’arrière-plan personnalisée,
      * encapsulé dans un objet contenant également son panneau image.
      *
-     * @param cheminImage le chemin vers l’image à utiliser en arrière-plan
+     * @param nomImage le chemin vers l’image à utiliser en arrière-plan
      * @return un objet BoutonAvecImage contenant le JButton et le PanelAvecImage     */
-    public static BoutonAvecI creerBoutonAvecImage(Path cheminImage) {
+    public static BoutonAvecI creerBoutonAvecImage(String nomImage) {
         JButton bouton = new JButton();
         bouton.setBorderPainted(true);
         bouton.setFocusPainted(false);
         bouton.setContentAreaFilled(false);
         bouton.setOpaque(false);
 
-        PanelAvecImage panel = new PanelAvecImage(cheminImage);
+        URL imageUrl = Paths.getButtonPath(nomImage);
+        PanelAvecImage panel = new PanelAvecImage(imageUrl);
         bouton.add(panel);
 
         BoutonAvecI boutonAvecImage = new BoutonAvecI(bouton, panel);
-        boutonAvecImage.setPathBouton(cheminImage);
+        boutonAvecImage.setUrlBouton(imageUrl);
 
         return boutonAvecImage;
     }
@@ -240,9 +225,9 @@ public class MethodsStaticsUtils {
         public PanelAvecImage panel;
 
         /** Animation associée au bouton (peut être null) */
-        public Animations animation;
-
         public Path pathBouton;
+
+        public URL urlBouton;
 
 
         /**
@@ -252,19 +237,18 @@ public class MethodsStaticsUtils {
         public BoutonAvecI(JButton bouton, PanelAvecImage panel) {
             this.bouton = bouton;
             this.panel = panel;
-            this.animation = null;
             this.pathBouton = null;
         }
 
         /**
          * Associe une animation au bouton.
          * @param animation l’objet animation à lier         */
-        public void setAnimation(Animations animation) {
-            this.animation = animation;
-        }
-
         public void setPathBouton(Path pathBouton){
             this.pathBouton = pathBouton;
+        }
+
+        public void setUrlBouton(URL urlBouton){
+            this.urlBouton = urlBouton;
         }
     }
 
@@ -296,7 +280,7 @@ public class MethodsStaticsUtils {
         panel.add(message, BorderLayout.CENTER);
 
         // Bouton de fermeture
-        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(Paths.PATH_BTN.resolve("exit.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(Paths.getButtonPath("exit.png"), Bouton.ConfigurationParDefaut.Cercle_transparent);
         fermer.setPreferredSize(new Dimension(60,60));
         fermer.addActionListener(e -> SwingUtilities.getWindowAncestor(panel).dispose());
         JPanel panelBtn = new JPanel();
@@ -320,10 +304,3 @@ public class MethodsStaticsUtils {
         dialog.setVisible(true);
     }
 }
-
-
-
-
-
-
-

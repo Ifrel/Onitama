@@ -1,10 +1,12 @@
 package Vue;
 
+import Global.Paths;
 import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.*;
+import Vue.Animations.AnimateurDeCartes;
 import Vue.Animations.AnimationUtils.CardFlipAnimator;
 import Vue.Animations.AnimationUtils.CardFlipLayerUI;
 import Vue.Configuration.InfosDeConfigUI;
@@ -27,6 +29,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -107,6 +110,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     int compCliqueBoutonSuggestion = 0;
 
+    // Animations
+    AnimateurDeCartes animateurDeCartes;
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -115,7 +120,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
      * @param interfaceGraphique Scène principale
      */
     public EcranPlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
-        super(PATH_ARRIERE_PLAN_8);
+        super(getArrierePlanPath("arrierePlan8.png"));
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
@@ -124,6 +129,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         jeu.ajouteObservateur(this);
         logger.info("Interface Plateau de jeu lancée");
         setLayout(new BorderLayout());
+
+        animateurDeCartes = new AnimateurDeCartes();
+
 
         creerButtonsCartes();
         initialiserInterface();
@@ -141,14 +149,21 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         updatePlayerAndRoundInfo();
         updateUndoRedoButtons();
 
+        // Rotation carte
         if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
                 jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT) {
             listeDescardFlipAnimators.get(4).startAnimation();
             ID_JOUEUR_PRECEDANT   = jeu.getIdJoueurCourant();
         }
 
+        // Verification si partie finie
         if (jeu.estPartieFinie()) {interfaceGraphique.afficherEcranVictoire(jeu.getJoueurCourant().getNom());}
         suggestion.setEnabled(jeu.getJoueurCourant().getTypeJoueur() != TYPE_JOUEUR.JOUEUR_IA);
+
+        // animation de switchage de carte
+        if (jeu.getDernierCoupJoue() != null) { animerEchangeCartes(); }
+
+        idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
 
         logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }
@@ -347,7 +362,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
             // --- Carte de rotation (carte supplémentaire) ---
             Carte carteSupplementaire = jeu.getCarteSupplementaire();
-            BufferedImage imageSupplementaire = ImageIO.read(getCheminImageCarte(carteSupplementaire).toFile());
+            BufferedImage imageSupplementaire = ImageIO.read(Paths.getCartePath(carteSupplementaire.getNom() + ".png"));
             carteDeRotation = new BoutonCarte(imageSupplementaire);
             imagesCartes.put(carteSupplementaire.getType(), imageSupplementaire);
 
@@ -363,8 +378,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
                 Carte carteJ1 = cartesJoueur1.get(i);
                 Carte carteJ2 = cartesJoueur2.get(i);
 
-                BufferedImage imageJ1 = ImageIO.read(getCheminImageCarte(carteJ1).toFile());
-                BufferedImage imageJ2 = ImageIO.read(getCheminImageCarte(carteJ2).toFile());
+                BufferedImage imageJ1 = ImageIO.read(Paths.getCartePath(carteJ1.getNom() + ".png").openStream());
+                BufferedImage imageJ2 = ImageIO.read(Paths.getCartePath(carteJ2.getNom() + ".png").openStream());
+
 
                 // Création des boutons avec leur image respective
                 BoutonCarte boutonJ1 = new BoutonCarte(imageJ1);
@@ -498,9 +514,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         droite.setOpaque(false);
 
         // Création des boutons
-        annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
-        refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
-        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion_on.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
+        annuler = Bouton.creerBouton(PATH_BTN_ANNULER, Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
+        refaire = Bouton.creerBouton(PATH_BTN_REFAIRE, Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
+        suggestion = Bouton.creerBouton(Paths.getButtonPath("suggestion_on.png"), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
 
         // Configuration des dimensions
         annuler.setPreferredSize(DIM_BTN_ACTION);
@@ -521,7 +537,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             compCliqueBoutonSuggestion++;
 
             suggestion.setEnabled(false);
-            suggestion.setIcon(new ImageIcon(PATH_BTN.resolve("suggestion.png").toString()));
+            suggestion.setIcon(new ImageIcon(Paths.getButtonPath("suggestion.png")));
             afficherTimerFlottant(compCliqueBoutonSuggestion *5, suggestion);
 
         });
@@ -560,7 +576,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private JButton creerBoutonSon() {
-        boutonSon = Bouton.creerBouton(PATH_BTN_MUET.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        boutonSon = Bouton.creerBouton(Paths.getButtonPath("muet.png"), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         boutonSon.setPreferredSize(DIM_BARRE_MENU);
         boutonSon.setToolTipText("Musique");
         boutonSon.addActionListener(e -> toggleMusique(boutonSon));
@@ -618,7 +634,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private JButton creerBoutonMenu() {
-        BoutonAvecImage menu = Bouton.creerBouton(PATH_BTN_MENU.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        BoutonAvecImage menu = Bouton.creerBouton(PATH_BTN_MENU, Bouton.ConfigurationParDefaut.SansBordure_transparent);
         menu.setPreferredSize(DIM_BARRE_MENU);
         menu.setToolTipText("Menu");
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
@@ -630,13 +646,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         panel.setOpaque(false);
 
-        BoutonAvecImage bouton = Bouton.creerBouton(PATH_BTN.resolve("ia.png").toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        BoutonAvecImage bouton = Bouton.creerBouton(Paths.getButtonPath("ia.png"), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         bouton.setPreferredSize(DIM_BARRE_MENU);
         bouton.setToolTipText("IA vs IA");
         bouton.addActionListener(e -> {
             collecteurEv.clavier("ia vs ia");
             isActive[0] = !isActive[0];
-            bouton.changerImage(PATH_BTN.resolve("ia" + (isActive[0] ? "_on" : "") + ".png").toString());
+            bouton.changerImage(Paths.getButtonPath("ia" + (isActive[0] ? "_on" : "") + ".png"));
         });
         panel.add(bouton);
         return panel;
@@ -807,9 +823,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private void chargerImagesTerrain() {
         for (TYPE_ELEMENT_SUR_TERRAIN type : TYPE_ELEMENT_SUR_TERRAIN.values()) {
             try {
-                Path chemin = getCheminImagePion(infosDeConfigUI, type);
-                if (chemin != null && Files.exists(chemin)) {
-                    BufferedImage image = ImageIO.read(chemin.toFile());
+                URL chemin = getCheminImagePion(infosDeConfigUI, type);
+                if (chemin != null) {
+                    BufferedImage image = ImageIO.read(chemin);
                     imagesCaseTerrain.put(type, image);
                 } else {
                     logger.warning("Aucune image trouvée pour le type : " + type + " (chemin : " + chemin + ")");
@@ -1048,7 +1064,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
     private void creerBoutonFlottant() {
-        boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
+        boutonFlottant = Bouton.creerBouton(Paths.getButtonPath("optionJoueur.png"), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
         boutonFlottant.setSize(DIM_BARRE_MENU);
 
         // Rendre le bouton déplaçable
@@ -1203,7 +1219,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
                     // Attendre un court instant avant de fermer pour montrer le "0"
                     new Timer(1000, evt -> frameTimer.dispose()).start();
 
-                    suggestion.setIcon(new ImageIcon(PATH_BTN.resolve("suggestion_on.png").toString()));
+                    suggestion.setIcon(new ImageIcon(Paths.getButtonPath("suggestion_on.png")));
                     suggestion.setEnabled(true);
                 }
             }
@@ -1221,6 +1237,42 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             }
         });
     }
+
+
+
+    private void animerEchangeCartes() {
+        // Récupérer les positions des cartes
+        Point posCarteSupp = carteDeRotation.getLocation();
+
+        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
+            // Animation pour le joueur 1
+            BoutonCarte carteJouee = buttonsCartesJoueur2[idCartePrecedementSelectionnee];
+            animateurDeCartes.animerDeplacement(carteJouee, posCarteSupp);
+
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    Thread.sleep(500); // Attendre que l'animation se termine
+                    animateurDeCartes.animerDeplacement(carteDeRotation, carteJouee.getLocation());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            // Animation pour le joueur 2
+            BoutonCarte carteJouee = buttonsCartesJoueur1[idCartePrecedementSelectionnee];
+            animateurDeCartes.animerDeplacement(carteJouee, posCarteSupp);
+
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    Thread.sleep(500);
+                    animateurDeCartes.animerDeplacement(carteDeRotation, carteJouee.getLocation());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
 
 }
 

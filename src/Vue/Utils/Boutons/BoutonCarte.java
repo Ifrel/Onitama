@@ -3,6 +3,8 @@ package Vue.Utils.Boutons;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -27,8 +29,10 @@ public class BoutonCarte extends JButton {
     private BufferedImage imageFond; // Added for background image
     private final float[] phase = {0f}; // Phase pour l’animation de la bordure
 
-    private final Timer minuteur;
+    private Timer minuteur;
     private int arrondiCoins = 20;
+    private Point positionInitiale;
+
 
 
     /**
@@ -97,34 +101,20 @@ public class BoutonCarte extends JButton {
 
 
 
-    /**
-     * Constructeur avec styles personnalisables sans image.
-     *
-     * @param texte Le texte affiché sur le bouton.
-     * @param epaisseurBordure Épaisseur de la bordure.
-     * @param couleurBordureNormale Couleur de bordure en mode inactif.
-     * @param couleurBordureAnimation Couleur utilisée dans l’animation.
-     * @param couleurFond Couleur de fond normale.
-     * @param couleurFondSurvol Couleur de fond lors du survol.
-     * @param arrondiCoins Rayon des coins arrondis.
-     */
-    public BoutonCarte(
-            String texte,
-            float epaisseurBordure,
-            Color couleurBordureNormale,
-            Color couleurBordureAnimation,
-            Color couleurFond,
-            Color couleurFondSurvol,
-            int arrondiCoins)
-    {
-        this(   texte,
-                epaisseurBordure,
-                couleurBordureNormale,
-                couleurBordureAnimation,
-                couleurFond, couleurFondSurvol,
-                arrondiCoins,
-                null);
+    public BoutonCarte(ImageIcon icon) {
+        super(icon);
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                if (positionInitiale == null) {
+                    positionInitiale = getLocation();
+                }
+            }
+        });
     }
+
+
+
 
 
     /**
@@ -349,9 +339,8 @@ public class BoutonCarte extends JButton {
     }
 
 
-    // -----------------------------
-    // Méthodes de configuration (rest unchanged)
-    // -----------------------------
+
+
 
 
     /**
@@ -484,4 +473,16 @@ public class BoutonCarte extends JButton {
         animationActive = false;
         minuteur.stop();
     }
+
+
+    public Point getPositionInitiale() {
+        return positionInitiale;
+    }
+
+    public void retournerPositionInitiale() {
+        if (positionInitiale != null) {
+            setLocation(positionInitiale);
+        }
+    }
+
 }

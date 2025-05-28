@@ -1,5 +1,7 @@
 package Vue.LabO;
 
+import Global.Paths;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-import static Global.Paths.PATH_CARTE;
 
 /**
  * Classe représentant une fenêtre avec un effet de carte réversible en 3D.
@@ -48,7 +49,7 @@ public class EffetCarteReversible extends JFrame {
      */
     private void chargerImage(String cheminImage) {
         try {
-            image = ImageIO.read(new File(cheminImage));
+            image = ImageIO.read(Paths.getCartePath(cheminImage).openStream());
         } catch (IOException e) {
             afficherErreur("Erreur de chargement : " + e.getMessage());
             dispose();
@@ -249,6 +250,6 @@ class test {
      * @param args Arguments de la ligne de commande
      */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new EffetCarteReversible(PATH_CARTE.resolve("TIGRE.png").toString()));
+        SwingUtilities.invokeLater(() -> new EffetCarteReversible(Paths.getCartePath("TIGRE.png").toString()));
     }
 }

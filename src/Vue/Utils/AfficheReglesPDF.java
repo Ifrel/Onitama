@@ -32,7 +32,8 @@ public class AfficheReglesPDF {
      * @param composantParent Le composant parent pour les dialogues, utilisé pour le centrage.
      */
     public static void ouvrirReglesPDFExterne(Component composantParent) {
-        File fichierRegles = REGLES.resolve("regles_du_jeu.pdf").toFile();
+        File fichierRegles = new File(getReglesPath("regles_du_jeu.pdf").getFile());
+
 
         // Vérification de l'existence du fichier
         if (!fichierRegles.exists()) {
@@ -114,7 +115,7 @@ public class AfficheReglesPDF {
 
         // 3. Panel personnalisé qui dessine l'image de fond
         JPanel fondPanel = new JPanel() {
-            Image img = new ImageIcon(PATH_ARRIERE.resolve("arrierePlan4.png").toString()).getImage(); // Mets le chemin de ton image ici
+            Image img = new ImageIcon(Paths.getArrierePlanPath("arrierePlan4.png").toString()).getImage();
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -126,7 +127,7 @@ public class AfficheReglesPDF {
         fondPanel.add(scrollPane, BorderLayout.CENTER);
 
         // 4. Bouton de fermeture
-        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(Paths.PATH_BTN.resolve("exit.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
+        Bouton.BoutonAvecImage fermer = Bouton.creerBouton(Paths.getArrierePlanPath("arrierePlan4.png"), Bouton.ConfigurationParDefaut.Cercle_transparent);
         fermer.setPreferredSize(new Dimension(60,60));
         fermer.addActionListener(e -> SwingUtilities.getWindowAncestor(fondPanel).dispose());
         JPanel panelBtn = new JPanel();

@@ -1,5 +1,7 @@
 package Vue.LabO;
 
+import Global.Paths;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -257,7 +259,7 @@ class TestAnimatedButton {
             // Exemple d'utilisation avec une icône (assurez-vous d'avoir une image valide)
             try {
                 // Remplacez "chemin/vers/votre/image.png" par un vrai chemin d'accès ou une ressource
-                 BufferedImage img = ImageIO.read(new File(Global.Paths.PATH_CARTE.resolve("TIGRE.png").toString())); // Exemple avec votre constante
+                BufferedImage img = ImageIO.read(Paths.getCartePath("TIGRE.png").openStream());
                  Icon icon = new ImageIcon(img.getScaledInstance(50, 50, Image.SCALE_SMOOTH)); // Redimensionner l'icône si besoin
                  AnimatedCardButton boutonImage = new AnimatedCardButton(icon, false);
                  boutonImage.setPreferredSize(new Dimension(80, 80)); // Définir une taille pour l'icône

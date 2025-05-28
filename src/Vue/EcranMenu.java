@@ -1,15 +1,19 @@
 package Vue;
 
+import Global.Paths;
 import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.*;
 import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.PanelAvecImage;
 
+import javax.print.DocFlavor;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.net.URL;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -18,7 +22,6 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 
 import static Global.Paths.PATH_ARRIERE_PLAN_4;
-import static Global.Paths.PATH_BTN;
 
 /**
  * La classe {@code EcranMenu} représente l'écran de menu principal du jeu.
@@ -386,7 +389,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
      * @param borderInsets        Marges intérieures pour le panel.
      * @return Un {@link JPanel} configuré avec le bouton.
      */
-    private JPanel creerPanelAvecBouton(String imagePath, Dimension dimension, ActionListener listener, int flowLayoutAlignment, Insets borderInsets) {
+    private JPanel creerPanelAvecBouton(URL imagePath, Dimension dimension, ActionListener listener, int flowLayoutAlignment, Insets borderInsets) {
         Bouton.BoutonAvecImage bouton = Bouton.creerBouton(imagePath, Bouton.ConfigurationParDefaut.SansBordure_transparent);
         bouton.setPreferredSize(dimension);
         if (listener != null) {
@@ -410,7 +413,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelRetour() {
         return creerPanelAvecBouton(
-                PATH_BTN.resolve("decliner.png").toString(),
+                Paths.getButtonPath("decliner.png"),
                 DIM_BOUTON_RETOUR,
                 e -> interfaceGraphique.fermerMenu(),
                 FlowLayout.RIGHT,
@@ -426,7 +429,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelSauvegarde() {
         return creerPanelAvecBouton(
-                PATH_BTN.resolve("sauvegarder.png").toString(),
+                Paths.getButtonPath("sauvegarder.png"),
                 DIM_BOUTON_SAUVEGARDER,
                 new AdaptateurSauvegarder(collecteurEvenements),
                 FlowLayout.LEFT,
@@ -443,7 +446,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
      */
     private JPanel creerPanelExit() {
         return creerPanelAvecBouton(
-                PATH_BTN.resolve("exit.png").toString(),
+                Paths.getButtonPath("exit.png"),
                 DIM_BOUTON_EXIT,
                 new AdaptateurExit(collecteurEvenements),
                 FlowLayout.RIGHT,
@@ -481,7 +484,7 @@ public class  EcranMenu extends PanelAvecImage implements Observateur {
         for (int i = 0; i < configs.size(); i++) {
             BoutonConfig config = configs.get(i);
             Bouton.BoutonAvecImage bouton = Bouton.creerBouton(
-                    PATH_BTN.resolve(config.nomImage).toString(),
+                    Paths.getButtonPath(config.nomImage),
                     Bouton.ConfigurationParDefaut.SansBordure_transparent
             );
             bouton.setPreferredSize(DIM_BOUTON_ACTION);

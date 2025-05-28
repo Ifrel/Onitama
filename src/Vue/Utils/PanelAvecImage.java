@@ -2,72 +2,73 @@ package Vue.Utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.nio.file.Path;
+import java.net.URL;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import static Global.Config.COULEUR_CASE_TERRAIN;
 
-
-
-/**
- * Un panneau (JPanel) personnalisé qui affiche une image d'arrière-plan
- * redimensionnée pour s'adapter à la taille du panneau, sans déformer le contenu
- * ajouté par-dessus.
- *
- * L'image est étirée pour remplir complètement le panneau, potentiellement
- * au prix d'une déformation si les ratios d'aspect de l'image et du panneau diffèrent. */
 public class PanelAvecImage extends JPanel {
+    private static final Logger LOGGER = Logger.getLogger(PanelAvecImage.class.getName());
     private Image image;
-    private Path cheminImage;
+    private URL cheminImage;
 
-
-    /**
-     * Crée un nouveau panneau avec une image d'arrière-plan.
-     * L'image sera chargée depuis le chemin spécifié.
-     *
-     * @param cheminImage Le chemin d'accès au fichier image à utiliser (.jpg, .png, etc.).     */
-     public PanelAvecImage(Path cheminImage) {
+    public PanelAvecImage(URL cheminImage) {
         this.cheminImage = cheminImage;
         init();
-     }
+    }
 
-
-
-    /**
-     * Peint le contenu du composant. Cette méthode est appelée par le système graphique Swing
-     * chaque fois que le panneau a besoin d'être redessiné (redimensionnement, recouvrement, etc.).
-     *
-     * @param g L'objet Graphics utilisé pour dessiner.     */
-     @Override
-     protected void paintComponent(Graphics g) {
+    @Override
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         if (image != null && getWidth() > 0 && getHeight() > 0) {
             g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
         }
+    }
 
-     }
-
-
-
-     public void setImage(Path cheminImage) {
+    public void setImage(URL cheminImage) {
         this.cheminImage = cheminImage;
         init();
         repaint();
-     }
+    }
 
-
-
-
-
-     private void init(){
-        if(cheminImage == null) {
+    private void init() {
+        if (cheminImage == null) {
             image = null;
             setBackground(COULEUR_CASE_TERRAIN);
+        } else {
+            try {
+                // Utilisation de ImageIO pour un chargement plus robuste
+                image = new ImageIcon(cheminImage).getImage();
+
+                // Vérification que l'image est bien chargée
+                if (image.getWidth(this) <= 0) {
+                    LOGGER.log(Level.WARNING, "Impossible de charger l'image: " + cheminImage);
+                    image = null;
+                    setBackground(COULEUR_CASE_TERRAIN);
+                } else {
+                    setOpaque(false);
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Erreur lors du chargement de l'image: " + cheminImage, e);
+                image = null;
+                setBackground(COULEUR_CASE_TERRAIN);
+            }
         }
-        else {
-            image = new ImageIcon(cheminImage.toString()).getImage();
-            setOpaque(false);
-        }
-     }
+    }
+
+    public URL getCheminImage() {
+        return cheminImage;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void clearImage() {
+        image = null;
+        cheminImage = null;
+        setBackground(COULEUR_CASE_TERRAIN);
+        repaint();
+    }
 }

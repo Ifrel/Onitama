@@ -1,5 +1,6 @@
 package Vue.LabO;
 
+import Global.Paths;
 import Vue.Utils.Boutons.BoutonCarte;
 
 import javax.swing.*;
@@ -7,11 +8,10 @@ import javax.swing.plaf.LayerUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
-import java.nio.file.Path;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Global.Paths.PATH_CARTE;
 
 // --- Les classes CardFlipAnimator et AnimationListener restent les mêmes ---
 
@@ -259,8 +259,8 @@ class TestApplyAnimationToExistingButton {
 //            existingButton.setPreferredSize(new Dimension(250, 70));
 //            existingButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Clique sur le bouton animé !")); // Un listener standard fonctionne toujours
 
-            Path testImagePath = PATH_CARTE.resolve("TIGRE.png");
-            BoutonCarte existingButton = new BoutonCarte(testImagePath);
+            URL testImagePath = Paths.getCartePath("TIGRE.png");
+            BoutonCarte existingButton = new BoutonCarte(String.valueOf(testImagePath));
             existingButton.setPreferredSize(new Dimension(200,100));
             existingButton.setToolTipText("TIGRE");
 
