@@ -1336,6 +1336,10 @@ public class Jeu extends Observable implements Runnable {
                             }
                             if (estActiveIA2()) {
                                 c = IA_2.calculerCoup();
+                                if (! estActifIAvsIA() && estActiveIA1() && estActiveIA2()) {
+                                    etatJeu = ETAT_DEFAUT;
+                                    break;
+                                }
                                 Thread.sleep(delai);
                                 setPionSelectionne(IA_2.getPionChoisi().getPosition());
                                 setCarteSelectionnee(IA_2.getCarteChoisie());
@@ -1350,6 +1354,10 @@ public class Jeu extends Observable implements Runnable {
                             }
                             if (estActiveIA1()) {
                                 c = IA_1.calculerCoup();
+                                if (! estActifIAvsIA() && estActiveIA1() && estActiveIA2()) {
+                                    etatJeu = ETAT_DEFAUT;
+                                    break;
+                                }
                                 Thread.sleep(delai);
                                 setPionSelectionne(IA_1.getPionChoisi().getPosition());
                                 setCarteSelectionnee(IA_1.getCarteChoisie());
