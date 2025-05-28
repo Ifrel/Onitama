@@ -63,7 +63,7 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
 
         // Désactive les boutons des pions du joueur qui n'a pas la main
         if (casePlateau.getTypeElement() != VIDE) {
-            if (casePlateau.getProprietaire() != jeu.getJoueurCourant().getId()) {
+            if (casePlateau.getProprietaire() != jeu.getJoueurCourant().getId() && jeu.getPionSelectionne() == null) {
                 boutonTerrain.setEnabled(false);
             }else {
                 boutonTerrain.setEnabled(true);

@@ -140,9 +140,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         updateUndoRedoButtons();
         tournerLesCartesDuJoueur();
 
-        if (jeu.estPartieFinie()) {
-            interfaceGraphique.afficherEcranVictoire(jeu.getJoueurCourant().getNom());
-        }
+        if (jeu.estPartieFinie()) {interfaceGraphique.afficherEcranVictoire(jeu.getJoueurCourant().getNom());}
+        suggestion.setEnabled(jeu.getJoueurCourant().getTypeJoueur() != TYPE_JOUEUR.JOUEUR_IA);
+
         logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }
 
