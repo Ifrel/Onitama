@@ -62,6 +62,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     // Chargement des images dans une liste
     HashMap<TYPECARTE, BufferedImage> imagesCartes = new HashMap<>();
+    JLayer<JButton> carte1J1, carte2J1, carte1J2, carte2J2, carteJ0;
 
     // Gestion de panels
     private JPanel cartesNord;
@@ -129,6 +130,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         mettreAJourImagesTerrain();
 
         miseAJour();
+        tournerLesCartesDuJoueur();
     }
 
     @Override
@@ -138,7 +140,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         mettreAJourImagesCartes();
         updatePlayerAndRoundInfo();
         updateUndoRedoButtons();
-        tournerLesCartesDuJoueur();
+
+        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
+                jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT) {
+            listeDescardFlipAnimators.get(4).startAnimation();
+            ID_JOUEUR_PRECEDANT   = jeu.getIdJoueurCourant();
+        }
 
         if (jeu.estPartieFinie()) {interfaceGraphique.afficherEcranVictoire(jeu.getJoueurCourant().getNom());}
         suggestion.setEnabled(jeu.getJoueurCourant().getTypeJoueur() != TYPE_JOUEUR.JOUEUR_IA);
@@ -400,15 +407,15 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 1;
         gbc.weightx = 0.5;
         gbc.insets = new Insets(0, 10, 0, 10);
-        JLayer<JButton> carte1 = cardFlipAnimator(buttonsCartesJoueur1[0],0);
-        carte1.setPreferredSize(DIM_CARTE);
-        cartesNord.add(carte1, gbc);
+        carte1J1 = cardFlipAnimator(buttonsCartesJoueur1[0],0);
+        carte1J1.setPreferredSize(DIM_CARTE);
+        cartesNord.add(carte1J1, gbc);
 
         // Deuxième carte
         gbc.gridx = 2;
-        JLayer<JButton> carte2 = cardFlipAnimator(buttonsCartesJoueur1[1],1);
-        carte2.setPreferredSize(DIM_CARTE);
-        cartesNord.add(carte2, gbc);
+        carte2J1 = cardFlipAnimator(buttonsCartesJoueur1[1],1);
+        carte2J1.setPreferredSize(DIM_CARTE);
+        cartesNord.add(carte2J1, gbc);
 
         // Espacement élastique à droite
         gbc.gridx = 3;
@@ -436,15 +443,15 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 1;
         gbc.weightx = 0.5;
         gbc.insets = new Insets(0, 10, 0, 10);
-        JLayer<JButton> carte1 = cardFlipAnimator(buttonsCartesJoueur2[0], 2);
-        carte1.setPreferredSize(DIM_CARTE);
-        cartesSud.add(carte1, gbc);
+        carte1J2 = cardFlipAnimator(buttonsCartesJoueur2[0], 2);
+        carte1J2.setPreferredSize(DIM_CARTE);
+        cartesSud.add(carte1J2, gbc);
 
         // Deuxième carte
         gbc.gridx = 2;
-        JLayer<JButton> carte2 = cardFlipAnimator(buttonsCartesJoueur2[1], 3);
-        carte2.setPreferredSize(DIM_CARTE);
-        cartesSud.add(carte2, gbc);
+        carte2J2 = cardFlipAnimator(buttonsCartesJoueur2[1], 3);
+        carte2J2.setPreferredSize(DIM_CARTE);
+        cartesSud.add(carte2J2, gbc);
 
         // Espacement élastique à droite
         gbc.gridx = 3;
@@ -474,7 +481,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.weightx = 0.45;
         gbc.weighty = 0.45;
         gbc.insets = new Insets(25, 0, 25, 0);
-        cartesEst.add(cardFlipAnimator(carteDeRotation, 4), gbc);
+        carteJ0 = cardFlipAnimator(carteDeRotation, 4);
+        cartesEst.add(carteJ0, gbc);
 
         // Espacement vertical en bas
         gbc.gridy = 2;
@@ -646,25 +654,47 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         return layer;
     }
 
+    /*
     private void tournerLesCartesDuJoueur() {
+       carte1J1.revalidate();
+       carte1J1.repaint();
+       carte2J1.revalidate();
+       carte2J1.repaint();
+       carte1J2.revalidate();
+       carte1J2.repaint();
+       carte2J2.revalidate();
+       carte2J2.repaint();
+       carteJ0.revalidate();
         if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
                 jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT) {
 
-//            for (CardFlipAnimator animator : listeDescardFlipAnimators) {
-//                animator.startAnimation();
-//            }
+
             int numCarte = idCartePrecedementSelectionnee;
             if (jeu.getJoueurCourant().getId() == ID_JOUEUR_1){
                 numCarte += 2;
+
+                listeDescardFlipAnimators.get(4).startAnimation();
+                listeDescardFlipAnimators.get(numCarte).startAnimation();
+
+
+            } else {
+                listeDescardFlipAnimators.get(4).startAnimation();
+                listeDescardFlipAnimators.get(numCarte).startAnimation();
+                listeDescardFlipAnimators.get(4).startAnimation();
+                listeDescardFlipAnimators.get(numCarte).startAnimation();
             }
 
-            listeDescardFlipAnimators.get(4).startAnimation();
-            listeDescardFlipAnimators.get(numCarte).startAnimation();
 
             ID_JOUEUR_PRECEDANT = jeu.getIdJoueurCourant();
         }
         idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
     }
+*/
+    private void tournerLesCartesDuJoueur() {
+        listeDescardFlipAnimators.get(0).startAnimation();
+        listeDescardFlipAnimators.get(1).startAnimation();
+    }
+
 
     private void toggleMusique(JButton bouton) {
         if (musiqueActive) {
