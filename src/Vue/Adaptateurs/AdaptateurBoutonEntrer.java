@@ -75,7 +75,7 @@ public class AdaptateurBoutonEntrer implements ActionListener {
 
 
     private void activerModeAutoIA() {
-        collecteurEvent.setModeAuto(true);
+        collecteurEvent.setModeAuto();
         logger.info("Mode Auto (IA vs IA) activé");
     }
 

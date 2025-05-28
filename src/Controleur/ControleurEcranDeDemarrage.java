@@ -63,13 +63,9 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
     }
 
     @Override
-    public void setModeAuto(boolean nouvelEtat) {
-        if (nouvelEtat) {
+    public void setModeAuto() {
             jeu.toggleIA1();
             jeu.toggleIA2();
-        }else{
-            jeu.toggleIA1();
-        }
     }
 
      @Override
