@@ -30,22 +30,22 @@ import static Modele.Utils.*;
 
 
 public class Jeu extends Observable implements Runnable {
-    private volatile Pion [][] grille; // grille de pions
-    private volatile Historique<Coup> historique;
-    private volatile Joueur joueur1, joueur2;
-    private volatile IA IA_1, IA_2;
-    private volatile Joueur joueurCourant;
-    private volatile int idJoueurCourant; // identifiant du joueur courant
-    private volatile int numCarteSelectionee;
-    private volatile boolean estPartieFinie;
-    private volatile boolean IA1Activee, IA2Activee;
-    private volatile boolean IAvsIAActive;
-    private volatile boolean partieACommence;
-    private volatile boolean maitreMort;
-    private volatile Pion pionSelectionne;
-    private volatile ETAT_GRILLE etatGrille;
-    private volatile ETAT_JEU etatJeu;
-    private volatile Coup dernierCoupJoue;
+    private Pion [][] grille; // grille de pions
+    private Historique<Coup> historique;
+    private Joueur joueur1, joueur2;
+    private IA IA_1, IA_2;
+    private Joueur joueurCourant;
+    private int idJoueurCourant; // identifiant du joueur courant
+    private int numCarteSelectionee;
+    private boolean estPartieFinie;
+    private boolean IA1Activee, IA2Activee;
+    private boolean IAvsIAActive;
+    private boolean partieACommence;
+    private boolean maitreMort;
+    private Pion pionSelectionne;
+    private ETAT_GRILLE etatGrille;
+    private ETAT_JEU etatJeu;
+    private Coup dernierCoupJoue;
 
 
     // --- CARTES -- //
@@ -170,7 +170,7 @@ public class Jeu extends Observable implements Runnable {
             partieACommence = false;
             maitreMort = false;
             etatGrille = DEFAUT;
-            etatJeu = ETAT_JEU.DEFAUT;
+            etatJeu = ETAT_JEU.ETAT_DEFAUT;
             dernierCoupJoue = null;
 
             IA1Activee = IA2Activee = false;
@@ -464,9 +464,6 @@ public class Jeu extends Observable implements Runnable {
 
     // ######### CHARGER / SAUVEGARDER ########
 
-    public void sauvegarderJeu() throws IOException {
-        System.err.println("UTILISER LA METHODE sauvegarderJeu(String nomFichier)");
-    }
     public void sauvegarderJeu(String fichier) throws IOException {
         Files.createDirectories(SAVE_DIR);
 
@@ -480,11 +477,6 @@ public class Jeu extends Observable implements Runnable {
             out.writeObject(historique);
 
         }
-    }
-
-
-    public void chargerJeu() throws IOException, ClassNotFoundException{
-        System.err.println("UTILISER LA METHODE chargerJeu(String nomFichier)");
     }
 
 
@@ -637,18 +629,19 @@ public class Jeu extends Observable implements Runnable {
     // ######## PARTIE ########
 
 
-    synchronized public void toggleIAvsIA() {
+    public void toggleIAvsIA() {
         if (! estActiveIA1() || ! estActiveIA2()) {
             logger.info("Il faut d'abord activer les IA avant de les lancer");
             return;
         }
 
         IAvsIAActive = ! IAvsIAActive;
+        logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MODE IA VS IA " + ((IAvsIAActive) ? "Activé" : "Désactivé"));
 
         if (IAvsIAActive) {
             etatJeu = getIdJoueurCourant() == ID_JOUEUR_1 ? J2_A_JOUE : J1_A_JOUE;
         } else {
-            etatJeu = ETAT_JEU.DEFAUT;
+            etatJeu = ETAT_JEU.ETAT_DEFAUT;
         }
 
     }
@@ -656,7 +649,7 @@ public class Jeu extends Observable implements Runnable {
     /**
      * Active / désactive l'IA 1
      */
-    synchronized public void toggleIA1() {
+    public void toggleIA1() {
         IA1Activee = !IA1Activee; // si l'IA est activée, la désactive, vice-versa
 
         List<Carte> cartesJ1 = getCartesJoueur1();
@@ -681,7 +674,7 @@ public class Jeu extends Observable implements Runnable {
     /**
      * Active / désactive l'IA 2
      */
-    synchronized public void toggleIA2() {
+    public void toggleIA2() {
         IA2Activee = !IA2Activee; // si l'IA est activée, la désactive, vice-versa
 
         List<Carte> cartesJ2 = getCartesJoueur2();
@@ -708,7 +701,7 @@ public class Jeu extends Observable implements Runnable {
      *
      * @return vrai si l'IA 1 est activée
      */
-    synchronized public boolean estActiveIA1() {
+    public boolean estActiveIA1() {
         return IA1Activee;
     }
 
@@ -717,8 +710,12 @@ public class Jeu extends Observable implements Runnable {
      *
      * @return vrai si l'IA 2 est activée
      */
-    synchronized public boolean estActiveIA2() {
+    public boolean estActiveIA2() {
         return IA2Activee;
+    }
+
+    public boolean estActifIAvsIA() {
+        return IAvsIAActive;
     }
 
     /**
@@ -726,7 +723,7 @@ public class Jeu extends Observable implements Runnable {
      *
      * @param niveau FAIBLE | MOYEN | FORT
      */
-    synchronized public void setNiveauIA1(NIVEAU_IA niveau) {
+    public void setNiveauIA1(NIVEAU_IA niveau) {
         if (!estActiveIA1()) {
             logger.info("L'IA 1 n'est pas active, impossible de définir son niveau");
             return;
@@ -759,7 +756,7 @@ public class Jeu extends Observable implements Runnable {
      *
      * @param niveau FAIBLE | MOYEN | FORT
      */
-    synchronized public void setNiveauIA2(NIVEAU_IA niveau) {
+    public void setNiveauIA2(NIVEAU_IA niveau) {
         if (!estActiveIA2()) {
             logger.info("L'IA 2 n'est pas active, impossible de définir son niveau");
             return;
@@ -1330,9 +1327,13 @@ public class Jeu extends Observable implements Runnable {
                 Coup c;
                 synchronized (this) {
                     switch (etatJeu) {
-                        case DEFAUT:
+                        case ETAT_DEFAUT:
                             break;
                         case J1_A_JOUE:
+                            if (! estActifIAvsIA() && estActiveIA1() && estActiveIA2()) {
+                                etatJeu = ETAT_DEFAUT;
+                                break;
+                            }
                             if (estActiveIA2()) {
                                 c = IA_2.calculerCoup();
                                 Thread.sleep(delai);
@@ -1343,6 +1344,10 @@ public class Jeu extends Observable implements Runnable {
                             }
                             break;
                         case J2_A_JOUE:
+                            if (! estActifIAvsIA() && estActiveIA1() && estActiveIA2()) {
+                                etatJeu = ETAT_DEFAUT;
+                                break;
+                            }
                             if (estActiveIA1()) {
                                 c = IA_1.calculerCoup();
                                 Thread.sleep(delai);

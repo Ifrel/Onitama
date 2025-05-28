@@ -48,7 +48,7 @@ public class Config {
     }
 
     public static enum ETAT_JEU {
-        DEFAUT,
+        ETAT_DEFAUT,
         FIN,
         J1_A_JOUE,
         J2_A_JOUE,
