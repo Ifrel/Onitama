@@ -37,8 +37,11 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Custom ###
 .log/
 launch_Intelliji.sh
 *.dat
 *.json
 *.nfs*
+saves
