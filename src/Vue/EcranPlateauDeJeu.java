@@ -100,6 +100,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private boolean isPanelHovered = false;
     private boolean estCliqueBoutonFlotant = false;
 
+    // Constantes
+    Dimension DIM_BARRE_MENU = new Dimension(60, 60);
+    Dimension DIM_BTN_ACTION = new Dimension(50, 50);
+    Dimension DIM_CARTE = new Dimension(80, 80);
+
 
     /**
      * Constructeur principal du EcranPlateauDeJeu
@@ -213,13 +218,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
         gbc.weighty = 0;
-        gbc.insets = new Insets(15, 0, 0, 0);
+//        gbc.insets = new Insets(0, 0, 0, 0);
         contenu.add(creerPanelNomJoueurCourant(), gbc);
 
         // Ajout de l'espace
         gbc.gridy = 2;
-        gbc.weightx = 0.25;
-        gbc.weighty = 0.2;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
         contenu.add(Box.createGlue(), gbc);
     }
 
@@ -260,7 +265,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.weightx = 2.0;
-        gbc.weighty = 1.0;
+        gbc.weighty = 1;
         panel.add(cartesNord, gbc);
 
         // Panneau est (cartes)
@@ -268,7 +273,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.weightx = 1.0;
-        gbc.weighty = 2.0;
+        gbc.weighty = 1.0;
         panel.add(cartesEst, gbc);
 
         // Terrain central (maintenu carré)
@@ -276,7 +281,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridy = 1;
         gbc.weightx = 5.0;
         gbc.weighty = 5.0;
-        gbc.insets = new Insets(20, 20, 20, 20);
+//        gbc.insets = new Insets(20, 20, 20, 20);
 
         // Utilisation de PanelRatioFixe pour maintenir le ratio 1:1 du terrain
         panel.add(new PanelRatioFixe(terrain, 1.0), gbc);
@@ -286,7 +291,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 2;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
-        gbc.weighty = 2.0;
+        gbc.weighty = 1.0;
         JPanel boutonsDroite = creerBoutonsDroite();
         panel.add(boutonsDroite, gbc);
 
@@ -294,13 +299,18 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.weightx = 2.0;
-        gbc.weighty = 1.0;
+        gbc.weighty = 1;
         panel.add(cartesSud, gbc);
+
+        // Espacement vertical en bas
+        gbc.gridy = 3;
+        gbc.weighty = 0;
+        panel.add(Box.createVerticalGlue(), gbc);
     }
 
 
     private void creerTerrain() {
-        terrain = creerPanelArrondi();
+        terrain = ConfigModeJoueur.creerPanelCoinsdArrondi();
         terrain.setBackground(COULEUR_CASE_TERRAIN);
         terrain.setLayout(new GridLayout(LIGNES, COLONNES));
         buttonsTerrain = new BoutonTerrain[LIGNES][COLONNES];
@@ -378,7 +388,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridy = 0;
-        gbc.weighty = 0.2;
+        gbc.weighty = 0;
 
         // Espacement élastique à gauche
         gbc.gridx = 0;
@@ -389,11 +399,15 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 1;
         gbc.weightx = 0.5;
         gbc.insets = new Insets(0, 10, 0, 10);
-        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[0],0), gbc);
+        JLayer<JButton> carte1 = cardFlipAnimator(buttonsCartesJoueur1[0],0);
+        carte1.setPreferredSize(DIM_CARTE);
+        cartesNord.add(carte1, gbc);
 
         // Deuxième carte
         gbc.gridx = 2;
-        cartesNord.add(cardFlipAnimator(buttonsCartesJoueur1[1], 1), gbc);
+        JLayer<JButton> carte2 = cardFlipAnimator(buttonsCartesJoueur1[1],1);
+        carte2.setPreferredSize(DIM_CARTE);
+        cartesNord.add(carte2, gbc);
 
         // Espacement élastique à droite
         gbc.gridx = 3;
@@ -410,7 +424,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridy = 0;
-        gbc.weighty = 0.2;
+        gbc.weighty = 0;
 
         // Espacement élastique à gauche
         gbc.gridx = 0;
@@ -421,11 +435,15 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 1;
         gbc.weightx = 0.5;
         gbc.insets = new Insets(0, 10, 0, 10);
-        cartesSud.add(cardFlipAnimator(buttonsCartesJoueur2[0], 2), gbc);
+        JLayer<JButton> carte1 = cardFlipAnimator(buttonsCartesJoueur2[0], 2);
+        carte1.setPreferredSize(DIM_CARTE);
+        cartesSud.add(carte1, gbc);
 
         // Deuxième carte
         gbc.gridx = 2;
-        cartesSud.add(cardFlipAnimator(buttonsCartesJoueur2[1], 3), gbc);
+        JLayer<JButton> carte2 = cardFlipAnimator(buttonsCartesJoueur2[1], 3);
+        carte2.setPreferredSize(DIM_CARTE);
+        cartesSud.add(carte2, gbc);
 
         // Espacement élastique à droite
         gbc.gridx = 3;
@@ -435,8 +453,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private void creerCarteGauche() {
-        JPanel cartesEstbis = new JPanel(new GridBagLayout());
-        cartesEstbis.setOpaque(false);
+        cartesEst = new JPanel(new GridBagLayout());
+        cartesEst.setOpaque(false);
+        cartesEst.setPreferredSize(DIM_CARTE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -447,27 +466,21 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridy = 0;
         gbc.weightx = 2;
         gbc.weighty = 1.1;
-        cartesEstbis.add(Box.createVerticalGlue(), gbc);
+        cartesEst.add(Box.createVerticalGlue(), gbc);
 
         // Carte de rotation au centre
         gbc.gridy = 1;
         gbc.weightx = 0.45;
         gbc.weighty = 0.45;
-        cartesEstbis.add(cardFlipAnimator(carteDeRotation, 4), gbc);
+        gbc.insets = new Insets(25, 0, 25, 0);
+        cartesEst.add(cardFlipAnimator(carteDeRotation, 4), gbc);
 
         // Espacement vertical en bas
         gbc.gridy = 2;
         gbc.weightx = 1.1;
         gbc.weighty = 1.1;
-        cartesEstbis.add(Box.createVerticalGlue(), gbc);
+        cartesEst.add(Box.createVerticalGlue(), gbc);
 
-        // Configuration du panel Est
-        cartesEst.setLayout(new BoxLayout(cartesEst, BoxLayout.X_AXIS));
-        cartesEst.setOpaque(false);
-
-        // Ajout d'un espacement horizontal et du panel de la carte
-        cartesEst.add(Box.createHorizontalGlue());
-        cartesEst.add(cartesEstbis);
     }
 
     private JPanel creerBoutonsDroite() {
@@ -481,12 +494,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion_on.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
 
         // Configuration des dimensions
-        Dimension dimensionBoutonNormal = new Dimension(70, 70);
-        Dimension dimensionBoutonSuggestion = new Dimension(70, 100);
-
-        annuler.setPreferredSize(dimensionBoutonNormal);
-        refaire.setPreferredSize(dimensionBoutonNormal);
-        suggestion.setPreferredSize(dimensionBoutonSuggestion);
+        annuler.setPreferredSize(DIM_BTN_ACTION);
+        refaire.setPreferredSize(DIM_BTN_ACTION);
+        suggestion.setPreferredSize(DIM_BTN_ACTION);
 
         // Configuration de l'apparence
         Color couleurFond = new Color(207, 207, 207, 44);
@@ -498,6 +508,10 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
         suggestion.addActionListener(new AdaptateurSuggestion(collecteurEv, this));
+        suggestion.addActionListener(e->{
+            // Pour lancer un timer de 10 secondes
+            afficherTimerFlottant(10);
+        });
 
         // Configuration du GridBagConstraints
         GridBagConstraints gbc = new GridBagConstraints();
@@ -534,7 +548,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private JButton creerBoutonSon() {
         boutonSon = Bouton.creerBouton(PATH_BTN_MUET.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
-        boutonSon.setPreferredSize(new Dimension(80, 80));
+        boutonSon.setPreferredSize(DIM_BARRE_MENU);
         boutonSon.setToolTipText("Musique");
         boutonSon.addActionListener(e -> toggleMusique(boutonSon));
 
@@ -543,19 +557,18 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private JPanel creerPanelNomJoueurCourant() {
         JPanel textNomPanel = ConfigModeJoueur.creerPanelCoinsArondiAvecBordure();
-        textNomPanel.setPreferredSize(new Dimension(300, 120));
+        textNomPanel.setPreferredSize(new Dimension(200, 65));
         textNomPanel.setLayout(new BoxLayout(textNomPanel, BoxLayout.Y_AXIS));
         textNomPanel.setBackground(new Color(214, 214, 214, 107));
-        textNomPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         textNomPanel.setToolTipText("Nom du joueur qui joue actuellement");
 
         JLabel txt = new JLabel("C'est au tour de");
-        txt.setFont(new Font("Arial", Font.BOLD, 20));
+        txt.setFont(new Font("Arial", Font.BOLD, 16));
         txt.setAlignmentX(Component.CENTER_ALIGNMENT);
         txt.setForeground(new Color(197, 7, 184));
 
         nomJoueurCourantLabel = new JLabel(jeu.getNomJoueurCourant());
-        nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 20));
         nomJoueurCourantLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         nomJoueurCourantLabel.setForeground(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()));
 
@@ -568,7 +581,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private JPanel creerPanelRoundTemps() {
         JPanel panel = ConfigModeJoueur.creerPanelCoinsdArrondi();
-        panel.setPreferredSize(new Dimension(300, 80));
+        panel.setPreferredSize(new Dimension(250, 45));
         panel.setBackground(new Color(221, 221, 221, 131));
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.setToolTipText("Nombre de partie jouée et temps écoulé");
@@ -576,11 +589,11 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         numRound = jeu.getNumeroRound();
         roundLabel = new JLabel("Partie : " + numRound);
         roundLabel.setOpaque(false);
-        roundLabel.setFont(new Font("Arial", Font.PLAIN, 25));
+        roundLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         tempsLabel = new JLabel("00:00");
         tempsLabel.setOpaque(false);
-        tempsLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        tempsLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         panel.add(Box.createGlue());
         panel.add(roundLabel);
@@ -593,7 +606,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private JButton creerBoutonMenu() {
         BoutonAvecImage menu = Bouton.creerBouton(PATH_BTN_MENU.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
-        menu.setPreferredSize(new Dimension(100, 100));
+        menu.setPreferredSize(DIM_BARRE_MENU);
         menu.setToolTipText("Menu");
         menu.addActionListener(e -> interfaceGraphique.ouvrirMenu());
         return menu;
@@ -605,7 +618,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         panel.setOpaque(false);
 
         BoutonAvecImage bouton = Bouton.creerBouton(PATH_BTN.resolve("ia.png").toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
-        bouton.setPreferredSize(new Dimension(100, 100));
+        bouton.setPreferredSize(DIM_BARRE_MENU);
         bouton.setToolTipText("IA vs IA");
         bouton.addActionListener(e -> {
             collecteurEv.clavier("ia vs ia");
@@ -949,43 +962,22 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
 
-
-    private JPanel creerPanelConfig() {
-        JPanel mainPanel = ConfigModeJoueur.creerPanelCoinsdArrondi();
-        mainPanel.setLayout(new GridLayout(3, 1));
-        mainPanel.setBackground(ConfigModeJoueur.COULEUR_FOND_PRINCIPAL);
-        mainPanel.setPreferredSize(new Dimension(500, 200));
-
-        JPanel joueur1 = ConfigModeJoueur.creerPanelChoixJoueur("Rinel", 1, new Mediateur(null));
-        JPanel joueur2 = ConfigModeJoueur.creerPanelChoixJoueur("Raphael", 2, new Mediateur(null));
-
-        mainPanel.add(joueur1);
-        mainPanel.add(Box.createHorizontalStrut(20));
-        mainPanel.add(joueur2);
-
-        return mainPanel;
-    }
-
-
     private void creerPanelTemporaire() {
         // Création du panel
         panelTemporaire = ConfigModeJoueur.creerPanelCoinsdArrondi();
         panelTemporaire.setLayout(new BoxLayout(panelTemporaire, BoxLayout.Y_AXIS));
         panelTemporaire.setBackground(ConfigModeJoueur.COULEUR_FOND_PRINCIPAL);
+        panelTemporaire.setSize(new Dimension(180, 280));
+        panelTemporaire.setOpaque(false);
 
         // Contenu
-        panelTemporaire.add(new JLabel("Menu Temporaire"));
-        panelTemporaire.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panelTemporaire.add(new JSeparator());
         JPanel joueur1 = ConfigModeJoueur.creerPanelChoixJoueur(jeu.getNomJoueur1(), 1, collecteurEv);
         JPanel joueur2 = ConfigModeJoueur.creerPanelChoixJoueur(jeu.getNomJoueur2(), 2, collecteurEv);
+        joueur1.setPreferredSize(new Dimension(100, 100));
+        joueur2.setPreferredSize(new Dimension(100, 100));
 
         panelTemporaire.add(joueur1);
-        panelTemporaire.add(Box.createHorizontalStrut(100));
         panelTemporaire.add(joueur2);
-
-        // Taille et style
-        panelTemporaire.setSize(new Dimension(300, 400));
 
         // Par défaut, le panel est invisible
         panelTemporaire.setVisible(false);
@@ -1022,7 +1014,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private void creerBoutonFlottant() {
         boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
-        boutonFlottant.setSize(120, 120);
+        boutonFlottant.setSize(DIM_BARRE_MENU);
 
         // Rendre le bouton déplaçable
         MouseAdapter dragListener = new MouseAdapter() {
@@ -1087,15 +1079,84 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         this.add(boutonFlottant);
     }
 
+
+    private void afficherTimerFlottant(int dureeSecondes) {
+        // Créer un JDialog flottant
+        JDialog dialogTimer = new JDialog();
+        dialogTimer.setUndecorated(true);
+        dialogTimer.setBackground(new Color(0, 0, 0, 0));
+
+        // Variables pour le timer
+        final int[] tempsRestant = new int[1];
+        tempsRestant[0] = dureeSecondes;
+        final int[] progress = new int[1];
+        progress[0] = 0;
+
+        // Créer un JPanel personnalisé pour le cercle de progression
+        JPanel panelTimer = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Dessiner le cercle de fond
+                g2d.setColor(new Color(0, 0, 0, 50));
+                g2d.fillOval(0, 0, getWidth(), getHeight());
+
+                // Dessiner l'arc de progression
+                g2d.setColor(new Color(0, 150, 255));
+                g2d.setStroke(new BasicStroke(5f));
+                g2d.drawArc(5, 5, getWidth()-10, getHeight()-10, 90, -progress[0]);
+
+                // Afficher le texte du décompte
+                g2d.setColor(Color.WHITE);
+                g2d.setFont(new Font("Arial", Font.BOLD, 20));
+                String texte = String.valueOf(tempsRestant[0]);
+                FontMetrics fm = g2d.getFontMetrics();
+                g2d.drawString(texte,
+                        (getWidth() - fm.stringWidth(texte)) / 2,
+                        (getHeight() + fm.getAscent()) / 2);
+            }
+        };
+
+        panelTimer.setPreferredSize(new Dimension(80, 80));
+        panelTimer.setOpaque(false);
+        dialogTimer.add(panelTimer);
+        dialogTimer.pack();
+
+        // Positionner au centre de l'écran
+        dialogTimer.setLocationRelativeTo(null);
+
+        // Créer et démarrer le timer
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tempsRestant[0]--;
+                progress[0] = (int) (((double) (dureeSecondes - tempsRestant[0]) / dureeSecondes) * 360);
+
+                panelTimer.repaint();
+
+                if (tempsRestant[0] <= 0) {
+                    ((Timer)e.getSource()).stop();
+                    dialogTimer.dispose();
+                }
+            }
+        });
+
+        dialogTimer.setVisible(true);
+        timer.start();
+    }
+
 }
+
+
 
 
 
 class ConfigModeJoueur {
 
     // Constantes pour le style et les dimensions
-    private static final int PANEL_WIDTH = 320;
-    private static final int PANEL_HEIGHT = 170;
     private static final int CORNER_RADIUS = ARRONDI;
     private static final Font COMBO_FONT = new Font("SansSerif", Font.PLAIN, 15); // Police moderne
     static final Color COULEUR_FOND_PRINCIPAL = new Color(238, 242, 245); // Bleu très clair/gris
@@ -1103,7 +1164,7 @@ class ConfigModeJoueur {
     private static final Color COULEUR_OMBRE = new Color(0, 0, 0, 30); // Ombre un peu plus visible
     private static final Color COULEUR_BORDURE_PANEL = new Color(200, 205, 210); // Bordure subtile
     private static final Color COULEUR_SELECTION_COMBO = new Color(200, 220, 255); // Bleu clair pour la sélection
-    private static final Insets MARGES_PANEL_PRINCIPAL = new Insets(25, 25, 25, 25);
+    private static final Insets MARGES_PANEL_PRINCIPAL = new Insets(15, 15, 15, 15);
     private static final Insets MARGES_INTERNES_GB = new Insets(15, 15, 15, 15); // Espacement pour GridBag
     private static final Insets MARGES_COMBO_GB = new Insets(10, 15, 20, 15); // Espacement spécifique pour la ComboBox
 
@@ -1132,7 +1193,7 @@ class ConfigModeJoueur {
         JPanel panelCentral = creerPanelCoinsdArrondi();
         // JPanel panelNom = creerPanelNom(nomJoueur);
         JLabel panelNom = new JLabel(nomJoueur);
-        panelNom.setFont(new Font("SansSerif", Font.BOLD, 18));
+        panelNom.setFont(new Font("SansSerif", Font.BOLD, 16));
 
         JComboBox<TypeJoueur> comboType = creerComboType(idJoueur, collecteurEv);
 
@@ -1181,7 +1242,7 @@ class ConfigModeJoueur {
             }
         };
         panel.setBackground(COULEUR_PANEL_CENTRAL);
-        panel.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+//        panel.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         panel.setLayout(new GridBagLayout());
         panel.setOpaque(false); // Nécessaire car on dessine notre propre fond et ombre
         return panel;
