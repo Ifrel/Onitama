@@ -1,6 +1,5 @@
 package Vue;
 
-import Controleur.Mediateur;
 import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Jeu;
@@ -73,7 +72,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private BoutonCarte[] buttonsCartesJoueur1;
     private BoutonCarte[] buttonsCartesJoueur2;
     private BoutonCarte carteDeRotation;
-    private JButton annuler, refaire, suggestion;
+    private JButton annuler, refaire,  suggestion;
 
     private JButton boutonSon;
 
@@ -104,6 +103,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     Dimension DIM_BARRE_MENU = new Dimension(60, 60);
     Dimension DIM_BTN_ACTION = new Dimension(50, 50);
     Dimension DIM_CARTE = new Dimension(80, 80);
+
+    int compCliqueBoutonSuggestion = 0;
 
 
     /**
@@ -509,8 +510,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
         suggestion.addActionListener(new AdaptateurSuggestion(collecteurEv, this));
         suggestion.addActionListener(e->{
-            // Pour lancer un timer de 10 secondes
-            afficherTimerFlottant(10);
+            compCliqueBoutonSuggestion++;
+
+            suggestion.setEnabled(false);
+            suggestion.setIcon(new ImageIcon(PATH_BTN.resolve("suggestion.png").toString()));
+            afficherTimerFlottant(compCliqueBoutonSuggestion *5, suggestion);
+
         });
 
         // Configuration du GridBagConstraints
@@ -1080,8 +1085,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
 
-    private void afficherTimerFlottant(int dureeSecondes) {
-        // Créer un JDialog flottant
+    private void afficherTimerFlottant(int dureeSecondes, JButton suggestion) {
+         // Créer un JDialog flottant
         JDialog dialogTimer = new JDialog();
         dialogTimer.setUndecorated(true);
         dialogTimer.setBackground(new Color(0, 0, 0, 0));
@@ -1125,8 +1130,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         dialogTimer.add(panelTimer);
         dialogTimer.pack();
 
-        // Positionner au centre de l'écran
-        dialogTimer.setLocationRelativeTo(null);
+        // Positionner le timer à côté du bouton suggestion
+        Point boutonLocation = suggestion.getLocationOnScreen();
+        dialogTimer.setLocation(
+                boutonLocation.x + suggestion.getWidth() + 10, // 10 pixels à droite du bouton
+                boutonLocation.y + (suggestion.getHeight() - dialogTimer.getHeight()) / 2 // Centré verticalement
+        );
 
         // Créer et démarrer le timer
         Timer timer = new Timer(1000, new ActionListener() {
@@ -1140,6 +1149,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
                 if (tempsRestant[0] <= 0) {
                     ((Timer)e.getSource()).stop();
                     dialogTimer.dispose();
+
+                    suggestion.setIcon(new ImageIcon(PATH_BTN.resolve("suggestion_on.png").toString()));
+                    suggestion.setEnabled(true);
                 }
             }
         });
