@@ -160,6 +160,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         this.setLayout(new BorderLayout());
         this.add(new PanelRatioFixe(contenu, 1), BorderLayout.CENTER);
 
+
         // Démarrage du timer
         debutTempsPartie = Instant.now();
         timerPartie = new Timer(1000, e -> miseAjourTemps());
@@ -237,50 +238,66 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.insets = new Insets(0, 0, ESPACE * 3, 0);
+//        gbc.insets = new Insets(0, 0, ESPACE * 3, 0);
         contenu.add(panelCentreEmpile, gbc);
     }
 
 
+    /**
+     * Ajoute les composants au panneau central avec une répartition équitable de l'espace
+     * et maintient le terrain carré.
+     */
     private void ajouterComposantsCentraux(JPanel panel, GridBagConstraints gbc) {
-        // Cartes nord
+        // Configuration de base des contraintes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // Panneau nord (cartes)
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 0.5;
+        gbc.gridwidth = 1;
+        gbc.weightx = 2.0;
+        gbc.weighty = 1.0;
+//        cartesNord.setPreferredSize(new Dimension(0, 100));
         panel.add(cartesNord, gbc);
 
-        // Cartes est
+        // Panneau est (cartes)
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridwidth = 1;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+        gbc.weighty = 2.0;
+//        cartesEst.setPreferredSize(new Dimension(100, 0));
         panel.add(cartesEst, gbc);
 
-        // Terrain central
+        // Terrain central (maintenu carré)
         gbc.gridx = 1;
         gbc.gridy = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
+        gbc.weightx = 5.0;
+        gbc.weighty = 5.0;
         gbc.insets = new Insets(20, 20, 20, 20);
-        panel.add(terrain, gbc);
+
+        // Utilisation de PanelRatioFixe pour maintenir le ratio 1:1 du terrain
+        panel.add(new PanelRatioFixe(terrain, 1.0), gbc);
         gbc.insets = new Insets(0, 0, 0, 0);
 
-        // Boutons droite
+        // Panneau ouest (boutons)
         gbc.gridx = 2;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        panel.add(creerBoutonsDroite(), gbc);
+        gbc.weighty = 2.0;
+        JPanel boutonsDroite = creerBoutonsDroite();
+//        boutonsDroite.setPreferredSize(new Dimension(100, 0));
+        panel.add(boutonsDroite, gbc);
 
-        // Cartes sud
+        // Panneau sud (cartes)
         gbc.gridx = 1;
         gbc.gridy = 2;
-        gbc.weightx = 1.0;
-        gbc.weighty = 0.5;
+        gbc.weightx = 2.2;
+        gbc.weighty = 1.0;
+//        cartesSud.setPreferredSize(new Dimension(0, 100));
         panel.add(cartesSud, gbc);
     }
-
 
 
     private void creerTerrain() {
@@ -362,7 +379,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridy = 0;
-        gbc.weighty = 1.0;
+        gbc.weighty = 0.2;
 
         // Espacement élastique à gauche
         gbc.gridx = 0;
@@ -371,7 +388,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Première carte
         gbc.gridx = 1;
-        gbc.weightx = 2.0;
+        gbc.weightx = 0.5;
         gbc.insets = new Insets(0, 10, 0, 10);
         cartesNord.add(buttonsCartesJoueur1[0], gbc);
 
@@ -394,7 +411,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridy = 0;
-        gbc.weighty = 1.0;
+        gbc.weighty = 0.2;
 
         // Espacement élastique à gauche
         gbc.gridx = 0;
@@ -403,7 +420,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Première carte
         gbc.gridx = 1;
-        gbc.weightx = 2.0;
+        gbc.weightx = 0.5;
         gbc.insets = new Insets(0, 10, 0, 10);
         cartesSud.add(buttonsCartesJoueur2[0], gbc);
 
