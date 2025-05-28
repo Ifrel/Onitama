@@ -1086,15 +1086,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
 
-    /**
-     * Displays a floating countdown timer next to a reference button. The timer is rendered as
-     * a circular progress visualization and positioned dynamically relative to the provided
-     * button. This floating timer remains on top of other application windows and updates its
-     * location if the reference button is moved during the countdown.
-     *
-     * @param dureeSecondes the duration of the countdown timer in seconds
-     * @param boutonReference the reference button used to position the floating timer
-     */
     private void afficherTimerFlottant(int dureeSecondes, JButton boutonReference) {
         // Créer un JFrame flottant au lieu d'un JDialog
         JFrame frameTimer = new JFrame();
