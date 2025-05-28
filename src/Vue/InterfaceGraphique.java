@@ -171,22 +171,22 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         });
     }
 
-    // --- Gestion des menus ---
-
-    /**
-     * Met à jour la disposition des composants en fonction de la taille de la fenêtre
-     */
-    public void mettreAJourDispositions() {
-        int width = frame.getWidth();
-        int height = frame.getHeight();
-        ecranPlateauDeJeu.setBounds(0, 0, width, height);
-        backgroundBlur.setBounds(0, 0, width, height);
-        if (ecranMenu.isVisible()) {
-            ecranMenu.setBounds(width - WIDTH_MENU, 0, WIDTH_MENU, height);
-        } else {
-            ecranMenu.setBounds(width, 0, WIDTH_MENU, height);
-        }
-    }
+//    // --- Gestion des menus ---
+//
+//    /**
+//     * Met à jour la disposition des composants en fonction de la taille de la fenêtre
+//     */
+//    public void mettreAJourDispositions() {
+//        int width = frame.getWidth();
+//        int height = frame.getHeight();
+//        ecranPlateauDeJeu.setBounds(0, 0, width, height);
+//        backgroundBlur.setBounds(0, 0, width, height);
+//        if (ecranMenu.isVisible()) {
+//            ecranMenu.setBounds(width - WIDTH_MENU, 0, WIDTH_MENU, height);
+//        } else {
+//            ecranMenu.setBounds(width, 0, WIDTH_MENU, height);
+//        }
+//    }
 
     /**
      * Ouvre le menu latéral avec animation*/
@@ -286,16 +286,101 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
     }
 
 
+    public void setContentPane(Container component) {
+        frame.setContentPane(component);
+    }
+
+
+
+
+
+    private EcranVictoire ecranVictoire;
+
     /**
      * Affiche l'écran de victoire dans l'application.
      *
      * @param nomGagnant Le nom du joueur gagnant.
      */
     public void afficherEcranVictoire(String nomGagnant) {
-        ecranPlateauDeJeu.afficherEcranVictoire(nomGagnant);
+        // Créer et configurer l'écran de victoire
+        ecranVictoire = new EcranVictoire(nomGagnant, this);
+
+        // Ajuster la taille de l'écran de victoire
+        ecranVictoire.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+
+        // Ajouter l'écran de victoire au layeredPane avec la plus haute priorité
+        layeredPane.add(ecranVictoire, JLayeredPane.POPUP_LAYER);
+        layeredPane.moveToFront(ecranVictoire);
+
+        // Mettre à jour l'affichage
+        frame.revalidate();
+        frame.repaint();
     }
 
-    public void setContentPane(Container component) {
-        frame.setContentPane(component);
+    /**
+     * Ferme l'écran de victoire et retourne au menu principal
+     */
+    public void retournerAuMenu() {
+        if (ecranVictoire != null) {
+            layeredPane.remove(ecranVictoire);
+            ecranVictoire = null;
+
+            // Réinitialiser et afficher le menu
+            initialiserMenu();
+            ouvrirMenu();
+
+            // Mettre à jour l'affichage
+            frame.revalidate();
+            frame.repaint();
+        }
+    }
+
+    /**
+     * Ferme l'écran de victoire et lance une nouvelle partie
+     */
+    public void demarrerNouvellePartie() {
+        if (ecranVictoire != null) {
+            layeredPane.remove(ecranVictoire);
+            ecranVictoire = null;
+
+            // Réinitialiser et lancer une nouvelle partie
+            initialiserPlateau();
+            lancerPlateauDeJeu();
+
+            // Mettre à jour l'affichage
+            frame.revalidate();
+            frame.repaint();
+        }
+    }
+
+    /**
+     * Met à jour la disposition des composants en fonction de la taille de la fenêtre
+     */
+    public void mettreAJourDispositions() {
+        int width = frame.getWidth();
+        int height = frame.getHeight();
+
+        // Mise à jour des autres composants...
+        ecranPlateauDeJeu.setBounds(0, 0, width, height);
+        backgroundBlur.setBounds(0, 0, width, height);
+
+        // Mise à jour de l'écran de victoire s'il est présent
+        if (ecranVictoire != null) {
+            ecranVictoire.setBounds(0, 0, width, height);
+        }
+
+        // Mise à jour du menu...
+        if (ecranMenu.isVisible()) {
+            ecranMenu.setBounds(width - WIDTH_MENU, 0, WIDTH_MENU, height);
+        } else {
+            ecranMenu.setBounds(width, 0, WIDTH_MENU, height);
+        }
+    }
+
+
+
+
+    public CollecteurEvenements getControler() {
+        return collecteurEvent;
     }
 }

@@ -43,8 +43,8 @@ public class InterfaceTextuelleTest {
         originalSystemIn = System.in;
 
         // Mocks pour Jeu
-        when(mockJeu.getNumeroRound()).thenReturn(1);
-        when(mockJeu.getTempsDeJeu()).thenReturn(65L); // 1 min 5 sec
+        when(1).thenReturn(1);
+        when(65L).thenReturn(65L); // 1 min 5 sec
         when(mockJeu.getJoueurCourant()).thenReturn(new Joueur(ID_JOUEUR_1, "Joueur 1"));
         when(mockJeu.getNomJoueur1()).thenReturn("Joueur 1");
         when(mockJeu.getNomJoueur2()).thenReturn("Joueur 2");
