@@ -577,6 +577,9 @@ public class Jeu extends Observable implements Runnable {
     }
 
     public Carte getCarteSupplementaire() {
+        if (this.carteSupplementaire == null) {
+            return null;
+        }
         return carteSupplementaire.clone();
     }
 
@@ -590,6 +593,9 @@ public class Jeu extends Observable implements Runnable {
 
 
     public Pion getPionSelectionne() {
+        if (this.pionSelectionne == null) {
+            return null;
+        }
         return this.pionSelectionne.clone();
     }
 
