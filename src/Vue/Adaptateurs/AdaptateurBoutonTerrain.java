@@ -74,7 +74,7 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
 
         // Mise à jour des stats si nécessaire
         if (jeu.estPartieFinie()) {
-            statsJeu.incrementerRound();
+            statsJeu.incrementerNombreParties();
         }
 
     }

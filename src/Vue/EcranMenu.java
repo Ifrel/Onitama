@@ -6,6 +6,7 @@ import Patterns.Observateur;
 import Vue.Adaptateurs.*;
 import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.PanelAvecImage;
+import Vue.Utils.StatsJeu;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -54,11 +55,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     // État du jeu
     private int round = 0;
     private Duration dureePartie = Duration.ZERO;
-    private Instant debutPartie;
-    private boolean partieEnCours = false;
-    private boolean partieEnPause = false;
-    private boolean partieTerminee = false;
-    private boolean sauvegardeEnCours = false;
+
 
     // Gestion des joueurs
     private final JOUEUR joueur1 = JOUEUR.JOUEUR_A;
@@ -106,6 +103,12 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         }
     }
 
+
+    private final StatsJeu statsJeu = StatsJeu.getInstance();
+
+
+
+
     /**
      * Constructeur de l'écran de menu.
      */
@@ -127,8 +130,9 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     private void initialiserLesStats() {
         joueur1.setNom(jeu.getNomJoueur1());
         joueur2.setNom(jeu.getNomJoueur2());
-        debutPartie = Instant.now();
     }
+
+
 
     /**
      * Met à jour l'interface en fonction des changements du modèle.
@@ -137,39 +141,31 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     public void miseAJour() {
         LOGGER.info("Mise à jour des données de EcranMenu depuis le modèle Jeu.");
 
-        SwingUtilities.invokeLater(() -> {
-            if (jeu.estPartieFinie()) {
-                round++;
-            }
-
-            // Mise à jour de la durée
-            if (partieEnCours && !partieEnPause) {
-                dureePartie = Duration.between(debutPartie, Instant.now());
-            }
-
-            // Mise à jour de l'affichage
-            updateDisplayValues();
-        });
+        updateDisplayValues();
 
         LOGGER.info("Mise à jour de EcranMenu terminée.");
     }
+
 
     /**
      * Met à jour les valeurs affichées dans l'interface.
      */
     private void updateDisplayValues() {
-        roundValue.setText(String.valueOf(round));
+        roundValue.setText(statsJeu.getNombreParties() + "");
 
+        dureePartie = statsJeu.getDureePartie();
         long minutes = dureePartie.toMinutes();
         long secondes = dureePartie.minusMinutes(minutes).getSeconds();
         dureePartieValue.setText(String.format("%02d:%02d", minutes, secondes));
 
         nomJoueurAValue.setText(joueur1.getNom() + ": ");
-        scoreJoueurAValue.setText(String.valueOf(joueur1.getScore()));
+        scoreJoueurAValue.setText(statsJeu.getScoreJoueur1() + " pts");
 
         nomJoueurBValue.setText(joueur2.getNom() + ": ");
-        scoreJoueurBValue.setText(String.valueOf(joueur2.getScore()));
+        scoreJoueurBValue.setText(statsJeu.getScoreJoueur2() + " pts");
     }
+
+
 
     /**
      * Initialise et configure le layout et les composants de l'écran de menu.
@@ -473,51 +469,5 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
             this.adaptateurBuilder = adaptateurBuilder;
         }
     }
-
-
-    public String getImagePath() {
-        return Paths.PATH_ARRIERE_PLAN_4.toString();
-    }
-
-
-    public void demarrerPartie() {
-        partieEnCours = true;
-        partieEnPause = false;
-        partieTerminee = false;
-        debutPartie = Instant.now();
-    }
-
-    public void mettreEnPause() {
-        if (partieEnCours) {
-            partieEnPause = true;
-        }
-    }
-
-    public void reprendrePartie() {
-        if (partieEnCours && partieEnPause) {
-            partieEnPause = false;
-            // Ajuster le temps de début pour tenir compte de la pause
-            debutPartie = Instant.now().minus(dureePartie);
-        }
-    }
-
-    public void terminerPartie() {
-        partieEnCours = false;
-        partieTerminee = true;
-        // Figer la durée finale
-        dureePartie = Duration.between(debutPartie, Instant.now());
-    }
-
-    public void reinitialiserStats() {
-        round = 0;
-        dureePartie = Duration.ZERO;
-        joueur1.setScore(0);
-        joueur2.setScore(0);
-        debutPartie = Instant.now();
-        partieEnCours = false;
-        partieEnPause = false;
-        partieTerminee = false;
-    }
-
 
 }

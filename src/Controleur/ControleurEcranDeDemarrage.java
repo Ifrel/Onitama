@@ -4,6 +4,7 @@ import Global.Config;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.Configuration.InfosDeConfigUI;
+import Vue.InterfaceGraphique;
 import Vue.Utils.AfficheReglesPDF;
 
 import java.awt.*;
@@ -14,25 +15,117 @@ import static Global.Config.CiblesDesCouleurs.PION_TERRAIN_JOUEUR_2;
 import static Global.Config.ID_JOUEUR_1;
 import static Global.Config.ID_JOUEUR_2;
 import static Global.Config.NIVEAU_IA.*;
+import static Vue.Utils.MethodsStaticsUtils.afficherFonctionEnCours;
 
 public class ControleurEcranDeDemarrage implements CollecteurEvenements {
     private final Jeu jeu;
     private final InfosDeConfigUI infosDeConfigUI = InfosDeConfigUI.getInstance();
-    Logger LOGGER = Logger.getLogger(ControleurEcranDeDemarrage.class.getName());
+    Logger logger = Logger.getLogger(ControleurEcranDeDemarrage.class.getName());
 
     public ControleurEcranDeDemarrage(Jeu jeu){
         this.jeu = jeu;
     }
 
+
     @Override
-    public void clavier(String commande) {
-        if (commande.equals("regles")) {// Recherche de la fenêtre ayant le focus
-            Window fenetreActive = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
-            AfficheReglesPDF.ouvrirReglesPDFExterne(fenetreActive);
-        } else {
-            LOGGER.severe("Commande inconnue : " + commande);
+    synchronized public void clavier(String touche) {
+        logger.info("Touche clavier : " + touche);
+        try {
+            InterfaceGraphique vue = InterfaceGraphique.getInstance();
+            switch (touche) {
+                case "exit":
+                    System.exit(0);
+                    break;
+                case "annuler":
+                    jeu.annulerCoup();
+                    break;
+                case "refaire":
+                    jeu.refaireCoup();
+                    break;
+                case "didacticiel":
+                case "mesParties":
+                    afficherFonctionEnCours();
+                    break;
+                case "nouvellePartie":
+                    vue.demarrerNouvellePartie();
+                    break;
+                case "regles":
+                    // Recherche de la fenêtre ayant le focus
+                    Window fenetreActive = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+                    AfficheReglesPDF.ouvrirReglesPDFExterne(fenetreActive);
+                    break;
+                case "pause":
+                    jeu.setPause();
+                    break;
+                case "full":
+                    vue.toggleFullScreen();
+                    break;
+                case "demarrer":
+                    vue.lancerPlateauDeJeu();
+                    break;
+                case "Humain-1":
+                    if (jeu.estActiveIA1())
+                        jeu.toggleIA1();
+                    break;
+                case "IA - Facile-1":
+                    if (!jeu.estActiveIA1())
+                        jeu.toggleIA1();
+                    jeu.setNiveauIA1(FAIBLE);
+                    break;
+                case "IA - Moyen-1":
+                    if (!jeu.estActiveIA1())
+                        jeu.toggleIA1();
+                    jeu.setNiveauIA1(MOYEN);
+                    break;
+                case "IA - Difficile-1":
+                    if (!jeu.estActiveIA1())
+                        jeu.toggleIA1();
+                    jeu.setNiveauIA1(FORT);
+                    break;
+                case "Humain-2":
+                    if (jeu.estActiveIA2())
+                        jeu.toggleIA2();
+                    break;
+                case "IA - Facile-2":
+                    if (!jeu.estActiveIA2())
+                        jeu.toggleIA2();
+                    jeu.setNiveauIA2(FAIBLE);
+                    break;
+                case "IA - Moyen-2":
+                    if (!jeu.estActiveIA2())
+                        jeu.toggleIA2();
+                    jeu.setNiveauIA2(MOYEN);
+                    break;
+                case "IA - Difficile-2":
+                    if (!jeu.estActiveIA2())
+                        jeu.toggleIA2();
+                    jeu.setNiveauIA2(FORT);
+                    break;
+                case "ia vs ia":
+                    if (!jeu.estActiveIA1()) {
+                        jeu.toggleIA1();
+                    }
+
+                    if (!jeu.estActiveIA2()) {
+                        jeu.toggleIA2();
+                    }
+
+                    Thread.sleep(1000);
+                    logger.info("Lancement du mode IA(" + jeu.getNiveauIA1() + ") vs IA(" + jeu.getNiveauIA2() + ")");
+                    jeu.toggleIAvsIA();
+                    break;
+                default:
+                    logger.severe("Touche inconnue : " + touche);
+                    break;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
+
+
+
+
 
     @Override
     public void tictac() {

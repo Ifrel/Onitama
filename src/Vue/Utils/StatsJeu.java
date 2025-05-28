@@ -54,7 +54,7 @@ public class StatsJeu {
     /**
      * Incrémente le compteur de rounds et notifie le changement.
      */
-    public synchronized void incrementerRound() {
+    public synchronized void incrementerNombreParties() {
         nombeParties++;
         LOGGER.info("Round incrémenté : " + nombeParties);
     }
@@ -161,4 +161,12 @@ public class StatsJeu {
         this.scoreJoueur2 = Math.max(0, score);
         LOGGER.info("Score du joueur 2 mis à jour : " + scoreJoueur2);
     }
+
+    public void setDuration(Duration duration) {
+        this.dureePartie = duration;
+    }
+
+    public void setPartieEnCours(boolean partieEnCours) {
+    }
+
 }

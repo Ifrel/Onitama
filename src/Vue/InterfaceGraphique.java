@@ -84,6 +84,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         frame.setPreferredSize(DIM_SCENE);
         frame.setMinimumSize(DIM_SCENE);
         frame.addKeyListener(new AdaptateurClavier(collecteurEvent));
+        frame.setFocusable(true);
         ajouterEcouteurFermeture(frame);
         return frame;
     }
@@ -301,6 +302,7 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         mettreAJourDispositions();
         frame.revalidate();
         frame.repaint();
+        requestGameFocus();
     }
 
 
@@ -467,6 +469,11 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
 
     public void signalerActionInvalide() {
         secouerFenetre();
+    }
+
+
+    public void requestGameFocus() {
+        frame.requestFocus();
     }
 
 

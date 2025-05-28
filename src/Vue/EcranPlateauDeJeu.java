@@ -115,12 +115,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     // Gestions de Statistiques
     private final StatsJeu statsJeu = StatsJeu.getInstance();
-    private boolean partieEnCours = false;
-    private boolean partieEnPause = false;
-    private boolean partieEnVictoire = false;
-    private boolean partieEnDefaite = false;
-    private boolean partieEnFinDePartie = false;
-    private boolean partieEnFinDeJeu = false;
+    private Duration duration = Duration.ZERO;
 
 
     /**
@@ -135,6 +130,14 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
         this.idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
+        // Ajouter l'écouteur de clavier
+        this.setFocusable(true);
+        this.addKeyListener(new AdaptateurClavier(collecteurEv));
+
+        statsJeu.setNomJoueur1(jeu.getNomJoueur1());
+        statsJeu.setNomJoueur2(jeu.getNomJoueur2());
+
+
 
         jeu.ajouteObservateur(this);
         logger.info("Interface Plateau de jeu lancée");
@@ -178,41 +181,23 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         SwingUtilities.invokeLater(() -> {
             // Mise à jour des stats
             if (jeu.estPartieFinie()) {
-                statsJeu.incrementerRound();
-            }
+                statsJeu.incrementerNombreParties();
 
-            if (partieEnCours && !partieEnPause) {
-                statsJeu.updateDureePartie();
-            }
-
-            // Mise à jour des scores
-            if (jeu.estPartieFinie()) {
                 if (jeu.getJoueurCourant().getId() == ID_JOUEUR_1) {
                     statsJeu.setScoreJoueur1(statsJeu.getScoreJoueur1() + 1);
                 } else {
                     statsJeu.setScoreJoueur2(statsJeu.getScoreJoueur2() + 1);
                 }
+
+            } else{
+                statsJeu.setDuration(duration);
+                statsJeu.updateDureePartie();
             }
-
-            // Mise à jour du reste de l'interface
-            updatePlayerAndRoundInfo2();
-            mettreAJourImagesCartes();
-            updateUndoRedoButtons();
         });
-
-
 
         logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }
 
-
-    private void updatePlayerAndRoundInfo2() {
-        roundLabel.setText("Partie: " + statsJeu.getNombreParties());
-        Duration duree = statsJeu.getDureePartie();
-        long minutes = duree.toMinutes();
-        long secondes = duree.minusMinutes(minutes).getSeconds();
-        tempsLabel.setText(String.format("Temps: %02d:%02d", minutes, secondes));
-    }
 
 
 
@@ -819,6 +804,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             long minutes = duration.toMinutes();
             long secondes = duration.getSeconds() % 60;
             tempsLabel.setText(String.format("%02d:%02d", minutes, secondes));
+            this.duration = duration;
         }
     }
     /**
@@ -853,8 +839,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             String nomJoueur = jeu.getJoueurCourant().getNom();
             nomJoueurCourantLabel.setText(nomJoueur);
 
-            parties = 1;
-            roundLabel.setText("Partie: " + parties);
+            roundLabel.setText("Partie: " + statsJeu.getNombreParties());
 
             nomJoueurCourantLabel.setForeground(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()));
         }

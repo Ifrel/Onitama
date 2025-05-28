@@ -5,6 +5,7 @@ import Global.Config;
 import Global.Paths;
 import Modele.Jeu;
 import Vue.Adaptateurs.AdaptateurBoutonEntrer;
+import Vue.Adaptateurs.AdaptateurClavier;
 import Vue.Utils.Boutons.Bouton;
 import Vue.Utils.Boutons.Bouton.BoutonAvecImage;
 import Vue.Utils.PanelAvecImage;
@@ -76,6 +77,11 @@ public class EcranDeDemarrage extends JTabbedPane {
         this.interfaceGraphique = interfaceGraphique;
         this.estModeAutoIA = false;
         this.actionListenerEntree = new AdaptateurBoutonEntrer(CD, interfaceGraphique);
+        // Ajouter l'écouteur de clavier
+        this.setFocusable(true);
+        this.addKeyListener(new AdaptateurClavier(CD));
+
+
         creerInterfaceUtilisateur();
     }
 
@@ -99,6 +105,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         addTab(null, creerOngletCouleur());
         setTabComponentAt(1, creerPanelTitreOnglet(TITRE_ONGLET_COULEUR));
     }
+
 
 
     /**
