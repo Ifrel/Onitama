@@ -27,6 +27,8 @@ import static Global.Config.ROLEPION.PION_MAITRE;
 import static Global.Config.TYPECARTE.*;
 import static Global.Config.TYPE_JOUEUR.JOUEUR_IA;
 import static Modele.Utils.*;
+import static Global.Config.COULEURS_CARTES;
+import static Global.Config.COULEUR_CARTE.*;
 
 
 public class Jeu extends Observable implements Runnable {
@@ -317,6 +319,11 @@ public class Jeu extends Observable implements Runnable {
         carte2Joueur2.setProprietaire(ID_JOUEUR_2);
         //La carte qui reste est la carte d'échange
         carteSupplementaire = cartesDuJeu.get(4);
+        if (COULEURS_CARTES.get(carteSupplementaire.getType()) == BLEU) {
+            joueurQuiCommence(ID_JOUEUR_1);
+        } else {
+            joueurQuiCommence(ID_JOUEUR_2);
+        }
         //On crée la classe des deux joueurs
 
         joueur1.clearHand();
