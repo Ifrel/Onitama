@@ -1,12 +1,8 @@
 package Vue;
 
 import Global.Config;
-import Modele.Carte;
 import Modele.CasePlateau;
 import Modele.Coup;
-import Vue.Animations.AnimationUtils.CardFlipAnimator;
-import Vue.Utils.Boutons.BoutonCarte;
-import Vue.Utils.Boutons.BoutonTerrain;
 
 import java.awt.*;
 import java.util.List;
@@ -79,92 +75,12 @@ public interface CollecteurEvenements {
     default void setNomJoueur(int num, String nom){};
 
 
-
-    /**
-     * Gère l'activation ou la désactivation d'un mode de jeu automatique
-     * impliquant potentiellement des IA.
-     * @param nouvelEtat Le nouvel état du mode automatique (true pour activé, false pour désactivé).     */
-    default void setModeAuto(){};
-
-
-    /**
-     * Gère le réglage du temps de réflexion accordé à une IA (en millisecondes).
-     * @param tempsMs Le temps de réflexion en millisecondes.     */
-    default void setIAReflexion(int tempsMs){};
-
-
-
-    /**
-     * Gère l'activation ou la désactivation d'une heuristique spécifique pour l'IA.
-     * @param active True pour activer l'heuristique, false pour la désactiver.     */
-    default void setIAHeuristique(boolean active){};
-
-
-
-    /**
-     * Gère la sélection de l'algorithme utilisé par l'IA.
-     * @param nomAlgorithme Le nom de l'algorithme d'IA sélectionné.     */
-    default void setIAAlgorithme(String nomAlgorithme){};
-
-
-
     /**
      * Gère le changement de couleur pour un élément spécifique de l'interface ou du jeu.
      * Nécessite l'énumération CiblesDesCouleurs pour identifier ce qui doit être coloré.
      * @param cible La cible du changement de couleur (définie dans Global.Config.CiblesDesCouleurs).
      * @param couleur La nouvelle couleur à appliquer.     */
     default void setCouleur(Config.CiblesDesCouleurs cible, Color couleur){};
-
-
-
-    /**
-     * Gère le réglage de la vitesse des animations dans le jeu.
-     * @param vitesse La nouvelle vitesse des animations (valeur typiquement comprise dans une plage prédéfinie).     */
-    default void setAnimationVitesse(int vitesse){};
-
-
-
-    /**
-     * Gère l'activation ou la désactivation des animations pour les pièces (pions, etc.) sur le plateau.
-     * @param active True pour activer les animations des pièces, false pour les désactiver.     */
-    default void setAnimationPieces(boolean active){};
-
-
-    /**
-     * Gère l'activation ou la désactivation des animations de surbrillance
-     * (par exemple, pour indiquer les coups possibles ou les éléments sélectionnés).
-     * @param active True pour activer la surbrillance animée, false pour la désactiver.*/
-    default void setAnimationSurbrillance(boolean active){};
-
-
-
-    /**
-     * Gère le réglage du volume général du son de l'application.
-     * @param volume Le nouveau niveau de volume général.   */
-    default void setSonVolumeGeneral(int volume){};
-
-
-
-    /**
-     * Gère le réglage du volume des effets sonores.
-     * @param volume Le nouveau niveau de volume des effets.    */
-    default void setSonVolumeEffets(int volume){};
-
-
-
-    /**
-     * Gère le réglage du volume de la musique de fond.
-     * @param volume Le nouveau niveau de volume de la musique.   */
-    default void setSonVolumeMusique(int volume){};
-
-
-
-    /**
-     * Gère l'activation ou la désactivation du mode muet.
-     * @param muet True pour activer le mode muet, false pour le désactiver.     */
-    default void setSonMuet(boolean muet){};
-
-
 
 
     /*****************************************************
@@ -187,17 +103,12 @@ public interface CollecteurEvenements {
     default void setCaseSelectionnee(int xDepart, int yDepart){};
 
 
-    default void clicBoutonTerrain(BoutonTerrain boutonTerrain, CasePlateau casePlateau){};
-
     default void activeCibleBoutonTerrain(List<Coup> coupPossible, EcranPlateauDeJeu ecranPlateauDeJeu){};
 
     default  CollecteurEvenements getCollecteurAnimation(){return null;}
 
     default void desactiveCibleBoutonTerrain(List<Coup> coupPossible){};
 
-    default void activeAnimationDeRotation(CardFlipAnimator animator, int idJoueurCourant){};
-
-    default void desactiveAnimationDeRotation(BoutonCarte boutonCarte, int idJoueurCourant){};
 
     default void desactiveSuggestion(Coup coup, EcranPlateauDeJeu ecranPlateauDeJeu){};
 

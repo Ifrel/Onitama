@@ -15,11 +15,10 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.nio.file.Path;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.net.URL;
 
 import static Global.Config.*;
 import static Global.Config.CiblesDesCouleurs.*;
@@ -28,9 +27,9 @@ import static Vue.Configuration.ConfigUI.*;
 
 
 /**
- EcranDeDemarrage : Écran de configuration du jeu utilisant JTabbedPane.
- Permet de définir le mode de jeu, les noms des joueurs, le niveau de l'IA, etc.
- Interagit avec le {@link ControleurEcranDeDemarrage} pour signaler les actions de l'utilisateur.
+ * EcranDeDemarrage : Écran de configuration du jeu utilisant JTabbedPane.
+ * Permet de définir le mode de jeu, les noms des joueurs, le niveau de l'IA, etc.
+ * Interagit avec le {@link ControleurEcranDeDemarrage} pour signaler les actions de l'utilisateur.
  */
 public class EcranDeDemarrage extends JTabbedPane {
     // Ajoutez ces constantes en haut de la classe EcranDeDemarrage
@@ -38,10 +37,18 @@ public class EcranDeDemarrage extends JTabbedPane {
     private static final double BUTTON_HEIGHT_RATIO = 0.1;  // 10% de la hauteur
     private static final double COMBOBOX_WIDTH_RATIO = 0.25; // 25% de la largeur
     private static final double TEXTFIELD_WIDTH_RATIO = 0.25; // 25% de la largeur
+    // Constantes de Mise en Page et Style
+    private static final int GRID_COLUMN_LABEL = 4;
+    private static final String FONT_NAME_ARIAL = "Arial";
+    private static final Font FONT_TITLE = new Font(FONT_NAME_ARIAL, Font.BOLD, 40);
+    private static final Font FONT_LABEL = new Font(FONT_NAME_ARIAL, Font.PLAIN, 25);
+    private static final Font FONT_COMPONENT = new Font(FONT_NAME_ARIAL, Font.PLAIN, 20);
     private final Jeu jeu;
     private final ControleurEcranDeDemarrage CD;
     private final InterfaceGraphique interfaceGraphique;
-
+    private final AdaptateurBoutonEntrer actionListenerEntree;
+    // Pour la réinitialisation des couleurs
+    private final Map<CiblesDesCouleurs, Color> couleursInitiales = new HashMap<>();
     // Onglet Général
     private boolean estModeAutoIA;
     private BoutonAvecImage boutonModeAuto;
@@ -51,24 +58,13 @@ public class EcranDeDemarrage extends JTabbedPane {
     private JTextField champNomJoueur2;
     private String nomPartieSelectionnee;
     private String niveauIASelectionne;
-    private final AdaptateurBoutonEntrer actionListenerEntree;
-
-    // Constantes de Mise en Page et Style
-    private static final int GRID_COLUMN_LABEL = 4;
-    private static final String FONT_NAME_ARIAL = "Arial";
-    private static final Font FONT_TITLE = new Font(FONT_NAME_ARIAL, Font.BOLD, 40);
-    private static final Font FONT_LABEL = new Font(FONT_NAME_ARIAL, Font.PLAIN, 25);
-    private static final Font FONT_COMPONENT = new Font(FONT_NAME_ARIAL, Font.PLAIN, 20);
-
-    // Pour la réinitialisation des couleurs
-    private final Map<CiblesDesCouleurs, Color> couleursInitiales = new HashMap<>();
 
 
     /**
      * Constructeur de l'écran de démarrage.
      * Initialise les composants UI et connecte le contrôleur.
      *
-     * @param jeu Le modèle de jeu.
+     * @param jeu                Le modèle de jeu.
      * @param interfaceGraphique L'interface graphique principale.
      */
     public EcranDeDemarrage(Jeu jeu, InterfaceGraphique interfaceGraphique) {
@@ -107,12 +103,12 @@ public class EcranDeDemarrage extends JTabbedPane {
     }
 
 
-
     /**
      * Crée un JPanel avec un titre en format PNG, utilisé comme composant de l'onglet.
      *
      * @param titre Le texte du titre à afficher dans le PNG.
-     * @return Un JPanel contenant le titre sous forme d'image PNG.     */
+     * @return Un JPanel contenant le titre sous forme d'image PNG.
+     */
     private JPanel creerPanelTitreOnglet(String titre) {
         JPanel panelTitre = PngText.createPngPanel(titre, 25);
         panelTitre.setOpaque(false); // Rendre le panneau transparent
@@ -124,7 +120,8 @@ public class EcranDeDemarrage extends JTabbedPane {
      * Crée l'onglet principal "Général" de configuration en utilisant GridBagLayout.
      * Cet onglet permet de configurer le mode de jeu, les noms des joueurs et le niveau de l'IA.
      *
-     * @return Le JPanel de l'onglet Général.     */
+     * @return Le JPanel de l'onglet Général.
+     */
     private JPanel creerOngletGeneral() {
         PanelAvecImage ongletGeneral = new PanelAvecImage(getArrierePlanPath("arrierePlan10.png"));
         ongletGeneral.setLayout(new GridBagLayout());
@@ -177,7 +174,6 @@ public class EcranDeDemarrage extends JTabbedPane {
         ajouterLigneConfiguration(ongletGeneral, LBL_MODE_AUTO, boutonModeAuto, ligneCourante++, FONT_LABEL);
 
 
-
         // Ligne 3 : Jouer avec l'IA
         comboBoxNiveauIA = creerListeDeroulanteAvecIndication(OPTIONS_IA);
         comboBoxNiveauIA.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
@@ -200,9 +196,18 @@ public class EcranDeDemarrage extends JTabbedPane {
         champNomJoueur1.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
         champNomJoueur1.setFont(FONT_COMPONENT);
         champNomJoueur1.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) { updateChampJoueur1(); }
-            public void removeUpdate(DocumentEvent e) { updateChampJoueur1(); }
-            public void insertUpdate(DocumentEvent e) { updateChampJoueur1(); }
+            public void changedUpdate(DocumentEvent e) {
+                updateChampJoueur1();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                updateChampJoueur1();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                updateChampJoueur1();
+            }
+
             private void updateChampJoueur1() {
                 champNomJoueur1.setBorder(UIManager.getBorder("TextField.border"));
                 actionListenerEntree.setChampJoueur(1, champNomJoueur1);
@@ -219,9 +224,18 @@ public class EcranDeDemarrage extends JTabbedPane {
         champNomJoueur2.setPreferredSize(DIMENSION_CHAMP_LISTE_DEROULANTE);
         champNomJoueur2.setFont(FONT_COMPONENT);
         champNomJoueur2.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) { updateChampJoueur2(); }
-            public void removeUpdate(DocumentEvent e) { updateChampJoueur2(); }
-            public void insertUpdate(DocumentEvent e) { updateChampJoueur2(); }
+            public void changedUpdate(DocumentEvent e) {
+                updateChampJoueur2();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                updateChampJoueur2();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                updateChampJoueur2();
+            }
+
             private void updateChampJoueur2() {
                 champNomJoueur2.setBorder(UIManager.getBorder("TextField.border"));
                 actionListenerEntree.setChampJoueur(2, champNomJoueur2);
@@ -240,7 +254,9 @@ public class EcranDeDemarrage extends JTabbedPane {
         BoutonAvecImage regles = Bouton.creerBouton(Paths.getButtonPath("regles.png"), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         regles.setPreferredSize(new Dimension(200, 90));
         regles.setToolTipText("Voir les Règles du jeu");
-        regles.addActionListener(e -> { CD.clavier("regles");});
+        regles.addActionListener(e -> {
+            CD.clavier("regles");
+        });
         panelBoutons.add(regles);
 
         // Bouton "Entrer"
@@ -274,7 +290,8 @@ public class EcranDeDemarrage extends JTabbedPane {
      * Crée l'onglet de personnalisation des couleurs.
      * Permet à l'utilisateur de modifier les couleurs des différents éléments du jeu.
      *
-     * @return Le JPanel de l'onglet Couleur.     */
+     * @return Le JPanel de l'onglet Couleur.
+     */
     private JPanel creerOngletCouleur() {
         PanelAvecImage ongletCouleur = new PanelAvecImage(PATH_ARRIERE_PLAN_03);
         ongletCouleur.setLayout(new GridBagLayout());
@@ -370,17 +387,16 @@ public class EcranDeDemarrage extends JTabbedPane {
     }
 
 
-
-
     /**
      * Ajoute une ligne dans le panneau de l'onglet "Couleur" permettant la sélection d'une couleur.
      * Chaque ligne comprend une étiquette, un bouton de prévisualisation de couleur et un bouton de réinitialisation.
      *
-     * @param panneau Le conteneur (JPanel) dans lequel ajouter les composants.
-     * @param texteEtiquette Le texte affiché à gauche de la ligne (ex: "Plateau de jeu").
+     * @param panneau         Le conteneur (JPanel) dans lequel ajouter les composants.
+     * @param texteEtiquette  Le texte affiché à gauche de la ligne (ex: "Plateau de jeu").
      * @param couleurInitiale La couleur initiale à afficher dans le bouton de prévisualisation.
-     * @param ligne L'index de la ligne dans le GridBagLayout.
-     * @param cible La cible de la configuration de couleur (énumération {@link CiblesDesCouleurs}).     */
+     * @param ligne           L'index de la ligne dans le GridBagLayout.
+     * @param cible           La cible de la configuration de couleur (énumération {@link CiblesDesCouleurs}).
+     */
     private void ajouterLigneSecteurCouleur(JPanel panneau, String texteEtiquette, Color couleurInitiale, int ligne, Config.CiblesDesCouleurs cible) {
         couleursInitiales.put(cible, couleurInitiale);
 
@@ -437,7 +453,8 @@ public class EcranDeDemarrage extends JTabbedPane {
                         case "bleu":
                             couleurChoisie = new Color(26, 67, 104);
                             break;
-                        default:return;
+                        default:
+                            return;
                     }
                     boutonSelectionCouleur.chargerCouleurFont(couleurChoisie);
                     CD.setCouleurPion(cible, choixCouleur.getSelectedItem().toString());
@@ -500,11 +517,12 @@ public class EcranDeDemarrage extends JTabbedPane {
      * Méthode utilitaire pour ajouter une ligne (étiquette PNG + composant) au GridBagLayout
      * dans l'onglet de configuration générale.
      *
-     * @param panneau Le JPanel utilisant GridBagLayout.
-     * @param texteEtiquette Le texte pour l'étiquette PNG.
-     * @param composant Le JComponent à ajouter (ex: JButton, JComboBox, JTextField).
-     * @param ligne La valeur gridy pour cette ligne.
-     * @param policeEtiquette La police (Font) pour l'étiquette (bien que l'étiquette soit un PNG, cela pourrait être utile pour d'autres types de labels).     */
+     * @param panneau         Le JPanel utilisant GridBagLayout.
+     * @param texteEtiquette  Le texte pour l'étiquette PNG.
+     * @param composant       Le JComponent à ajouter (ex: JButton, JComboBox, JTextField).
+     * @param ligne           La valeur gridy pour cette ligne.
+     * @param policeEtiquette La police (Font) pour l'étiquette (bien que l'étiquette soit un PNG, cela pourrait être utile pour d'autres types de labels).
+     */
     private void ajouterLigneConfiguration(JPanel panneau, String texteEtiquette, JComponent composant, int ligne, Font policeEtiquette) {
         // Contraintes de l'Étiquette
         GridBagConstraints gbcLabel = new GridBagConstraints();
@@ -543,7 +561,8 @@ public class EcranDeDemarrage extends JTabbedPane {
      * L'indication est affichée en gris et redevient noire lors de la sélection d'une vraie option.
      *
      * @param options Les options pour la liste déroulante. Le premier élément est traité comme l'indication.
-     * @return La JComboBox configurée.     */
+     * @return La JComboBox configurée.
+     */
     private JComboBox<String> creerListeDeroulanteAvecIndication(String[] options) {
         JComboBox<String> comboBox = new JComboBox<>(options);
         comboBox.setFont(FONT_COMPONENT);
@@ -587,9 +606,10 @@ public class EcranDeDemarrage extends JTabbedPane {
      * (Note: Cette méthode est moins utilisée maintenant que PngText.createPngPanel est préféré pour les labels PNG).
      *
      * @param urlImage Le chemin vers l'image.
-     * @param width La largeur désirée de l'image.
-     * @param height La hauteur désirée de l'image.
-     * @return Un JLabel contenant l'image redimensionnée.     */
+     * @param width    La largeur désirée de l'image.
+     * @param height   La hauteur désirée de l'image.
+     * @return Un JLabel contenant l'image redimensionnée.
+     */
     private JLabel creerLabelAvecImage(URL urlImage, int width, int height) {
         JLabel label = new JLabel();
         ImageIcon icon = new ImageIcon(urlImage);

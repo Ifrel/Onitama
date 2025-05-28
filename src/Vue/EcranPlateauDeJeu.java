@@ -6,7 +6,6 @@ import Modele.CasePlateau;
 import Modele.Jeu;
 import Patterns.Observateur;
 import Vue.Adaptateurs.*;
-import Vue.Animations.AnimateurDeCartes;
 import Vue.Animations.AnimationUtils.CardFlipAnimator;
 import Vue.Animations.AnimationUtils.CardFlipLayerUI;
 import Vue.Configuration.InfosDeConfigUI;
@@ -24,7 +23,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
-import javax.swing.Timer;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
@@ -33,14 +31,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static Global.Config.*;
 import static Global.Paths.*;
 import static Vue.Configuration.ConfigUI.ARRONDI;
-import static Vue.Utils.MethodsStaticsUtils.*;
+import static Vue.Utils.MethodsStaticsUtils.getCheminImagePion;
 
 
 /**
@@ -109,8 +109,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     int compCliqueBoutonSuggestion = 0;
 
-    // Animations
-    AnimateurDeCartes animateurDeCartes;
 
 
     // Gestions de Statistiques
@@ -143,8 +141,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         logger.info("Interface Plateau de jeu lancée");
         setLayout(new BorderLayout());
 
-        animateurDeCartes = new AnimateurDeCartes();
-
 
         creerButtonsCartes();
         initialiserInterface();
@@ -174,7 +170,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         suggestion.setEnabled(jeu.getJoueurCourant().getTypeJoueur() != TYPE_JOUEUR.JOUEUR_IA);
 
         // animation de switchage de carte
-        if (jeu.getDernierCoupJoue() != null) { animerEchangeCartes(); }
         idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
 
         // Mise a jour des Infos des Statatistiques
@@ -1271,41 +1266,6 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
                 frameTimer.dispose();
             }
         });
-    }
-
-
-
-    private void animerEchangeCartes() {
-        // Récupérer les positions des cartes
-        Point posCarteSupp = carteDeRotation.getLocation();
-
-        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1) {
-            // Animation pour le joueur 1
-            BoutonCarte carteJouee = buttonsCartesJoueur2[idCartePrecedementSelectionnee];
-            animateurDeCartes.animerDeplacement(carteJouee, posCarteSupp);
-
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    Thread.sleep(500); // Attendre que l'animation se termine
-                    animateurDeCartes.animerDeplacement(carteDeRotation, carteJouee.getLocation());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-        } else {
-            // Animation pour le joueur 2
-            BoutonCarte carteJouee = buttonsCartesJoueur1[idCartePrecedementSelectionnee];
-            animateurDeCartes.animerDeplacement(carteJouee, posCarteSupp);
-
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    Thread.sleep(500);
-                    animateurDeCartes.animerDeplacement(carteDeRotation, carteJouee.getLocation());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
     }
 
 

@@ -13,7 +13,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -43,7 +42,10 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     private final Jeu jeu;
     private final InterfaceGraphique interfaceGraphique;
     private final CollecteurEvenements collecteurEvenements;
-
+    // Gestion des joueurs
+    private final JOUEUR joueur1 = JOUEUR.JOUEUR_A;
+    private final JOUEUR joueur2 = JOUEUR.JOUEUR_B;
+    private final StatsJeu statsJeu = StatsJeu.getInstance();
     // Composants UI pour les statistiques
     private JLabel roundValue;
     private JLabel dureePartieValue;
@@ -51,62 +53,9 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     private JLabel scoreJoueurAValue;
     private JLabel nomJoueurBValue;
     private JLabel scoreJoueurBValue;
-
     // État du jeu
-    private int round = 0;
+    private final int round = 0;
     private Duration dureePartie = Duration.ZERO;
-
-
-    // Gestion des joueurs
-    private final JOUEUR joueur1 = JOUEUR.JOUEUR_A;
-    private final JOUEUR joueur2 = JOUEUR.JOUEUR_B;
-
-    /**
-     * Enumération représentant les joueurs avec leurs attributs.
-     */
-    private enum JOUEUR {
-        JOUEUR_A(Color.BLUE),
-        JOUEUR_B(new Color(26, 67, 104));
-
-        private String nom;
-        private int score;
-        private final Color couleur;
-
-        JOUEUR(Color couleur) {
-            this.nom = "Joueur";
-            this.score = 0;
-            this.couleur = couleur;
-        }
-
-        public String getNom() {
-            return nom;
-        }
-
-        public int getScore() {
-            return score;
-        }
-
-        public Color getCouleur() {
-            return couleur;
-        }
-
-        public void setNom(String nom) {
-            this.nom = nom != null ? nom : "Joueur";
-        }
-
-        public void setScore(int score) {
-            this.score = Math.max(0, score);
-        }
-
-        public void incrementerScore() {
-            this.score++;
-        }
-    }
-
-
-    private final StatsJeu statsJeu = StatsJeu.getInstance();
-
-
 
 
     /**
@@ -132,8 +81,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         joueur2.setNom(jeu.getNomJoueur2());
     }
 
-
-
     /**
      * Met à jour l'interface en fonction des changements du modèle.
      */
@@ -145,7 +92,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
 
         LOGGER.info("Mise à jour de EcranMenu terminée.");
     }
-
 
     /**
      * Met à jour les valeurs affichées dans l'interface.
@@ -164,8 +110,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         nomJoueurBValue.setText(joueur2.getNom() + ": ");
         scoreJoueurBValue.setText(statsJeu.getScoreJoueur2() + " pts");
     }
-
-
 
     /**
      * Initialise et configure le layout et les composants de l'écran de menu.
@@ -229,9 +173,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         gbc.fill = GridBagConstraints.VERTICAL;
         add(Box.createVerticalStrut(100), gbc); // Espace fixe en bas
     }
-
-
-
 
     /**
      * Crée et configure le panneau d'affichage des statistiques de jeu.
@@ -305,7 +246,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         return panelStats;
     }
 
-
     /**
      * Helper method to create a styled JLabel.
      *
@@ -318,7 +258,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         label.setFont(new Font("Arial", Font.PLAIN, 25)); // Font and size
         return label;
     }
-
 
     /**
      * Crée un panel contenant un bouton configuré, typiquement pour les boutons
@@ -347,7 +286,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         return panel;
     }
 
-
     /**
      * Crée le panneau contenant le bouton "Retour".
      *
@@ -362,7 +300,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
                 MARGE_PANEL_RETOUR
         );
     }
-
 
     /**
      * Crée le panneau contenant le bouton "Sauvegarder".
@@ -379,8 +316,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         );
     }
 
-
-
     /**
      * Crée le panneau contenant le bouton "Exit".
      *
@@ -395,8 +330,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
                 MARGE_PANEL_EXIT
         );
     }
-
-
 
     /**
      * Crée le panneau central contenant les boutons d'action principaux (Nouvelle partie, Règles, etc.).
@@ -438,8 +371,6 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         return panelActions;
     }
 
-
-
     /**
      * Crée le panneau du bas de page, contenant le bouton de sauvegarde à gauche
      * et le bouton de sortie à droite.
@@ -456,6 +387,48 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         return bottomPanel;
     }
 
+
+    /**
+     * Enumération représentant les joueurs avec leurs attributs.
+     */
+    private enum JOUEUR {
+        JOUEUR_A(Color.BLUE),
+        JOUEUR_B(new Color(26, 67, 104));
+
+        private final Color couleur;
+        private String nom;
+        private int score;
+
+        JOUEUR(Color couleur) {
+            this.nom = "Joueur";
+            this.score = 0;
+            this.couleur = couleur;
+        }
+
+        public String getNom() {
+            return nom;
+        }
+
+        public void setNom(String nom) {
+            this.nom = nom != null ? nom : "Joueur";
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public void setScore(int score) {
+            this.score = Math.max(0, score);
+        }
+
+        public Color getCouleur() {
+            return couleur;
+        }
+
+        public void incrementerScore() {
+            this.score++;
+        }
+    }
 
     /**
      * Structure pour définir la configuration d'un bouton d'action.
