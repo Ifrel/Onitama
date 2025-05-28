@@ -1,17 +1,18 @@
 package Vue.Utils;
 
+import Global.Paths;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.*;
 
 import javax.imageio.ImageIO;
-
-import static Global.Paths.PATH_LBL_TXT;
 
 /**
  * Crée un texte sous forme d'images PNG personnalisées.
@@ -20,7 +21,7 @@ import static Global.Paths.PATH_LBL_TXT;
 public class PngText {
 
     private static final Logger logger = Logger.getLogger(PngText.class.getName());
-    private static final Map<String, BufferedImage> imageCache = new HashMap<>();
+    private static final Map<URL, BufferedImage> imageCache = new HashMap<>();
 
 
     /**
@@ -48,7 +49,7 @@ public class PngText {
             }
 
             String filename = Character.toUpperCase(c) + ".png";
-            String path = PATH_LBL_TXT.resolve(filename).toString();
+            URL path = Paths.getFontPath(filename);
 
             BufferedImage img = loadImage(path);
             JLabel label;
@@ -71,11 +72,11 @@ public class PngText {
     /**
      * Charge une image depuis le disque ou depuis le cache.
      */
-    private static BufferedImage loadImage(String path) {
+    private static BufferedImage loadImage(URL path) {
         if (imageCache.containsKey(path)) return imageCache.get(path);
 
         try {
-            BufferedImage img = ImageIO.read(new File(path));
+            BufferedImage img = ImageIO.read(path);
             imageCache.put(path, img);
             logger.info("Image chargée : " + path);
             return img;

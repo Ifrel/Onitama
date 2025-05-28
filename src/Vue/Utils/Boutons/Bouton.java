@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
+import java.net.URL;
 
 import static Vue.Configuration.ConfigUI.ARRONDI;
 
@@ -140,8 +141,8 @@ public class Bouton {
          * Change l'image affichée par le bouton.
          * @param cheminNouvelleImage Le chemin vers la nouvelle image.
          */
-        public void changerImage(String cheminNouvelleImage) {
-            if (cheminNouvelleImage == null || cheminNouvelleImage.isEmpty()) {
+        public void changerImage(URL cheminNouvelleImage) {
+            if (cheminNouvelleImage == null ) {
                 this.iconeOriginale = null;
             } else {
                 this.iconeOriginale = new ImageIcon(cheminNouvelleImage);
@@ -414,7 +415,7 @@ public class Bouton {
      * @param config La configuration de style par défaut.
      * @return Un bouton personnalisé.
      */
-    public static BoutonAvecImage creerBouton(String cheminImage, ConfigurationParDefaut config) {
+    public static BoutonAvecImage creerBouton(URL cheminImage, ConfigurationParDefaut config) {
         float epaisseurInitiale, epaisseurSurvol, arrondi;
         Color couleurBordure, couleurFondSurvol;
 
@@ -487,7 +488,7 @@ public class Bouton {
 
         // Créer l'icône à partir du chemin
         ImageIcon iconeOriginale = null;
-        if (cheminImage != null && !cheminImage.isEmpty()) {
+        if (cheminImage != null) {
 //            URL imageURL = Bouton.class.getResource(cheminImage);
 //            if (imageURL == null) {
 //                System.err.println("Image non trouvée pour la configuration " + config + ": " + cheminImage);
@@ -539,7 +540,7 @@ public class Bouton {
     }
 
     // Méthode simplifiée pour créer un bouton avec juste une image (utilise une config par défaut implicite ou minimale)
-    public static BoutonAvecImage creerBouton(String cheminImage) {
+    public static BoutonAvecImage creerBouton(URL cheminImage) {
         // Utilise une configuration par défaut simple, par exemple Rectangle_transparent
         return creerBouton(cheminImage, ConfigurationParDefaut.Rectangle_transparent);
     }

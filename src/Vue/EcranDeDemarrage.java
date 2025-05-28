@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.net.URL;
 
 import static Global.Config.*;
 import static Global.Config.CiblesDesCouleurs.*;
@@ -118,7 +119,7 @@ public class EcranDeDemarrage extends JTabbedPane {
      *
      * @return Le JPanel de l'onglet Général.     */
     private JPanel creerOngletGeneral() {
-        PanelAvecImage ongletGeneral = new PanelAvecImage(PATH_ARRIERE_PLAN_03);
+        PanelAvecImage ongletGeneral = new PanelAvecImage(getArrierePlanPath("arrierePlan10.png"));
         ongletGeneral.setLayout(new GridBagLayout());
 
         // Titre de l'onglet Général
@@ -153,11 +154,11 @@ public class EcranDeDemarrage extends JTabbedPane {
 
 
         // Ligne 2 : Mode Auto IA
-        boutonModeAuto = Bouton.creerBouton(PATH_BTN_MODE_AUTO_OFF.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        boutonModeAuto = Bouton.creerBouton(PATH_BTN_MODE_AUTO_OFF, Bouton.ConfigurationParDefaut.SansBordure_transparent);
         boutonModeAuto.setPreferredSize(new Dimension(125, 60));
         boutonModeAuto.addActionListener(e -> {
             estModeAutoIA = !estModeAutoIA;
-            boutonModeAuto.changerImage(estModeAutoIA ? PATH_BTN_MODE_AUTO_ON.toString() : PATH_BTN_MODE_AUTO_OFF.toString());
+            boutonModeAuto.changerImage(estModeAutoIA ? PATH_BTN_MODE_AUTO_ON : PATH_BTN_MODE_AUTO_OFF);
             actionListenerEntree.setModeAutoIA(estModeAutoIA);
 
             // Geler/dégeler les autres options de configuration dans l'onglet général
@@ -229,14 +230,14 @@ public class EcranDeDemarrage extends JTabbedPane {
         panelBoutons.setOpaque(false);
 
         // Bouton "Regles"
-        BoutonAvecImage regles = Bouton.creerBouton(Paths.PATH_BTN.resolve("regles.png").toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        BoutonAvecImage regles = Bouton.creerBouton(Paths.getButtonPath("regles.png"), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         regles.setPreferredSize(new Dimension(200, 90));
         regles.setToolTipText("Voir les Règles du jeu");
         regles.addActionListener(e -> { CD.clavier("regles");});
         panelBoutons.add(regles);
 
         // Bouton "Entrer"
-        BoutonAvecImage boutonEntrer = Bouton.creerBouton(PATH_BTN_ENTRER.toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
+        BoutonAvecImage boutonEntrer = Bouton.creerBouton(PATH_BTN_ENTRER, Bouton.ConfigurationParDefaut.SansBordure_transparent);
         boutonEntrer.setPreferredSize(new Dimension(200, 98));
         boutonEntrer.addActionListener(actionListenerEntree);
         boutonEntrer.setToolTipText("Lancer le jeu");
@@ -261,7 +262,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // Ajouter le bouton de sélection du joueur qui commence
         BoutonAvecImage boutonPremierJoueur = Bouton.creerBouton(
-                PATH_BTN.resolve("joueur1.png").toString(),
+                Paths.getButtonPath("joueur1.png"),
                 Bouton.ConfigurationParDefaut.Rectangle_transparent_V2
         );
         boutonPremierJoueur.setPreferredSize(new Dimension(60, 60));
@@ -277,9 +278,9 @@ public class EcranDeDemarrage extends JTabbedPane {
                     "Le " + nomJoueur + " commence la partie"
             );
             // Mettre à jour l'image du bouton selon le joueur sélectionné
-            String imagePath = PATH_BTN.resolve(
+            URL imagePath = Paths.getButtonPath(
                     "joueur" + joueurQuiCommence[0] + ".png"
-            ).toString();
+            );
             boutonPremierJoueur.changerImage(imagePath);
 
             // Informer le contrôleur du changement
@@ -339,7 +340,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // Bouton "Réinitialiser"
         BoutonAvecImage boutonReinitialiser = Bouton.creerBouton(
-                Paths.PATH_BTN.resolve("button_reset_all.png").toString(),
+                Paths.getButtonPath("button_reset_all.png"),
                 Bouton.ConfigurationParDefaut.Cercle_transparent);
         boutonReinitialiser.setPreferredSize(new Dimension(98, 98));
         boutonReinitialiser.setToolTipText("Réinitialiser toutes les couleurs");
@@ -373,7 +374,7 @@ public class EcranDeDemarrage extends JTabbedPane {
 
         // Bouton "Entrer"
         BoutonAvecImage boutonEntrer = Bouton.creerBouton(
-                PATH_BTN_ENTRER.toString(),
+                PATH_BTN_ENTRER,
                 Bouton.ConfigurationParDefaut.SansBordure_transparent);
         boutonEntrer.setPreferredSize(new Dimension(200, 98));
         boutonEntrer.addActionListener(actionListenerEntree);
@@ -438,7 +439,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         panneau.add(Box.createGlue(), gbcSpace);
 
         // Bouton de prévisualisation et sélection de couleur
-        BoutonAvecImage boutonSelectionCouleur = Bouton.creerBouton("", Bouton.ConfigurationParDefaut.Carre_transparent);
+        BoutonAvecImage boutonSelectionCouleur = Bouton.creerBouton(null, Bouton.ConfigurationParDefaut.Carre_transparent);
         boutonSelectionCouleur.setPreferredSize(DIM_PREVIEW_COULEUR);
         boutonSelectionCouleur.chargerCouleurFont(couleurInitiale);
         boutonSelectionCouleur.setFocusPainted(true);
@@ -501,7 +502,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         panneau.add(boutonSelectionCouleur, gbcBouton);
 
         // Bouton de réinitialisation de la couleur
-        BoutonAvecImage boutonReinitialiser = Bouton.creerBouton(Paths.PATH_BTN.resolve("button_annuler_rouge.png").toString(), Bouton.ConfigurationParDefaut.Carre_transparent);
+        BoutonAvecImage boutonReinitialiser = Bouton.creerBouton(Paths.getButtonPath("button_annuler_rouge.png"), Bouton.ConfigurationParDefaut.Carre_transparent);
         boutonReinitialiser.setPreferredSize(DIM_PREVIEW_COULEUR);
         boutonReinitialiser.setToolTipText("Réinitialiser à la couleur par défaut");
         boutonReinitialiser.addActionListener(e -> {
@@ -616,13 +617,13 @@ public class EcranDeDemarrage extends JTabbedPane {
      * Crée un JLabel avec une image redimensionnée.
      * (Note: Cette méthode est moins utilisée maintenant que PngText.createPngPanel est préféré pour les labels PNG).
      *
-     * @param cheminImage Le chemin vers l'image.
+     * @param urlImage Le chemin vers l'image.
      * @param width La largeur désirée de l'image.
      * @param height La hauteur désirée de l'image.
      * @return Un JLabel contenant l'image redimensionnée.     */
-    private JLabel creerLabelAvecImage(Path cheminImage, int width, int height) {
+    private JLabel creerLabelAvecImage(URL urlImage, int width, int height) {
         JLabel label = new JLabel();
-        ImageIcon icon = new ImageIcon(cheminImage.toString());
+        ImageIcon icon = new ImageIcon(urlImage);
         Image image = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(image);
         label.setIcon(scaledIcon);

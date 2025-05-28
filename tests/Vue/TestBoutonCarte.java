@@ -1,5 +1,6 @@
 package Vue;
 
+import Global.Paths;
 import Vue.Utils.Boutons.BoutonCarte;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import static Global.Paths.PATH_CARTE;
+
 
 
 @DisplayName("TestBoutonCarte Tests")
@@ -25,7 +26,7 @@ public class TestBoutonCarte {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20)); // Simple layout
 
-            Path testImagePath = PATH_CARTE.resolve("TIGRE.png");
+            Path testImagePath = Path.of(Paths.getCartePath("TIGRE.png").getPath());
 
 
 
@@ -65,10 +66,10 @@ public class TestBoutonCarte {
             // Chargement des images dans une liste
             ArrayList<BufferedImage> images = new ArrayList<>();
             try {
-                images.add(ImageIO.read(PATH_CARTE.resolve("TIGRE.png").toFile()));
-                images.add(ImageIO.read(PATH_CARTE.resolve("COQ.png").toFile()));
-                images.add(ImageIO.read(PATH_CARTE.resolve("COBRA.png").toFile()));
-                images.add(ImageIO.read(PATH_CARTE.resolve("DRAGON.png").toFile()));
+                images.add(ImageIO.read(Paths.getCartePath("TIGRE.png")));
+                images.add(ImageIO.read(Paths.getCartePath("COQ.png")));
+                images.add(ImageIO.read(Paths.getCartePath("COBRA.png")));
+                images.add(ImageIO.read(Paths.getCartePath("DRAGON.png")));
             } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println("Erreur lors du chargement des images.");
