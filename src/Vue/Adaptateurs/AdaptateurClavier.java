@@ -67,6 +67,10 @@ public class AdaptateurClavier implements KeyListener {
             case KeyEvent.VK_ENTER:
                 control.clavier("demarrer");
                 break;
+                case KeyEvent.VK_SPACE:
+                    control.clavier("pause");
+                    break;
+
         }
     }
 

@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -20,16 +21,21 @@ import static Global.Config.*;
  * Implémente le pattern Singleton pour assurer une instance unique
  */
 public class InfosDeConfigUI implements ConfigurationUI {
-    public static final Path CHEMIN_FICHIER_CONFIG = Path.of("res", "vue").resolve("config_ui.json");
+    public static final Path CHEMIN_FICHIER_CONFIG = Path.of(
+            Optional.ofNullable(InfosDeConfigUI.class.getResource("/vue/config_ui.json"))
+                    .map(URL::getPath)
+                    .orElse(System.getProperty("user.dir") + "/res/vue/config_ui.json")
+    );
+
     private static final Logger LOGGER = Logger.getLogger(InfosDeConfigUI.class.getName());
 
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(Color.class, new AdaptateurCouleur())
             .create();
-    private static final InfosDeConfigUI INSTANCE = new InfosDeConfigUI();
     private final Map<Integer, ConfigurationCouleurJoueur> configurationParJoueur;
 
+    private static final InfosDeConfigUI INSTANCE = new InfosDeConfigUI();
 
 
     /**
@@ -60,13 +66,10 @@ public class InfosDeConfigUI implements ConfigurationUI {
      * Initialise la configuration par défaut avec des couleurs aléatoires pour chaque joueur
      */
     private void initialiserConfigurationParDefaut() {
-        List<TypeCouleur> couleurs = new ArrayList<>(Arrays.asList(TypeCouleur.values()));
-        Collections.shuffle(couleurs);
-
         configurationParJoueur.put(
                 ID_JOUEUR_1,
                 new ConfigurationCouleurJoueur(
-                        couleurs.get(0),
+                        TypeCouleur.BLEU,
                         COULEUR_CASE_MAITRE_JOUEUR_1,
                         COULEUR_CASE_ELEVE_JOUEUR_1
                 )
@@ -74,7 +77,7 @@ public class InfosDeConfigUI implements ConfigurationUI {
         configurationParJoueur.put(
                 ID_JOUEUR_2,
                 new ConfigurationCouleurJoueur(
-                        couleurs.get(1),
+                        TypeCouleur.ROUGE,
                         COULEUR_CASE_MAITRE_JOUEUR_2,
                         COULEUR_CASE_ELEVE_JOUEUR_2
                 )
@@ -114,7 +117,7 @@ public class InfosDeConfigUI implements ConfigurationUI {
      */
     private synchronized void sauvegarderConfiguration() {
         try {
-            Files.createDirectories(CHEMIN_FICHIER_CONFIG.getParent());
+            Files.createDirectories(CHEMIN_FICHIER_CONFIG);
             ConfigurationSauvegardee config = new ConfigurationSauvegardee(configurationParJoueur);
             String jsonConfig = GSON.toJson(config);
             Files.writeString(CHEMIN_FICHIER_CONFIG, jsonConfig);
@@ -290,4 +293,3 @@ public class InfosDeConfigUI implements ConfigurationUI {
         }
     }
 }
-

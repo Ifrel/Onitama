@@ -88,6 +88,7 @@ public class AdaptateurBoutonEntrer implements ActionListener {
     private void reprendrePartie() {
         collecteurEvent.setNouvellePartie(partieSelectionnee);
         logger.info("Mode Reprendre une partie (" + partieSelectionnee + ") activé");
+        interfaceGraphique.lancerPlateauDeJeu();
     }
 
     private void activerModeJoueurVsJoueur() {
