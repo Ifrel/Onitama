@@ -309,7 +309,7 @@ public class Config {
         ROUGE
     }
 
-    public HashMap<TYPECARTE, COULEUR_CARTE> COULEURS_CARTES = new HashMap<>() {{
+    public static HashMap<TYPECARTE, COULEUR_CARTE> COULEURS_CARTES = new HashMap<>() {{
         put(TYPECARTE.TIGRE, COULEUR_CARTE.BLEU);
         put(TYPECARTE.DRAGON, COULEUR_CARTE.ROUGE);
         put(TYPECARTE.GRENOUILLE, COULEUR_CARTE.ROUGE);
