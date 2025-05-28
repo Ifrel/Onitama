@@ -369,8 +369,6 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
 
 
 
-//    private EcranVictoire ecranVictoire;
-
     /**
      * Affiche l'écran de victoire dans l'application.
      *
