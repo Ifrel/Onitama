@@ -6,6 +6,8 @@ import Vue.Adaptateurs.AdaptateurClavier;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
@@ -20,8 +22,8 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
     private final Jeu jeu;
 
     JFrame frame;
-    private JLayeredPane layeredPane;
-    private JPanel backgroundBlur;
+    private final JLayeredPane layeredPane;
+    private final JPanel backgroundBlur;
 
     private EcranMenu ecranMenu;
     private EcranPlateauDeJeu ecranPlateauDeJeu;
@@ -197,8 +199,8 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
     /**
      * Gère le redimensionnement dynamique de tous les éléments*/
     private void ajouterComportementRedimensionnement() {
-        frame.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
+        frame.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent evt) {
                 mettreAJourDispositions();
             }
         });
@@ -301,16 +303,55 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
         frame.repaint();
     }
 
+
+    void mettreAJourDispositions() {
+        logger.fine("Mise à jour des dispositions suite au redimensionnement.");
+        int frameWidth = frame.getWidth();
+        int frameHeight = frame.getHeight();
+
+        if (ecranDeDemarrage != null ) {
+            ecranDeDemarrage.setBounds(0, 0, frameWidth, frameHeight);
+            ecranDeDemarrage.setBounds(0, 0, frameWidth, frameHeight);
+        }
+
+        if (ecranPlateauDeJeu != null) {
+            ecranPlateauDeJeu.setBounds(0, 0, frameWidth, frameHeight);
+        }
+
+
+        if (backgroundBlur != null) {
+            backgroundBlur.setBounds(0, 0, frameWidth, frameHeight);
+        }
+
+        if (ecranMenu != null) {
+            // Ajuster la position du menu s'il est visible ou selon sa logique
+            if (ecranMenu.isVisible()) {
+                ecranMenu.setBounds(frameWidth - WIDTH_MENU, 0, WIDTH_MENU, frameHeight);
+            } else {
+                ecranMenu.setBounds(frameWidth, 0, WIDTH_MENU, frameHeight);
+            }
+        }
+        if (ecranVictoire != null && ecranVictoire.isVisible()) {
+            ecranVictoire.setBounds(0, 0, frameWidth, frameHeight);
+        }
+
+        frame.revalidate();
+        frame.repaint();
+    }
+
     /**
      * Ferme proprement l'application en arrêtant tous les timers et clips
      */
     private void fermerApplication() {
-        if (ecranPlateauDeJeu != null && ecranPlateauDeJeu.timerPartie != null && ecranPlateauDeJeu.timerPartie.isRunning()) {
-            ecranPlateauDeJeu.timerPartie.stop();
+        if (ecranPlateauDeJeu != null) {
+            if (ecranPlateauDeJeu.timerPartie != null && ecranPlateauDeJeu.timerPartie.isRunning()) {
+                ecranPlateauDeJeu.timerPartie.stop();
+            }
+            if (ecranPlateauDeJeu.clip != null && ecranPlateauDeJeu.clip.isRunning()) {
+                ecranPlateauDeJeu.clip.stop();
+            }
         }
-        if (ecranPlateauDeJeu != null && ecranPlateauDeJeu.clip != null && ecranPlateauDeJeu.clip.isRunning()) {
-            ecranPlateauDeJeu.clip.stop();
-        }
+        animationExecutor.shutdown();
         frame.dispose();
         System.exit(0);
     }
@@ -395,36 +436,40 @@ public class InterfaceGraphique extends Component implements Runnable, Interface
 
         // 6. Réinitialiser la référence à l'écran de victoire
         ecranVictoire = null;
+
     }
 
 
 
+    private void secouerFenetre() {
+        final Point positionOriginale = frame.getLocation();
+        final int nombreSecousses = 5;
+        final int amplitude = 10;
+        final int delai = 50;
 
+        Timer timer = new Timer(delai, null);
+        final int[] compteur = {0};
 
-    /**
-     * Met à jour la disposition des composants en fonction de la taille de la fenêtre
-     */
-    public void mettreAJourDispositions() {
-        int width = frame.getWidth();
-        int height = frame.getHeight();
+        timer.addActionListener(e -> {
+            if (compteur[0] >= nombreSecousses * 2) {
+                timer.stop();
+                frame.setLocation(positionOriginale);
+                return;
+            }
 
-        // Mise à jour des autres composants...
-        ecranPlateauDeJeu.setBounds(0, 0, width, height);
-        backgroundBlur.setBounds(0, 0, width, height);
+            int deplacement = (compteur[0] % 2 == 0) ? amplitude : -amplitude;
+            frame.setLocation(positionOriginale.x + deplacement, positionOriginale.y);
+            compteur[0]++;
+        });
 
-        // Mise à jour de l'écran de victoire s'il est présent
-        if (ecranVictoire != null) {
-            ecranVictoire.setBounds(0, 0, width, height);
-        }
-
-        // Mise à jour du menu...
-        if (ecranMenu.isVisible()) {
-            ecranMenu.setBounds(width - WIDTH_MENU, 0, WIDTH_MENU, height);
-        } else {
-            ecranMenu.setBounds(width, 0, WIDTH_MENU, height);
-        }
+        SwingUtilities.invokeLater(() -> timer.start());
+        System.out.println("Secouers");
     }
 
+
+    public void signalerActionInvalide() {
+        secouerFenetre();
+    }
 
 
 
