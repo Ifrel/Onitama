@@ -652,7 +652,8 @@ public class Jeu extends Observable implements Runnable {
         IA1Activee = !IA1Activee; // si l'IA est activée, la désactive, vice-versa
 
         List<Carte> cartesJ1 = getCartesJoueur1();
-        String nomJ1 = getNomJoueur1();
+        //String nomJ1 = getNomJoueur1();
+        String nomJ1 = "Joueur 1";
 
         if (estActiveIA1()) {
             joueur1 = IA_1 = new IAMoyen(this, ID_JOUEUR_1, "IA 1");
@@ -666,6 +667,7 @@ public class Jeu extends Observable implements Runnable {
            return;
         }
         joueur1.addCards(cartesJ1);
+        metAJour();
     }
 
     /**
@@ -676,6 +678,7 @@ public class Jeu extends Observable implements Runnable {
 
         List<Carte> cartesJ2 = getCartesJoueur2();
         String nomJ2 = getNomJoueur2();
+        //String nomJ2 = "Joueur 2";
 
         if (estActiveIA2()) {
             joueur2 = IA_2 = new IAMoyen(this, ID_JOUEUR_2, "IA 2");
@@ -689,6 +692,7 @@ public class Jeu extends Observable implements Runnable {
             return;
         }
         joueur2.addCards(cartesJ2);
+        metAJour();
     }
 
     /**
@@ -739,6 +743,7 @@ public class Jeu extends Observable implements Runnable {
         } else {
             initJoueursCartes();
         }
+        metAJour();
     }
 
     /**
@@ -770,6 +775,7 @@ public class Jeu extends Observable implements Runnable {
         } else {
             initJoueursCartes();
         }
+        metAJour();
     }
 
     public void lancer() {
