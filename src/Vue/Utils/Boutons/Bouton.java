@@ -30,7 +30,7 @@ public class Bouton {
         Carre_transparent,
         Rectangle,
         Rectangle_transparent,
-        Cercle_transparent_V2,
+        Rectangle_transparent_V2,
         SansBordure_transparent
     }
 
@@ -351,10 +351,10 @@ public class Bouton {
                 couleurBordure = new Color(200, 200, 200, 0); // transparent
                 couleurFondSurvol = new Color(200, 200, 200, 0); // transparent
                 break;
-            case Cercle_transparent_V2:
+            case Rectangle_transparent_V2:
                 epaisseurInitiale = 2f;
                 epaisseurSurvol = 8f;
-                arrondi = 999f;
+                arrondi = ARRONDI;
                 couleurBordure = new Color(200, 200, 200, 255); // Gris clair
                 couleurFondSurvol = new Color(200, 200, 200, 121); // Gris clair semi-transparent
                 break;

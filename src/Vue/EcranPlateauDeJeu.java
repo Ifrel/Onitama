@@ -169,7 +169,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         barreIndication.setLayout(new FlowLayout(FlowLayout.TRAILING, 10, 10));
         barreIndication.setOpaque(false);
         barreIndication.add(creerBoutonSon());
-        barreIndication.add(creerBarredesBoutons());
+        barreIndication.add(creerBoutonIA());
         barreIndication.add(Box.createHorizontalStrut(ESPACE));
         barreIndication.add(Box.createGlue());
         barreIndication.add(creerPanelRoundTemps());
@@ -370,13 +370,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private JPanel creerBoutonsDroite() {
-        JPanel droite = new JPanel(new GridLayout(4, 1, 0, 10));
+        JPanel droite = new JPanel(new GridLayout(5, 1, 0, 10));
 //        droite.setPreferredSize(new Dimension(140, 0));
         droite.setOpaque(false);
 
-        annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Cercle_transparent_V2);
-        refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Cercle_transparent_V2);
-        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent_V2);
+        annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
+        refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
+        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
 
         Dimension DIM = new Dimension(70, 70);
         annuler.setPreferredSize(DIM);
@@ -391,13 +391,12 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         refaire.addActionListener(new AdaptateurRefaire(collecteurEv));
         suggestion.addActionListener(new AdaptateurSuggestion(collecteurEv, this));
 
-        droite.add(Box.createGlue());
 //        droite.add(Box.createGlue());
+        droite.add(Box.createGlue());
         droite.add(annuler);
         droite.add(refaire);
         droite.add(suggestion);
-//        boutonsAnnuleRefaire.add(Box.createGlue());
-//        droite.add(Box.createGlue());
+        droite.add(Box.createGlue());
 
         return droite;
     }
@@ -469,14 +468,19 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         return menu;
     }
 
-    private JPanel creerBarredesBoutons() {
+    private JPanel creerBoutonIA() {
+        Boolean [] isActive = {false};
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         panel.setOpaque(false);
 
         BoutonAvecImage bouton = Bouton.creerBouton(PATH_BTN.resolve("ia.png").toString(), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         bouton.setPreferredSize(new Dimension(100, 100));
         bouton.setToolTipText("IA vs IA");
-        bouton.addActionListener(e -> { collecteurEv.clavier("ia vs ia"); });
+        bouton.addActionListener(e -> {
+            collecteurEv.clavier("ia vs ia");
+            isActive[0] = !isActive[0];
+            bouton.changerImage(PATH_BTN.resolve("ia" + (isActive[0] ? "_on" : "") + ".png").toString());
+        });
         panel.add(bouton);
         return panel;
     }
@@ -846,7 +850,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
 
     private void creerBoutonFlottant() {
-        boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent_V2);
+        boutonFlottant = Bouton.creerBouton(PATH_BTN.resolve("optionJoueur.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
         boutonFlottant.setSize(120, 120);
 
         // Rendre le bouton déplaçable
