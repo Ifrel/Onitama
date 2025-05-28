@@ -1092,7 +1092,7 @@ public class Jeu extends Observable implements Runnable {
 
     public void echangerCartes(Joueur joueur, Carte carteSeleccionnee){
         //Conserver la reference de l'ancienne carte supplementaire
-        Carte ancienneSup = this.carteSupplementaire;
+        Carte ancienneSup = getCarteSupplementaire();
 
         //Retirer la carte selectioneé de la main du joueur
         joueur.removeCard(carteSeleccionnee);
@@ -1264,6 +1264,14 @@ public class Jeu extends Observable implements Runnable {
             if (pionSelectionne == null) {
                 throw new IllegalStateException("Il faut d'abord choisir un pion avant de jouer un Coup");
             }
+
+            if (! toutesCartesUniques(getCartesJoueur1(), getCartesJoueur2(), getCarteSupplementaire())) {
+                throw new IllegalStateException("Toutes les cartes ne sont pas uniques, c'est impossible" +
+                        "\nCartes J1 : " + getCartesJoueur1() +
+                        "\nCartes J2 : " + getCartesJoueur2() +
+                        "\nCarte Supp : " + getCarteSupplementaire());
+            }
+
             if (estPartieFinie()) {
                 logger.info("La partie est finie, impossible de jouer un coup");
                 return false;

@@ -239,4 +239,26 @@ public class Utils {
         }
         return false;
     }
+
+    public static boolean toutesCartesUniques(List<Carte> cj1, List<Carte> cj2, Carte csupp) {
+        HashSet<TYPECARTE> vues = new HashSet<>();
+        for (Carte c : cj1) {
+            if (vues.contains(c.getType())) {
+                return false;
+            }
+            vues.add(c.getType());
+        }
+
+        for (Carte c : cj2) {
+            if (vues.contains(c.getType())) {
+                return false;
+            }
+            vues.add(c.getType());
+        }
+        if (vues.contains(csupp.getType())) {
+            return false;
+        }
+
+        return true;
+    }
 }
