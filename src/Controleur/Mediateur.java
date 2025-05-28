@@ -159,16 +159,6 @@ public class Mediateur implements CollecteurEvenements {
         jeu.setCarteSelectionnee(idCarte);
     }
 
-    @Override
-    public void setNouvellePartie(String partieSelectionee) {
-        try {
-            jeu.chargerJeu(partieSelectionee);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
 
 
 

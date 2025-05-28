@@ -120,4 +120,14 @@ public class ControleurEcranDeDemarrage implements CollecteurEvenements {
     public void reinitialiserCouleurs() {
         infosDeConfigUI.reinitialiserCouleurs();
     }
+
+    @Override
+    public void setNouvellePartie(String partieSelectionee) {
+        try {
+            jeu.chargerJeu(partieSelectionee);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
