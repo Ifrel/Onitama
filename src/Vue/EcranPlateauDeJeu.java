@@ -375,7 +375,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         annuler = Bouton.creerBouton(PATH_BTN_ANNULER.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
         refaire = Bouton.creerBouton(PATH_BTN_REFAIRE.toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
-        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion.png").toString(), Bouton.ConfigurationParDefaut.Rectangle_transparent_V2);
+        suggestion = Bouton.creerBouton(PATH_BTN.resolve("suggestion.png").toString(), Bouton.ConfigurationParDefaut.Cercle_transparent);
 
         Dimension DIM = new Dimension(70, 70);
         annuler.setPreferredSize(DIM);

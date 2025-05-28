@@ -114,14 +114,19 @@ public class Bouton {
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    epaisseurActuelle = epaisseurBordureSurvol;
-                    repaint();
+                    if (isEnabled()) {
+                        epaisseurActuelle = epaisseurBordureSurvol;
+                        repaint();
+                    }
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    epaisseurActuelle = epaisseurBordureInitiale;
-                    repaint();
+                    if (isEnabled()) {
+                        epaisseurActuelle = epaisseurBordureInitiale;
+                        repaint();
+                    }
+
                 }
             });
 
@@ -182,7 +187,7 @@ public class Bouton {
         }
 
 
-
+/*
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -280,6 +285,96 @@ public class Bouton {
 
             g2.dispose();
         }
+*/
+
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+            int width = getWidth();
+            int height = getHeight();
+            int arc = (int) arrondiBordure;
+
+            boolean survol = getModel().isRollover();
+            boolean clique = getModel().isPressed();
+            boolean focus = isFocusOwner();
+
+            // Si une couleur de fond chargée
+            if (aCouleurDeFond && couleurdeFond != null) {
+                g2.setColor(couleurdeFond);
+                g2.fillRoundRect(0, 0, width, height, arc, arc);
+            }
+
+            // Effets de survol et clic uniquement si le bouton est activé
+            if (isEnabled()) {
+                // Fond survol ou focus
+                if (survol || focus) {
+                    g2.setColor(couleurFondSurvol);
+                    g2.fillRoundRect(0, 0, width, height, arc, arc);
+                }
+
+                // Fond appuyé
+                if (clique) {
+                    g2.setColor(new Color(0, 0, 0, 50));
+                    g2.fillRoundRect(0, 0, width, height, arc, arc);
+                }
+            }
+
+            // Calcul marge dynamique
+            int tailleMin = Math.min(width, height);
+            float margeArrondie = arc * 0.15f;
+            float margeFixe = 4f;
+            float margeMin = 2f;
+            float marge = Math.max(margeFixe, Math.max(epaisseurActuelle, margeArrondie));
+            marge = Math.min(marge, tailleMin / 6.5f);
+
+            // Dessin de l'image centrée
+            Icon icon = getIcon();
+            if (icon instanceof ImageIcon) {
+                ImageIcon imageIcon = (ImageIcon) icon;
+                Image image = imageIcon.getImage();
+
+                int iw = image.getWidth(this);
+                int ih = image.getHeight(this);
+
+                if (iw > 0 && ih > 0) {
+                    int availableWidth = (int) (width - 2 * marge);
+                    int availableHeight = (int) (height - 2 * marge);
+
+                    float scale = Math.min((float) availableWidth / iw, (float) availableHeight / ih);
+                    int nw = (int) (iw * scale);
+                    int nh = (int) (ih * scale);
+
+                    int x = (width - nw) / 2;
+                    int y = (height - nh) / 2;
+
+                    // Appliquer une transparence si désactivé
+                    if (!isEnabled()) {
+                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                    }
+                    g2.drawImage(image, x, y, nw, nh, this);
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+                }
+            }
+
+            // Bordure avec couleur adaptée à l'état
+            g2.setColor(isEnabled() ? couleurBordure : new Color(200, 200, 200, 150));
+            g2.setStroke(new BasicStroke(epaisseurActuelle));
+            float halfStroke = epaisseurActuelle / 2f;
+            g2.drawRoundRect(
+                    (int) halfStroke,
+                    (int) halfStroke,
+                    (int) (width - epaisseurActuelle),
+                    (int) (height - epaisseurActuelle),
+                    arc, arc
+            );
+
+            g2.dispose();
+        }
+
 
 
         @Override
@@ -369,7 +464,7 @@ public class Bouton {
                 break;
             case SansBordure_transparent:
                 epaisseurInitiale = 2f;
-                epaisseurSurvol = 6f;
+                epaisseurSurvol = 8f;
                 arrondi = ARRONDI;
                 couleurBordure = new Color(200, 200, 200, 0); // transparent
                 couleurFondSurvol = new Color(200, 200, 200, 0); // transparent
