@@ -35,7 +35,7 @@ public class Jeu extends Observable implements Runnable {
     private Pion [][] grille; // grille de pions
     private Historique<Coup> historique;
     private Joueur joueur1, joueur2;
-    private IA IA_1, IA_2;
+    private volatile IA IA_1, IA_2;
     private Joueur joueurCourant;
     private int idJoueurCourant; // identifiant du joueur courant
     private int numCarteSelectionee;
@@ -1432,6 +1432,9 @@ public class Jeu extends Observable implements Runnable {
                                 break;
                             }
                             if (estActiveIA2()) {
+                                while (IA_2 == null) {
+                                    Thread.onSpinWait();
+                                }
                                 c = IA_2.calculerCoup();
                                 Thread.sleep(delai);
                                 setPionSelectionne(IA_2.getPionChoisi().getPosition());
@@ -1446,6 +1449,9 @@ public class Jeu extends Observable implements Runnable {
                                 break;
                             }
                             if (estActiveIA1()) {
+                                while (IA_1 == null) {
+                                    Thread.onSpinWait();
+                                }
                                 c = IA_1.calculerCoup();
                                 Thread.sleep(delai);
                                 setPionSelectionne(IA_1.getPionChoisi().getPosition());
