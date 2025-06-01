@@ -148,47 +148,99 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         tournerLesCartesDuJoueur();
     }
 
+    // Constantes pour les types de mise à jour
+    private static final int MAJ_TOUT = 0;
+    private static final int MAJ_TERRAIN = 1;
+    private static final int MAJ_CARTES = 2;
+    private static final int MAJ_JOUEUR = 3;
+    private static final int MAJ_BOUTONS = 4;
+
+    // État précédent pour éviter les mises à jour inutiles
+    private int dernierIdJoueur = -1;
+    private boolean dernierEtatPartieFinie = false;
+    private int dernierNumeroRound = -1;
+
+    /**
+     * Effectue une mise à jour complète de l'interface
+     */
     @Override
     public void miseAJour() {
-        logger.info("Mise à jour : EcranPlateauDeJeu...");
-        mettreAJourImagesTerrain();
-        mettreAJourImagesCartes();
-        updatePlayerAndRoundInfo();
-        updateUndoRedoButtons();
+        miseAJour(MAJ_TOUT);
+    }
 
-        // Rotation carte
-        if (jeu.getIdJoueurCourant() == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
-                jeu.getIdJoueurCourant() == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT) {
-            listeDescardFlipAnimators.get(4).startAnimation();
-            ID_JOUEUR_PRECEDANT   = jeu.getIdJoueurCourant();
+    /**
+     * Effectue une mise à jour sélective de l'interface en fonction du type spécifié
+     * @param typeMaj le type de mise à jour à effectuer
+     */
+    public void miseAJour(int typeMaj) {
+        logger.info("Mise à jour : EcranPlateauDeJeu... (type: " + typeMaj + ")");
+
+        // Récupérer l'état actuel pour les comparaisons
+        int idJoueurActuel = jeu.getIdJoueurCourant();
+        boolean partieFinie = jeu.estPartieFinie();
+        int numeroRound = jeu.getNumeroRound();
+        int numCarteSelectionnee = jeu.getNumCarteSelectionnee();
+
+        // Mise à jour du terrain si nécessaire
+        if (typeMaj == MAJ_TOUT || typeMaj == MAJ_TERRAIN) {
+            mettreAJourImagesTerrain();
         }
 
-        // Verification si partie finie
-        if (jeu.estPartieFinie()) {interfaceGraphique.afficherEcranVictoire(jeu.getJoueurCourant().getNom());}
+        // Mise à jour des cartes si nécessaire
+        if (typeMaj == MAJ_TOUT || typeMaj == MAJ_CARTES || 
+            idCartePrecedementSelectionnee != numCarteSelectionnee) {
+            mettreAJourImagesCartes();
+            idCartePrecedementSelectionnee = numCarteSelectionnee;
+        }
 
-        // animation de switchage de carte
-        idCartePrecedementSelectionnee = jeu.getNumCarteSelectionnee();
+        // Mise à jour des informations du joueur si nécessaire
+        if (typeMaj == MAJ_TOUT || typeMaj == MAJ_JOUEUR || 
+            dernierIdJoueur != idJoueurActuel || 
+            dernierNumeroRound != numeroRound) {
+            updatePlayerAndRoundInfo();
+            dernierIdJoueur = idJoueurActuel;
+            dernierNumeroRound = numeroRound;
+        }
 
-        // Mise a jour des Infos des Statatistiques
-        SwingUtilities.invokeLater(() -> {
-            // Mise à jour des stats
-            statsJeu.setNomJoueur1(jeu.getNomJoueur1());
-            statsJeu.setNomJoueur2(jeu.getNomJoueur2());
-            
-            if (jeu.estPartieFinie()) {
-                statsJeu.incrementerNombreParties();
+        // Mise à jour des boutons annuler/refaire si nécessaire
+        if (typeMaj == MAJ_TOUT || typeMaj == MAJ_BOUTONS) {
+            updateUndoRedoButtons();
+        }
 
-                if (jeu.getJoueurCourant().getId() == ID_JOUEUR_1) {
-                    statsJeu.setScoreJoueur1(statsJeu.getScoreJoueur1() + 1);
+        // Rotation carte si changement de joueur
+        if (idJoueurActuel == ID_JOUEUR_1 && ID_JOUEUR_1 != ID_JOUEUR_PRECEDANT ||
+                idJoueurActuel == ID_JOUEUR_2 && ID_JOUEUR_1 == ID_JOUEUR_PRECEDANT) {
+            listeDescardFlipAnimators.get(4).startAnimation();
+            ID_JOUEUR_PRECEDANT = idJoueurActuel;
+        }
+
+        // Verification si partie finie (seulement si l'état a changé)
+        if (partieFinie && !dernierEtatPartieFinie) {
+            interfaceGraphique.afficherEcranVictoire(jeu.getJoueurCourant().getNom());
+        }
+        dernierEtatPartieFinie = partieFinie;
+
+        // Mise à jour des statistiques (en arrière-plan pour ne pas bloquer l'interface)
+        if (typeMaj == MAJ_TOUT || typeMaj == MAJ_JOUEUR || partieFinie != dernierEtatPartieFinie) {
+            SwingUtilities.invokeLater(() -> {
+                // Mise à jour des stats
+                statsJeu.setNomJoueur1(jeu.getNomJoueur1());
+                statsJeu.setNomJoueur2(jeu.getNomJoueur2());
+
+                if (partieFinie) {
+                    statsJeu.incrementerNombreParties();
+
+                    if (idJoueurActuel == ID_JOUEUR_1) {
+                        statsJeu.setScoreJoueur1(statsJeu.getScoreJoueur1() + 1);
+                    } else {
+                        statsJeu.setScoreJoueur2(statsJeu.getScoreJoueur2() + 1);
+                    }
                 } else {
-                    statsJeu.setScoreJoueur2(statsJeu.getScoreJoueur2() + 1);
+                    statsJeu.setDuration(duration);
+                    statsJeu.updateDureePartie();
                 }
-
-            } else{
-                statsJeu.setDuration(duration);
-                statsJeu.updateDureePartie();
-            }
-        });
+            });
+        }
 
         logger.info("Mise à jour : EcranPlateauDeJeu terminée.");
     }

@@ -65,6 +65,7 @@ public class Jeu extends Observable implements Runnable {
 
     /**
      * Crée un Jeu de base, avec des paramètres par défaut
+     * @throws IllegalStateException si l'initialisation du jeu échoue
      */
     public Jeu() {
         try {
@@ -76,9 +77,10 @@ public class Jeu extends Observable implements Runnable {
 
             initJoueursCartes();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.severe("Erreur lors de la création du jeu: " + e.getMessage());
+            e.printStackTrace();
+            throw new IllegalStateException("Impossible de créer le jeu: " + e.getMessage(), e);
         }
-
     }
 
 
@@ -88,6 +90,8 @@ public class Jeu extends Observable implements Runnable {
      * @param carteEnPlus   carte supplémentaire du jeu
      * @param cartesJoueur1 cartes du joueur 1
      * @param cartesJoueur2 cartes du joueur 2
+     * @throws IllegalArgumentException si la sélection de cartes n'est pas conforme
+     * @throws IllegalStateException si l'initialisation du jeu échoue
      */
     public Jeu(TYPECARTE carteEnPlus, List<TYPECARTE> cartesJoueur1, List<TYPECARTE> cartesJoueur2) {
         try {
@@ -100,8 +104,13 @@ public class Jeu extends Observable implements Runnable {
             joueur2.addCardsType(cartesJoueur2);
 
             initGrille();
+        } catch (IllegalArgumentException e) {
+            logger.severe("Sélection de cartes non conforme: " + e.getMessage());
+            throw e; // Propager l'exception avec son type d'origine
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.severe("Erreur lors de la création du jeu avec cartes spécifiées: " + e.getMessage());
+            e.printStackTrace();
+            throw new IllegalStateException("Impossible de créer le jeu avec les cartes spécifiées: " + e.getMessage(), e);
         }
     }
 
@@ -113,6 +122,8 @@ public class Jeu extends Observable implements Runnable {
      * @param cartesJoueur2   cartes du joueur 2
      * @param pionsJoueur1   pions du joueur 1
      * @param pionsJoueur2 pions du joueur 2
+     * @throws IllegalArgumentException si la sélection de cartes ou de pions n'est pas conforme
+     * @throws IllegalStateException si l'initialisation du jeu échoue
      */
     public Jeu(TYPECARTE carteEnPlus, List<TYPECARTE> cartesJoueur1, List<TYPECARTE> cartesJoueur2, List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
         try {
@@ -127,8 +138,13 @@ public class Jeu extends Observable implements Runnable {
 
             setPionsJeu(pionsJoueur1, pionsJoueur2);
 
+        } catch (IllegalArgumentException e) {
+            logger.severe("Sélection de cartes ou de pions non conforme: " + e.getMessage());
+            throw e; // Propager l'exception avec son type d'origine
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.severe("Erreur lors de la création du jeu avec cartes et pions spécifiés: " + e.getMessage());
+            e.printStackTrace();
+            throw new IllegalStateException("Impossible de créer le jeu avec les cartes et pions spécifiés: " + e.getMessage(), e);
         }
     }
 
@@ -136,6 +152,8 @@ public class Jeu extends Observable implements Runnable {
      * Crée un jeu avec les pions fournis en paramètres et des cartes tirées aléatoirement
      * @param pionsJoueur1 pions du joueur 1
      * @param pionsJoueur2 pions du joueur 2
+     * @throws IllegalArgumentException si la sélection de pions n'est pas conforme
+     * @throws IllegalStateException si l'initialisation du jeu échoue
      */
     public Jeu(List<Pion> pionsJoueur1, List<Pion> pionsJoueur2) {
         try {
@@ -149,13 +167,21 @@ public class Jeu extends Observable implements Runnable {
 
             setPionsJeu(pionsJoueur1, pionsJoueur2);
 
+        } catch (IllegalArgumentException e) {
+            logger.severe("Sélection de pions non conforme: " + e.getMessage());
+            throw e; // Propager l'exception avec son type d'origine
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.severe("Erreur lors de la création du jeu avec pions spécifiés: " + e.getMessage());
+            e.printStackTrace();
+            throw new IllegalStateException("Impossible de créer le jeu avec les pions spécifiés: " + e.getMessage(), e);
         }
     }
 
     /**
-     * pseudo constructeur commun aux constructeurs publics
+     * Pseudo constructeur commun aux constructeurs publics
+     * Initialise les attributs de base du jeu
+     * 
+     * @throws IllegalStateException si l'initialisation échoue
      */
     private void _Jeu() {
         try {
@@ -179,7 +205,9 @@ public class Jeu extends Observable implements Runnable {
             IAvsIAActive = false;
             IA_1 = IA_2 = null;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.severe("Erreur lors de l'initialisation de base du jeu: " + e.getMessage());
+            e.printStackTrace();
+            throw new IllegalStateException("Impossible d'initialiser les attributs de base du jeu: " + e.getMessage(), e);
         }
     }
 
@@ -1415,59 +1443,164 @@ public class Jeu extends Observable implements Runnable {
         }
     }
 
+    // Objets de verrouillage dédiés pour éviter les blocages
+    private final Object lockIA1 = new Object();
+    private final Object lockIA2 = new Object();
+    private volatile boolean threadRunning = true;
+
+    /**
+     * Exécute le thread de jeu qui gère les coups des IA
+     * Utilise wait/notify pour une meilleure gestion des ressources
+     * et une gestion appropriée des interruptions
+     */
     @Override
     public void run() {
         try {
-            int delai = 1500;
+            int delaiBase = 1500;
             boucle:
-            while (! estPartieFinie()) {
+            while (threadRunning && !estPartieFinie()) {
                 Coup c;
+
+                // Vérifier si le thread a été interrompu
+                if (Thread.currentThread().isInterrupted()) {
+                    logger.warning("Thread de jeu interrompu");
+                    break;
+                }
+
                 synchronized (this) {
                     switch (etatJeu) {
                         case ETAT_DEFAUT:
+                            // Attendre une notification au lieu de consommer du CPU
+                            try {
+                                wait(500); // Attendre avec timeout pour éviter les blocages
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                logger.warning("Thread interrompu pendant l'attente: " + e.getMessage());
+                                break boucle;
+                            }
                             break;
                         case J1_A_JOUE:
-                            if (! estActifIAvsIA() && estActiveIA1() && estActiveIA2()) {
+                            if (!estActifIAvsIA() && estActiveIA1() && estActiveIA2()) {
                                 etatJeu = ETAT_DEFAUT;
                                 break;
                             }
                             if (estActiveIA2()) {
-                                while (IA_2 == null) {
-                                    Thread.onSpinWait();
+                                // Utiliser un objet de verrouillage dédié pour IA_2
+                                synchronized (lockIA2) {
+                                    // Attendre que l'IA soit initialisée avec un timeout
+                                    int attente = 0;
+                                    int maxAttente = 5000; // 5 secondes max
+                                    while (IA_2 == null && attente < maxAttente) {
+                                        try {
+                                            lockIA2.wait(100);
+                                            attente += 100;
+                                        } catch (InterruptedException e) {
+                                            Thread.currentThread().interrupt();
+                                            logger.warning("Thread interrompu pendant l'attente de l'IA_2: " + e.getMessage());
+                                            break boucle;
+                                        }
+                                    }
+
+                                    if (IA_2 == null) {
+                                        logger.severe("IA_2 n'a pas été initialisée après le délai d'attente");
+                                        break;
+                                    }
+
+                                    // Calculer le coup avec un délai adaptatif
+                                    try {
+                                        c = IA_2.calculerCoup();
+                                        // Délai adaptatif basé sur la complexité du coup (à titre d'exemple)
+                                        int delaiAdaptatif = Math.min(delaiBase, 500 + c.getComplexite() * 100);
+                                        Thread.sleep(delaiAdaptatif);
+
+                                        setPionSelectionne(IA_2.getPionChoisi().getPosition());
+                                        setCarteSelectionnee(IA_2.getCarteChoisie());
+                                        jouerCoup(c);
+                                        etatJeu = J2_A_JOUE;
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                        logger.warning("Thread interrompu pendant le délai après le coup de l'IA_2: " + e.getMessage());
+                                        break boucle;
+                                    } catch (Exception e) {
+                                        logger.severe("Erreur lors du calcul du coup de l'IA_2: " + e.getMessage());
+                                    }
                                 }
-                                c = IA_2.calculerCoup();
-                                Thread.sleep(delai);
-                                setPionSelectionne(IA_2.getPionChoisi().getPosition());
-                                setCarteSelectionnee(IA_2.getCarteChoisie());
-                                jouerCoup(c);
-                                etatJeu = J2_A_JOUE;
                             }
                             break;
                         case J2_A_JOUE:
-                            if (! estActifIAvsIA() && estActiveIA1() && estActiveIA2()) {
+                            if (!estActifIAvsIA() && estActiveIA1() && estActiveIA2()) {
                                 etatJeu = ETAT_DEFAUT;
                                 break;
                             }
                             if (estActiveIA1()) {
-                                while (IA_1 == null) {
-                                    Thread.onSpinWait();
+                                // Utiliser un objet de verrouillage dédié pour IA_1
+                                synchronized (lockIA1) {
+                                    // Attendre que l'IA soit initialisée avec un timeout
+                                    int attente = 0;
+                                    int maxAttente = 5000; // 5 secondes max
+                                    while (IA_1 == null && attente < maxAttente) {
+                                        try {
+                                            lockIA1.wait(100);
+                                            attente += 100;
+                                        } catch (InterruptedException e) {
+                                            Thread.currentThread().interrupt();
+                                            logger.warning("Thread interrompu pendant l'attente de l'IA_1: " + e.getMessage());
+                                            break boucle;
+                                        }
+                                    }
+
+                                    if (IA_1 == null) {
+                                        logger.severe("IA_1 n'a pas été initialisée après le délai d'attente");
+                                        break;
+                                    }
+
+                                    // Calculer le coup avec un délai adaptatif
+                                    try {
+                                        c = IA_1.calculerCoup();
+                                        // Délai adaptatif basé sur la complexité du coup (à titre d'exemple)
+                                        int delaiAdaptatif = Math.min(delaiBase, 500 + c.getComplexite() * 100);
+                                        Thread.sleep(delaiAdaptatif);
+
+                                        setPionSelectionne(IA_1.getPionChoisi().getPosition());
+                                        setCarteSelectionnee(IA_1.getCarteChoisie());
+                                        jouerCoup(c);
+                                        etatJeu = J1_A_JOUE;
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                        logger.warning("Thread interrompu pendant le délai après le coup de l'IA_1: " + e.getMessage());
+                                        break boucle;
+                                    } catch (Exception e) {
+                                        logger.severe("Erreur lors du calcul du coup de l'IA_1: " + e.getMessage());
+                                    }
                                 }
-                                c = IA_1.calculerCoup();
-                                Thread.sleep(delai);
-                                setPionSelectionne(IA_1.getPionChoisi().getPosition());
-                                setCarteSelectionnee(IA_1.getCarteChoisie());
-                                jouerCoup(c);
-                                etatJeu = J1_A_JOUE;
                             }
                             break;
                         case FIN:
                             break boucle;
-
                     }
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.severe("Erreur dans le thread de jeu: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            logger.info("Thread de jeu terminé");
+        }
+    }
+
+    /**
+     * Arrête proprement le thread de jeu
+     */
+    public void arreterThread() {
+        threadRunning = false;
+        synchronized (this) {
+            notifyAll(); // Réveiller le thread s'il est en attente
+        }
+        synchronized (lockIA1) {
+            lockIA1.notifyAll();
+        }
+        synchronized (lockIA2) {
+            lockIA2.notifyAll();
         }
     }
 }

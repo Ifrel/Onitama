@@ -84,4 +84,33 @@ public class Coup implements Serializable{
         S.append("(").append((int) arrivee.getX()).append(",").append((int) arrivee.getY()).append(")");
         return S.toString();
     }
+
+    /**
+     * Calcule la complexité d'un coup pour ajuster le délai de l'IA
+     * La complexité est basée sur plusieurs facteurs:
+     * - Si le coup mange un pion adverse
+     * - Si le coup implique le pion maître
+     * - La distance parcourue par le pion
+     * 
+     * @return Un entier représentant la complexité du coup (0-10)
+     */
+    public int getComplexite() {
+        int complexite = 0;
+
+        // Si le coup mange un pion adverse, c'est plus complexe
+        if (aMangerPion) {
+            complexite += 3;
+        }
+
+        // Calculer la distance parcourue (Manhattan distance)
+        int distanceX = Math.abs((int)arrivee.getX() - (int)depart.getX());
+        int distanceY = Math.abs((int)arrivee.getY() - (int)depart.getY());
+        int distance = distanceX + distanceY;
+
+        // Plus la distance est grande, plus le coup est complexe
+        complexite += Math.min(distance, 4);
+
+        // Limiter la complexité à une valeur entre 0 et 10
+        return Math.min(complexite, 10);
+    }
 }
