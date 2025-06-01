@@ -68,8 +68,17 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         this.interfaceGraphique = interfaceGraphique;
         this.jeu.ajouteObservateur(this);
 
+        // Rendre l'écran focusable pour recevoir les événements clavier
+        this.setFocusable(true);
+
+        // Ajouter l'adaptateur clavier
+        this.addKeyListener(new AdaptateurClavier(collecteurEv));
+
         initialiserLayout();
         miseAJour();
+
+        // Demander le focus pour recevoir les événements clavier
+        this.requestFocusInWindow();
     }
 
 

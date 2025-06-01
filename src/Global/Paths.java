@@ -49,6 +49,8 @@ public class Paths {
     public static final URL PATH_ARRIERE_PLAN_03 = getArrierePlanPath("arrierePlan10.png");
     public static final URL PATH_ARRIERE_PLAN_4 = getArrierePlanPath("arrierePlan4.png");
     public static final URL PATH_ARRIERE_PLAN_8 = getArrierePlanPath("arrierePlan8.png");
+    public static final URL PATH_ARRIERE_PLAN_12 = getArrierePlanPath("arrierePlan12.png");
+
 
     /********************************************
      *              IMAGES PIONS               *

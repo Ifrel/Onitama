@@ -275,7 +275,7 @@ public class EcranDeDemarrage extends JTabbedPane {
      * @return Le JPanel de l'onglet Couleur.
      */
     private JPanel creerOngletCouleur() {
-        PanelAvecImage ongletCouleur = new PanelAvecImage(PATH_ARRIERE_PLAN_03);
+        PanelAvecImage ongletCouleur = new PanelAvecImage(PATH_ARRIERE_PLAN_12);
         ongletCouleur.setLayout(new GridBagLayout());
         GridBagConstraints gbc;
         int ligneCourante = 0;
@@ -383,7 +383,7 @@ public class EcranDeDemarrage extends JTabbedPane {
         couleursInitiales.put(cible, couleurInitiale);
 
         // Étiquette descriptive
-        JPanel etiquettePanel = PngText.createPngPanel(texteEtiquette, 20);
+        JPanel etiquettePanel = PngText.createPngPanel(texteEtiquette, 23);
         etiquettePanel.setOpaque(false);
         etiquettePanel.setFont(FONT_LABEL);
         GridBagConstraints gbcLabel = new GridBagConstraints();
@@ -583,21 +583,4 @@ public class EcranDeDemarrage extends JTabbedPane {
     }
 
 
-    /**
-     * Crée un JLabel avec une image redimensionnée.
-     * (Note: Cette méthode est moins utilisée maintenant que PngText.createPngPanel est préféré pour les labels PNG).
-     *
-     * @param urlImage Le chemin vers l'image.
-     * @param width    La largeur désirée de l'image.
-     * @param height   La hauteur désirée de l'image.
-     * @return Un JLabel contenant l'image redimensionnée.
-     */
-    private JLabel creerLabelAvecImage(URL urlImage, int width, int height) {
-        JLabel label = new JLabel();
-        ImageIcon icon = new ImageIcon(urlImage);
-        Image image = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        ImageIcon scaledIcon = new ImageIcon(image);
-        label.setIcon(scaledIcon);
-        return label;
-    }
 }

@@ -31,57 +31,122 @@ import Vue.CollecteurEvenements;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.logging.Logger;
 
-
+/**
+ * Adaptateur qui transforme les événements clavier en commandes pour le jeu.
+ * Cette classe implémente KeyListener et peut être attachée à n'importe quel composant Swing.
+ */
 public class AdaptateurClavier implements KeyListener {
-    CollecteurEvenements control;
+    private static final Logger logger = Logger.getLogger(AdaptateurClavier.class.getName());
+    private final CollecteurEvenements control;
 
+    /**
+     * Constructeur de l'adaptateur clavier.
+     * 
+     * @param c Le collecteur d'événements qui recevra les commandes générées par les touches du clavier
+     */
     public AdaptateurClavier(CollecteurEvenements c) {
         control = c;
     }
 
+    /**
+     * Gère les événements de touche pressée et les transmet au collecteur d'événements.
+     * 
+     * @param event L'événement de touche pressée
+     */
     @Override
     public void keyPressed(KeyEvent event) {
+        String commande = null;
+
         switch (event.getKeyCode()) {
+            // Gestion du jeu
             case KeyEvent.VK_U:
-                control.clavier("annuler");
-                System.out.println("annuler");
+                commande = "annuler";
                 break;
             case KeyEvent.VK_R:
-                control.clavier("refaire");
-                System.out.println("refaire");
+                commande = "refaire";
                 break;
-            case KeyEvent.VK_Q:
-            case KeyEvent.VK_A:
-                control.clavier("exit");
-                System.out.println("exit");
+            case KeyEvent.VK_SPACE:
+            case KeyEvent.VK_P:
+                commande = "pause";
                 break;
-            case KeyEvent.VK_I:
-                control.clavier("ia");
-                System.out.println("ia");
-                break;
+
+            // Navigation
             case KeyEvent.VK_ESCAPE:
-                control.clavier("full");
-                System.out.println("full");
+                commande = "full";
+                break;
+            case KeyEvent.VK_F:
+                commande = "full";
                 break;
             case KeyEvent.VK_ENTER:
-                control.clavier("demarrer");
+                commande = "demarrer";
                 break;
-                case KeyEvent.VK_SPACE:
-                    control.clavier("pause");
-                    break;
+            case KeyEvent.VK_M:
+                commande = "menu";
+                break;
 
+            // Actions
+            case KeyEvent.VK_Q:
+            case KeyEvent.VK_A:
+                commande = "exit";
+                break;
+            case KeyEvent.VK_S:
+                commande = "sauvegarder";
+                break;
+            case KeyEvent.VK_N:
+                commande = "nouvellePartie";
+                break;
+            case KeyEvent.VK_H:
+                commande = "regles";
+                break;
+
+            // IA
+            case KeyEvent.VK_I:
+                commande = "ia";
+                break;
+
+            // Navigation dans le menu avec les flèches
+            case KeyEvent.VK_UP:
+                commande = "haut";
+                break;
+            case KeyEvent.VK_DOWN:
+                commande = "bas";
+                break;
+            case KeyEvent.VK_LEFT:
+                commande = "gauche";
+                break;
+            case KeyEvent.VK_RIGHT:
+                commande = "droite";
+                break;
+        }
+
+        if (commande != null) {
+            logger.info("Touche clavier: " + commande);
+            control.clavier(commande);
         }
     }
 
+    /**
+     * Méthode appelée lorsqu'une touche est relâchée.
+     * Cette méthode est requise par l'interface KeyListener mais n'est pas utilisée dans cette implémentation.
+     * 
+     * @param e L'événement de touche relâchée
+     */
     @Override
     public void keyReleased(KeyEvent e) {
-        // Pas utilisé, mais doit être implémenté.
+        // Pas utilisé, mais doit être implémenté pour l'interface KeyListener.
     }
 
+    /**
+     * Méthode appelée lorsqu'une touche est tapée (pressée puis relâchée).
+     * Cette méthode est requise par l'interface KeyListener mais n'est pas utilisée dans cette implémentation.
+     * 
+     * @param e L'événement de touche tapée
+     */
     @Override
     public void keyTyped(KeyEvent e) {
-        // Non utilisé, mais doit être implémenté.
+        // Non utilisé, mais doit être implémenté pour l'interface KeyListener.
     }
 
 
