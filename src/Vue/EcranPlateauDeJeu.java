@@ -74,7 +74,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private BoutonCarte[] buttonsCartesJoueur1;
     private BoutonCarte[] buttonsCartesJoueur2;
     private BoutonCarte carteDeRotation;
-    private JButton annuler,
+    private BoutonAvecImage annuler,
             refaire,
             suggestion;
 
@@ -104,8 +104,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     private boolean estCliqueBoutonFlotant = false;
 
     // Constantes
-    Dimension DIM_BARRE_MENU = new Dimension(60, 60);
-    Dimension DIM_BTN_ACTION = new Dimension(50, 50);
+    Dimension DIM_BARRE_MENU = new Dimension(55, 55);
+    Dimension DIM_BTN_ACTION = new Dimension(60, 50);
     Dimension DIM_CARTE = new Dimension(80, 80);
 
     int compCliqueBoutonSuggestion = 0;
@@ -124,7 +124,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
      * @param interfaceGraphique Scène principale
      */
     public EcranPlateauDeJeu(Jeu jeu, CollecteurEvenements collecteurEv, InterfaceGraphique interfaceGraphique) {
-        super(getArrierePlanPath("arrierePlan8.png"));
+        super(PATH_ARRIERE_PLAN_12);
         this.jeu = jeu;
         this.collecteurEv = collecteurEv;
         this.interfaceGraphique = interfaceGraphique;
@@ -259,7 +259,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Création du conteneur principal
         JPanel contenu = new JPanel(new GridBagLayout());
-        contenu.setBorder(BorderFactory.createEmptyBorder(ESPACE, ESPACE, ESPACE, ESPACE));
+        contenu.setBorder(BorderFactory.createEmptyBorder(ESPACE, 0, ESPACE, 0));
         contenu.setOpaque(false);
 
         // Configuration de la barre supérieure
@@ -270,7 +270,9 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Configuration finale
         this.setLayout(new BorderLayout());
-        this.add(new PanelRatioFixe(contenu, 1), BorderLayout.CENTER);
+//        this.add(new PanelRatioFixe(contenu, 1), BorderLayout.CENTER);
+        this.add(contenu, BorderLayout.CENTER);
+
 
 
         // Démarrage du timer
@@ -296,17 +298,23 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
     private void ajouterBarreSuperieure(JPanel contenu) {
         // Création de la barre d'indication
-        JPanel barreIndication = new JPanel(new FlowLayout(FlowLayout.TRAILING, 10, 10));
+        JPanel barreIndication = new JPanel();
+        barreIndication.setLayout(new BoxLayout(barreIndication, BoxLayout.X_AXIS));
         barreIndication.setOpaque(false);
 
         // Ajout des composants à la barre
+        barreIndication.add(Box.createGlue());
         barreIndication.add(creerBoutonSon());
+
+        barreIndication.add(Box.createGlue());
         barreIndication.add(creerBoutonIA());
-        barreIndication.add(Box.createHorizontalStrut(ESPACE));
+
         barreIndication.add(Box.createGlue());
         barreIndication.add(creerPanelRoundTemps());
-        barreIndication.add(Box.createHorizontalStrut(ESPACE));
+
+        barreIndication.add(Box.createGlue());
         barreIndication.add(creerBoutonMenu());
+        barreIndication.add(Box.createGlue());
 
         // Configuration et ajout de la barre
         GridBagConstraints gbc = new GridBagConstraints();
@@ -322,16 +330,13 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        gbc.weighty = 0;
-//        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.weighty = 0.051;
+        contenu.add(Box.createVerticalGlue(), gbc);
         contenu.add(creerPanelNomJoueurCourant(), gbc);
 
         // Ajout de l'espace
         gbc.gridy = 2;
-        gbc.weightx = 0;
-        gbc.weighty = 0.21;
-        contenu.add(Box.createGlue(), gbc);
-    }
+        contenu.add(Box.createVerticalGlue(), gbc);    }
 
 
     private void ajouterPanneauCentral(JPanel contenu) {
@@ -352,7 +357,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 //        gbc.insets = new Insets(0, 0, ESPACE * 3, 0);
-        contenu.add(panelCentreEmpile, gbc);
+        contenu.add(new PanelRatioFixe(panelCentreEmpile, 1.0), gbc);
     }
 
 
@@ -370,7 +375,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.weightx = 2.0;
-        gbc.weighty = 1;
+        gbc.weighty = 0.6;
         panel.add(cartesNord, gbc);
 
         // Panneau est (cartes)
@@ -389,7 +394,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.insets = new Insets(20, 20, 20, 20);
 
         // Utilisation de PanelRatioFixe pour maintenir le ratio 1:1 du terrain
-        panel.add(new PanelRatioFixe(terrain, 1.0), gbc);
+        panel.add(terrain, gbc);
         gbc.insets = new Insets(0, 0, 0, 0);
 
         // Panneau ouest (boutons)
@@ -404,7 +409,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.weightx = 2.0;
-        gbc.weighty = 1;
+        gbc.weighty = 0.6;
         panel.add(cartesSud, gbc);
 
         // Espacement vertical en bas
@@ -503,7 +508,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Première carte
         gbc.gridx = 1;
-        gbc.weightx = 0.5;
+        gbc.weightx = 0.6;
         gbc.insets = new Insets(0, 10, 0, 10);
         carte1J1 = cardFlipAnimator(buttonsCartesJoueur1[0],0);
         carte1J1.setPreferredSize(DIM_CARTE);
@@ -539,7 +544,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Première carte
         gbc.gridx = 1;
-        gbc.weightx = 0.5;
+        gbc.weightx = 0.6;
         gbc.insets = new Insets(0, 10, 0, 10);
         carte1J2 = cardFlipAnimator(buttonsCartesJoueur2[0], 2);
         carte1J2.setPreferredSize(DIM_CARTE);
@@ -606,10 +611,10 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         suggestion.setPreferredSize(DIM_BTN_ACTION);
 
         // Configuration de l'apparence
-        Color couleurFond = new Color(207, 207, 207, 44);
-        annuler.setBackground(couleurFond);
-        refaire.setBackground(couleurFond);
-        suggestion.setBackground(couleurFond);
+        Color couleurFond = new Color(207, 207, 207, 84);
+        annuler.chargerCouleurFont(couleurFond);
+        refaire.chargerCouleurFont(couleurFond);
+        suggestion.chargerCouleurFont(couleurFond);
 
         // Ajout des écouteurs
         annuler.addActionListener(new AdaptateurAnnuler(collecteurEv));
@@ -667,19 +672,17 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private JPanel creerPanelNomJoueurCourant() {
-        JPanel textNomPanel = ConfigModeJoueur.creerPanelCoinsArondiAvecBordure();
-        textNomPanel.setPreferredSize(new Dimension(200, 70));
+        JPanel textNomPanel = new JPanel();
+        textNomPanel.setOpaque(false);
         textNomPanel.setLayout(new BoxLayout(textNomPanel, BoxLayout.Y_AXIS));
-        textNomPanel.setBackground(new Color(214, 214, 214, 107));
         textNomPanel.setToolTipText("Nom du joueur qui joue actuellement");
 
         JLabel txt = new JLabel("C'est au tour de");
         txt.setFont(new Font("Arial", Font.BOLD, 16));
         txt.setAlignmentX(Component.CENTER_ALIGNMENT);
-        txt.setForeground(new Color(197, 7, 184));
 
         nomJoueurCourantLabel = new JLabel(jeu.getNomJoueurCourant());
-        nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        nomJoueurCourantLabel.setFont(new Font("Arial", Font.BOLD, 25));
         nomJoueurCourantLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         nomJoueurCourantLabel.setForeground(infosDeConfigUI.getCouleurPionJoueur(jeu.getJoueurCourant().getId()));
 
@@ -691,26 +694,22 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
     }
 
     private JPanel creerPanelRoundTemps() {
-        JPanel panel = ConfigModeJoueur.creerPanelCoinsdArrondi();
-        panel.setPreferredSize(new Dimension(250, 45));
-        panel.setBackground(new Color(221, 221, 221, 131));
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.setToolTipText("Nombre de partie jouée et temps écoulé");
 
-        parties = 1;
         roundLabel = new JLabel("Partie : " + parties);
         roundLabel.setOpaque(false);
-        roundLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        roundLabel.setFont(new Font("Arial", Font.BOLD, 25));
 
         tempsLabel = new JLabel("00:00");
         tempsLabel.setOpaque(false);
-        tempsLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        tempsLabel.setFont(new Font("Arial", Font.BOLD, 25));
 
-        panel.add(Box.createGlue());
         panel.add(roundLabel);
-        panel.add(Box.createRigidArea(new Dimension(20, 0)));
-        panel.add(tempsLabel);
         panel.add(Box.createGlue());
+        panel.add(tempsLabel);
 
         return panel;
     }
@@ -723,11 +722,8 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         return menu;
     }
 
-    private JPanel creerBoutonIA() {
+    private JButton creerBoutonIA() {
         Boolean [] isActive = {false};
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        panel.setOpaque(false);
-
         BoutonAvecImage bouton = Bouton.creerBouton(Paths.getButtonPath("ia.png"), Bouton.ConfigurationParDefaut.SansBordure_transparent);
         bouton.setPreferredSize(DIM_BARRE_MENU);
         bouton.setToolTipText("IA vs IA");
@@ -736,8 +732,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             isActive[0] = !isActive[0];
             bouton.changerImage(Paths.getButtonPath("ia" + (isActive[0] ? "_on" : "") + ".png"));
         });
-        panel.add(bouton);
-        return panel;
+        return bouton;
     }
 
     private JLayer<JButton> cardFlipAnimator(BoutonCarte boutonCarte, int idCarte) {
@@ -848,6 +843,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
             Duration duration = Duration.between(debutTempsPartie, Instant.now());
             long minutes = duration.toMinutes();
             long secondes = duration.getSeconds() % 60;
+            tempsLabel.removeAll();
             tempsLabel.setText(String.format("%02d:%02d", minutes, secondes));
             this.duration = duration;
         }
@@ -1181,7 +1177,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
         boutonFlottant.setFocusPainted(false);
 
         // Position initiale
-        boutonFlottant.setLocation(100, 80);
+        boutonFlottant.setLocation(100, 120);
         boutonFlottant.setVisible(true);
         boutonFlottant.setToolTipText("Option de Configuration des Joueurs");
 

@@ -188,105 +188,7 @@ public class Bouton {
         }
 
 
-/*
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-            int width = getWidth();
-            int height = getHeight();
-            int arc = (int) arrondiBordure;
-
-            boolean survol = getModel().isRollover();
-            boolean clique = getModel().isPressed();
-            boolean focus = isFocusOwner();
-            boolean estDesactive = !isEnabled();
-
-            // Applique un effet grisé si le bouton est désactivé
-            if (estDesactive) {
-                g2.setColor(new Color(200, 200, 200, 50));
-                g2.fillRoundRect(0, 0, width, height, arc, arc);
-            } else {
-                // Fond survol ou focus (seulement si le bouton est activé)
-                if (survol || focus) {
-                    g2.setColor(couleurFondSurvol);
-                    g2.fillRoundRect(0, 0, width, height, arc, arc);
-                }
-
-                // Fond appuyé (seulement si le bouton est activé)
-                if (clique) {
-                    g2.setColor(new Color(0, 0, 0, 50));
-                    g2.fillRoundRect(0, 0, width, height, arc, arc);
-                }
-            }
-
-            // Calcul marge dynamique — ajusté pour éviter un rayon négatif ou 0
-            int tailleMin = Math.min(width, height);
-            float margeArrondie = arc * 0.15f;
-            float margeFixe = 4f;
-            float margeMin = 2f;
-            float marge = Math.max(margeFixe, Math.max(epaisseurActuelle, margeArrondie));
-            marge = Math.min(marge, tailleMin / 6.5f);
-
-            // Dessin de l'image centrée
-            Icon icon = getIcon();
-            if (icon instanceof ImageIcon) {
-                ImageIcon imageIcon = (ImageIcon) icon;
-                Image image = imageIcon.getImage();
-
-                int iw = image.getWidth(this);
-                int ih = image.getHeight(this);
-
-                if (iw > 0 && ih > 0) {
-                    int availableWidth = (int) (width - 2 * marge);
-                    int availableHeight = (int) (height - 2 * marge);
-
-                    float scale = Math.min((float) availableWidth / iw, (float) availableHeight / ih);
-                    int nw = (int) (iw * scale);
-                    int nh = (int) (ih * scale);
-
-                    int x = (width - nw) / 2;
-                    int y = (height - nh) / 2;
-
-                    // Applique un filtre gris si le bouton est désactivé
-                    if (estDesactive) {
-                        ImageFilter filter = new GrayFilter(true, 50);
-                        ImageProducer producer = new FilteredImageSource(image.getSource(), filter);
-                        Image grayImage = Toolkit.getDefaultToolkit().createImage(producer);
-                        g2.drawImage(grayImage, x, y, nw, nh, this);
-                    } else {
-                        g2.drawImage(image, x, y, nw, nh, this);
-                    }
-                }
-            }
-
-            // Bordure (avec couleur grisée si désactivé)
-            if (estDesactive) {
-                g2.setColor(new Color(200, 200, 200, 150));
-            } else {
-                g2.setColor(couleurBordure);
-            }
-            g2.setStroke(new BasicStroke(epaisseurActuelle));
-            float halfStroke = epaisseurActuelle / 2f;
-            g2.drawRoundRect(
-                    (int) halfStroke,
-                    (int) halfStroke,
-                    (int) (width - epaisseurActuelle),
-                    (int) (height - epaisseurActuelle),
-                    arc, arc
-            );
-
-            // Si une couleur de fond chargée (seulement si le bouton est activé)
-            if (!estDesactive && aCouleurDeFond && couleurdeFond != null) {
-                g2.setColor(couleurdeFond);
-                g2.fillRoundRect(0, 0, width, height, arc, arc);
-            }
-
-            g2.dispose();
-        }
-*/
 
 
         @Override
@@ -474,7 +376,7 @@ public class Bouton {
                 epaisseurInitiale = 2f;
                 epaisseurSurvol = 8f;
                 arrondi = ARRONDI;
-                couleurBordure = new Color(200, 200, 200, 255); // Gris clair
+                couleurBordure = new Color(31, 156, 230, 255); // Gris clair
                 couleurFondSurvol = new Color(200, 200, 200, 121); // Gris clair semi-transparent
                 break;
             default:
@@ -488,13 +390,9 @@ public class Bouton {
 
         // Créer l'icône à partir du chemin
         ImageIcon iconeOriginale = null;
-        if (cheminImage != null) {
-//            URL imageURL = Bouton.class.getResource(cheminImage);
-//            if (imageURL == null) {
-//                System.err.println("Image non trouvée pour la configuration " + config + ": " + cheminImage);
-//            } else {
-//                iconeOriginale = new ImageIcon(imageURL);
-//            }
+        if (cheminImage == null) {
+            System.err.println("Image non trouvée pour la configuration " + config + ": " + cheminImage);
+        } else {
             iconeOriginale = new ImageIcon(cheminImage);
         }
 
