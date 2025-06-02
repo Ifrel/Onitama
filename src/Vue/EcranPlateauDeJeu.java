@@ -259,7 +259,7 @@ public class EcranPlateauDeJeu extends PanelAvecImage implements Observateur {
 
         // Création du conteneur principal
         JPanel contenu = new JPanel(new GridBagLayout());
-        contenu.setBorder(BorderFactory.createEmptyBorder(ESPACE, 0, ESPACE, 0));
+        contenu.setBorder(BorderFactory.createEmptyBorder(ESPACE, 0, ESPACE*2, 0));
         contenu.setOpaque(false);
 
         // Configuration de la barre supérieure

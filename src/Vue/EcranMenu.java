@@ -130,7 +130,8 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         gbc.gridy = -1;
         gbc.weighty = 0.3;
         gbc.fill = GridBagConstraints.VERTICAL;
-        add(Box.createVerticalStrut(200), gbc); // Espace fixe en haut
+        add(Box.createVerticalStrut(50), gbc); // Espace fixe en bas
+        add(Box.createGlue(), gbc);
         gbc.weighty = 0;
 
         // Ligne 0 : Bouton Retour (en haut à droite)
@@ -175,7 +176,8 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
         gbc.gridy = 6;
         gbc.weighty = 0.25;
         gbc.fill = GridBagConstraints.VERTICAL;
-        add(Box.createVerticalStrut(100), gbc); // Espace fixe en bas
+        add(Box.createGlue(), gbc);
+        add(Box.createVerticalStrut(50), gbc); // Espace fixe en bas
     }
 
     /**
