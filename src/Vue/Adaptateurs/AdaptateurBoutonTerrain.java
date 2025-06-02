@@ -70,6 +70,9 @@ public class AdaptateurBoutonTerrain implements ActionListener, Observateur {
             }else {
                 boutonTerrain.setEnabled(true);
             }
+        } else {
+            // pour réactiver les cases vides après avoir annulé un coup
+            boutonTerrain.setEnabled(true);
         }
 
         // Mise à jour des stats si nécessaire

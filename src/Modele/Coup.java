@@ -1,30 +1,32 @@
 package Modele;
-import Global.Config;
 
 import java.io.Serializable;
 import java.awt.*;
 import static Global.Config.TYPECARTE;
-import static Global.Config.TYPECARTE.*;
 //import java.util.ArrayList;
 
 public class Coup implements Serializable{
     private static final long serialVersionUID = 1L;
     private Point depart;
     private Point arrivee;
-    private Carte carteEchangee;
-    private TYPECARTE carteEnPlus;
+    private Carte carteRecue;
+    private Carte carteDonnee;
+    private TYPECARTE typeCarteEnPlus;
+    private TYPECARTE typeCarteDonnee;
     private boolean aMangerPion;
 
-    public Coup(Point depart, Point arrivee, Carte carteEchangee) {
+    public Coup(Point depart, Point arrivee, Carte carteRecue, Carte carteDonnee) {
         this.depart = depart;
         this.arrivee = arrivee;
-        this.carteEchangee = carteEchangee;
+        this.carteRecue = carteRecue;
+        this.carteDonnee = carteDonnee;
     }
 
-    public Coup(Point depart, Point arrivee, TYPECARTE carteEchangee) {
+    public Coup(Point depart, Point arrivee, TYPECARTE carteRecue, TYPECARTE carteDonnee) {
         this.depart = depart;
         this.arrivee = arrivee;
-        this.carteEnPlus = carteEchangee;
+        this.typeCarteEnPlus = carteRecue;
+        this.typeCarteDonnee = carteDonnee;
     }
 
     /**
@@ -33,7 +35,7 @@ public class Coup implements Serializable{
      * */
     public boolean equals(Coup c) {
         boolean b1 = getDepart().equals(c.getDepart()) && getArrivee().equals(c.getArrivee());
-        boolean b2 = carteEchangee.equals(c.getCarteEchangee());
+        boolean b2 = carteRecue.equals(c.getCarteRecue());
         boolean b3 = aMangerPion == c.getPionMange();
         return b1 && b2 && b3;
 
@@ -55,13 +57,19 @@ public class Coup implements Serializable{
         return this.arrivee;
     }
 
-    public Carte getCarteEchangee() {
-        if (carteEchangee == null) {
-            return new Carte(carteEnPlus);
+    public Carte getCarteRecue() {
+        if (carteRecue == null) {
+            return new Carte(typeCarteEnPlus);
         }
-        return carteEchangee;
+        return carteRecue.clone();
     }
 
+    public Carte getCarteDonnee() {
+        if (carteDonnee == null) {
+            return new Carte(typeCarteDonnee);
+        }
+        return carteDonnee;
+    }
 
     public boolean getPionMange()
     {

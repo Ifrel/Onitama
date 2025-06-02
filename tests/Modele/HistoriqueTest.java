@@ -13,7 +13,7 @@ class HistoriqueTest<T> {
     public void peutAnnuler() {
         Historique<Coup> h = new Historique<>();
         assertFalse(h.peutAnnuler());
-        h.add(new Coup(new Point(1, 2), new Point(45, 1234),new Carte(COQ)));
+        h.add(new Coup(new Point(1, 2), new Point(45, 1234),new Carte(COQ), null));
         assertTrue(h.peutAnnuler());
     }
 
@@ -21,7 +21,7 @@ class HistoriqueTest<T> {
     public void peutRefaire() {
         Historique<Coup> h = new Historique<>();
         assertFalse(h.peutRefaire());
-        h.add(new Coup(new Point(1, 2), new Point(45, 1234),new Carte(COQ)));
+        h.add(new Coup(new Point(1, 2), new Point(45, 1234),new Carte(COQ), null));
         assertFalse(h.peutRefaire());
         h.annuler();
         assertTrue(h.peutRefaire());
@@ -30,7 +30,7 @@ class HistoriqueTest<T> {
     @Test
     public void annuler() {
         Historique<Coup> h = new Historique<>();
-        Coup c = new Coup(new Point(1, 2), new Point(45, 1234), new Carte(COQ));
+        Coup c = new Coup(new Point(1, 2), new Point(45, 1234), new Carte(COQ), null);
         h.add(c);
         assertEquals(h.annuler(), c);
     }
@@ -38,7 +38,7 @@ class HistoriqueTest<T> {
     @Test
     public void refaire() {
         Historique<Coup> h = new Historique<>();
-        Coup c = new Coup(new Point(1, 2), new Point(45, 1234), new Carte(COQ));
+        Coup c = new Coup(new Point(1, 2), new Point(45, 1234), new Carte(COQ), null);
         h.add(c);
         assertEquals(h.annuler(), c);
         assertEquals(h.refaire(), c);
