@@ -368,11 +368,11 @@ public class Jeu extends Observable implements Runnable {
 // ######## ANNULER / REFAIRE ########
 
     public boolean peutAnnulerCoup() {
-        return historique.peutAnnuler() && ! estActiveIA2();
+        return historique.peutAnnuler() && ! (estActiveIA1() && estActiveIA2());
     }
 
     public boolean peutRefaireCoup() {
-        return historique.peutRefaire() && ! estActiveIA2();
+        return historique.peutRefaire() && ! (estActiveIA1() && estActiveIA2());
     }
 
     public void annulerCoup() {
@@ -389,7 +389,7 @@ public class Jeu extends Observable implements Runnable {
             }
 
             int nbAAnnuler = 1;
-            if (estActiveIA1()) {
+            if (estActiveIA1() || estActiveIA2()) {
                 nbAAnnuler = 2;
             }
 
@@ -403,7 +403,8 @@ public class Jeu extends Observable implements Runnable {
                 //Restaurer la main du joueur avant de joueur le coup
                 changerJoueur();
                 //Restaurer le joueur qui avait joué le coup
-                restaurerMainJoueur(c.getCarteEchangee(), getCarteSupplementaire());
+                restaurerMainJoueur(c.getCarteRecue(), c.getCarteDonnee());
+                //echangerCartes(getJoueurCourant(), c.getCarteEchangee());
 
                 dernierCoupJoue = c;
 
@@ -421,9 +422,13 @@ public class Jeu extends Observable implements Runnable {
 
     private void restaurerMainJoueur(Carte c1, Carte c2) {
         Joueur joueur = getJoueurCourant();
-        joueur.removeCard(c1);
-        c1.setProprietaire(0);
-        setCarteSupplementaire(c1);
+        for (Carte c : joueur.getCartesEnMain()) {
+            if (c.getType() == c1.getType()) {
+                joueur.removeCard(c);
+                c1.setProprietaire(0);
+                setCarteSupplementaire(c1);
+            }
+        }
         joueur.addCard(c2);
         c2.setProprietaire(joueur.getId());
     }
@@ -466,7 +471,7 @@ public class Jeu extends Observable implements Runnable {
         }
 
         int nbAAnnuler = 1;
-        if (estActiveIA1()) {
+        if (estActiveIA1() || estActiveIA2()) {
             nbAAnnuler = 2;
         }
 
@@ -476,12 +481,12 @@ public class Jeu extends Observable implements Runnable {
 
             //repliquer le mouvement original
             deplacerPion(c.getDepart(), c.getArrivee());
-            echangerCartes(getJoueurCourant(), c.getCarteEchangee());
+            //echangerCartes(getJoueurCourant(), c.getCarteRecue());
             //restaurer selection /viasual
             setPionSelectionne(c.getArrivee());
 
+            restaurerMainJoueur(c.getCarteDonnee(), c.getCarteRecue());
             changerJoueur();
-            //restaurerMainJoueur(getCarteSupplementaire(), c.getCarteEchangee());
 
             dernierCoupJoue = c;
 
@@ -1123,7 +1128,11 @@ public class Jeu extends Observable implements Runnable {
         Carte ancienneSup = getCarteSupplementaire();
 
         //Retirer la carte selectioneé de la main du joueur
-        joueur.removeCard(carteSeleccionnee);
+        for (Carte c : joueur.getCartesEnMain()) {
+            if (c.getType() == carteSeleccionnee.getType()) {
+                joueur.removeCard(c);
+            }
+        }
         carteSeleccionnee.setProprietaire(0);
 
         //Definir la carte selectioneé comme la nouvelle carte suplementaire
@@ -1275,7 +1284,7 @@ public class Jeu extends Observable implements Runnable {
                         setPionSelectionne(p);
                         return;
                     }
-                    if (!jouerCoup(new Coup(getPionSelectionne().getPosition(), p, getCarteSupplementaire()))) {
+                    if (!jouerCoup(new Coup(getPionSelectionne().getPosition(), p, getCarteSupplementaire(), getCarteSelectionnee()))) {
                         return;
                     }
                     etatGrille = DEFAUT;

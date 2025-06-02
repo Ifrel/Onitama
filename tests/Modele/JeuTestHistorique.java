@@ -93,7 +93,7 @@ public class JeuTestHistorique {
         Jeu jeu = new Jeu(carteEnPlus, cJ1, cJ2, lp1, lp2);
         jeu.setCarteSelectionnee(0);
         jeu.setPionSelectionne(new Point(3, 2));
-        Coup coup = new Coup(new Point(3, 2), new Point(4, 2), jeu.getCarteSupplementaire());
+        Coup coup = new Coup(new Point(3, 2), new Point(4, 2), jeu.getCarteSupplementaire(), jeu.getCarteSelectionnee());
         jeu.jouerCoup(coup);
         assertTrue(jeu.verifierVictoire());
     }
@@ -195,7 +195,7 @@ public class JeuTestHistorique {
         //Modification de l'etat du jeu pour voir si vraiment le jeu sauvegarde et charge
         jeuOriginal.setCarteSelectionnee(0);
         jeuOriginal.setPionSelectionne(new Point(0, 1));
-        Coup coup = new Coup(new Point(0, 1), new Point(1, 1), jeuOriginal.getCarteSupplementaire());
+        Coup coup = new Coup(new Point(0, 1), new Point(1, 1), jeuOriginal.getCarteSupplementaire(), jeuOriginal.getCarteSelectionnee());
         jeuOriginal.jouerCoup(coup);
         String fichier = "sauvegarde1.txt";
         jeuOriginal.sauvegarderJeu(fichier);
@@ -249,7 +249,7 @@ public class JeuTestHistorique {
         Jeu jeu = new Jeu(carteEnPlus, cJ1, cJ2, lp1, lp2);
         jeu.setPionSelectionne(new Point(0, 1));
         //Initialisation: On creé un coup
-        Coup coup = new Coup(new Point(0, 1), new Point(1, 1), jeu.getCarteSupplementaire());
+        Coup coup = new Coup(new Point(0, 1), new Point(1, 1), jeu.getCarteSupplementaire(), jeu.getCarteSelectionnee());
         jeu.jouerCoup(coup);
         //On créee le coup qu'on vient de faire et on l'ajoute à l'historique
         //On annule et on refait
