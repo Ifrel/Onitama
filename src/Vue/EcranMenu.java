@@ -32,7 +32,7 @@ public class EcranMenu extends PanelAvecImage implements Observateur {
     private static final Dimension DIM_BOUTON_EXIT = new Dimension(120, 60);
 
     private static final Insets MARGE_BOUTONS_ACTION = new Insets(10, 0, 10, 0);
-    private static final Insets MARGE_PANEL_RETOUR = new Insets(10, 0, 0, 20);
+    private static final Insets MARGE_PANEL_RETOUR = new Insets(10, 0, 20, 20);
     private static final Insets MARGE_PANEL_SAUVEGARDER = new Insets(0, 50, 20, 0);
     private static final Insets MARGE_PANEL_EXIT = new Insets(0, 0, 20, 50);
     private static final Insets MARGE_CONTENEUR_ACTIONS = new Insets(20, 50, 20, 50);
